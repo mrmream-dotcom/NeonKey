@@ -1,0 +1,36 @@
+NeonKey - Proprietary License / Copyright Notice
+
+Copyright (c) 2026 Michael Ream (NeonKey). All rights reserved.
+
+This repository and everything in it, including source code, Cloudflare
+Worker code, configuration, site content, articles, study guides, text,
+graphics, logos, screenshots, and other assets (the "Materials"), are the
+proprietary property of Michael Ream and are protected by copyright and other
+intellectual property laws.
+
+NO LICENSE IS GRANTED. The fact that this repository is publicly visible does
+not grant you any license or right to copy, reproduce, modify, adapt, merge,
+publish, distribute, sublicense, sell, host, deploy, or otherwise use the
+Materials, in whole or in part, for any purpose, commercial or
+non-commercial. This is not an open-source license, and no open-source
+license applies to this repository.
+
+The only exception is the limited right to view this repository on GitHub,
+and any other right that GitHub's Terms of Service require a repository
+owner to grant to GitHub users for public repositories (for example, viewing
+and forking within GitHub's platform). Any such fork remains subject to this
+notice, and no right granted by those Terms extends beyond GitHub's platform
+or permits any use outside of it.
+
+"NeonKey", the NeonKey logo, and related names and marks are trademarks of
+Michael Ream and may not be used without prior written permission.
+
+Third-party components (for example, npm dependencies) remain under their
+own licenses. Nothing in this notice restricts rights you have under those
+licenses for those components alone.
+
+Requests for permission: hello@neonkey.tech
+
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY ARISING FROM OR IN CONNECTION WITH THE MATERIALS.

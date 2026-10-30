@@ -1,6 +1,7 @@
 {
   "name": "neonkey-welcome-worker",
   "private": true,
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",

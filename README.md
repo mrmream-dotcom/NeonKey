@@ -136,3 +136,9 @@ Internal links must use `url('/path/')` from `src/config.ts` so they respect `BA
 ## External links
 
 `integrations/external-links.mjs` runs after `astro build` and rewrites every `<a href="http(s)://…">` whose host isn't neonkey.tech (from .astro and MDX alike) to `target="_blank" rel="noopener noreferrer"` (merged with existing rel, e.g. `sponsored`) plus a visually hidden "(opens in new tab)". Internal, relative, mailto:, tel: and #anchor links are untouched. Add `data-same-tab` to an `<a>` to opt out. It only runs on build, not `astro dev`.
+
+## License and security
+
+Copyright (c) 2026 Michael Ream (NeonKey). All rights reserved. This repository is public for viewing only; it is **not** open source and no license to copy, modify, distribute, or use it is granted. See [LICENSE](LICENSE).
+
+To report a vulnerability privately, see [SECURITY.md](SECURITY.md).

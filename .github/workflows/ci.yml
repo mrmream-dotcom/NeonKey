@@ -1,0 +1,41 @@
+# CI build check: confirms the live site still builds. Does not deploy anything
+# (gh-pages is deployed from Michael's machine) and never runs on gh-pages.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SITE_URL: https://neonkey.tech
+      BASE_PATH: /
+      PUBLIC_SITE_MODE: live
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx astro build
+      - name: Check build output has no source maps or env files
+        run: |
+          if find dist \( -name '*.map' -o -name '.env*' -o -name '.dev.vars' \) | grep -q .; then
+            echo "::error::dist contains source maps or env files"; exit 1
+          fi

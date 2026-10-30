@@ -6,14 +6,33 @@ dist/
 node_modules/
 
 # logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
-# env
+# env and secrets (never commit these)
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+secrets/
+.secrets/
+*.secret
+*.secrets.json
+credentials.json
+.npmrc
+
+# Cloudflare / wrangler local state
+.wrangler/
 
 # OS / editor
 .DS_Store
