@@ -15,8 +15,8 @@ export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it',
 
 export function priceLine(o: Offer): string {
   return o.unit
-    ? `Starting at $${o.from}${o.unit}. Typical range ${o.range}.`
-    : `Starting at $${o.from}. Typical range ${o.range}, scoped per project.`;
+    ? `Starting at $${o.from}${o.unit}.`
+    : `Starting at $${o.from}, scoped per project.`;
 }
 export const PRICE_DISCLAIMER = 'Pricing is a starting point, not a quote.';
 
@@ -293,7 +293,7 @@ export function buildPlan(p: Plan): PlanView {
       ...base, resultName: remoteIt.name, kicker, heading: remoteIt.name,
       intro: `You told me ${pain}. The fixes your answers point to are the basics this setup covers: email, passwords, Wi-Fi and backups, done remotely by video call and screen share, on accounts you own.`,
       items: { title: p.healthCheck ? 'Start with a quick health check' : 'Based on your answers, start with', list },
-      price: `Starting at $${remoteIt.from}. Typical range ${remoteIt.range}, depending on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
+      price: `Starting at $${remoteIt.from}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
       youGet: 'What you get either way: plain-English notes of every change, admin access that stays with you, and a short recorded walkthrough where it helps.',
       footnote: "Handle regulated data (for example HIPAA or PCI), or need someone onsite? That\'s outside this setup. Mention it and I\'ll say so up front and point you somewhere better.",
       links: [
