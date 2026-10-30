@@ -1,0 +1,29 @@
+# NeonKey "Unlock the Week" confirmation reminder worker.
+# Hourly cron: finds people who joined Kit form 10118914 24-48h ago and still haven't
+# confirmed (Kit state "inactive"), and sends each of them ONE reminder via Resend, ever.
+# The reminder's button leads to a page that re-submits Kit's own form, so Kit sends a
+# fresh confirmation email (Kit has no API to confirm or resend).
+# Secrets (set with `wrangler secret put`, never committed):
+#   KIT_API_KEY, RESEND_API_KEY, LINK_SECRET
+#   TEST_TOKEN (optional; only while testing - delete it to lock /test)
+name = "neonkey-confirm-reminder"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[triggers]
+crons = ["17 * * * *"]
+
+[vars]
+PUBLIC_BASE_URL = "https://neonkey-confirm-reminder.mr-mream.workers.dev"
+FROM_ADDRESS = "NeonKey <hello@neonkey.tech>"
+REPLY_TO = "hello@neonkey.tech"
+KIT_FORM_ID = "10118914"
+
+[[kv_namespaces]]
+binding = "REMINDED"
+id = "d7381b2cf83149138fd6e2c2fa899e2d"
+
+[observability]
+enabled = false

@@ -19,6 +19,7 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     {NEWSLETTER.mode !== 'off' ? (
       <>
         <p>Unlock the Week is sent with <a href="https://kit.com/privacy" data-umami-event="outbound-click" data-umami-event-item="kit-privacy">Kit</a> (formerly ConvertKit), which processes subscriber data on NeonKey's behalf. When you subscribe, your email address goes straight to Kit. Kit stores it along with basic sign-up and delivery data, such as when and where you signed up and whether an issue was delivered, opened or clicked.</p>
+        <p>Kit sends a confirmation email first, and you're only added once you click it. If you haven't confirmed after about a day, I send you one reminder through <a href="https://resend.com/legal/privacy-policy">Resend</a>, NeonKey's email delivery provider, with a button to get a fresh confirmation link. That's the only reminder: if you don't confirm, you won't hear from me again, and the reminder itself has an unsubscribe link.</p>
         <p>Your email is used only to send the newsletter and is never sold. Every issue has an unsubscribe link, and you can ask for your data to be deleted at any time by emailing {CONTACT_EMAIL}.</p>
         {NEWSLETTER.mode === 'embed' && (
           <p>The signup form on this site is loaded from Kit. Kit's form script may store a small cookie or local-storage entry, for example to remember that you've already subscribed.</p>
