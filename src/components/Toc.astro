@@ -1,0 +1,30 @@
+---
+// Compact "On this page" dropdown. Native <details>/<summary>: works without JS and with the keyboard.
+// The small script (progressive enhancement) closes it after a jump, on Escape, or on a click outside.
+interface Props { sections: [string, string][]; label?: string }
+const { sections, label = 'On this page' } = Astro.props;
+---
+<details class="toc-dd">
+  <summary>
+    <span>{label}</span>
+    <svg class="toc-chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </summary>
+  <nav class="toc-dd-panel" aria-label={label}>
+    <ol>{sections.map(([id, text]) => <li><a href={`#${id}`}>{text}</a></li>)}</ol>
+  </nav>
+</details>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('details.toc-dd').forEach((dd) => {
+    const summary = dd.querySelector('summary');
+    dd.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) dd.open = false;
+    });
+    dd.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dd.open) { dd.open = false; summary?.focus(); }
+    });
+    document.addEventListener('click', (e) => {
+      if (dd.open && !dd.contains(e.target as Node)) dd.open = false;
+    });
+  });
+</script>

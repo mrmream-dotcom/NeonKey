@@ -4,12 +4,13 @@ import { url } from '../config';
 // Sections: Overview, Goal, Stack/tools, Build steps, What broke & how I fixed it, What I learned, Related.
 import Base from './Base.astro';
 import DemoBadge from '../components/DemoBadge.astro';
+import Toc from '../components/Toc.astro';
 import { labProjects } from '../data/lab';
 interface Props { slug: string; stack: string[] }
 const { slug, stack } = Astro.props;
 const project = labProjects.find((p) => p.slug === slug)!;
 const others = labProjects.filter((p) => p.slug !== slug);
-const sections = [
+const sections: [string, string][] = [
   ['overview', 'Overview'], ['goal', 'Goal'], ['stack', 'Stack & tools'], ['build', 'Build steps'],
   ['broke', 'What broke & how I fixed it'], ['learned', 'What I learned'], ['related', 'Related'],
 ];
@@ -22,9 +23,7 @@ const sections = [
 
     <div class="callout warn"><strong>Demo content.</strong> This is a sample case study that shows the Lab template. It's a placeholder until the real build is done and documented. Nothing here is a real result, client or measurement.</div>
 
-    <nav class="toc" aria-label="On this page">
-      <ul>{sections.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ul>
-    </nav>
+    <Toc sections={sections} />
 
     <h2 id="overview">Overview</h2>
     <slot name="overview" />
