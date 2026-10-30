@@ -9,6 +9,10 @@ export interface Offer {
   href?: string;
   featured?: boolean;
   unit?: string;
+  /** Optional card label (defaults to the section's). */
+  kicker?: string;
+  /** Optional upsell line pointing to a bigger service. */
+  upsell?: { text: string; linkText: string; href: string };
   /** Optional link to a working demo of this kind of build. */
   demo?: { label: string; href: string };
 }
@@ -54,7 +58,21 @@ export const remoteSupportPlan: Offer = {
 };
 
 export const automationOffers: Offer[] = [
-  { slug: 'quick-win', name: 'One-Workflow Quick Win', from: 99, for: 'Automate one repetitive task', items: ['One workflow, scoped together first', 'Connects tools you already use', 'Short walkthrough video and notes', 'Handoff so you own it'], demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' } },
+  {
+    slug: 'quick-win',
+    name: 'Quick Win + Tech Checkup',
+    kicker: 'Start here',
+    from: 99,
+    for: 'Automate one repetitive task and get a quick remote check of your tech basics',
+    items: [
+      'One simple workflow automated, scoped together first, using tools you already use',
+      'A short remote checkup of the basics: passwords and two-factor sign-in, backups, Wi-Fi and router basics, device updates and security settings',
+      'A plain-English written to-do list of the top fixes',
+      'Short walkthrough video and notes, then a handoff so you own it',
+    ],
+    demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' },
+    upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
+  },
   { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'] },
   { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'] },
 ];

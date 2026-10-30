@@ -23,7 +23,7 @@ export const labProjects: LabProject[] = [
     summary: 'Paste a customer message and an AI sorts it, flags urgency, pulls out the key details and drafts a reply for a human to review. Live demo plus the full write-up.',
     tags: ['AI', 'Automation'],
     level: 'Beginner → Intermediate',
-    service: { label: 'One-Workflow Quick Win', href: '/services/' },
+    service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
   },
   {
     draft: true,

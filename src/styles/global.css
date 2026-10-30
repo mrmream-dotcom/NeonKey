@@ -365,3 +365,4 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .intro-pricing { border: 1px solid rgba(34,211,238,.35); background: linear-gradient(90deg, rgba(34,211,238,.08), rgba(244,114,182,.06)); border-radius: 10px; padding: .7rem 1rem; margin: 0 0 1.25rem; color: var(--muted); font-size: .95rem; }
 .intro-pricing strong { color: var(--cyan); }
 .intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }
+.offer-upsell { font-size: .92rem; color: var(--muted); margin: .2rem 0 .9rem; }
