@@ -1,0 +1,71 @@
+---
+// Case-study template for Lab project pages.
+// Sections: Overview, Goal, Stack/tools, Build steps, What broke & how I fixed it, What I learned, Related.
+import Base from './Base.astro';
+import DemoBadge from '../components/DemoBadge.astro';
+import { labProjects } from '../data/lab';
+interface Props { slug: string; stack: string[] }
+const { slug, stack } = Astro.props;
+const project = labProjects.find((p) => p.slug === slug)!;
+const others = labProjects.filter((p) => p.slug !== slug);
+const sections = [
+  ['overview', 'Overview'], ['goal', 'Goal'], ['stack', 'Stack & tools'], ['build', 'Build steps'],
+  ['broke', 'What broke & how I fixed it'], ['learned', 'What I learned'], ['related', 'Related'],
+];
+---
+<Base title={project.title} description={`Demo Lab write-up: ${project.summary}`}>
+  <article class="narrow page-head prose lab-case">
+    <span class="kicker">Lab · {project.tags.join(' · ')}</span>
+    <h1>{project.title}</h1>
+    <div class="meta"><DemoBadge /><span>Sample write-up for the demo site</span><span>·</span><span>Level: {project.level}</span></div>
+
+    <div class="callout warn"><strong>Demo content.</strong> This is a sample case study that shows the Lab template. It's a placeholder until the real build is done and documented. Nothing here is a real result, client or measurement.</div>
+
+    <nav class="toc" aria-label="On this page">
+      <ul>{sections.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ul>
+    </nav>
+
+    <h2 id="overview">Overview</h2>
+    <slot name="overview" />
+
+    <h2 id="goal">Goal</h2>
+    <slot name="goal" />
+
+    <h2 id="stack">Stack &amp; tools</h2>
+    <ul class="stack-list">{stack.map((s) => <li><span class="tag">{s}</span></li>)}</ul>
+    <slot name="stack" />
+
+    <h2 id="build">Build steps</h2>
+    <slot name="build" />
+
+    <h2 id="broke">What broke &amp; how I fixed it</h2>
+    <slot name="broke" />
+
+    <h2 id="learned">What I learned</h2>
+    <slot name="learned" />
+
+    <h2 id="related">Related</h2>
+    <div class="lab-related">
+      {project.service ? (
+        <div class="panel">
+          <span class="kicker">Related service</span>
+          <h3 style="margin-top:.4rem">{project.service.label}</h3>
+          <p class="muted">Want something like this for your business? Every project starts with a short scoping call.</p>
+          <a class="btn btn-primary btn-sm" href={project.service.href}>See services</a>
+        </div>
+      ) : (
+        <div class="panel">
+          <span class="kicker">Related</span>
+          <h3 style="margin-top:.4rem">Learn the basics first</h3>
+          <p class="muted">Tutorials on home networking and homelab setup live in Learn.</p>
+          <a class="btn btn-ghost btn-sm" href="/learn/">Go to Learn</a>
+        </div>
+      )}
+      <slot name="related" />
+    </div>
+
+    <h3>More from the Lab</h3>
+    <ul>{others.map((o) => <li><a href={`/lab/${o.slug}/`}>{o.title}</a></li>)}</ul>
+    <p><a href="/lab/">← Back to the Lab</a></p>
+  </article>
+</Base>

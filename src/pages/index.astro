@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import DemoBadge from '../components/DemoBadge.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import { labProjects } from '../data/lab';
 const pillars = [
   { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Small, practical automations for small businesses: intake, FAQs, follow-ups. Plain-English setup and handoff.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
@@ -72,7 +73,19 @@ const pillars = [
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="review-h">
+  <section class="alt" aria-labelledby="lab-h">
+    <div class="container">
+      <div class="section-head"><h2 id="lab-h">From the Lab</h2><a href="/lab/">All builds →</a></div>
+      <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, what broke and what I learned.</p>
+      <div class="grid grid-3">
+        {labProjects.map((p) => (
+          <Card href={`/lab/${p.slug}/`} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="review-h">
     <div class="container feature">
       <div class="placeholder-art">Product image placeholder<br />(no real product shown in demo)</div>
       <div>

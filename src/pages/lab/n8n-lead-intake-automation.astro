@@ -1,0 +1,56 @@
+---
+import LabProject from '../../layouts/LabProject.astro';
+---
+<LabProject slug="n8n-lead-intake-automation" stack={['n8n (self-hosted)', 'Docker', 'Mini PC or old PC', 'HTML form / webhook', 'Google Sheets', 'SMTP email', 'Reverse proxy + HTTPS']}>
+  <Fragment slot="overview">
+    <p class="lead">A small lead-intake pipeline: someone fills in a contact form, the details land in a spreadsheet, the right person gets an email, and the visitor gets a friendly "we got it" reply. Everything runs on a self-hosted n8n instance at home.</p>
+  </Fragment>
+
+  <Fragment slot="goal">
+    <p>Replace "check the inbox and copy things into a sheet by hand" with one workflow that:</p>
+    <ul>
+      <li>Accepts a form submission through an n8n webhook</li>
+      <li>Validates the basics (name, a reachable email, a message)</li>
+      <li>Routes by request type, for example "quote" vs "general question"</li>
+      <li>Logs every lead to a sheet and sends two emails: one internal, one auto-reply</li>
+    </ul>
+    <p>The demo uses a made-up business and test data only.</p>
+  </Fragment>
+
+  <Fragment slot="stack">
+    <p class="muted">Builds on the <a href="/learn/self-host-n8n-old-pc/">Self-host n8n on an old PC</a> tutorial.</p>
+  </Fragment>
+
+  <Fragment slot="build">
+    <ol class="steps">
+      <li><strong>Start from a working n8n box.</strong> n8n in Docker with a persistent volume, reachable on the home network.</li>
+      <li><strong>Add a Webhook trigger.</strong> A POST endpoint the form submits to. Test it with <code>curl</code> before touching any HTML.
+        <pre><code>curl -X POST http://&lt;n8n-host&gt;:5678/webhook-test/lead \
+  -H "Content-Type: application/json" \
+  -d '&#123;"name":"Test Person","email":"test@example.com","type":"quote","message":"Hello"&#125;'</code></pre>
+      </li>
+      <li><strong>Validate and clean.</strong> An IF node drops submissions without an email or message; a Set node trims whitespace and adds a timestamp.</li>
+      <li><strong>Route.</strong> A Switch node on <code>type</code> sends quotes to one inbox and general questions to another.</li>
+      <li><strong>Log to a sheet.</strong> Append a row per lead so nothing lives only in email.</li>
+      <li><strong>Send emails.</strong> One internal notification with all fields, one short auto-reply to the visitor.</li>
+      <li><strong>Expose the webhook safely.</strong> Only the webhook path goes through a reverse proxy with HTTPS; the n8n editor stays on the home network.</li>
+    </ol>
+  </Fragment>
+
+  <Fragment slot="broke">
+    <p class="muted"><em>Sample section: these are the kinds of issues the real write-up will document.</em></p>
+    <ul>
+      <li><strong>Test URL vs production URL.</strong> The form worked while the editor was open and then "stopped". n8n has separate test and production webhook URLs; the fix is to activate the workflow and point the form at the production path.</li>
+      <li><strong>Spam submissions.</strong> A public form gets junk fast. Fix: a hidden honeypot field plus the validation step, so bots never reach the sheet.</li>
+      <li><strong>Auto-replies landing in spam.</strong> Fix: send from a properly configured mail domain (SPF/DKIM) instead of a random SMTP account.</li>
+    </ul>
+  </Fragment>
+
+  <Fragment slot="learned">
+    <ul>
+      <li>Test the webhook with <code>curl</code> first; it separates "form problem" from "workflow problem".</li>
+      <li>Log first, notify second. If an email fails, the lead is still in the sheet.</li>
+      <li>Keep the editor private and expose only what the form needs.</li>
+    </ul>
+  </Fragment>
+</LabProject>

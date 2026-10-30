@@ -9,15 +9,19 @@ Static site built with [Astro](https://astro.build) (static output, no client fr
 
 | Route | Page |
 |---|---|
-| `/` | Home: hero, four Unlock pillars, latest tutorials, featured review, newsletter signup, services teaser, learning-in-public note |
+| `/` | Home: hero, four Unlock pillars, latest tutorials, From the Lab strip, featured review, newsletter signup, services teaser, learning-in-public note |
 | `/learn/` | Learn index |
 | `/learn/self-host-n8n-old-pc/` | Sample tutorial |
+| `/lab/` | Lab: project portfolio with tag filters, case-study format and a Services CTA |
+| `/lab/n8n-lead-intake-automation/` | Sample case study: self-hosted n8n lead intake and routing |
+| `/lab/homelab-network-segmentation/` | Sample case study: home VLAN segmentation with an SVG diagram |
+| `/lab/ai-faq-assistant-small-business/` | Sample case study: AI FAQ assistant for a fictional business |
 | `/reviews/` | Reviews index |
 | `/reviews/example-mini-pc-homelab/` | Sample review: FTC disclosure, pros/cons, verdict, where-to-buy |
 | `/notes/` | Notes index |
 | `/notes/what-unlock-means/` | Sample article |
 | `/newsletter/` | NeonKey Weekly signup (demo form) and sample archive issue |
-| `/services/` | Unlock AI Module 1 offers and a "Coming later" strip |
+| `/services/` | Unlock AI Module 1 offers, a link to the Lab and a "Coming later" strip |
 | `/about/`, `/disclosure/`, `/privacy/`, `/contact/` | Footer pages (privacy is a placeholder; the contact form isn't connected) |
 | `/404` | Not found |
 
@@ -37,7 +41,8 @@ npm run preview   # serve ./dist at http://localhost:4321
 ```
 public/            favicon.svg (neon key mark)
 src/components/    Logo, DemoBadge, Card, NewsletterForm
-src/layouts/       Base.astro (head + noindex, header/nav, footer)
+src/data/          lab.ts (Lab project list used by /lab/ and the home strip)
+src/layouts/       Base.astro (head + noindex, header/nav, footer), LabProject.astro (Lab case-study template)
 src/pages/         one .astro file per route
 src/styles/        global.css (design tokens, layout, components)
 screenshots/       reference screenshots of the demo

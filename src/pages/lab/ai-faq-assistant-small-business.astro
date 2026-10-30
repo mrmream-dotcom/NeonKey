@@ -1,0 +1,50 @@
+---
+import LabProject from '../../layouts/LabProject.astro';
+---
+<LabProject slug="ai-faq-assistant-small-business" stack={['FAQ document (Markdown)', 'LLM API', 'n8n or a small script', 'Simple chat widget', 'Email handoff']}>
+  <Fragment slot="overview">
+    <p class="lead">A simple FAQ assistant for <strong>"Brightside Bikes"</strong>, a <strong>fictional</strong> neighborhood bike repair shop invented for this demo. It answers common questions from one short FAQ document and passes anything else to a human.</p>
+    <div class="callout"><strong>Fictional business.</strong> Brightside Bikes doesn't exist. The FAQ, hours and prices on this page are made up for the example.</div>
+  </Fragment>
+
+  <Fragment slot="goal">
+    <ul>
+      <li>Answer the repeat questions (hours, booking a tune-up, what to bring) consistently</li>
+      <li>Answer <em>only</em> from the business's own FAQ, never guess</li>
+      <li>When unsure, say so and collect a name and contact so a person can follow up</li>
+    </ul>
+  </Fragment>
+
+  <Fragment slot="build">
+    <ol class="steps">
+      <li><strong>Write the FAQ first.</strong> Ten to fifteen plain question-and-answer pairs in one Markdown file. The assistant is only as good as this document.</li>
+      <li><strong>Write the instructions.</strong> A short system prompt: answer only from the FAQ, keep answers brief, and if the answer isn't in the FAQ, offer a human handoff.</li>
+      <li><strong>Wire it up.</strong> A small n8n workflow (or script) receives the question, sends it with the FAQ to the model, and returns the reply to a basic chat widget.</li>
+      <li><strong>Add the handoff.</strong> If the reply is a handoff, the widget asks for a name and email and forwards the conversation to the shop's inbox.</li>
+      <li><strong>Test with awkward questions.</strong> Off-topic, rude, or "can you give me a discount?" style questions to check it stays inside the FAQ.</li>
+    </ol>
+    <div class="chat-demo" aria-label="Example conversation (fictional)">
+      <div class="bubble user"><small>Visitor</small>Do I need to book a tune-up or can I just drop by?</div>
+      <div class="bubble bot"><small>Assistant (demo)</small>Booking is recommended, but walk-ins are welcome when there's space. You can book from the "Tune-ups" page.</div>
+      <div class="bubble user"><small>Visitor</small>Can you fix an e-bike motor?</div>
+      <div class="bubble bot"><small>Assistant (demo)</small>I don't have that in my notes, so I don't want to guess. Want me to pass your question to the team? Just leave your name and email.</div>
+    </div>
+  </Fragment>
+
+  <Fragment slot="broke">
+    <p class="muted"><em>Sample section: these are the kinds of issues the real write-up will document.</em></p>
+    <ul>
+      <li><strong>Confident wrong answers.</strong> Early prompts let the model "fill in" missing details. Fix: stricter instructions plus a test list of questions that must trigger the handoff.</li>
+      <li><strong>Stale info.</strong> Holiday hours changed but the FAQ didn't. Fix: one FAQ file as the single source of truth, with a "last reviewed" date the owner updates.</li>
+      <li><strong>Overlong replies.</strong> Fix: a length limit in the instructions and a friendlier, shorter tone.</li>
+    </ul>
+  </Fragment>
+
+  <Fragment slot="learned">
+    <ul>
+      <li>The FAQ content matters more than the model.</li>
+      <li>"I don't know, here's a human" is a feature, not a failure.</li>
+      <li>Keep personal data collection minimal and tell visitors what happens to it.</li>
+    </ul>
+  </Fragment>
+</LabProject>

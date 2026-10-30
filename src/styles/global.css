@@ -187,3 +187,36 @@ label { font-weight: 600; display: block; margin-bottom: .35rem; }
 .footer-links a:hover { color: var(--cyan); }
 .footer-fine { grid-column: 1 / -1; color: #8d93b8; font-size: .85rem; margin: 0; }
 @media (max-width: 640px) { .footer-inner { grid-template-columns: 1fr; } }
+
+/* Lab (portfolio) */
+.glow-c { color: var(--cyan); text-shadow: 0 0 22px rgba(34,211,238,.35); }
+.lab-filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+.filter-chip { font: inherit; font-size: .9rem; font-weight: 600; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: .4rem .95rem; cursor: pointer; transition: border-color .2s, color .2s, box-shadow .2s; }
+.filter-chip:hover { color: var(--text); border-color: rgba(34,211,238,.55); }
+.filter-chip[aria-pressed='true'] { color: #04121a; background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 14px rgba(34,211,238,.35); }
+.lab-card { display: flex; flex-direction: column; }
+.lab-card[hidden] { display: none; }
+.lab-card.empty-slot { justify-content: center; min-height: 180px; }
+.lab-tags { display: flex; gap: .4rem; flex-wrap: wrap; margin: .9rem 0 .8rem !important; }
+.lab-read { margin-top: auto; font-weight: 700; }
+.lab-cta { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.toc { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: .8rem 1.1rem; margin: 1.5rem 0; }
+.toc ul { list-style: none; padding: 0 !important; margin: 0; display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .92rem; }
+.toc li { margin: 0 !important; }
+.stack-list { list-style: none; padding: 0 !important; display: flex; flex-wrap: wrap; gap: .45rem; }
+.stack-list li { margin: 0 !important; }
+.stack-list .tag { font-size: .88rem; color: var(--text); border-color: rgba(167,139,250,.55); padding: .2rem .7rem; }
+.lab-case h2 { scroll-margin-top: 90px; }
+.lab-related { display: grid; gap: 1rem; }
+.diagram { border: 1px solid var(--line); background: #0f1230; border-radius: 14px; padding: 1rem; margin: 1.25rem 0; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.diagram figcaption { color: var(--muted); font-size: .88rem; margin-top: .6rem; }
+.vlan-table { width: 100%; border-collapse: collapse; font-size: .95rem; margin: 1rem 0; }
+.vlan-table th, .vlan-table td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line); }
+.vlan-table th { color: var(--violet); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+.table-wrap { overflow-x: auto; }
+.chat-demo { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 1rem; display: grid; gap: .6rem; margin: 1.25rem 0; }
+.bubble { max-width: 85%; padding: .6rem .9rem; border-radius: 12px; font-size: .95rem; }
+.bubble.user { justify-self: end; background: rgba(34,211,238,.12); border: 1px solid rgba(34,211,238,.4); }
+.bubble.bot { background: rgba(167,139,250,.1); border: 1px solid rgba(167,139,250,.4); }
+.bubble small { display: block; color: var(--muted); font-size: .75rem; margin-bottom: .2rem; text-transform: uppercase; letter-spacing: .06em; }

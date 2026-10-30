@@ -1,0 +1,100 @@
+---
+import LabProject from '../../layouts/LabProject.astro';
+const vlans = [
+  { id: 10, name: 'Trusted', subnet: '192.168.10.0/24', who: 'Laptops, phones', rule: 'Can reach Lab and printers' },
+  { id: 20, name: 'IoT', subnet: '192.168.20.0/24', who: 'Smart plugs, TV, cameras', rule: 'Internet only; no access to other VLANs' },
+  { id: 30, name: 'Guest', subnet: '192.168.30.0/24', who: 'Visitors\' devices', rule: 'Internet only; client isolation on' },
+  { id: 40, name: 'Lab', subnet: '192.168.40.0/24', who: 'Mini PC, test VMs', rule: 'Internet; reachable from Trusted only' },
+];
+---
+<LabProject slug="homelab-network-segmentation" stack={['Prosumer router with VLAN support', 'Managed (smart) switch', 'Wi-Fi access point with multiple SSIDs', 'Mini PC (Proxmox or Docker host)', 'Router firewall rules']}>
+  <Fragment slot="overview">
+    <p class="lead">Most home networks are one big flat network: the laptop, the smart TV, a guest's phone and the lab box can all see each other. This build splits the network into four VLANs so each group of devices only reaches what it needs.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 720 330" role="img" aria-labelledby="seg-title seg-desc">
+        <title id="seg-title">Home network segmentation diagram</title>
+        <desc id="seg-desc">Internet connects to a router and firewall, then a managed switch and Wi-Fi access point, which carry four VLANs: Trusted 10, IoT 20, Guest 30 and Lab 40 with a mini PC.</desc>
+        <defs>
+          <linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+        </defs>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#e8eaf6" text-anchor="middle">
+          <rect x="285" y="12" width="150" height="40" rx="10" fill="#151935" stroke="#262b52"/>
+          <text x="360" y="37">Internet / ISP</text>
+          <line x1="360" y1="52" x2="360" y2="80" stroke="url(#sg)" stroke-width="2"/>
+          <rect x="255" y="80" width="210" height="48" rx="10" fill="#151935" stroke="#22d3ee"/>
+          <text x="360" y="101" font-weight="700">Router + firewall</text>
+          <text x="360" y="119" font-size="12" fill="#b3b8d6">inter-VLAN rules live here</text>
+          <line x1="360" y1="128" x2="360" y2="156" stroke="url(#sg)" stroke-width="2"/>
+          <rect x="190" y="156" width="340" height="44" rx="10" fill="#151935" stroke="#a78bfa"/>
+          <text x="360" y="176" font-weight="700">Managed switch + Wi-Fi AP</text>
+          <text x="360" y="192" font-size="12" fill="#b3b8d6">trunk: VLANs 10 / 20 / 30 / 40 tagged</text>
+          <g stroke-width="2" fill="none">
+            <path d="M260 200 V230 H95 V250" stroke="#22d3ee"/>
+            <path d="M330 200 V230 H275 V250" stroke="#fbbf24"/>
+            <path d="M390 200 V230 H445 V250" stroke="#f472b6"/>
+            <path d="M460 200 V230 H625 V250" stroke="#a78bfa"/>
+          </g>
+          <rect x="20" y="250" width="150" height="66" rx="10" fill="#0f1230" stroke="#22d3ee"/>
+          <text x="95" y="274" font-weight="700" fill="#22d3ee">VLAN 10 Trusted</text>
+          <text x="95" y="294" font-size="12" fill="#b3b8d6">laptops, phones</text>
+          <rect x="200" y="250" width="150" height="66" rx="10" fill="#0f1230" stroke="#fbbf24"/>
+          <text x="275" y="274" font-weight="700" fill="#fbbf24">VLAN 20 IoT</text>
+          <text x="275" y="294" font-size="12" fill="#b3b8d6">internet only</text>
+          <rect x="370" y="250" width="150" height="66" rx="10" fill="#0f1230" stroke="#f472b6"/>
+          <text x="445" y="274" font-weight="700" fill="#f472b6">VLAN 30 Guest</text>
+          <text x="445" y="294" font-size="12" fill="#b3b8d6">isolated clients</text>
+          <rect x="550" y="250" width="150" height="66" rx="10" fill="#0f1230" stroke="#a78bfa"/>
+          <text x="625" y="274" font-weight="700" fill="#a78bfa">VLAN 40 Lab</text>
+          <text x="625" y="294" font-size="12" fill="#b3b8d6">mini PC, test VMs</text>
+        </g>
+      </svg>
+      <figcaption>Sample diagram. Subnets and VLAN IDs are example values for the write-up.</figcaption>
+    </figure>
+  </Fragment>
+
+  <Fragment slot="goal">
+    <ul>
+      <li>Keep cheap smart-home gadgets away from personal laptops and phones</li>
+      <li>Give guests internet access and nothing else</li>
+      <li>Give the lab its own space to break things without breaking the house Wi-Fi</li>
+      <li>Do it on consumer/prosumer gear, not enterprise hardware</li>
+    </ul>
+    <div class="table-wrap">
+      <table class="vlan-table">
+        <thead><tr><th>VLAN</th><th>Name</th><th>Example subnet</th><th>Devices</th><th>Access rule</th></tr></thead>
+        <tbody>
+          {vlans.map((v) => <tr><td>{v.id}</td><td>{v.name}</td><td><code>{v.subnet}</code></td><td>{v.who}</td><td>{v.rule}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </Fragment>
+
+  <Fragment slot="build">
+    <ol class="steps">
+      <li><strong>Map what's on the network.</strong> List every device and decide which group it belongs to. This takes longer than the config.</li>
+      <li><strong>Create the VLANs and subnets</strong> on the router, each with its own DHCP range.</li>
+      <li><strong>Tag the switch ports.</strong> The uplink to the router and the AP carry all VLANs (tagged); the mini PC's port is untagged on VLAN 40.</li>
+      <li><strong>Create one SSID per group</strong> (Home, IoT, Guest) and map each to its VLAN. Turn on client isolation for Guest.</li>
+      <li><strong>Write firewall rules, deny by default.</strong> Block IoT and Guest from reaching other VLANs; allow Trusted → Lab; allow established/related return traffic.</li>
+      <li><strong>Move devices over in small batches</strong> and test each one before moving the next.</li>
+    </ol>
+  </Fragment>
+
+  <Fragment slot="broke">
+    <p class="muted"><em>Sample section: these are the kinds of issues the real write-up will document.</em></p>
+    <ul>
+      <li><strong>Locked out of the switch.</strong> Changing the management VLAN on the port I was connected through cut my own access. Fix: keep one untagged management port on the default VLAN until everything works, and change it last.</li>
+      <li><strong>Phone can't find the TV for casting.</strong> Casting relies on multicast discovery that doesn't cross VLANs. Fix: the router's mDNS reflector for just those two VLANs, or accept that casting lives on one network.</li>
+      <li><strong>IoT devices that only join 2.4 GHz.</strong> Fix: a 2.4 GHz-only option on the IoT SSID.</li>
+    </ul>
+  </Fragment>
+
+  <Fragment slot="learned">
+    <ul>
+      <li>Segmentation is mostly planning; the config is the easy part.</li>
+      <li>Firewall rules are read top to bottom. Order matters, and "deny all" goes last.</li>
+      <li>Change one thing at a time and always keep a way back in.</li>
+      <li>This build lines up with networking topics I'm studying for the Network+ (planned, not earned yet).</li>
+    </ul>
+  </Fragment>
+</LabProject>

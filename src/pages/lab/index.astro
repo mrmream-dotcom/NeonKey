@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+import { labProjects, labTags } from '../../data/lab';
+---
+<Base title="Lab" description="The NeonKey Lab: real builds, documented. What I built, why, what broke and what I learned.">
+  <div class="container page-head">
+    <span class="kicker">The Lab · Hands-on builds</span>
+    <h1>Real builds, <span class="glow-c">documented.</span></h1>
+    <p>What I built, why, what broke, and what I learned. The Lab is my project portfolio: homelab, automation, networking, security and AI builds written up as honest case studies, mistakes included.</p>
+    <p class="muted" style="font-size:.95rem">The three write-ups below are <strong>demo samples</strong> that show the case-study format. They'll be replaced by real, documented builds.</p>
+  </div>
+
+  <section style="padding-top:.5rem" aria-labelledby="lab-grid-h">
+    <div class="container">
+      <h2 id="lab-grid-h" class="sr-only">Projects</h2>
+      <div class="lab-filters" role="group" aria-label="Filter projects by tag">
+        <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All</button>
+        {labTags.map((t) => (
+          <button type="button" class="filter-chip" data-filter={t} aria-pressed="false">{t}</button>
+        ))}
+      </div>
+      <div class="grid grid-3 lab-grid">
+        {labProjects.map((p) => (
+          <article class="card lab-card" data-tags={p.tags.join(',')}>
+            <div class="card-top">
+              <span class="kicker">{p.level}</span>
+              <span class="demo-badge">Demo content</span>
+            </div>
+            <h3><a href={`/lab/${p.slug}/`}>{p.title}</a></h3>
+            <p>{p.summary}</p>
+            <p class="lab-tags">{p.tags.map((t) => <span class="tag">{t}</span>)}</p>
+            <a class="lab-read" href={`/lab/${p.slug}/`}>Read the build →</a>
+          </article>
+        ))}
+        <div class="empty-slot lab-card" data-tags="all">Next build in progress. Placeholder slot.</div>
+      </div>
+      <p class="filter-empty muted" hidden>No sample builds with that tag yet.</p>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="lab-how-h">
+    <div class="container">
+      <h2 id="lab-how-h">How every build is written up</h2>
+      <div class="coming">
+        <span class="chip">Overview</span><span class="chip">Goal</span><span class="chip">Stack &amp; tools</span><span class="chip">Build steps</span><span class="chip">What broke &amp; the fix</span><span class="chip">What I learned</span><span class="chip">Related service</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="lab-cta-h">
+    <div class="container">
+      <div class="nl-box lab-cta">
+        <div>
+          <span class="kicker">Unlock AI</span>
+          <h2 id="lab-cta-h">Want something like this for your business?</h2>
+          <p class="muted" style="margin:0">The same kind of builds, scoped for your tools: intake forms, FAQ assistants, lead routing. Plain-English handoff included.</p>
+        </div>
+        <a class="btn btn-primary" href="/services/">See services</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.filter-chip');
+  const cards = document.querySelectorAll<HTMLElement>('.lab-card');
+  const empty = document.querySelector<HTMLElement>('.filter-empty');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter || 'all';
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      let shown = 0;
+      cards.forEach((card) => {
+        const tags = (card.dataset.tags || '').split(',');
+        const show = f === 'all' || tags.includes(f);
+        card.hidden = !show;
+        if (show && !tags.includes('all')) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    });
+  });
+</script>
