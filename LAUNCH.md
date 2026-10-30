@@ -1,6 +1,6 @@
 # NeonKey launch checklist
 
-Status as of 2026-10-29. **The site is live-ready in code, but it hasn't launched in live mode.** `neonkey.tech` was bought on Oct 29, 2026 (Porkbun) and currently serves the **noindex demo** from GitHub Pages. No Cloudflare project exists yet. Everything below marked "You" needs Michael.
+Status as of 2026-10-30. **The site is live:** since Oct 30, 2026 `neonkey.tech` serves a `PUBLIC_SITE_MODE=live` build (indexable, robots.txt allows crawling and lists the sitemap) from GitHub Pages. `neonkey.tech` was bought on Oct 29, 2026 (Porkbun). No Cloudflare project exists yet. Everything below marked "You" needs Michael.
 
 ## Already done (in this repo)
 
@@ -23,7 +23,7 @@ Status as of 2026-10-29. **The site is live-ready in code, but it hasn't launche
 - [x] **DNS today (at Porkbun) points at GitHub Pages for the demo:** GitHub Pages' apex `A`/`AAAA` records for `neonkey.tech`, plus a `www` `CNAME` to `mrmream-dotcom.github.io`. The gh-pages branch carries a `CNAME` file containing `neonkey.tech` (from `public/CNAME`) so GitHub keeps the custom domain on every push.
 - [ ] In GitHub **Settings → Pages**, confirm the custom domain shows `neonkey.tech` with a passing DNS check, then tick **Enforce HTTPS** once the certificate is issued.
 - [ ] Optional hardening: **verify the domain** for your GitHub account (Settings → Pages → Verified domains), so no other repo can claim it.
-- The build still uses `PUBLIC_SITE_MODE=demo`, so every page is `noindex` (no visible banner), even on the real domain.
+- Since Oct 30, 2026 the gh-pages build uses `PUBLIC_SITE_MODE=live`. Every manual deploy must pass `PUBLIC_SITE_MODE=live` (the code default is `demo`), or `noindex` comes back on every page.
 
 ### Hosting for the real launch: recommendation
 
@@ -118,10 +118,12 @@ Kit won't send until **Settings → Email → Mailing Address** is filled in ([c
 - [ ] Note: the **demo on neonkey.tech is counted too**, because it's the real domain. That's fine for testing. Exclude your own visits with `localStorage.setItem('umami.disabled', 1)` in devtools.
 - [ ] Check **Realtime** in Umami after visiting the site; ad-blockers may hide your visit.
 
-## 7. Switch to live mode (You)
+## 7. Switch to live mode
 
-- [ ] `PUBLIC_SITE_MODE=live` in the Production environment. This removes noindex, makes robots.txt allow crawling and lists the sitemap.
-- [ ] After DNS is live: submit `https://neonkey.tech/sitemap-index.xml` in Google Search Console (optional).
+- [x] Oct 30, 2026: gh-pages rebuilt with `PUBLIC_SITE_MODE=live`. noindex is gone (it stays only on 404, thank-you/welcome pages and the old /notes/ redirects), and robots.txt allows crawling and lists `https://neonkey.tech/sitemap-index.xml`.
+- [x] Deploy command for GitHub Pages: `rm -rf dist && SITE_URL=https://neonkey.tech BASE_PATH=/ PUBLIC_SITE_MODE=live npx astro build`, then push `dist/` + `CNAME` + `.nojekyll` to `gh-pages`. On Cloudflare Pages, set `PUBLIC_SITE_MODE=live` in Production.
+- [ ] You: submit `https://neonkey.tech/sitemap-index.xml` in Google Search Console and Bing Webmaster Tools (each needs your sign-in and a domain verification, e.g. a DNS TXT record at Porkbun).
+- [ ] You: have someone review `/privacy/` (the draft banner was removed at launch; it isn't legal advice). Check the newsletter section against Kit's current privacy policy and data processing terms.
 
 ## 8. Hidden drafts: sample content (You)
 
@@ -177,6 +179,6 @@ Still to finish separately: the contact form (not connected, see step 4), `src/p
 - How you'll take payments (e.g. invoices through Stripe, PayPal or Wave).
 - Local business registration or tax rules for freelance income.
 
-## GitHub Pages demo
+## GitHub Pages (live)
 
-The demo at **https://neonkey.tech/** (noindex, no visible banner) is a clean build pushed to the `gh-pages` branch with `BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`, plus `.nojekyll` and `CNAME` (`neonkey.tech`). Always include `CNAME` when pushing gh-pages by hand, or GitHub drops the custom domain. The old `https://mrmream-dotcom.github.io/NeonKey/` URL redirects to the custom domain. See README → Deploying.
+The live site at **https://neonkey.tech/** (indexable since Oct 30, 2026) is a clean build pushed to the `gh-pages` branch with `BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=live`, plus `.nojekyll` and `CNAME` (`neonkey.tech`). Always include `CNAME` when pushing gh-pages by hand, or GitHub drops the custom domain. The old `https://mrmream-dotcom.github.io/NeonKey/` URL redirects to the custom domain. See README → Deploying.

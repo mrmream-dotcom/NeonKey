@@ -123,5 +123,10 @@ Internal links must use `url('/path/')` from `src/config.ts` so they respect `BA
 
 - **Cloudflare Pages (production):** see [LAUNCH.md](LAUNCH.md).
 - **Domain:** `neonkey.tech`, registered at Porkbun on Oct 29, 2026. It renews Oct 30, 2027 at $50.98/yr, with auto-renew on. DNS is at Porkbun and points at GitHub Pages (apex `A`/`AAAA` + `www` CNAME) for the demo.
-- **GitHub Pages (demo, https://neonkey.tech/):** the `gh-pages` branch holds a clean demo build (`BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`) with `.nojekyll` and `CNAME`. `public/CNAME` puts `CNAME` into every build automatically. `.github/workflows/pages.yml` (manual-only, copy in `docs/pages.yml.example`) builds the same thing once **Settings → Pages → Source** is set to **GitHub Actions**. GitHub Pages ignores `_headers`/`_redirects`.
+- **GitHub Pages (live, https://neonkey.tech/):** the site went live on Oct 30, 2026. The `gh-pages` branch holds a clean **live** build with `.nojekyll` and `CNAME`. `public/CNAME` puts `CNAME` into every build automatically. **Always build with `PUBLIC_SITE_MODE=live`.** The code default is still `demo` (so local and preview builds stay noindex), and a deploy without it would put `noindex` back on every page:
+  ```sh
+  rm -rf dist && SITE_URL=https://neonkey.tech BASE_PATH=/ PUBLIC_SITE_MODE=live npx astro build
+  # then push dist/ (plus CNAME + .nojekyll) to the gh-pages branch
+  ```
+  `.github/workflows/pages.yml` (manual-only, copy in `docs/pages.yml.example`) builds the same live build once **Settings → Pages → Source** is set to **GitHub Actions**. GitHub Pages ignores `_headers`/`_redirects`.
 - **Launch plan:** move DNS to Cloudflare and deploy on Cloudflare Pages in live mode, so headers, redirects and Email Routing work. See LAUNCH.md, step 1.

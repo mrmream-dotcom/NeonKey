@@ -6,7 +6,7 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
   <article class="narrow page-head prose">
     <span class="kicker">Privacy</span>
     <h1>Privacy policy</h1>
-    <div class="callout warn"><strong>Draft.</strong> This page is a starting point, not legal advice. Review and complete it before launch.</div>
+    <p class="muted">Last updated October 30, 2026.</p>
 
     <h2>Analytics</h2>
     {UMAMI.websiteId ? (
@@ -39,12 +39,10 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     <h2>Cookies</h2>
     <p>NeonKey itself sets no cookies. Affiliate links may lead to retailer sites that set their own cookies; see the <a href={url('/disclosure/')}>disclosure</a>.</p>
 
-    <h2>Still to complete before launch</h2>
-    <ul>
-      <li>Confirm the newsletter wording against Kit's current privacy policy and data processing terms</li>
-      <li>Contact method and how messages are kept</li>
-      <li>Hosting provider logs (e.g. Cloudflare), including the triage demo's Worker</li>
-      <li>How to access or delete your data, and a privacy contact</li>
-    </ul>
+    <h2>Hosting</h2>
+    <p>The site is hosted on <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Pages</a>. Like any web host, GitHub may process standard request data such as your IP address to serve and secure the site.</p>
+
+    <h2>Your choices</h2>
+    <p>To ask what data NeonKey holds about you, or to have it deleted, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
   </article>
 </Base>

@@ -23,7 +23,7 @@ jobs:
     env:
       SITE_URL: https://neonkey.tech
       BASE_PATH: /
-      PUBLIC_SITE_MODE: demo
+      PUBLIC_SITE_MODE: live
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
