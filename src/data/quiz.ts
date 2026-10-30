@@ -182,6 +182,8 @@ export function computePlan(a: Answers): Plan {
 
 export interface Link { label: string; href: string; primary?: boolean }
 export interface ItemView { code: ItemCode; name: string; reason: string; covers: string; ready: string[] }
+/** One numbered step in the emailed plan (email only; the on-screen result shows names only). */
+export interface PlanStep { title: string; what: string; why?: string; ready?: string[] }
 export interface PlanView {
   type: ResultType;
   resultName: string;
@@ -206,6 +208,13 @@ export interface PlanView {
   links: Link[];
   subject: string;
   preheader: string;
+  /** On-screen initial scope: short price line and item names only. */
+  startPrice?: string;
+  scope?: { title: string; list: string[] };
+  /** Emailed plan only: numbered steps in recommended order, why this order, and next steps. */
+  steps?: PlanStep[];
+  orderNote?: string;
+  nextSteps?: string[];
 }
 
 const contact = (topic?: string) => `/contact/?${topic ? `topic=${topic}&` : ''}from=quiz`;
@@ -279,6 +288,12 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
 const BASICS_TIP = `Tip: a business email on your own domain makes any automation cleaner and looks more trustworthy to customers. It\'s part of the ${remoteIt.name} (starting at $${remoteIt.from}).`;
 
 export function buildPlan(p: Plan): PlanView {
+  const v = buildPlanBase(p);
+  addDetail(v, p);
+  return v;
+}
+
+function buildPlanBase(p: Plan): PlanView {
   const a = p.answers;
   const t = a.q8;
   const kicker = "What I\'d recommend";
@@ -470,6 +485,73 @@ function addExtras(v: PlanView, p: Plan) {
   if (p.secondary) v.secondary = secondaryView(p.secondary, p);
   if (p.basicsTip) v.tip = BASICS_TIP;
   if (p.type !== 'R' && p.secondary === 'R') v.footnote = "Handle regulated data (for example HIPAA or PCI), or need someone onsite? That\'s outside the IT setup. Mention it and I\'ll say so up front.";
+}
+
+const cap = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
+const SCOPING = [
+  "Reply to this email (or use the button below) with any questions.",
+  "We have a short scoping call by video to confirm exactly what's in scope.",
+  "You get a fixed quote before any work starts.",
+];
+
+// Splits the result into an on-screen scope (names only) and the detailed emailed plan.
+function addDetail(v: PlanView, p: Plan) {
+  const a = p.answers;
+  const toolsWhy = a.q8 === 'A' ? 'you said you mostly use Google tools' : a.q8 === 'B' ? 'you said you mostly use Microsoft tools' : a.q8 === 'C' ? 'you said you mostly work from your phone' : a.q8 === 'D' ? 'you said you use a mix of tools' : '';
+  const r = v.ready ?? [];
+  if (p.type === 'R') {
+    const list = v.items!.list;
+    v.startPrice = `Starting at $${remoteIt.from}`;
+    v.scope = { title: p.healthCheck ? 'A quick health check of' : 'Based on your answers, your setup would cover', list: list.map((i) => i.name) };
+    v.steps = list.map((i) => ({ title: i.name, what: i.covers, why: i.reason.startsWith('a quick check') ? "Your answers didn't flag this directly. It's one of the basics worth a quick check." : cap(i.reason) + '.', ready: i.ready }));
+    v.orderNote = "Why this order: email and its authentication come first because most other accounts sign in or reset through your email. Passwords and two-factor sign-in come next because they protect every other account. The network, backups and device checklists build on top of that.";
+    v.nextSteps = [...SCOPING, "The work is done remotely by video call and screen share, on accounts you own, with plain-English notes of every change."];
+  } else if (p.type === 'Q') {
+    const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
+    const focusName = p.wf === 'copy' ? 'Automating copy-and-paste between apps' : p.wf === 'reminders' ? 'Automating repeat emails and reminders' : 'Automating the one task you repeat most';
+    v.startPrice = `Starting at $${quickWin.from}`;
+    v.scope = { title: 'Based on your answers, your Quick Win would cover', list: [focusName, ...quickWin.items] };
+    v.steps = [
+      { title: 'Write down the task', what: 'A good first candidate: ' + v.focus!.text.charAt(0).toLowerCase() + v.focus!.text.slice(1), why, ready: r.slice(0, 2).concat(r.slice(3)) },
+      { title: 'Scope it together', what: 'We pick the single workflow on a short call and agree what it will and won\'t do before anything is built. Keeping it to one task keeps it small and low-risk.', why: 'One workflow, scoped together first, is how every Quick Win starts.', ready: [r[2]] },
+      { title: 'Build it on tools you already use', what: 'The automation connects the apps you already use, so your day-to-day routine barely changes.', why: toolsWhy ? cap(toolsWhy) + ', so the build starts there.' : 'The build uses whatever you already work in.' },
+      { title: 'Walkthrough and handoff', what: 'A short walkthrough video and notes, then a handoff so you own it.', why: 'So you can run and adjust it without me.' },
+    ];
+    v.nextSteps = SCOPING;
+  } else if (p.type === 'F') {
+    const why = a.q6 === 'A' ? 'You said people ask the same questions (hours, prices, how to book).' : 'You said you answer the same customer questions again and again.';
+    v.startPrice = `Starting at $${aiFaq.from}`;
+    v.scope = { title: 'Based on your answers, your assistant would include', list: v.includes!.list };
+    v.steps = [
+      { title: 'Gather your common questions and answers', what: 'The assistant is trained on your own FAQ content, so this is the most important prep.', why, ready: [r[0]] },
+      { title: 'Map where questions come in', what: 'It answers the common questions and captures name, contact and request details from the places people already reach you.', why: 'So nothing new is asked of your customers.', ready: [r[1], r[2]] },
+      { title: 'Decide the handoff', what: v.includes!.list.find((x) => x.startsWith('Clear handoff')) + '. Anything tricky goes to a person.', why: p.team ? 'You said you work with a team, so requests can go to the right person.' : 'You said you work solo, so handoffs come to you.', ready: [r[3]] },
+      { title: 'Review and tuning session', what: 'Once it\'s running, we review real answers together and tune anything that\'s off.', why: 'So it sounds like you and hands off the right things.' },
+    ];
+    v.nextSteps = SCOPING;
+  } else if (p.type === 'L') {
+    const why = a.q6 === 'B' ? 'You said inquiries come in from several places and some get missed.' : 'You said new inquiries or leads slip through the cracks, or follow-up is slow.';
+    const inc = v.includes!.list;
+    v.startPrice = `Starting at $${leadRouting.from}`;
+    v.scope = { title: 'Based on your answers, your system would include', list: ['Form, email or chat intake', p.team ? 'Routing rules to the right person' : 'Routing rules into one list', 'Follow-up reminders and templates', 'Simple tracking view'] };
+    v.steps = [
+      { title: 'Bring every inquiry into one flow', what: inc[0] + '.', why, ready: [r[0]] },
+      { title: 'Set the routing rules', what: inc[1] + '.', why: p.team ? 'You said you work with a team, so each lead gets an owner.' : 'You said you work solo, so everything lands in one list.', ready: [r[1]] },
+      { title: 'Follow-up reminders and templates', what: 'Reminders so each lead gets a reply on time, using templates based on the message you already send.', why: 'Slow follow-up is where leads usually get lost.', ready: [r[2]] },
+      { title: 'A simple tracking view', what: 'One place to see every lead and where it stands.', why: toolsWhy ? cap(toolsWhy) + ', so it can live in tools you already use.' : 'So you can see what needs a reply at a glance.', ready: [r[3]] },
+    ];
+    v.nextSteps = SCOPING;
+  } else if (p.type === 'LEARN') {
+    v.scope = { title: 'Where to start (free)', list: ['Learn: plain-language guides', 'The Lab: hands-on builds and a working demo', 'Unlock the Week: one short weekly email'] };
+    v.nextSteps = ['Pick one of the quick fixes above and do it this week.', 'Browse Learn or the Lab when you have a few minutes.', 'Reply to this email if you get stuck.'];
+  } else if (p.type === 'LEARN-BIZ') {
+    v.startPrice = `${quickWin.name}: starting at $${quickWin.from}`;
+    v.scope = { title: 'Good places to start', list: ['Free guides in Learn and the Lab', 'Unlock the Week, one short weekly email', `Optional: a ${quickWin.name}`] };
+    v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about a ${quickWin.name}.`, 'You get a fixed quote after a short scoping call before any work starts.'];
+  } else {
+    v.scope = v.includes ? { title: v.includes.title, list: v.includes.list } : undefined;
+    v.nextSteps = ['Reply to this email with roughly how many people you have and what\'s bugging you most.', 'I\'ll tell you honestly whether it\'s something I can help with, and point you somewhere better if not.'];
+  }
 }
 
 /** Human-readable answer summary (used in the lead copy sent to NeonKey). */

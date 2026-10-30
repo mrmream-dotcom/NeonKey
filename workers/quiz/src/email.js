@@ -29,6 +29,15 @@ ${list.map((b) => `<tr><td width="20" valign="top" style="padding:0 0 6px 0;font
 </table>`;
 }
 
+function numbered(list) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
+${list.map((b, i) => `<tr><td width="26" valign="top" style="padding:0 0 8px 0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.accent};font-weight:700;">${i + 1}.</td><td valign="top" style="padding:0 0 8px 0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.text};">${b}</td></tr>`).join("\n")}
+</table>`;
+}
+
+const label = (t) => `<p style="margin:12px 0 4px 0;font-family:${FONT};font-size:13px;line-height:1.4;letter-spacing:.5px;text-transform:uppercase;color:${C.accent};font-weight:600;">${t}</p>`;
+const body15 = `margin:0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.text};`;
+
 function box(inner) {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-radius:10px;padding:16px 18px;">${inner}</td></tr></table>`;
 }
@@ -104,41 +113,36 @@ export function renderPlanEmail(v, { firstName, newsletter }) {
   H.push(`<p style="${p}">Thanks for taking the NeonKey service quiz. ${e(v.intro)}</p>`);
   T.push(greeting, "", `Thanks for taking the NeonKey service quiz. ${v.intro}`, "");
 
-  if (v.items) {
-    H.push(`<p style="${h2}">${e(v.items.title)}</p>`);
-    T.push(v.items.title.toUpperCase());
-    for (const it of v.items.list) {
-      H.push(box(`<p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">${e(it.name)}</p>
-<p style="${small}"><em>Why: ${e(it.reason)}</em></p>
-<p style="margin:0 0 10px 0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.text};">${e(it.covers)}</p>
-<p style="margin:0 0 6px 0;font-family:${FONT};font-size:14px;line-height:1.5;color:${C.accent};font-weight:600;">Have ready</p>
-${bullets(it.ready.map(e))}`));
-      T.push(`* ${it.name} (why: ${it.reason})`, `  ${it.covers}`, `  Have ready:`, ...it.ready.map((r) => `   - ${r}`), "");
-    }
+  if (v.price) {
+    H.push(`<p style="${p}"><strong>What it costs:</strong> ${e(v.price)}</p>`);
+    T.push(`What it costs: ${v.price}`, "");
   }
-  if (v.focus) {
-    H.push(`<p style="${h2}">${e(v.focus.title)}</p><p style="${p}">${e(v.focus.text)}</p>`);
-    T.push(v.focus.title.toUpperCase(), v.focus.text, "");
-  }
-  if (v.includes) {
+  if (v.steps && v.steps.length) {
+    H.push(`<p style="${h2}">Your plan, step by step</p><p style="${small}">In the order I'd recommend doing them.</p>`);
+    T.push("YOUR PLAN, STEP BY STEP (in the order I'd recommend)", "");
+    v.steps.forEach((s, i) => {
+      H.push(box(`<p style="margin:0 0 2px 0;font-family:${FONT};font-size:13px;line-height:1.4;letter-spacing:1px;text-transform:uppercase;color:${C.muted};font-weight:600;">Step ${i + 1} of ${v.steps.length}</p>
+<p style="margin:0 0 4px 0;font-family:${FONT};font-size:17px;line-height:1.4;color:${C.text};font-weight:700;">${e(s.title)}</p>
+${label("What it is")}<p style="${body15}">${e(s.what)}</p>
+${s.why ? `${label("Why I picked it")}<p style="${body15}">${e(s.why)}</p>` : ""}
+${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}` : ""}`));
+      T.push(`${i + 1}. ${s.title}`, `   What it is: ${s.what}`);
+      if (s.why) T.push(`   Why I picked it: ${s.why}`);
+      if (s.ready && s.ready.length) T.push("   Have ready:", ...s.ready.map((r) => `   - ${r}`));
+      T.push("");
+    });
+    if (v.orderNote) { H.push(`<p style="${small}">${e(v.orderNote)}</p>`); T.push(v.orderNote, ""); }
+  } else if (v.includes) {
     H.push(`<p style="${h2}">${e(v.includes.title)}</p>${bullets(v.includes.list.map(e))}`);
     T.push(v.includes.title.toUpperCase(), ...v.includes.list.map((x) => `- ${x}`), "");
   }
-  if (v.ready) {
-    H.push(`<p style="${h2}">Have ready before we talk</p>${bullets(v.ready.map(e))}`);
-    T.push("HAVE READY BEFORE WE TALK", ...v.ready.map((x) => `- ${x}`), "");
+  if (v.selfHelp) {
+    H.push(`<p style="${h2}">Quick things you can do yourself</p><p style="${small}">Start with the first one; each takes a few minutes.</p>${numbered(v.selfHelp.map(e))}`);
+    T.push("QUICK THINGS YOU CAN DO YOURSELF", ...v.selfHelp.map((x, i) => `${i + 1}. ${x}`), "");
   }
   if (v.freeLinks) {
     H.push(`<p style="${h2}">Start here (free)</p>${bullets(v.freeLinks.map((l) => `<a href="${e(abs(l.href))}" style="color:${C.accent};font-weight:700;">${e(l.label)}</a>: ${e(l.text)}`))}`);
     T.push("START HERE (FREE)", ...v.freeLinks.map((l) => `- ${l.label}: ${l.text} ${abs(l.href)}`), "");
-  }
-  if (v.selfHelp) {
-    H.push(`<p style="${h2}">Quick things you can do yourself</p>${bullets(v.selfHelp.map(e))}`);
-    T.push("QUICK THINGS YOU CAN DO YOURSELF", ...v.selfHelp.map((x) => `- ${x}`), "");
-  }
-  if (v.price) {
-    H.push(`<p style="${p}"><strong>What it costs:</strong> ${e(v.price)}</p>`);
-    T.push(`What it costs: ${v.price}`, "");
   }
   if (v.youGet) { H.push(`<p style="${p}">${e(v.youGet)}</p>`); T.push(v.youGet, ""); }
   if (v.note) { H.push(`<p style="${p}">${e(v.note)}</p>`); T.push(v.note, ""); }
@@ -165,6 +169,11 @@ ${bullets(it.ready.map(e))}`));
     T.push(`ALSO WORTH A LOOK: ${v.secondary.name} (${v.secondary.price})`, v.secondary.text, abs(v.secondary.href), "");
   }
   if (v.tip) { H.push(`<p style="${p}">${e(v.tip)}</p>`); T.push(v.tip, ""); }
+
+  if (v.nextSteps && v.nextSteps.length) {
+    H.push(`<p style="${h2}">Next steps</p>${numbered(v.nextSteps.map(e))}`);
+    T.push("NEXT STEPS", ...v.nextSteps.map((x, i) => `${i + 1}. ${x}`), "");
+  }
 
   const cta = v.links.find((l) => l.primary) || v.links[0];
   H.push(button(cta.label, cta.href));

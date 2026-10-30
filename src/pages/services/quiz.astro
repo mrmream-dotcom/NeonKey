@@ -21,7 +21,7 @@ const total = QUESTIONS.length;
         <ul class="muted quiz-bullets">
           <li>One question per screen, with a Back button</li>
           <li>Your result appears instantly, right here in your browser</li>
-          <li>Want it by email too? That's optional, at the end</li>
+          <li>Want the full, detailed plan? I can email it to you. That's optional, at the end</li>
         </ul>
         <button type="button" class="btn btn-primary" data-start data-umami-event="quiz-start">Start the quiz</button>
       </div>
@@ -53,8 +53,8 @@ const total = QUESTIONS.length;
       <div class="quiz-result" data-result tabindex="-1" hidden></div>
 
       <div class="panel quiz-email" data-email-box hidden>
-        <h2 class="quiz-h3">Email me my plan</h2>
-        <p class="muted">I'll send one email with the exact pieces from your answers and what to have ready before a call.</p>
+        <h2 class="quiz-h3">Want the full plan? I'll email you the details</h2>
+        <p class="muted">Your result above is yours either way. The email goes further: what each item involves and why your answers point to it, the order I'd do them in, what to have ready (tailored to the tools you use) and the next steps.</p>
         <form data-email-form novalidate>
           <div class="field"><label for="qz-name">First name <span class="muted">(optional)</span></label><input id="qz-name" name="first_name" autocomplete="given-name" maxlength="40" /></div>
           <div class="field"><label for="qz-email">Email</label><input id="qz-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" aria-describedby="qz-consent" />
@@ -62,7 +62,7 @@ const total = QUESTIONS.length;
           </div>
           <div class="quiz-hp" aria-hidden="true"><label for="qz-website">Website</label><input id="qz-website" name="website" tabindex="-1" autocomplete="off" /></div>
           <label class="quiz-opt quiz-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, my free weekly email (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
-          <button type="submit" class="btn btn-primary" data-send>Send my plan</button>
+          <button type="submit" class="btn btn-primary" data-send>Email me the full plan</button>
           <p class="form-note quiz-status" data-status aria-live="polite"></p>
         </form>
       </div>
@@ -208,32 +208,20 @@ const total = QUESTIONS.length;
     function esc(s: string) {
       return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
     }
+    // On screen: the initial scope only (service, starting price, item names, optional second suggestion).
+    // The detail (what each item involves, order, prep, next steps) goes in the optional email.
     function render(v: PlanView): string {
       const h: string[] = [];
-      h.push(`<div class="panel"><span class="kicker">${esc(v.kicker)}</span><h2>${esc(v.heading)}</h2><p class="muted">${esc(v.intro)}</p>`);
-      if (v.items) {
-        h.push(`<h3 class="quiz-h3">${esc(v.items.title)}</h3><ul class="quiz-items">`);
-        for (const it of v.items.list) {
-          h.push(`<li><strong>${esc(it.name)}</strong> <span class="quiz-small">(${esc(it.reason)})</span><p>${esc(it.covers)}</p><details><summary>What to have ready</summary><ul>${it.ready.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details></li>`);
-        }
-        h.push('</ul>');
-      }
-      if (v.focus) h.push(`<h3 class="quiz-h3">${esc(v.focus.title)}</h3><p class="muted" style="margin:0">${esc(v.focus.text)}</p>`);
-      if (v.includes) h.push(`<h3 class="quiz-h3">${esc(v.includes.title)}</h3><ul class="quiz-list">${v.includes.list.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
-      if (v.ready) h.push(`<h3 class="quiz-h3">What to have ready</h3><ul class="quiz-list">${v.ready.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
-      if (v.freeLinks) h.push(`<h3 class="quiz-h3">Start here (free)</h3><ul class="quiz-list">${v.freeLinks.map((l) => `<li><a href="${esc(u(l.href))}">${esc(l.label)}</a>: ${esc(l.text)}</li>`).join('')}</ul>`);
-      if (v.selfHelp) h.push(`<h3 class="quiz-h3">Quick things you can do yourself</h3><ul class="quiz-list">${v.selfHelp.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
-      if (v.price) h.push(`<p class="quiz-price">${esc(v.price)}</p>`);
-      if (v.youGet) h.push(`<p class="quiz-small">${esc(v.youGet)}</p>`);
-      if (v.note) h.push(`<p class="quiz-small">${esc(v.note)}</p>`);
-      if (v.demo) h.push(`<p class="quiz-small">${esc(v.demo.text)} <a href="${esc(u(v.demo.href))}">${esc(v.demo.label)} →</a></p>`);
-      if (v.setupNote) h.push(`<p class="quiz-small">${esc(v.setupNote.text)} <a href="${esc(u(v.setupNote.href))}">About the setup →</a></p>`);
+      const service = ['R', 'Q', 'F', 'L'].includes(v.type);
+      h.push(`<div class="panel"><span class="kicker">${esc(v.kicker)}</span><h2>${esc(v.heading)}</h2>`);
+      if (v.startPrice) h.push(`<p class="quiz-price" style="margin-top:0">${esc(v.startPrice)}</p>`);
+      if (!service) h.push(`<p class="muted">${esc(v.intro)}</p>`);
+      if (v.scope) h.push(`<h3 class="quiz-h3">${esc(v.scope.title)}</h3><ul class="quiz-list quiz-scope">${v.scope.list.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
+      if (v.addon) h.push(`<p class="quiz-small" style="margin-top:.8rem">Optional add-on: <a href="${esc(u(v.addon.href))}">${esc(v.addon.name)}</a></p>`);
+      if (v.secondary) h.push(`<p class="quiz-small">Also worth a look: <a href="${esc(u(v.secondary.href))}">${esc(v.secondary.name)}</a></p>`);
       h.push(`<div class="btn-row">${v.links.map((l) => `<a class="btn ${l.primary ? 'btn-primary' : 'btn-ghost'}" href="${esc(u(l.href))}" data-umami-event="${l.href.startsWith('/contact') ? 'contact-click' : 'services-cta'}" data-umami-event-location="quiz" data-umami-event-result="${esc(v.type)}">${esc(l.label)}</a>`).join('')}</div>`);
       if (v.footnote) h.push(`<p class="quiz-small" style="margin-top:1rem">${esc(v.footnote)}</p>`);
       h.push('</div>');
-      if (v.addon) h.push(`<div class="panel"><span class="kicker">Optional add-on</span><h3 class="quiz-h3" style="margin-top:.3rem">${esc(v.addon.name)}</h3><p class="quiz-small">${esc(v.addon.reason)}</p><p class="muted">${esc(v.addon.text)}</p><p class="quiz-price">${esc(v.addon.price)}</p><a href="${esc(u(v.addon.href))}">About the plan →</a></div>`);
-      if (v.secondary) h.push(`<div class="panel"><span class="kicker">Also worth a look</span><h3 class="quiz-h3" style="margin-top:.3rem">${esc(v.secondary.name)} <span class="quiz-small">(${esc(v.secondary.price)})</span></h3><p class="muted">${esc(v.secondary.text)}</p><a href="${esc(u(v.secondary.href))}">Learn more →</a></div>`);
-      if (v.tip) h.push(`<div class="callout">${esc(v.tip)}</div>`);
       return h.join('');
     }
 
