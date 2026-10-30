@@ -1,1 +1,80 @@
-[]
+[
+  {
+    "sampleId": "bakery",
+    "label": "New project request",
+    "message": "Hi! I'm Dana Ortiz and I run Ortiz Family Bakery in Tucson. Custom cake orders come in through Instagram DMs, email and phone, and we keep losing track of them. Could you set up something that collects orders in one place and sends customers a confirmation? Ideally before the holiday rush starts in mid-November. Our budget is around $300. Thanks!",
+    "capturedAt": "2026-10-30T07:00:35Z",
+    "model": "gemini-3.6-flash",
+    "ms": 3268,
+    "tokens": 831,
+    "result": {
+      "category": "Sales / new project",
+      "urgency": "medium",
+      "urgency_reason": "The client has a clear deadline of mid-November before the holiday rush starts.",
+      "summary": "Dana Ortiz from Ortiz Family Bakery needs a system to consolidate custom cake orders from multiple channels and send automatic customer confirmations.",
+      "details": {
+        "name": "Dana Ortiz",
+        "business": "Ortiz Family Bakery",
+        "need": "A system to collect custom cake orders from Instagram DMs, email, and phone in one place and send customer confirmations.",
+        "deadline": "mid-November",
+        "budget": "$300",
+        "contact": ""
+      },
+      "next_action": "Reply to Dana to discuss potential solutions that fit her $300 budget and mid-November deadline.",
+      "reply_draft": "Hi Dana,\n\nThanks for reaching out! Consolidating your custom cake orders into one place sounds like a great way to streamline things before the holidays.\n\nI would love to help you set up an order management system that fits your workflow and budget. Given your mid-November target, we can explore a few options that keep things simple and automated.\n\nAre you available for a quick phone call or chat [insert available days/times] to go over the details?\n\nBest regards,\n\n[Your name]",
+      "confidence": "high"
+    }
+  },
+  {
+    "sampleId": "physio",
+    "label": "Something is broken",
+    "message": "Hello, this is Sam from Ridgeway Physio. The online booking form on our website stopped sending us notification emails yesterday morning, and two patients said they booked but we never saw it. We have a full clinic tomorrow. Can someone look at this today? Best number is 555-0142.",
+    "capturedAt": "2026-10-30T07:00:45Z",
+    "model": "gemini-3.5-flash-lite",
+    "ms": 1315,
+    "tokens": 756,
+    "result": {
+      "category": "Support / problem",
+      "urgency": "high",
+      "urgency_reason": "The online booking notifications are broken and the clinic is full tomorrow.",
+      "summary": "Sam from Ridgeway Physio reports that website booking notification emails stopped working yesterday, resulting in missed appointment alerts with a full clinic tomorrow.",
+      "details": {
+        "name": "Sam",
+        "business": "Ridgeway Physio",
+        "need": "Fix online booking form notification emails",
+        "deadline": "Today",
+        "budget": "",
+        "contact": "555-0142"
+      },
+      "next_action": "Call Sam at 555-0142 today to troubleshoot the booking form email issue.",
+      "reply_draft": "Hello Sam, thank you for reaching out. I am sorry to hear that the booking notification emails are not working, especially with a full clinic tomorrow. I am looking into this right now and will call you at 555-0142 as soon as I have an update. [Your name]",
+      "confidence": "high"
+    }
+  },
+  {
+    "sampleId": "seo-spam",
+    "label": "Spammy pitch",
+    "message": "Dear Website Owner, we GUARANTEE #1 Google ranking and 10,000 high-quality backlinks for only $49!!! Limited time offer, act now. Reply YES to claim your SEO package today. To stop receiving these offers reply STOP.",
+    "capturedAt": "2026-10-30T07:00:50Z",
+    "model": "gemini-3.6-flash",
+    "ms": 1301,
+    "tokens": 580,
+    "result": {
+      "category": "Spam / irrelevant",
+      "urgency": "low",
+      "urgency_reason": "This is an unsolicited automated spam message with no real time pressure.",
+      "summary": "The sender is offering guaranteed SEO rankings and backlinks for $49. This is an unsolicited commercial offer.",
+      "details": {
+        "name": "",
+        "business": "",
+        "need": "",
+        "deadline": "",
+        "budget": "",
+        "contact": ""
+      },
+      "next_action": "Mark as spam and do not reply.",
+      "reply_draft": "",
+      "confidence": "high"
+    }
+  }
+]

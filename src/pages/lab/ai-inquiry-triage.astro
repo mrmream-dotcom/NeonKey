@@ -9,9 +9,9 @@ import examplesRaw from '../../data/triage-examples.json';
 interface Example { sampleId: string; label: string; message: string; capturedAt: string; model: string; ms: number; tokens: number | null; result: any }
 const examples = examplesRaw as Example[];
 const project = labProjects.find((p) => p.slug === 'ai-inquiry-triage')!;
-const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Workers Rate Limiting binding', 'Workers KV (daily counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output'];
+const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Durable Objects (rate-limit counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output'];
 const fields: [string, string][] = [['name', 'Name'], ['business', 'Business'], ['need', 'Needs'], ['deadline', 'Deadline'], ['budget', 'Budget'], ['contact', 'Contact']];
-const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles' });
 const sections = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['examples', 'Real results'], ['build', 'Build notes'], ['related', 'Related']];
 ---
 <Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a human to review. Plus how it's built and what it costs.">
@@ -88,7 +88,7 @@ const sections = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bot
     <h2 id="cost">What it costs to run</h2>
     <p>For this demo, nothing so far. Each piece runs on a free tier, and each has limits:</p>
     <ul>
-      <li><strong>Cloudflare Workers, free plan:</strong> 100,000 requests a day and 10 ms of CPU time per request. Workers KV's free allowance is 100,000 reads and 1,000 writes a day. Each run here uses 2 writes, which is one reason the demo caps itself at 150 runs a day overall.</li>
+      <li><strong>Cloudflare Workers, free plan:</strong> 100,000 requests a day and 10 ms of CPU time per request. The rate-limit counters live in a small Durable Object; the free plan includes 100,000 Durable Object requests and 100,000 written rows a day, and each run here uses only a handful of each. The 150-runs-a-day cap mainly protects the AI quota.</li>
       <li><strong>Google Gemini API, free tier:</strong> Google sets per-model request limits on the free tier and changes them from time to time. The trade-off is data use. On the free tier Google may use what's submitted to improve its products, and human reviewers may read it. Google's terms also don't allow free-tier apps for users in the UK, Switzerland or the EEA, so the demo is switched off there.</li>
       {examples.length > 0 && (
         <li><strong>Size of a run:</strong> the example runs below used about {Math.min(...examples.map((e) => e.tokens || 0))}–{Math.max(...examples.map((e) => e.tokens || 0))} tokens each (instructions + message + result), as reported by the API.</li>
@@ -102,7 +102,7 @@ const sections = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bot
       <li><strong>A human should review every reply.</strong> The draft can sound confident and still be wrong, and it doesn't know your prices, calendar or policies.</li>
       <li><strong>It only sees the one message.</strong> It has no customer history, so it can't tell an important repeat client from a stranger.</li>
       <li><strong>Free tiers can run out or slow down.</strong> If the main model is busy, the Worker retries on a lighter model. If both are unavailable, you get a friendly error instead of a result.</li>
-      <li><strong>Rate limits are approximate.</strong> They're designed to stop abuse on a free demo, not to count exactly.</li>
+      <li><strong>Rate limits are per connection, not per person.</strong> People behind the same office network, mobile carrier or VPN share one limit, and someone switching IP addresses can get around it. The daily total cap is the backstop.</li>
     </ul>
 
     <h2 id="examples">Real example results</h2>
@@ -142,6 +142,8 @@ const sections = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bot
       <li><strong>The planned model wasn't available.</strong> I planned to use Gemini 2.5 Flash, but the API key returned "no longer available to new users." I switched to <code>gemini-3.5-flash</code> (the API currently reports the version it serves as <code>gemini-3.6-flash</code>) with thinking set to its minimal level (about 2–3 seconds per run), with Gemini 3.5 Flash-Lite as the fallback.</li>
       <li><strong>The newest model was too slow for a demo.</strong> The latest Flash model either returned "high demand" errors or took close to a minute during testing. For this job, speed matters more than having the newest model.</li>
       <li><strong>Free tier rules shaped the design.</strong> Google's terms say free-tier content may be reviewed and free-tier apps can't be offered in the UK, Switzerland or the EEA. That's why the page has a clear "don't paste private info" note and the Worker turns those regions away. A client build would use a paid tier.</li>
+      <li><strong>The first rate limiter didn't hold.</strong> I started with Cloudflare's built-in rate limiting plus KV counters. In testing, a burst of requests sailed past the 5-a-minute limit: both are eventually consistent, so counts lag behind fast requests. I moved the counters into a small Durable Object, which handles one request at a time per visitor, and the limit then held in testing.</li>
+      <li><strong>Fallbacks happen.</strong> One of the example runs below (the "something is broken" sample) was answered by the Flash-Lite fallback, because the main model didn't return a usable answer at that moment. The page shows which model answered every run.</li>
       <li><strong>Limits before AI.</strong> The Worker checks origin, rate limits and message length before it calls the AI, so abuse costs as little as possible.</li>
     </ul>
     <p class="muted" style="font-size:.95rem">The Worker source lives in the site's repository under <code>workers/triage/</code>, with no secrets in it. The API key is stored as an encrypted Worker secret.</p>

@@ -1,7 +1,9 @@
 // NeonKey Lab demo: AI inquiry triage.
 // POST /triage {message, name?} -> category, urgency, summary, extracted details, next action, drafted reply.
 // Privacy: the message is sent to Google's Gemini API and returned to the browser. It is never stored or logged here.
-// Limits: per-IP 5/min (rate limiting binding), per-IP daily cap and a global daily cap (KV counters keyed by date).
+// Limits: per-IP 5/min, per-IP daily cap and a global daily cap, enforced strictly by the Limiter Durable Object.
+
+import { DurableObject } from 'cloudflare:workers';
 
 const CATEGORIES = ['Sales / new project', 'Support / problem', 'Billing', 'Partnership', 'Spam / irrelevant', 'Other'];
 const LEVELS = ['low', 'medium', 'high'];
@@ -49,7 +51,7 @@ Return only the JSON described by the schema:
 Write in the same language as the message.`;
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const origin = request.headers.get('Origin') || '';
     const allowed = isAllowedOrigin(origin, env);
@@ -71,13 +73,20 @@ export default {
     const country = request.cf?.country || '';
     if (PAID_ONLY_REGIONS.has(country)) return reply(451, { ok: false, error: 'region_unavailable', message: "Sorry, this free demo isn't available in the UK, Switzerland or the EEA (the free AI tier it runs on can't be offered there). The write-up and real example results below still show what it does." });
 
-    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const ip = clientKey(request.headers.get('CF-Connecting-IP') || 'unknown');
 
-    // 1) Per-IP burst limit: 5 requests per minute.
+    // 1) Per-IP burst limit: counts every POST, valid or not.
+    const day = new Date().toISOString().slice(0, 10);
+    const perMinute = Number(env.PER_IP_MINUTE || 5);
+    let visitor;
     try {
-      const { success } = await env.RL_MINUTE.limit({ key: ip });
-      if (!success) return reply(429, { ok: false, error: 'rate_limited', message: "Easy there! The demo allows 5 runs per minute. Please wait a minute and try again." }, { 'Retry-After': '60' });
-    } catch (e) { /* if the binding is unavailable, fall through to the daily caps */ }
+      visitor = env.LIMITER.get(env.LIMITER.idFromName(`ip:${day}:${await sha256(ip + '|' + day)}`));
+      const m = await visitor.hit(perMinute);
+      if (!m.ok) return reply(429, { ok: false, error: 'rate_limited', message: `Easy there! The demo allows ${perMinute} runs per minute. Please wait ${m.retryAfter} seconds and try again.` }, { 'Retry-After': String(m.retryAfter) });
+    } catch (e) {
+      console.warn(JSON.stringify({ event: 'limiter_error', where: 'minute', error: String(e && e.message).slice(0, 200) }));
+      return reply(503, { ok: false, error: 'busy', message: 'The demo is busy right now. Please try again in a minute.' });
+    }
 
     // 2) Validate input.
     const len = Number(request.headers.get('Content-Length') || 0);
@@ -90,16 +99,18 @@ export default {
     if (message.length < 10) return reply(400, { ok: false, error: 'too_short', message: 'Please enter a message of at least 10 characters.' });
     if (message.length > maxChars) return reply(400, { ok: false, error: 'too_long', message: `Please keep the message under ${maxChars} characters (yours is ${message.length}).` });
 
-    // 3) Daily caps (KV, keyed by UTC date; IPs are hashed, never stored raw).
-    const day = new Date().toISOString().slice(0, 10);
-    const ipKey = `ip:${day}:${await sha256(ip + '|' + day)}`;
-    const globalKey = `global:${day}`;
+    // 3) Daily caps (only requests that will reach the AI count). Fails closed so a counter outage can't burn the AI quota.
     const perIpDaily = Number(env.PER_IP_DAILY || 30);
     const globalDaily = Number(env.GLOBAL_DAILY || 150);
-    const [ipCount, globalCount] = await Promise.all([getCount(env, ipKey), getCount(env, globalKey)]);
-    if (ipCount >= perIpDaily) return reply(429, { ok: false, error: 'daily_limit', message: `You've reached today's limit of ${perIpDaily} demo runs. Please come back tomorrow (limits reset at midnight UTC).` }, { 'Retry-After': '3600' });
-    if (globalCount >= globalDaily) return reply(429, { ok: false, error: 'global_limit', message: "The demo has hit its daily limit (it runs on free tiers). Please try again tomorrow." }, { 'Retry-After': '3600' });
-    ctx.waitUntil(Promise.all([putCount(env, ipKey, ipCount + 1), putCount(env, globalKey, globalCount + 1)]));
+    try {
+      const d = await visitor.consume(perIpDaily);
+      if (!d.ok) return reply(429, { ok: false, error: 'daily_limit', message: `You've reached today's limit of ${perIpDaily} demo runs. Please come back tomorrow (limits reset at midnight UTC).` }, { 'Retry-After': '3600' });
+      const g = await env.LIMITER.get(env.LIMITER.idFromName(`global:${day}`)).consume(globalDaily);
+      if (!g.ok) return reply(429, { ok: false, error: 'global_limit', message: "The demo has hit its daily limit (it runs on free tiers). Please try again tomorrow." }, { 'Retry-After': '3600' });
+    } catch (e) {
+      console.warn(JSON.stringify({ event: 'limiter_error', where: 'daily', error: String(e && e.message).slice(0, 200) }));
+      return reply(503, { ok: false, error: 'busy', message: 'The demo is busy right now. Please try again in a minute.' });
+    }
 
     // 4) Call Gemini: primary model, then the fallback on any error, quota or timeout.
     if (!env.GEMINI_API_KEY) return reply(503, { ok: false, error: 'not_configured', message: 'The demo is not configured right now.' });
@@ -171,12 +182,42 @@ function clean(o) {
   };
 }
 
-async function getCount(env, key) {
-  try { return Number(await env.TRIAGE_LIMITS.get(key)) || 0; } catch { return 0; }
+// One instance per visitor-day (named by a hash) plus one global instance per day.
+// Stores only timestamps of recent requests and a run count, then deletes itself 48 h after last use.
+export class Limiter extends DurableObject {
+  async hit(limit) {
+    const now = Date.now();
+    const hits = ((await this.ctx.storage.get('hits')) || []).filter((t) => now - t < 60000);
+    if (hits.length >= limit) {
+      return { ok: false, retryAfter: hits.length ? Math.max(1, Math.ceil((60000 - (now - hits[0])) / 1000)) : 60 };
+    }
+    hits.push(now);
+    await this.ctx.storage.put('hits', hits);
+    await this.ctx.storage.setAlarm(now + 48 * 3600 * 1000);
+    return { ok: true };
+  }
+  async consume(limit) {
+    const n = (await this.ctx.storage.get('count')) || 0;
+    if (n >= limit) return { ok: false, count: n };
+    await this.ctx.storage.put('count', n + 1);
+    await this.ctx.storage.setAlarm(Date.now() + 48 * 3600 * 1000);
+    return { ok: true, count: n + 1 };
+  }
+  async alarm() {
+    await this.ctx.storage.deleteAll();
+  }
 }
-async function putCount(env, key, n) {
-  try { await env.TRIAGE_LIMITS.put(key, String(n), { expirationTtl: 60 * 60 * 48 }); } catch { /* KV write limits: ignore */ }
+
+// IPv6 visitors are keyed by their /64 prefix (one household or device usually owns a whole /64).
+function clientKey(ip) {
+  if (!ip.includes(':')) return ip;
+  let [head, tail = ''] = ip.split('::');
+  const h = head ? head.split(':') : [];
+  const t = tail ? tail.split(':') : [];
+  const full = ip.includes('::') ? [...h, ...Array(8 - h.length - t.length).fill('0'), ...t] : h;
+  return full.slice(0, 4).map((x) => parseInt(x || '0', 16).toString(16)).join(':') + '::/64';
 }
+
 async function sha256(s) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');

@@ -12,10 +12,14 @@ Deployed at: https://neonkey-triage.mr-mream.workers.dev
 
 - CORS / Origin: only `ALLOWED_ORIGINS` (neonkey.tech) and, while `ALLOW_LOCALHOST` is
   `"true"`, http://localhost / 127.0.0.1 for testing. Requests without an allowed Origin get 403.
-- Per-IP rate limit: 5 requests / 60 s (Workers Rate Limiting binding `RL_MINUTE`).
-- Daily caps (KV `TRIAGE_LIMITS`): `PER_IP_DAILY` (30) per hashed IP, `GLOBAL_DAILY` (150) total.
-  Keys are `ip:<date>:<sha256(ip|date) prefix>` and `global:<date>`, with a 48 h TTL. KV free tier
-  allows 1,000 writes/day; each run uses 2 writes.
+- Limits are enforced by a small SQLite-backed Durable Object, `Limiter` (available on the free plan):
+  - per visitor: `PER_IP_MINUTE` (5) requests per rolling 60 s (every POST counts) and `PER_IP_DAILY` (30) AI runs per UTC day;
+  - global: `GLOBAL_DAILY` (150) AI runs per UTC day.
+  Each visitor's object is named `ip:<date>:<sha256(ip|date) prefix>` (IPv6 is keyed by its /64), so raw IPs are
+  never stored. Objects delete their data 48 h after last use (alarm). If the limiter errors, the Worker fails
+  closed with a 503 rather than calling the AI.
+  (An earlier version used the Workers Rate Limiting binding plus KV; both are eventually consistent and let
+  bursts through, so they were replaced. The KV namespace `TRIAGE_LIMITS` is no longer used and can be deleted.)
 - Message length 10–`MAX_CHARS` (2000) characters; request body max 16 KB.
 - Region block: requests from the EEA, Switzerland and the UK get 451, because the Gemini API
   free tier may not be offered there.
@@ -32,12 +36,13 @@ cd workers/triage
 npm install
 export CLOUDFLARE_API_TOKEN=...        # from your environment / secret store
 export CLOUDFLARE_ACCOUNT_ID=...
-# KV namespace (already created; id is in wrangler.jsonc):
-#   npx wrangler kv namespace create TRIAGE_LIMITS
 # Gemini key as a Worker secret, read from env via stdin (never commit it):
 printf %s "$GEMINI_API_KEY" | npx wrangler secret put GEMINI_API_KEY
 npx wrangler deploy
 ```
+
+To test limits locally without calling the AI, run `npx wrangler dev` without a `.dev.vars` file
+(requests then stop at `not_configured` after the counters run), optionally with `--var PER_IP_DAILY:1`.
 
 To remove the localhost allowance for production, set `ALLOW_LOCALHOST` to `"false"` in
 `wrangler.jsonc` and redeploy.
