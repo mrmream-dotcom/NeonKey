@@ -1,19 +1,22 @@
 // Article registry: the "frontmatter" for every published article.
 // Each article page lives in src/pages/articles/<slug>.astro and reads its entry from here,
-// so the index, the category pages (/articles/news/, /articles/insights/) and the badges stay in sync.
+// so the index, the category pages (/articles/news/, /articles/insights/, /articles/reviews/) and the badges stay in sync.
+// Reviews also appear on /reviews/.
 //
 // To publish an article: add the page file, then add an entry below (newest first).
-//   category   'news' | 'insights' (defaults to 'insights' when omitted)
+//   category   'news' | 'insights' | 'reviews' (defaults to 'insights' when omitted)
+//   author     Byline name (defaults to "NeonKey")
 //   sourceUrl  News posts: link to the original story. Rendered as "Source: <sourceName>" on the article page.
 //   sourceName News posts: publication name shown in that link (falls back to the URL's hostname).
 
-export const ARTICLE_CATEGORIES = ['news', 'insights'] as const;
+export const ARTICLE_CATEGORIES = ['news', 'insights', 'reviews'] as const;
 export type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
 export const DEFAULT_CATEGORY: ArticleCategory = 'insights';
 
 export const CATEGORY_LABELS: Record<ArticleCategory, string> = {
   news: 'News',
   insights: 'Insights',
+  reviews: 'Reviews',
 };
 
 export interface ArticleInput {
@@ -23,6 +26,8 @@ export interface ArticleInput {
   /** Topic tag shown on the card, e.g. "Automation". */
   topic?: string;
   category?: ArticleCategory;
+  /** Byline name; defaults to "NeonKey". */
+  author?: string;
   /** ISO date, optional. */
   date?: string;
   sourceUrl?: string;
@@ -46,6 +51,24 @@ function defineArticle(input: ArticleInput): Article {
 }
 
 export const articles: Article[] = [
+  defineArticle({
+    slug: 'lenovo-legion-pro-7i-review',
+    title: 'Lenovo Legion Pro 7i Gen 10 Review: A Gaming Laptop I Use for Work',
+    description: "Six months with the Legion Pro 7i Gen 10 (RTX 5080, 32GB) as a work machine. It's good for virtualization, multitasking and two external monitors, but it's heavy.",
+    topic: 'Laptops',
+    category: 'reviews',
+    author: 'Michael Ream',
+    date: '2026-10-30',
+  }),
+  defineArticle({
+    slug: 'budget-work-laptops',
+    title: 'Four Budget Work Machines for Everyday Work',
+    description: 'Smaller-tier alternatives to a gaming-laptop workstation: Mac mini M6, MacBook Air 13-inch M5, ThinkPad E14 Gen 7 and HP ProBook 4 G1i, plus what to look for in a secure, reliable work machine.',
+    topic: 'Laptops',
+    category: 'reviews',
+    author: 'Michael Ream',
+    date: '2026-10-30',
+  }),
   defineArticle({
     slug: 'ai-hacking-defender',
     title: "Everyone's Worried About AI Hacking. It's Also Becoming a Defender.",

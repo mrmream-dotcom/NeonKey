@@ -350,6 +350,12 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .cat-badge { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; line-height: 1.4; border-radius: 999px; padding: .1rem .6rem; border: 1px solid; }
 .cat-news { color: var(--magenta); border-color: rgba(244,114,182,.6); background: rgba(244,114,182,.1); }
 .cat-insights { color: var(--violet); border-color: rgba(167,139,250,.6); background: rgba(167,139,250,.1); }
+.cat-reviews { color: var(--cyan); border-color: rgba(34,211,238,.6); background: rgba(34,211,238,.1); }
+.table-scroll { overflow-x: auto; margin: 1rem 0; }
+.table-scroll .vlan-table { margin: 0; min-width: 32rem; }
+.prose ul.checklist { list-style: none; padding-left: 0; }
+.prose ul.checklist li { position: relative; padding-left: 1.6rem; }
+.prose ul.checklist li::before { content: '\2713'; position: absolute; left: .2rem; color: var(--cyan); font-weight: 700; }
 .article-source a { color: var(--cyan); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .article-empty { border: 1px dashed rgba(167,139,250,.55); border-radius: var(--radius); background: var(--panel); padding: 1.5rem 1.4rem; margin: 0 0 3rem; text-align: center; }
 .article-empty p { color: var(--muted); margin: 0 0 .5rem; }

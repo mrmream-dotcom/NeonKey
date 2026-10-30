@@ -1,5 +1,5 @@
 ---
-// Shared Articles listing with All | News | Insights tabs.
+// Shared Articles listing with All | News | Insights | Reviews tabs.
 // Tabs are plain links to static pages, so filtering works without JavaScript.
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
@@ -12,13 +12,16 @@ const tabs: { href: string; label: string; key?: ArticleCategory }[] = [
   { href: '/articles/', label: 'All' },
   { href: '/articles/news/', label: CATEGORY_LABELS.news, key: 'news' },
   { href: '/articles/insights/', label: CATEGORY_LABELS.insights, key: 'insights' },
+  { href: '/articles/reviews/', label: CATEGORY_LABELS.reviews, key: 'reviews' },
 ];
 const title = category ? `${CATEGORY_LABELS[category]} · Articles` : 'Articles';
 const description = category === 'news'
   ? 'NeonKey news: short takes on what changed in automation, AI and small-office tech, with links to the original source.'
   : category === 'insights'
     ? 'NeonKey insights: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech.'
-    : 'NeonKey articles: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech, whatever your level.';
+    : category === 'reviews'
+      ? 'NeonKey reviews: honest takes on laptops and other gear for everyday work, with who it suits, the downsides and a plain verdict.'
+      : 'NeonKey articles: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech, whatever your level.';
 const empty = list.length === 0;
 const emptyText = category ? `${CATEGORY_LABELS[category]} posts are coming soon.` : 'Articles are coming soon.';
 ---
@@ -54,7 +57,7 @@ const emptyText = category ? `${CATEGORY_LABELS[category]} posts are coming soon
             </div>
             <h2><a href={url(a.href)}>{a.title}</a></h2>
             <p>{a.description}</p>
-            <span class="article-cta" aria-hidden="true">Read article <span class="arrow">→</span></span>
+            <span class="article-cta" aria-hidden="true">{a.category === 'reviews' ? 'Read review' : 'Read article'} <span class="arrow">→</span></span>
           </li>
         ))}
       </ul>
