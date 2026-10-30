@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import externalLinks from './integrations/external-links.mjs';
 import { articles, ARTICLE_CATEGORIES } from './src/data/articles.ts';
 
 // Build modes are driven by environment variables (see README "Build modes"):
@@ -24,7 +25,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'never' },
   vite: { build: { assetsInlineLimit: 0 } },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [mdx(), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) })],
+  integrations: [mdx(), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) })],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);

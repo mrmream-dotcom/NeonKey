@@ -11,6 +11,6 @@ const source = sourceLabel(article);
   <span>By NeonKey</span>
   {article.date && <time datetime={article.date}>{new Date(article.date + 'T12:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}</time>}
   {source && (
-    <span class="article-source">Source: <a href={article.sourceUrl} rel="noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item={source}>{source}</a></span>
+    <span class="article-source">Source: <a href={article.sourceUrl} rel="noopener noreferrer" target="_blank" data-umami-event="outbound-click" data-umami-event-item={source}>{source}</a></span>
   )}
 </div>

@@ -131,3 +131,8 @@ Internal links must use `url('/path/')` from `src/config.ts` so they respect `BA
   ```
   `.github/workflows/pages.yml` (manual-only, copy in `docs/pages.yml.example`) builds the same live build once **Settings → Pages → Source** is set to **GitHub Actions**. GitHub Pages ignores `_headers`/`_redirects`.
 - **Launch plan:** move DNS to Cloudflare and deploy on Cloudflare Pages in live mode, so headers, redirects and Email Routing work. See LAUNCH.md, step 1.
+
+
+## External links
+
+`integrations/external-links.mjs` runs after `astro build` and rewrites every `<a href="http(s)://…">` whose host isn't neonkey.tech (from .astro and MDX alike) to `target="_blank" rel="noopener noreferrer"` (merged with existing rel, e.g. `sponsored`) plus a visually hidden "(opens in new tab)". Internal, relative, mailto:, tel: and #anchor links are untouched. Add `data-same-tab` to an `<a>` to opt out. It only runs on build, not `astro dev`.

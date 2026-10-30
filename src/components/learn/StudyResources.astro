@@ -8,8 +8,7 @@ const href = l.isAffiliate && l.affiliateUrl ? l.affiliateUrl : l.url;
 const rel = l.isAffiliate ? 'sponsored noopener' : 'noopener';
 ---
 <div class="study-resources">
-  <p>Official exam details, objectives and pricing:
-    <a href={href} rel={rel} data-umami-event="outbound-click" data-umami-event-item="comptia-security-plus">{l.label}</a>.
+  <p>Official exam details, objectives and pricing:{' '}<a href={href} rel={rel} data-umami-event="outbound-click" data-umami-event-item="comptia-security-plus">{l.label}</a>.
     {l.isAffiliate && <span class="muted">(Affiliate link; see our <a href={url('/disclosure/')}>disclosure</a>.)</span>}
   </p>
   <p class="fine-print">NeonKey isn't affiliated with or endorsed by CompTIA. Security+ is a trademark of CompTIA. No pass guarantees — check CompTIA for current exam details.</p>
