@@ -29,7 +29,7 @@ export function cleanFirstName(name) {
   return n;
 }
 
-export function renderWelcome({ firstName, unsubscribeUrl }) {
+export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
   const name = cleanFirstName(firstName);
   const greeting = name ? `Hi ${name},` : "Hi there,";
   const font =
@@ -111,7 +111,8 @@ ${bulletRows}
     <tr>
       <td class="px" align="center" style="padding:24px 40px 0 40px;">
         <p style="margin:0 0 6px 0;font-family:${font};font-size:12px;line-height:1.6;color:${C.muted};">You're receiving this because you subscribed to Unlock the Week at neonkey.tech.</p>
-        <p style="margin:0;font-family:${font};font-size:12px;line-height:1.6;color:${C.muted};"><a href="${u}" style="color:${C.muted};text-decoration:underline;">Unsubscribe</a></p>
+        <p style="margin:0;font-family:${font};font-size:12px;line-height:1.6;color:${C.muted};"><a href="${u}" style="color:${C.muted};text-decoration:underline;">Unsubscribe</a></p>${mailingAddress ? `
+        <p style="margin:10px 0 0 0;font-family:${font};font-size:11px;line-height:1.5;color:#6b7096;">NeonKey &middot; ${escapeHtml(mailingAddress)}</p>` : ""}
       </td>
     </tr>
   </table>
@@ -138,7 +139,7 @@ neonkey.tech · hello@neonkey.tech
 --
 You're receiving this because you subscribed to Unlock the Week at neonkey.tech.
 Unsubscribe: ${unsubscribeUrl}
-`;
+${mailingAddress ? `NeonKey · ${mailingAddress}\n` : ""}`;
 
   return { html, text };
 }

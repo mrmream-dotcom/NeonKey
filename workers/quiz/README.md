@@ -26,6 +26,7 @@ CLOUDFLARE_ACCOUNT_ID=13d2e240576e100fbd65b2499bd6c048 npx wrangler deploy
 # secrets (never commit, never echo):
 printf '%s' "$RESEND_API_KEY" | npx wrangler secret put RESEND_API_KEY
 printf '%s' "$KIT_API_KEY"    | npx wrangler secret put KIT_API_KEY
+printf '%s' "$MAILING_ADDRESS" | npx wrangler secret put MAILING_ADDRESS   # postal address for the email footer (CAN-SPAM)
 ```
 
 Live at https://neonkey-quiz.mr-mream.workers.dev/plan (set in `src/config.ts` as `QUIZ_API_URL`).

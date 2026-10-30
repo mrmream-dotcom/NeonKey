@@ -23,6 +23,7 @@ reminder's button leads to a page where the person's own browser re-submits Kit'
   testing). `{"mode":"dry"}` = counts only; `{"mode":"send"}` = mrmream2@gmail.com only.
 - No addresses are logged or stored.
 
-Secrets: `KIT_API_KEY`, `RESEND_API_KEY` (sending-only key), `LINK_SECRET`.
+Secrets: `KIT_API_KEY`, `RESEND_API_KEY` (sending-only key), `LINK_SECRET`, `MAILING_ADDRESS`
+(postal address shown in small text in the footer for CAN-SPAM; kept out of the public repo).
 
 Deploy: `CLOUDFLARE_ACCOUNT_ID=... npx wrangler deploy`

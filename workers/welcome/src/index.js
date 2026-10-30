@@ -120,7 +120,7 @@ async function processSubscriber(payloadSub, env) {
 
 async function sendWelcome(env, { email, firstName, idempotencyKey }) {
   const unsubscribeUrl = await buildUnsubscribeUrl(env, email);
-  const { html, text } = renderWelcome({ firstName, unsubscribeUrl });
+  const { html, text } = renderWelcome({ firstName, unsubscribeUrl, mailingAddress: env.MAILING_ADDRESS });
 
   const headers = {
     Authorization: `Bearer ${env.RESEND_API_KEY}`,

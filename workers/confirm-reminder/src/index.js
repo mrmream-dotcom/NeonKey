@@ -127,7 +127,7 @@ async function remindOne(env, listed, { dryRun = false, keyPrefix = "remind", al
 async function sendReminder(env, { email, id, firstName, idempotencyKey }) {
   const confirmUrl = `${env.PUBLIC_BASE_URL}/c?s=${id}&t=${await sign(env, `confirm:${id}`)}`;
   const stopUrl = `${env.PUBLIC_BASE_URL}/u?s=${id}&t=${await sign(env, `stop:${id}`)}`;
-  const { html, text } = renderReminder({ firstName, confirmUrl, stopUrl });
+  const { html, text } = renderReminder({ firstName, confirmUrl, stopUrl, mailingAddress: env.MAILING_ADDRESS });
   const res = await fetch(`${RESEND_API}/emails`, {
     method: "POST",
     headers: {

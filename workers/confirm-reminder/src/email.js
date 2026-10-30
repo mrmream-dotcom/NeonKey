@@ -36,7 +36,7 @@ const PARAS = [
 const AFTER =
   "Changed your mind? You don't need to do anything. This is the only reminder I'll send, and you won't hear from me again unless you confirm.";
 
-export function renderReminder({ firstName, confirmUrl, stopUrl }) {
+export function renderReminder({ firstName, confirmUrl, stopUrl, mailingAddress }) {
   const name = cleanFirstName(firstName);
   const greeting = name ? `Hi ${name},` : "Hi there,";
   const p = `margin:0 0 16px 0;font-family:${FONT};font-size:16px;line-height:1.6;color:${C.text};`;
@@ -89,14 +89,15 @@ export function renderReminder({ firstName, confirmUrl, stopUrl }) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr><td style="border-top:1px solid ${C.rule};padding:20px 0 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
         </table>
-        <p style="margin:0 0 4px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Michael Ream</p>
-        <p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.5;color:${C.muted};">NeonKey &middot; <a href="https://neonkey.tech/" style="color:${C.accent};text-decoration:none;">neonkey.tech</a> &middot; <a href="mailto:hello@neonkey.tech" style="color:${C.accent};text-decoration:none;">hello@neonkey.tech</a></p>
+        <p style="margin:0 0 4px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">NeonKey</p>
+        <p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.5;color:${C.muted};"><a href="https://neonkey.tech/" style="color:${C.accent};text-decoration:none;">neonkey.tech</a> &middot; <a href="mailto:hello@neonkey.tech" style="color:${C.accent};text-decoration:none;">hello@neonkey.tech</a></p>
       </td>
     </tr>
     <tr>
       <td class="px" align="center" style="padding:24px 40px 0 40px;">
         <p style="margin:0 0 6px 0;font-family:${FONT};font-size:12px;line-height:1.6;color:${C.muted};">You're getting this one-time reminder because this address was entered in the Unlock the Week signup at neonkey.tech.</p>
-        <p style="margin:0;font-family:${FONT};font-size:12px;line-height:1.6;color:${C.muted};"><a href="${su}" style="color:${C.muted};text-decoration:underline;">Unsubscribe</a></p>
+        <p style="margin:0;font-family:${FONT};font-size:12px;line-height:1.6;color:${C.muted};"><a href="${su}" style="color:${C.muted};text-decoration:underline;">Unsubscribe</a></p>${mailingAddress ? `
+        <p style="margin:10px 0 0 0;font-family:${FONT};font-size:11px;line-height:1.5;color:#6b7096;">NeonKey &middot; ${escapeHtml(mailingAddress)}</p>` : ""}
       </td>
     </tr>
   </table>
@@ -114,13 +115,12 @@ Confirm my subscription: ${confirmUrl}
 
 ${AFTER}
 
-Michael Ream
 NeonKey · neonkey.tech · hello@neonkey.tech
 
 --
 You're getting this one-time reminder because this address was entered in the Unlock the Week signup at neonkey.tech.
 Unsubscribe: ${stopUrl}
-`;
+${mailingAddress ? `NeonKey · ${mailingAddress}\n` : ""}`;
   return { html, text };
 }
 

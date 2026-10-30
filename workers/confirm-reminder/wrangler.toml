@@ -5,6 +5,7 @@
 # fresh confirmation email (Kit has no API to confirm or resend).
 # Secrets (set with `wrangler secret put`, never committed):
 #   KIT_API_KEY, RESEND_API_KEY, LINK_SECRET
+#   MAILING_ADDRESS (CAN-SPAM postal address shown small in the email footer; kept out of the public repo)
 #   TEST_TOKEN (optional; only while testing - delete it to lock /test)
 name = "neonkey-confirm-reminder"
 main = "src/index.js"

@@ -62,7 +62,7 @@ export default {
     const plan = computePlan(answers);
     const view = buildPlan(plan);
 
-    const mail = renderPlanEmail(view, { firstName, newsletter });
+    const mail = renderPlanEmail(view, { firstName, newsletter, mailingAddress: env.MAILING_ADDRESS });
     const sent = await resendSend(env, {
       from: env.FROM_ADDRESS,
       to: [email],

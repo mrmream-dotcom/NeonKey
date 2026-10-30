@@ -4,6 +4,7 @@
 # Plan logic is shared with the site: ../../src/data/quiz.ts (bundled by wrangler/esbuild).
 # Secrets (set with `wrangler secret put`, never committed):
 #   RESEND_API_KEY, KIT_API_KEY
+#   MAILING_ADDRESS (CAN-SPAM postal address shown small in the email footer; kept out of the public repo)
 name = "neonkey-quiz"
 main = "src/index.js"
 compatibility_date = "2025-10-01"

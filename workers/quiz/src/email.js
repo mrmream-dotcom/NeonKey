@@ -46,7 +46,7 @@ function button(label, href) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px 0;"><tr><td align="center" bgcolor="${C.accent}" style="border-radius:8px;background-color:${C.accent};"><a href="${escapeHtml(abs(href))}" style="display:inline-block;padding:13px 28px;font-family:${FONT};font-size:16px;line-height:1.2;font-weight:700;color:${C.outer};text-decoration:none;border-radius:8px;">${escapeHtml(label)}</a></td></tr></table>`;
 }
 
-function shell({ title, preheader, kicker, heading, body, footer }) {
+function shell({ title, preheader, kicker, heading, body, footer, address }) {
   return `<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -91,6 +91,7 @@ ${body}
     <tr>
       <td class="px" align="center" style="padding:24px 40px 0 40px;">
 ${footer.map((f) => `        <p style="margin:0 0 6px 0;font-family:${FONT};font-size:12px;line-height:1.6;color:${C.muted};">${f}</p>`).join("\n")}
+${address ? `        <p style="margin:10px 0 0 0;font-family:${FONT};font-size:11px;line-height:1.5;color:#6b7096;">NeonKey &middot; ${escapeHtml(address)}</p>` : ""}
       </td>
     </tr>
   </table>
@@ -102,7 +103,7 @@ ${footer.map((f) => `        <p style="margin:0 0 6px 0;font-family:${FONT};font
 }
 
 /** The user's plan email, built from the shared PlanView (src/data/quiz.ts). */
-export function renderPlanEmail(v, { firstName, newsletter }) {
+export function renderPlanEmail(v, { firstName, newsletter, mailingAddress }) {
   const name = cleanFirstName(firstName);
   const greeting = name ? `Hi ${name},` : "Hi there,";
   const e = escapeHtml;
@@ -179,16 +180,17 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
   H.push(button(cta.label, cta.href));
   T.push(`${cta.label}: ${abs(cta.href)}`, "");
   if (v.footnote) { H.push(`<p style="${small}">${e(v.footnote)}</p>`); T.push(v.footnote, ""); }
-  H.push(`<p style="${p}">Questions? Just reply to this email.</p><p style="${p}">Michael Ream<br>NeonKey</p>`);
-  T.push("Questions? Just reply to this email.", "", "Michael Ream", "NeonKey", "neonkey.tech · hello@neonkey.tech", "");
+  H.push(`<p style="${p}">Questions? Just reply to this email.</p>`);
+  T.push("Questions? Just reply to this email.", "", "NeonKey · neonkey.tech · hello@neonkey.tech", "");
 
   const footer = [
     "Prices on neonkey.tech are starting points, not quotes. You get a fixed quote after a short scoping call. Results depend on your business, your tools and your data, so no specific outcomes are promised.",
     `You're getting this because you asked for your plan on neonkey.tech. This is a one-time email${newsletter ? ", and you also asked for Unlock the Week: Kit will send a separate email to confirm that" : ""}. <a href="https://neonkey.tech/privacy/" style="color:${C.muted};text-decoration:underline;">Privacy</a>`,
   ];
   T.push("--", footer[0], footer[1].replace(/ <a .*$/, " Privacy: https://neonkey.tech/privacy/"));
+  if (mailingAddress) T.push("", `NeonKey · ${mailingAddress}`);
 
-  const html = shell({ title: v.subject, preheader: v.preheader, kicker: "Your NeonKey plan", heading: v.heading, body: H.join("\n"), footer });
+  const html = shell({ title: v.subject, preheader: v.preheader, kicker: "Your NeonKey plan", heading: v.heading, body: H.join("\n"), footer, address: mailingAddress });
   return { html, text: T.join("\n") };
 }
 
