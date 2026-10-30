@@ -1,5 +1,5 @@
 ---
-// Resources box + disclaimer. The official link comes from track.json so an affiliate URL can be swapped in later
+// Official link + one-line fine-print disclaimer. The link comes from track.json so an affiliate URL can be swapped in later
 // without touching pages. When isAffiliate is true it adds rel="sponsored" and a disclosure line.
 import { url } from '../../config';
 import track from '../../data/security-plus/track.json';
@@ -7,11 +7,15 @@ const l = track.officialLink;
 const href = l.isAffiliate && l.affiliateUrl ? l.affiliateUrl : l.url;
 const rel = l.isAffiliate ? 'sponsored noopener' : 'noopener';
 ---
-<aside class="callout study-resources" aria-label="Official resources">
-  <strong>Official source</strong>
-  <p>Always check exam details, objectives, and pricing with CompTIA directly:
+<div class="study-resources">
+  <p>Official exam details, objectives and pricing:
     <a href={href} rel={rel} data-umami-event="outbound-click" data-umami-event-item="comptia-security-plus">{l.label}</a>.
+    {l.isAffiliate && <span class="muted">(Affiliate link; see our <a href={url('/disclosure/')}>disclosure</a>.)</span>}
   </p>
-  {l.isAffiliate && <p class="muted">This is an affiliate link. See our <a href={url('/disclosure/')}>disclosure</a>.</p>}
-  <p class="muted small">NeonKey is an independent site and is not affiliated with, endorsed by, or sponsored by CompTIA. CompTIA and Security+ are trademarks of CompTIA, Inc. These notes are a study aid, not official material, and using them does not guarantee a passing score. Last reviewed {track.lastReviewed}.</p>
-</aside>
+  <p class="fine-print">NeonKey isn't affiliated with or endorsed by CompTIA. Security+ is a trademark of CompTIA. No pass guarantees — check CompTIA for current exam details.</p>
+</div>
+<style>
+  .study-resources { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  .study-resources p { margin: 0 0 .5rem; }
+  .study-resources .fine-print { font-size: .74rem; line-height: 1.5; color: var(--muted); margin: .25rem 0 0; }
+</style>
