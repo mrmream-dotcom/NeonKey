@@ -1,0 +1,27 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+---
+<Base title="You're in" description="Your Unlock the Week subscription is confirmed." noindex>
+  <div class="narrow page-head" style="text-align:center">
+    <span class="kicker">Unlock the Week</span>
+    <h1>You're in. Welcome to Unlock the Week.</h1>
+    <p>Your subscription is confirmed. Thanks for joining.</p>
+    <div class="panel" style="text-align:left;margin-top:1.5rem">
+      <h2 style="font-size:1.1rem;margin-top:0">What to expect</h2>
+      <ul>
+        <li><strong>One email a week</strong>, about a five-minute read.</li>
+        <li><strong>A few hand-picked AI and tech articles</strong> worth your time.</li>
+        <li><strong>One practical tip or tool</strong> you can actually use.</li>
+        <li><strong>The occasional gear pick or deal</strong>, clearly marked when a link is an affiliate link.</li>
+      </ul>
+      <p style="margin-bottom:0">No spam, and you can unsubscribe anytime from the link at the bottom of any email.</p>
+    </div>
+    <div class="panel" style="text-align:left;margin-top:1rem">
+      <h2 style="font-size:1.1rem;margin-top:0">One quick favor</h2>
+      <p style="margin-bottom:0">What would you most like to learn about: AI tools, home networking, automations, or something else? Email <a href={`mailto:${CONTACT_EMAIL}?subject=Unlock%20the%20Week%20topic%20idea`} data-umami-event="nl-welcome-reply">{CONTACT_EMAIL}</a> and let me know. I read every message.</p>
+      <p class="muted" style="margin-top:.75rem;margin-bottom:0">Michael Ream, NeonKey</p>
+    </div>
+    <p style="margin-top:1.5rem"><a class="btn btn-primary" href={url('/')}>Explore NeonKey</a></p>
+  </div>
+</Base>
