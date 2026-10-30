@@ -1,0 +1,20 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Check your inbox" description="Thanks for subscribing to Unlock the Week. Confirm your email to start receiving it." noindex>
+  <div class="narrow page-head" style="text-align:center">
+    <span class="kicker">Unlock the Week</span>
+    <h1>Almost there. Check your inbox.</h1>
+    <p>Thanks for subscribing. We just sent a confirmation email. Open it and click <strong>Confirm my subscription</strong> to start getting Unlock the Week.</p>
+    <div class="panel" style="text-align:left;margin-top:1.5rem">
+      <h2 style="font-size:1.1rem;margin-top:0">Don't see it?</h2>
+      <ul>
+        <li>Give it a minute or two, then check your Spam or Promotions folder.</li>
+        <li>Make sure the address you entered was spelled correctly. If not, just <a href={url('/newsletter/')}>sign up again</a>.</li>
+        <li>Still nothing? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll sort it out.</li>
+      </ul>
+    </div>
+    <p style="margin-top:1.5rem"><a class="btn btn-primary" href={url('/')} data-umami-event="nl-thanks-home">Back to NeonKey</a></p>
+  </div>
+</Base>

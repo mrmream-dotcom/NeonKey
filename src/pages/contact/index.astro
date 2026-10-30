@@ -1,0 +1,26 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Contact" description="Contact NeonKey about remote small-office IT setup, automation services, a tutorial, a review or the Unlock the Week newsletter.">
+  <div class="narrow page-head">
+    <span class="kicker">Contact</span>
+    <h1>Contact</h1>
+    <p>Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
+    <p class="muted" style="font-size:.95rem">Looking for IT help? See <a href={url('/services/remote-it/')}>Remote Small-Office IT Setup</a> for what's in and out of scope.</p>
+    <form class="panel" action={`https://formsubmit.co/${CONTACT_EMAIL}`} method="post">
+      <input type="hidden" name="_subject" value="New NeonKey contact form message" />
+      <input type="hidden" name="_next" value="https://neonkey.tech/contact/thanks/" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+      <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="field"><label for="c-topic">Topic</label>
+        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>Something else</option></select>
+      </div>
+      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required></textarea></div>
+      <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
+      <p class="form-note">Your message goes straight to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a> for how form messages are handled.</p>
+    </form>
+  </div>
+</Base>

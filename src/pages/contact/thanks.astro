@@ -1,0 +1,12 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Message sent" description="Thanks for contacting NeonKey." noindex>
+  <div class="narrow page-head" style="text-align:center">
+    <span class="kicker">Contact</span>
+    <h1>Thanks, your message is on its way.</h1>
+    <p>Michael Ream reads every message and will reply by email. If you need to add anything, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <p style="margin-top:1.5rem"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/services/')}>See services</a></p>
+  </div>
+</Base>

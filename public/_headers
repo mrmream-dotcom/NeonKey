@@ -8,7 +8,7 @@
 #   img: images in Kit form templates come from https://embed.filekitcdn.com
 # If you turn on reCAPTCHA in the Kit form settings you'd also need www.google.com / www.gstatic.com; keep it off or add them.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com; connect-src 'self' https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com; font-src 'self'; frame-src 'none'; form-action 'self' https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com; connect-src 'self' https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com; font-src 'self'; frame-src 'none'; form-action 'self' https://formsubmit.co https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
