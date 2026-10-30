@@ -1,0 +1,280 @@
+---
+import { url, QUIZ_API_URL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import { QUESTIONS } from '../../data/quiz';
+const total = QUESTIONS.length;
+---
+<Base title="What service do I need? A 2-minute quiz" description="Answer eight quick questions and see which NeonKey service makes sense for you: remote small-office IT setup, a small automation, an FAQ assistant or lead routing. Free, instant, no email needed.">
+  <div class="narrow page-head">
+    <span class="kicker">Services · 2-minute quiz</span>
+    <h1>What service do I need?</h1>
+    <p>Not sure where to start? Answer {total} quick questions and I'll show you what I'd recommend right away, with no email needed. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
+  </div>
+
+  <section style="padding-top:0" class="quiz-wrap" data-quiz data-api={QUIZ_API_URL} data-base={url('/')}>
+    <div class="narrow">
+      <noscript>
+        <div class="panel"><p style="margin:0">The quiz needs JavaScript. You can still <a href={url('/services/')}>browse all services</a> or <a href={url('/contact/')}>get in touch</a>.</p></div>
+      </noscript>
+
+      <div class="panel quiz-intro" data-step="intro" hidden>
+        <ul class="muted quiz-bullets">
+          <li>One question per screen, with a Back button</li>
+          <li>Your result appears instantly, right here in your browser</li>
+          <li>Want it by email too? That's optional, at the end</li>
+        </ul>
+        <button type="button" class="btn btn-primary" data-start data-umami-event="quiz-start">Start the quiz</button>
+      </div>
+
+      <form class="panel quiz-form" data-form hidden novalidate>
+        <div class="quiz-progress" aria-hidden="true"><span data-bar></span></div>
+        <p class="quiz-count muted" data-count aria-live="polite"></p>
+        {QUESTIONS.map((q, qi) => (
+          <fieldset class="quiz-q" data-q={q.id} data-multi={q.multi ? '1' : undefined} hidden>
+            <legend><span class="sr-only">Question {qi + 1} of {total}: </span>{q.text}</legend>
+            {q.hint && <p class="muted quiz-hint">{q.hint}</p>}
+            <div class="quiz-opts">
+              {q.options.map((o) => (
+                <label class="quiz-opt">
+                  <input type={q.multi ? 'checkbox' : 'radio'} name={q.id} value={o.v} data-exclusive={o.exclusive ? '1' : undefined} />
+                  <span>{o.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <p class="quiz-error" data-qerror role="alert" hidden>Pick an answer to continue.</p>
+        <div class="btn-row quiz-nav">
+          <button type="button" class="btn btn-ghost" data-back>Back</button>
+          <button type="submit" class="btn btn-primary" data-next>Next</button>
+        </div>
+      </form>
+
+      <div class="quiz-result" data-result tabindex="-1" hidden></div>
+
+      <div class="panel quiz-email" data-email-box hidden>
+        <h2 class="quiz-h3">Email me my plan</h2>
+        <p class="muted">I'll send one email with the exact pieces from your answers and what to have ready before a call.</p>
+        <form data-email-form novalidate>
+          <div class="field"><label for="qz-name">First name <span class="muted">(optional)</span></label><input id="qz-name" name="first_name" autocomplete="given-name" maxlength="40" /></div>
+          <div class="field"><label for="qz-email">Email</label><input id="qz-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" aria-describedby="qz-consent" />
+            <p class="form-note" id="qz-consent">Your email and quiz answers are sent to NeonKey to prepare this plan: I'll email it to you once, and a copy comes to me so I can help if you reply. I won't add you to any list unless you tick the box below. See the <a href={url('/privacy/')}>privacy policy</a>.</p>
+          </div>
+          <div class="quiz-hp" aria-hidden="true"><label for="qz-website">Website</label><input id="qz-website" name="website" tabindex="-1" autocomplete="off" /></div>
+          <label class="quiz-opt quiz-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, my free weekly email (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
+          <button type="submit" class="btn btn-primary" data-send>Send my plan</button>
+          <p class="form-note quiz-status" data-status aria-live="polite"></p>
+        </form>
+      </div>
+
+      <p class="muted quiz-foot" data-foot hidden><button type="button" class="linkish" data-restart>Start over</button> · <a href={url('/services/')}>All services</a> · <a href={url('/contact/?from=quiz')}>Contact</a></p>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .quiz-bullets { padding-left: 1.1rem; margin: 0 0 1.2rem; }
+  .quiz-progress { height: 6px; background: #0e1129; border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+  .quiz-progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--cyan), var(--violet)); transition: width .25s; }
+  .quiz-count { font-size: .88rem; margin: .6rem 0 .2rem; }
+  .quiz-q { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .quiz-q legend { font-size: clamp(1.2rem, 2.6vw, 1.45rem); font-weight: 800; line-height: 1.3; margin-bottom: .4rem; padding: 0; }
+  .quiz-hint { margin: 0 0 .6rem; font-size: .95rem; }
+  .quiz-opts { display: grid; gap: .6rem; margin: .8rem 0 1rem; }
+  .quiz-opt { display: flex; gap: .75rem; align-items: flex-start; font-weight: 500; margin: 0; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: 10px; background: #0e1129; cursor: pointer; transition: border-color .15s, background .15s; }
+  .quiz-opt:hover { border-color: rgba(34,211,238,.55); }
+  .quiz-opt:has(input:checked) { border-color: var(--cyan); background: rgba(34,211,238,.08); }
+  .quiz-opt input { width: auto; flex: 0 0 auto; margin: .25rem 0 0; accent-color: var(--cyan); padding: 0; box-shadow: none; }
+  .quiz-check { margin: 0 0 1rem; font-size: .95rem; }
+  .quiz-error { color: #fda4af; margin: 0 0 .8rem; }
+  .quiz-nav { justify-content: space-between; }
+  .quiz-result { margin-bottom: 1.25rem; outline: none; }
+  .quiz-result .panel + .panel, .quiz-result .callout { margin-top: 1rem; }
+  .quiz-result h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: .35rem 0 .6rem; }
+  .quiz-h3 { font-size: 1.2rem; margin: 1.2rem 0 .5rem; }
+  .quiz-email .quiz-h3 { margin-top: 0; }
+  .quiz-items { list-style: none; padding: 0; margin: .4rem 0 0; display: grid; gap: .8rem; }
+  .quiz-items > li { border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; background: #0e1129; }
+  .quiz-items strong { color: var(--text); }
+  .quiz-items p { margin: .3rem 0 0; color: var(--muted); font-size: .97rem; }
+  .quiz-items details { margin-top: .4rem; color: var(--muted); font-size: .95rem; }
+  .quiz-items summary { cursor: pointer; color: var(--cyan); font-weight: 600; }
+  .quiz-items details ul, .quiz-list { padding-left: 1.1rem; color: var(--muted); margin: .4rem 0 0; }
+  .quiz-price { font-weight: 700; color: var(--text); margin: 1rem 0 .3rem; }
+  .quiz-small { font-size: .92rem; color: var(--muted); }
+  .quiz-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .quiz-status.ok { color: #6ee7b7; } .quiz-status.err { color: #fda4af; }
+  .quiz-foot { margin-top: 1rem; font-size: .95rem; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--cyan); font: inherit; cursor: pointer; text-decoration: underline; }
+  .quiz-result .btn-row { margin-top: 1rem; }
+</style>
+
+<script>
+  import { QUESTIONS, computePlan, buildPlan, type Answers, type PlanView } from '../../data/quiz';
+
+  const root = document.querySelector<HTMLElement>('[data-quiz]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const API = root.dataset.api || '';
+    const BASE = (root.dataset.base || '/').replace(/\/$/, '');
+    const u = (p: string) => (/^https?:/.test(p) ? p : BASE + p);
+    const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const intro = $('[data-step="intro"]');
+    const form = $<HTMLFormElement>('[data-form]');
+    const qs = Array.from(root.querySelectorAll<HTMLFieldSetElement>('fieldset[data-q]'));
+    const bar = $('[data-bar]');
+    const count = $('[data-count]');
+    const qerr = $('[data-qerror]');
+    const back = $<HTMLButtonElement>('[data-back]');
+    const next = $<HTMLButtonElement>('[data-next]');
+    const result = $('[data-result]');
+    const emailBox = $('[data-email-box]');
+    const emailForm = $<HTMLFormElement>('[data-email-form]');
+    const status = $('[data-status]');
+    const foot = $('[data-foot]');
+    const total = qs.length;
+    let i = 0;
+    let answers: Answers | null = null;
+    let lastType = '';
+
+    intro.hidden = false;
+    const track = (ev: string, data?: Record<string, string>) => (window as any).umami?.track?.(ev, data);
+
+    // Multi-select: an "exclusive" option (None of these) unticks the others, and vice versa.
+    root.querySelectorAll<HTMLInputElement>('fieldset[data-multi] input').forEach((inp) => {
+      inp.addEventListener('change', () => {
+        if (!inp.checked) return;
+        const fs = inp.closest('fieldset')!;
+        fs.querySelectorAll<HTMLInputElement>('input').forEach((o) => {
+          if (o !== inp && (inp.dataset.exclusive || o.dataset.exclusive)) o.checked = false;
+        });
+      });
+    });
+    // Single-choice: a pointer pick moves on after a short pause (keyboard arrows never auto-advance).
+    let pointer = false;
+    form.addEventListener('pointerdown', () => (pointer = true));
+    form.addEventListener('keydown', () => (pointer = false));
+    root.querySelectorAll<HTMLInputElement>('fieldset:not([data-multi]) input').forEach((inp) => {
+      inp.addEventListener('change', () => {
+        if (!pointer) return;
+        const at = i;
+        setTimeout(() => { if (inp.checked && i === at && !form.hidden) go(1); }, 220);
+      });
+    });
+
+    $('[data-start]').addEventListener('click', () => { intro.hidden = true; form.hidden = false; show(0, true); });
+    $('[data-restart]').addEventListener('click', () => {
+      form.reset(); emailForm.reset(); status.textContent = ''; status.className = 'form-note quiz-status';
+      result.hidden = true; emailBox.hidden = true; foot.hidden = true; answers = null;
+      form.hidden = false; show(0, true);
+    });
+    back.addEventListener('click', () => go(-1));
+    form.addEventListener('submit', (e) => { e.preventDefault(); go(1); });
+
+    function value(fs: HTMLFieldSetElement): string[] {
+      return Array.from(fs.querySelectorAll<HTMLInputElement>('input:checked')).map((x) => x.value);
+    }
+    function show(n: number, focus = false) {
+      i = n;
+      qs.forEach((fs, k) => (fs.hidden = k !== n));
+      qerr.hidden = true;
+      bar.style.width = `${Math.round((n / total) * 100)}%`;
+      count.textContent = `Question ${n + 1} of ${total}`;
+      back.hidden = n === 0;
+      next.textContent = n === total - 1 ? 'See my result' : 'Next';
+      if (focus) (qs[n].querySelector<HTMLInputElement>('input:checked') || qs[n].querySelector<HTMLInputElement>('input'))?.focus({ preventScroll: true });
+    }
+    function go(dir: number) {
+      if (dir > 0) {
+        if (!value(qs[i]).length) { qerr.hidden = false; return; }
+        if (i === total - 1) return finish();
+        show(i + 1, true);
+      } else if (i > 0) show(i - 1, true);
+    }
+    function finish() {
+      const a: Record<string, unknown> = {};
+      QUESTIONS.forEach((q, k) => { const v = value(qs[k]); a[q.id] = q.multi ? v : v[0]; });
+      answers = a as Answers;
+      const view = buildPlan(computePlan(answers));
+      lastType = view.type;
+      result.innerHTML = render(view);
+      form.hidden = true; result.hidden = false; emailBox.hidden = false; foot.hidden = false;
+      result.focus();
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      track('quiz-complete', { result: view.type });
+    }
+
+    function esc(s: string) {
+      return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    }
+    function render(v: PlanView): string {
+      const h: string[] = [];
+      h.push(`<div class="panel"><span class="kicker">${esc(v.kicker)}</span><h2>${esc(v.heading)}</h2><p class="muted">${esc(v.intro)}</p>`);
+      if (v.items) {
+        h.push(`<h3 class="quiz-h3">${esc(v.items.title)}</h3><ul class="quiz-items">`);
+        for (const it of v.items.list) {
+          h.push(`<li><strong>${esc(it.name)}</strong> <span class="quiz-small">(${esc(it.reason)})</span><p>${esc(it.covers)}</p><details><summary>What to have ready</summary><ul>${it.ready.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details></li>`);
+        }
+        h.push('</ul>');
+      }
+      if (v.focus) h.push(`<h3 class="quiz-h3">${esc(v.focus.title)}</h3><p class="muted" style="margin:0">${esc(v.focus.text)}</p>`);
+      if (v.includes) h.push(`<h3 class="quiz-h3">${esc(v.includes.title)}</h3><ul class="quiz-list">${v.includes.list.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
+      if (v.ready) h.push(`<h3 class="quiz-h3">What to have ready</h3><ul class="quiz-list">${v.ready.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
+      if (v.freeLinks) h.push(`<h3 class="quiz-h3">Start here (free)</h3><ul class="quiz-list">${v.freeLinks.map((l) => `<li><a href="${esc(u(l.href))}">${esc(l.label)}</a>: ${esc(l.text)}</li>`).join('')}</ul>`);
+      if (v.selfHelp) h.push(`<h3 class="quiz-h3">Quick things you can do yourself</h3><ul class="quiz-list">${v.selfHelp.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
+      if (v.price) h.push(`<p class="quiz-price">${esc(v.price)}</p>`);
+      if (v.youGet) h.push(`<p class="quiz-small">${esc(v.youGet)}</p>`);
+      if (v.note) h.push(`<p class="quiz-small">${esc(v.note)}</p>`);
+      if (v.demo) h.push(`<p class="quiz-small">${esc(v.demo.text)} <a href="${esc(u(v.demo.href))}">${esc(v.demo.label)} →</a></p>`);
+      if (v.setupNote) h.push(`<p class="quiz-small">${esc(v.setupNote.text)} <a href="${esc(u(v.setupNote.href))}">About the setup →</a></p>`);
+      h.push(`<div class="btn-row">${v.links.map((l) => `<a class="btn ${l.primary ? 'btn-primary' : 'btn-ghost'}" href="${esc(u(l.href))}" data-umami-event="${l.href.startsWith('/contact') ? 'contact-click' : 'services-cta'}" data-umami-event-location="quiz" data-umami-event-result="${esc(v.type)}">${esc(l.label)}</a>`).join('')}</div>`);
+      if (v.footnote) h.push(`<p class="quiz-small" style="margin-top:1rem">${esc(v.footnote)}</p>`);
+      h.push('</div>');
+      if (v.addon) h.push(`<div class="panel"><span class="kicker">Optional add-on</span><h3 class="quiz-h3" style="margin-top:.3rem">${esc(v.addon.name)}</h3><p class="quiz-small">${esc(v.addon.reason)}</p><p class="muted">${esc(v.addon.text)}</p><p class="quiz-price">${esc(v.addon.price)}</p><a href="${esc(u(v.addon.href))}">About the plan →</a></div>`);
+      if (v.secondary) h.push(`<div class="panel"><span class="kicker">Also worth a look</span><h3 class="quiz-h3" style="margin-top:.3rem">${esc(v.secondary.name)} <span class="quiz-small">(${esc(v.secondary.price)})</span></h3><p class="muted">${esc(v.secondary.text)}</p><a href="${esc(u(v.secondary.href))}">Learn more →</a></div>`);
+      if (v.tip) h.push(`<div class="callout">${esc(v.tip)}</div>`);
+      return h.join('');
+    }
+
+    emailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!answers) return;
+      const fd = new FormData(emailForm);
+      const email = String(fd.get('email') || '').trim();
+      const emailInput = emailForm.querySelector<HTMLInputElement>('#qz-email')!;
+      if (!email || !emailInput.checkValidity()) {
+        status.className = 'form-note quiz-status err';
+        status.textContent = 'Please enter a valid email address.';
+        emailInput.focus();
+        return;
+      }
+      const btn = emailForm.querySelector<HTMLButtonElement>('[data-send]')!;
+      btn.disabled = true;
+      status.className = 'form-note quiz-status';
+      status.textContent = 'Sending…';
+      const newsletter = fd.get('newsletter') === '1';
+      track('quiz-email-submit', { result: lastType, newsletter: String(newsletter) });
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), answers, newsletter, website: String(fd.get('website') || '') }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.ok) {
+          status.className = 'form-note quiz-status ok';
+          status.textContent = 'Sent! Check your inbox (and spam, just in case) for an email from NeonKey.' + (newsletter ? (out.newsletter === 'ok' ? ' Kit will send a separate email to confirm Unlock the Week.' : " The newsletter signup didn't go through, but you can sign up anytime on the Newsletter page.") : '');
+          emailForm.querySelectorAll('input').forEach((x) => (x.disabled = true));
+          return;
+        }
+        status.className = 'form-note quiz-status err';
+        status.textContent = out.message || "That didn't go through. Try again, or email hello@neonkey.tech.";
+      } catch {
+        status.className = 'form-note quiz-status err';
+        status.textContent = "That didn't go through. Try again, or email hello@neonkey.tech.";
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

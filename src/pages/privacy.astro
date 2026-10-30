@@ -36,6 +36,11 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     <p>The demo uses Gemini's free tier. Under Google's terms, content sent on the free tier may be used by Google to improve its products, and human reviewers may read it. <strong>Please don't paste private, sensitive or personal information into the demo.</strong> Because of those terms, the demo isn't available in the UK, Switzerland or the EEA.</p>
     <p>To enforce rate limits (5 runs a minute and 30 a day per visitor, plus a daily total), the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, and a run count. The counters expire after 48 hours. Cloudflare, as the host, may also process standard request data such as your IP address; see <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</p>
 
+    <h2>Service quiz</h2>
+    <p>The <a href={url('/services/quiz/')}>"What service do I need?" quiz</a> works out your result in your browser. Your answers aren't sent anywhere unless you ask for your plan by email.</p>
+    <p>If you do, your email address, optional first name and quiz answers are sent to NeonKey through a small API on Cloudflare Workers to prepare your plan. The plan is emailed to you once through <a href="https://resend.com/legal/privacy-policy">Resend</a>, NeonKey's email delivery provider, and a copy with your email and answers is sent to NeonKey at {CONTACT_EMAIL} so I can prepare and follow up if you reply. That copy is kept only as long as needed and is never sold. You're only added to the newsletter if you tick the newsletter box; then Kit sends you a confirmation email first (see Newsletter above).</p>
+    <p>To limit abuse, the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, a one-way hash of your email address (so the same address can't be sent more than one plan a day), and a daily total. These expire after about 24 hours, and your answers aren't stored there. To have your quiz data deleted, email {CONTACT_EMAIL}.</p>
+
     <h2>Cookies</h2>
     <p>NeonKey itself sets no cookies. Affiliate links may lead to retailer sites that set their own cookies; see the <a href={url('/disclosure/')}>disclosure</a>.</p>
 

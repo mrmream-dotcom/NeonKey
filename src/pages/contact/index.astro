@@ -25,3 +25,28 @@ import Base from '../../layouts/Base.astro';
     </form>
   </div>
 </Base>
+
+<script>
+  // Preselect the topic from ?topic= (links on Services and the quiz). Whitelisted values only;
+  // when coming from the quiz, also suggest a starter message if the box is still empty.
+  const TOPICS: Record<string, [string, string]> = {
+    'remote-it': ['Remote small-office IT setup', 'the Remote Small-Office IT Setup'],
+    'support-plan': ['Monthly remote support plan', 'the Monthly Remote Support Plan'],
+    'quick-win': ['Automation services', 'a One-Workflow Quick Win'],
+    'ai-faq': ['Automation services', 'an AI Intake & FAQ Assistant'],
+    'lead-routing': ['Automation services', 'a Lead-Routing & Follow-Up System'],
+  };
+  const qp = new URLSearchParams(location.search);
+  const t = TOPICS[qp.get('topic') || ''];
+  const sel = document.getElementById('c-topic') as HTMLSelectElement | null;
+  const msg = document.getElementById('c-msg') as HTMLTextAreaElement | null;
+  if (t && sel) {
+    const opt = Array.from(sel.options).find((o) => o.text === t[0]);
+    if (opt) sel.value = opt.value;
+  }
+  if (qp.get('from') === 'quiz' && msg && !msg.value) {
+    msg.value = t
+      ? `Hi Michael, I took the service quiz on neonkey.tech and it suggested ${t[1]}. I'd like to ask about it.\n\n`
+      : "Hi Michael, I took the service quiz on neonkey.tech and I'd like to talk it through.\n\n";
+  }
+</script>

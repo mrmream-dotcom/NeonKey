@@ -10,6 +10,19 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
     <p>Remote setup help and small automations, explained in plain English. Every project starts with a short scoping call so we agree on what "done" looks like before any work begins.</p>
   </div>
 
+  <section style="padding-top:0;padding-bottom:1rem" aria-labelledby="quiz-h">
+    <div class="container">
+      <div class="callout quiz-callout">
+        <div>
+          <span class="kicker">Not sure where to start?</span>
+          <h2 id="quiz-h" style="font-size:1.3rem;margin:.3rem 0 .3rem">What service do I need? Take the 2-minute quiz</h2>
+          <p class="muted" style="margin:0">Eight quick questions. You'll see what I'd recommend right away, with no email needed.</p>
+        </div>
+        <a class="btn btn-primary" href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">Take the quiz</a>
+      </div>
+    </div>
+  </section>
+
   <section style="padding-top:1rem" aria-labelledby="featured-h">
     <div class="container">
       <article class="card offer offer-featured">
@@ -25,7 +38,7 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
             <p class="muted" style="font-size:.95rem">Optional add-on: {remoteSupportPlan.name}, from ${remoteSupportPlan.from}/mo.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-featured">See what's included</a>
-              <a class="btn btn-ghost" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name}>Ask about this</a>
+              <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name}>Ask about this</a>
             </div>
           </div>
         </div>
@@ -38,7 +51,7 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
       <div class="section-head"><h2 id="auto-h">Unlock AI: automation services</h2><p>Small automations that take repetitive work off your plate.</p></div>
       <div class="grid grid-3">
         {automationOffers.map((o) => (
-          <article class="card offer">
+          <article class="card offer" id={o.slug}>
             <span class="kicker">Automation</span>
             <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
             <p class="price">Starting at ${o.from}<small>Typical range {o.range}, scoped per project</small></p>
@@ -47,7 +60,7 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
             {o.demo && (
               <p class="offer-demo"><a href={url(o.demo.href)} data-umami-event="demo-click" data-umami-event-offer={o.name} data-umami-event-location="services">{o.demo.label} →</a><span class="muted"> Example: AI inquiry triage</span></p>
             )}
-            <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={o.name}>Ask about this</a>
+            <a class="btn btn-primary" href={url(`/contact/?topic=${o.slug}`)} data-umami-event="services-cta" data-umami-event-offer={o.name}>Ask about this</a>
           </article>
         ))}
       </div>
@@ -78,3 +91,8 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
     </div>
   </section>
 </Base>
+
+<style>
+  .quiz-callout { display: flex; justify-content: space-between; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; }
+  .offer[id] { scroll-margin-top: 90px; }
+</style>

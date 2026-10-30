@@ -1,0 +1,27 @@
+# NeonKey service quiz: plan email Worker.
+# neonkey.tech/services/quiz/ -> POST /plan -> Resend (plan to visitor + lead copy to LEAD_TO),
+# plus Kit double opt-in only when the visitor ticks the newsletter box.
+# Plan logic is shared with the site: ../../src/data/quiz.ts (bundled by wrangler/esbuild).
+# Secrets (set with `wrangler secret put`, never committed):
+#   RESEND_API_KEY, KIT_API_KEY
+name = "neonkey-quiz"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ALLOWED_ORIGINS = "https://neonkey.tech,https://www.neonkey.tech"
+FROM_ADDRESS = "NeonKey <hello@neonkey.tech>"
+REPLY_TO = "hello@neonkey.tech"
+LEAD_TO = "hello@neonkey.tech"
+IP_DAILY_LIMIT = "5"
+GLOBAL_DAILY_LIMIT = "100"
+
+# Short-lived rate-limit counters (hashed IP / hashed email / daily total). No answers stored.
+[[kv_namespaces]]
+binding = "QUIZ_RL"
+id = "5fb0df1c3d8e41d3a158a62e4e1ce3be"
+
+[observability]
+enabled = false
