@@ -251,3 +251,40 @@ label { font-weight: 600; display: block; margin-bottom: .35rem; }
 .kit-embed { min-height: 120px; }
 .issue-format { border: 1px dashed rgba(167,139,250,.55); }
 .issue-format ol { padding-left: 1.2rem; color: var(--muted); }
+
+/* Lab demo: AI inquiry triage */
+.offer-demo { margin: 0 0 1rem; font-size: .95rem; }
+.offer-demo a { font-weight: 700; }
+.offer-demo .muted { display: block; font-size: .85rem; }
+.triage-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.5rem; align-items: start; }
+@media (max-width: 900px) { .triage-wrap { grid-template-columns: 1fr; } }
+.triage-form textarea { min-height: 210px; resize: vertical; line-height: 1.5; }
+.triage-samples { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0 1rem; }
+.sample-btn { background: transparent; color: var(--text); border: 1px dashed rgba(167,139,250,.7); border-radius: 999px; padding: .4rem .85rem; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; }
+.sample-btn:hover, .sample-btn[aria-pressed='true'] { border-style: solid; border-color: var(--magenta); box-shadow: 0 0 12px rgba(244,114,182,.25); }
+.triage-meta-row { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .25rem; }
+.char-count { font-size: .85rem; color: var(--muted); }
+.char-count.over { color: #fbbf24; }
+.triage-status { min-height: 1.4em; font-size: .92rem; color: var(--muted); margin: .7rem 0 0; }
+.triage-status.error { color: #fde68a; border-left: 3px solid #fbbf24; background: rgba(251,191,36,.08); padding: .6rem .8rem; border-radius: 0 10px 10px 0; }
+.triage-empty { border: 1px dashed rgba(167,139,250,.55); border-radius: var(--radius); padding: 2rem 1.4rem; text-align: center; color: var(--muted); background: radial-gradient(400px 160px at 50% 0%, rgba(34,211,238,.07), transparent 70%), var(--panel); }
+.triage-card { background: radial-gradient(500px 200px at 100% 0%, rgba(167,139,250,.1), transparent 60%), var(--panel); border: 1px solid rgba(34,211,238,.45); box-shadow: 0 0 0 1px rgba(34,211,238,.1), 0 0 28px rgba(34,211,238,.07); border-radius: var(--radius); padding: 1.3rem 1.4rem; }
+.triage-card h3 { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--violet); margin: 1.1rem 0 .35rem; }
+.triage-card p { margin: 0; }
+.triage-badges { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: .3rem; font-size: .82rem; font-weight: 700; border-radius: 999px; padding: .2rem .7rem; border: 1px solid var(--line); color: var(--text); }
+.badge-cat { border-color: rgba(34,211,238,.6); background: rgba(34,211,238,.1); color: #a5f3fc; }
+.badge-high { border-color: rgba(244,114,182,.7); background: rgba(244,114,182,.12); color: #fbcfe8; }
+.badge-medium { border-color: rgba(251,191,36,.65); background: rgba(251,191,36,.1); color: #fde68a; }
+.badge-low { border-color: rgba(167,139,250,.6); background: rgba(167,139,250,.1); color: #ddd6fe; }
+.badge-conf { color: var(--muted); }
+.triage-reason { color: var(--muted); font-size: .92rem; margin-top: .55rem !important; }
+.triage-details { display: grid; grid-template-columns: max-content 1fr; gap: .3rem .9rem; margin: 0; font-size: .95rem; }
+.triage-details dt { color: var(--muted); }
+.triage-details dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.triage-details dd.none { color: #8d93b8; }
+.triage-next { border-left: 3px solid var(--cyan); background: rgba(34,211,238,.07); padding: .6rem .85rem; border-radius: 0 10px 10px 0; }
+.triage-reply { white-space: pre-wrap; font-size: .95rem; line-height: 1.55; background: #0e1129; border: 1px solid #3a4078; border-radius: 10px; padding: .85rem 1rem; margin: 0; font-family: inherit; color: var(--text); }
+.triage-foot { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; font-size: .82rem; color: var(--muted); }
+.triage-examples { display: grid; gap: 1.25rem; }
+.triage-example .sample-text { font-size: .92rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: .8rem; margin: .4rem 0 .9rem; }

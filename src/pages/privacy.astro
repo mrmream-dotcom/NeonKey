@@ -31,6 +31,11 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     <h2>Contact</h2>
     <p>The contact form is delivered by <a href="https://web3forms.com/privacy">Web3Forms</a>, which passes your name, email, topic and message to {CONTACT_EMAIL}. Messages, whether sent through the form or by email, are kept only as long as needed to reply and are never sold.</p>
 
+    <h2>AI inquiry triage demo (Lab)</h2>
+    <p>The <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sends the text you type to a small NeonKey API running on Cloudflare Workers. The API forwards it to Google's <a href="https://ai.google.dev/gemini-api/terms">Gemini API</a> to generate the result, then returns the result to your browser. NeonKey doesn't store or log the message or the result.</p>
+    <p>The demo uses Gemini's free tier. Under Google's terms, content sent on the free tier may be used by Google to improve its products, and human reviewers may read it. <strong>Please don't paste private, sensitive or personal information into the demo.</strong> Because of those terms, the demo isn't available in the UK, Switzerland or the EEA.</p>
+    <p>To enforce rate limits (5 runs a minute and 30 a day per visitor, plus a daily total), the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, and a run count. The counters expire after 48 hours. Cloudflare, as the host, may also process standard request data such as your IP address; see <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</p>
+
     <h2>Cookies</h2>
     <p>NeonKey itself sets no cookies. Affiliate links may lead to retailer sites that set their own cookies; see the <a href={url('/disclosure/')}>disclosure</a>.</p>
 
@@ -38,7 +43,7 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     <ul>
       <li>Confirm the newsletter wording against Kit's current privacy policy and data processing terms</li>
       <li>Contact method and how messages are kept</li>
-      <li>Hosting provider logs (e.g. Cloudflare)</li>
+      <li>Hosting provider logs (e.g. Cloudflare), including the triage demo's Worker</li>
       <li>How to access or delete your data, and a privacy contact</li>
     </ul>
   </article>

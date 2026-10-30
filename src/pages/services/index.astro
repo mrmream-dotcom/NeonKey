@@ -44,6 +44,9 @@ import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/servic
             <p class="price">Starting at ${o.from}<small>Typical range {o.range}, scoped per project</small></p>
             <p class="muted">{o.for}.</p>
             <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
+            {o.demo && (
+              <p class="offer-demo"><a href={url(o.demo.href)} data-umami-event="demo-click" data-umami-event-offer={o.name} data-umami-event-location="services">{o.demo.label} →</a><span class="muted"> Example: AI inquiry triage</span></p>
+            )}
             <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={o.name}>Ask about this</a>
           </article>
         ))}

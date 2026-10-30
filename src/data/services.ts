@@ -10,6 +10,8 @@ export interface Offer {
   href?: string;
   featured?: boolean;
   unit?: string;
+  /** Optional link to a working demo of this kind of build. */
+  demo?: { label: string; href: string };
 }
 
 export const remoteIt: Offer = {
@@ -45,7 +47,7 @@ export const remoteSupportPlan: Offer = {
 };
 
 export const automationOffers: Offer[] = [
-  { slug: 'quick-win', name: 'One-Workflow Quick Win', from: 75, range: '$75–$150', for: 'Automate one repetitive task', items: ['One workflow, scoped together first', 'Connects tools you already use', 'Short walkthrough video and notes', 'Handoff so you own it'] },
+  { slug: 'quick-win', name: 'One-Workflow Quick Win', from: 75, range: '$75–$150', for: 'Automate one repetitive task', items: ['One workflow, scoped together first', 'Connects tools you already use', 'Short walkthrough video and notes', 'Handoff so you own it'], demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' } },
   { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 250, range: '$250–$500', for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'] },
   { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 400, range: '$400–$900', for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'] },
 ];

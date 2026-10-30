@@ -75,3 +75,7 @@ export const NEWSLETTER = {
 
 // Public contact address. Placeholder until the domain and a business inbox exist (see LAUNCH.md).
 export const CONTACT_EMAIL = (import.meta.env.PUBLIC_CONTACT_EMAIL || 'hello@neonkey.tech').trim();
+
+// Lab demo: AI inquiry triage. Cloudflare Worker endpoint (source in workers/triage/). Public URL, not a secret.
+//   PUBLIC_TRIAGE_API_URL = override, e.g. http://localhost:8787/triage when running `wrangler dev`.
+export const TRIAGE_API_URL = (import.meta.env.PUBLIC_TRIAGE_API_URL || 'https://neonkey-triage.mr-mream.workers.dev/triage').trim();

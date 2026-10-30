@@ -1,0 +1,27 @@
+// Cloudflare Worker for the NeonKey Lab "AI inquiry triage" demo.
+// No secrets in this file. The Gemini key is a Worker secret:  printf %s "$GEMINI_API_KEY" | npx wrangler secret put GEMINI_API_KEY
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neonkey-triage",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  // Per-IP burst limit (Workers Rate Limiting binding, available on the free plan). period must be 10 or 60 seconds.
+  "ratelimits": [
+    { "name": "RL_MINUTE", "namespace_id": "4201", "simple": { "limit": 5, "period": 60 } }
+  ],
+  // Daily counters only (hashed IP + date, and one global count per day). Message text is never written anywhere.
+  "kv_namespaces": [
+    { "binding": "TRIAGE_LIMITS", "id": "5c751b45f77e45d09ccd3502f468e8c9" }
+  ],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://neonkey.tech,https://www.neonkey.tech",
+    "ALLOW_LOCALHOST": "true",
+    "PRIMARY_MODEL": "gemini-3.5-flash",
+    "FALLBACK_MODEL": "gemini-3.5-flash-lite",
+    "MAX_CHARS": "2000",
+    "PER_IP_DAILY": "30",
+    "GLOBAL_DAILY": "150"
+  }
+}

@@ -1,7 +1,8 @@
 // Lab projects.
 // `draft: true` = not published: the card is hidden everywhere (home, /lab/) and the page file lives in
 // src/_drafts/lab/ (outside src/pages, so Astro doesn't build it). To publish one, see LAUNCH.md "Hidden drafts".
-// The three entries below are sample write-ups, not documented real builds yet, so they stay drafts.
+// The AI inquiry triage entry is a real, deployed build. The three entries after it are sample write-ups, not
+// documented real builds yet, so they stay drafts.
 export interface LabProject {
   slug: string;
   title: string;
@@ -16,6 +17,14 @@ export interface LabProject {
 export const labTags = ['Homelab', 'Automation', 'Networking', 'Security', 'AI'];
 
 export const labProjects: LabProject[] = [
+  {
+    slug: 'ai-inquiry-triage',
+    title: 'AI inquiry triage: a working demo',
+    summary: 'Paste a customer message and an AI sorts it, flags urgency, pulls out the key details and drafts a reply for a human to review. Live demo plus the full write-up.',
+    tags: ['AI', 'Automation'],
+    level: 'Beginner → Intermediate',
+    service: { label: 'One-Workflow Quick Win', href: '/services/' },
+  },
   {
     draft: true,
     slug: 'n8n-lead-intake-automation',

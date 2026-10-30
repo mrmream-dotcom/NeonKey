@@ -1,0 +1,266 @@
+---
+import { url, TRIAGE_API_URL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import { labProjects } from '../../data/lab';
+import { triageSamples } from '../../data/triage-samples';
+import examplesRaw from '../../data/triage-examples.json';
+// triage-examples.json is captured by actually running the deployed demo (see workers/triage/README.md).
+// It is never hand-written. If it's empty, the "Real example results" section says so instead of showing anything.
+interface Example { sampleId: string; label: string; message: string; capturedAt: string; model: string; ms: number; tokens: number | null; result: any }
+const examples = examplesRaw as Example[];
+const project = labProjects.find((p) => p.slug === 'ai-inquiry-triage')!;
+const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Workers Rate Limiting binding', 'Workers KV (daily counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output'];
+const fields: [string, string][] = [['name', 'Name'], ['business', 'Business'], ['need', 'Needs'], ['deadline', 'Deadline'], ['budget', 'Budget'], ['contact', 'Contact']];
+const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const sections = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['examples', 'Real results'], ['build', 'Build notes'], ['related', 'Related']];
+---
+<Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a human to review. Plus how it's built and what it costs.">
+  <div class="container page-head">
+    <span class="kicker">Lab · AI · Automation · Live demo</span>
+    <h1>AI inquiry triage, <span class="glow-c">working demo.</span></h1>
+    <p>Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of one-workflow build in the <a href={url('/services/')}>Quick Win service</a>, running for real.</p>
+    <nav class="toc" aria-label="On this page" style="max-width:900px">
+      <ul>{sections.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ul>
+    </nav>
+  </div>
+
+  <section id="demo" style="padding-top:0" aria-labelledby="demo-h">
+    <div class="container">
+      <h2 id="demo-h" class="sr-only">Try the demo</h2>
+      <div class="triage-wrap">
+        <form class="panel triage-form" id="triage-form" novalidate>
+          <label for="triage-msg">Customer message</label>
+          <p class="muted" style="margin:.1rem 0 .3rem;font-size:.9rem">Load a made-up sample, or write your own:</p>
+          <div class="triage-samples" role="group" aria-label="Made-up sample messages">
+            {triageSamples.map((s) => (
+              <button type="button" class="sample-btn" data-sample={s.id} aria-pressed="false" data-umami-event="triage-sample" data-umami-event-sample={s.id}>Sample: {s.label}</button>
+            ))}
+          </div>
+          <textarea id="triage-msg" name="message" maxlength="2000" rows="9" placeholder="e.g. Hi, I run a small landscaping business and I'd like a quote for..." aria-describedby="triage-note char-count"></textarea>
+          <div class="triage-meta-row">
+            <span class="char-count" id="char-count" aria-live="polite">0 / 2000</span>
+            <button class="btn btn-primary" type="submit" id="triage-run" data-umami-event="triage-run">Run triage</button>
+          </div>
+          <p class="triage-status" id="triage-status" role="status" aria-live="polite"></p>
+          <p class="form-note" id="triage-note" style="margin-top:.8rem">Sample messages are made up: the people, businesses and numbers are fictional. What you type is sent to Google's Gemini API to generate the result. NeonKey doesn't store it. Please don't paste private, sensitive or personal information; on the free tier Google may use what's submitted to improve its products, and its reviewers may read it. Limit: 5 runs a minute and 30 a day per visitor. See <a href={url('/privacy/')}>privacy</a>.</p>
+        </form>
+
+        <div id="triage-output" aria-live="polite">
+          <div class="triage-empty" id="triage-empty">
+            <p style="margin:0 0 .3rem;font-weight:700;color:var(--text)">Your triage result appears here</p>
+            <p style="margin:0">Category, urgency, a short summary, key details, a suggested next step and a draft reply.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="narrow prose lab-case" style="padding-bottom:3rem">
+    <h2 id="what">What it does</h2>
+    <p>One message goes in. One structured result comes out:</p>
+    <ul>
+      <li><strong>Category:</strong> new project or sale, support problem, billing, partnership, spam, or other.</li>
+      <li><strong>Urgency:</strong> low, medium or high, with a one-line reason.</li>
+      <li><strong>Summary:</strong> one or two sentences, so you get the gist without rereading.</li>
+      <li><strong>Key details:</strong> name, business, what they need, deadline, budget and contact info, but only when the message actually says them. Blank means it wasn't mentioned.</li>
+      <li><strong>Suggested next step</strong> and a <strong>drafted reply</strong> you can edit. Anything the AI can't know, like a price or a date, is left as a <code>[placeholder]</code> for you to fill in.</li>
+    </ul>
+
+    <h2 id="why">Why a small business would want it</h2>
+    <ul>
+      <li><strong>Sorting:</strong> sales leads, support problems and billing questions land in the same inbox. A label on each one lets you deal with them in batches, or route them to the right person.</li>
+      <li><strong>Faster first replies:</strong> starting from a draft is quicker than starting from a blank email.</li>
+      <li><strong>Fewer missed messages:</strong> an urgent "our booking form is broken" gets flagged instead of sitting under ten newsletters. Spam gets labelled so you can skip it.</li>
+    </ul>
+    <p>It won't run your inbox for you. It does a first pass so you can spend your time on the reply.</p>
+
+    <h2 id="how">How it works</h2>
+    <ol>
+      <li><strong>Form:</strong> this page sends the message (max 2,000 characters) to a small API.</li>
+      <li><strong>Worker:</strong> a Cloudflare Worker checks where the request came from (only neonkey.tech is allowed), applies the rate limits, and rejects anything empty or too long.</li>
+      <li><strong>AI:</strong> the Worker sends the message to Google's Gemini model with instructions and a strict JSON schema. The schema fixes the allowed categories and urgency levels, so the answer always has the same shape. The message is treated as data, so instructions hidden inside it are ignored.</li>
+      <li><strong>Structured result:</strong> the Worker checks the JSON and returns it. Nothing is saved.</li>
+      <li><strong>Human review:</strong> you read the summary and the draft, fix anything that's off, and send it yourself. In a real setup the result would go to a shared inbox label, a spreadsheet row or a task, not straight back to the customer.</li>
+    </ol>
+    <h3>Stack &amp; tools</h3>
+    <ul class="stack-list">{stack.map((s) => <li><span class="tag">{s}</span></li>)}</ul>
+
+    <h2 id="cost">What it costs to run</h2>
+    <p>For this demo, nothing so far. Each piece runs on a free tier, and each has limits:</p>
+    <ul>
+      <li><strong>Cloudflare Workers, free plan:</strong> 100,000 requests a day and 10 ms of CPU time per request. Workers KV's free allowance is 100,000 reads and 1,000 writes a day. Each run here uses 2 writes, which is one reason the demo caps itself at 150 runs a day overall.</li>
+      <li><strong>Google Gemini API, free tier:</strong> Google sets per-model request limits on the free tier and changes them from time to time. The trade-off is data use. On the free tier Google may use what's submitted to improve its products, and human reviewers may read it. Google's terms also don't allow free-tier apps for users in the UK, Switzerland or the EEA, so the demo is switched off there.</li>
+      {examples.length > 0 && (
+        <li><strong>Size of a run:</strong> the example runs below used about {Math.min(...examples.map((e) => e.tokens || 0))}–{Math.max(...examples.map((e) => e.tokens || 0))} tokens each (instructions + message + result), as reported by the API.</li>
+      )}
+    </ul>
+    <p>For a real business handling customer messages, I'd use Gemini's <strong>paid</strong> tier, or another provider with similar terms. On the paid tier Google says it doesn't use prompts or responses to improve its products. It bills per token at <a href="https://ai.google.dev/gemini-api/docs/pricing">Google's current rates</a>. For short messages like these the bill is usually small, but it depends on your volume, so I'd check it with you during scoping. I won't promise you a number here.</p>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li><strong>The AI can misclassify.</strong> A vague message, sarcasm or a mix of topics can get the wrong label or urgency. Treat the result as a suggestion.</li>
+      <li><strong>A human should review every reply.</strong> The draft can sound confident and still be wrong, and it doesn't know your prices, calendar or policies.</li>
+      <li><strong>It only sees the one message.</strong> It has no customer history, so it can't tell an important repeat client from a stranger.</li>
+      <li><strong>Free tiers can run out or slow down.</strong> If the main model is busy, the Worker retries on a lighter model. If both are unavailable, you get a friendly error instead of a result.</li>
+      <li><strong>Rate limits are approximate.</strong> They're designed to stop abuse on a free demo, not to count exactly.</li>
+    </ul>
+
+    <h2 id="examples">Real example results</h2>
+    {examples.length === 0 ? (
+      <p class="muted">Example results will be added here after the demo has been run on the samples.</p>
+    ) : (<>
+      <p>These are the results the deployed demo returned for the three made-up samples on {fmtDate(examples[0].capturedAt)}. They're copied as-is, not edited. Run a sample yourself and the result will differ a little, because the AI's wording varies between runs.</p>
+      <div class="triage-examples">
+        {examples.map((ex) => (
+          <div class="triage-example">
+            <h3 style="margin-bottom:.2rem">Sample: {ex.label}</h3>
+            <p class="sample-text">{ex.message}</p>
+            <div class="triage-card">
+              <div class="triage-badges">
+                <span class="badge badge-cat">{ex.result.category}</span>
+                <span class={`badge badge-${ex.result.urgency}`}>Urgency: {ex.result.urgency}</span>
+                <span class="badge badge-conf">Confidence: {ex.result.confidence}</span>
+              </div>
+              <p class="triage-reason">{ex.result.urgency_reason}</p>
+              <h3>Summary</h3><p>{ex.result.summary}</p>
+              <h3>Key details</h3>
+              <dl class="triage-details">
+                {fields.map(([k, label]) => (<><dt>{label}</dt><dd class={ex.result.details[k] ? '' : 'none'}>{ex.result.details[k] || 'Not mentioned'}</dd></>))}
+              </dl>
+              <h3>Suggested next step</h3><p class="triage-next">{ex.result.next_action}</p>
+              <h3>Draft reply (review before sending)</h3>
+              {ex.result.reply_draft ? <pre class="triage-reply">{ex.result.reply_draft}</pre> : <p class="muted">No reply drafted (marked as spam).</p>}
+              <div class="triage-foot"><span>Model: {ex.model} · {(ex.ms / 1000).toFixed(1)}s{ex.tokens ? ` · ${ex.tokens} tokens` : ''}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>)}
+
+    <h2 id="build">Build notes: what broke and what I changed</h2>
+    <ul>
+      <li><strong>The planned model wasn't available.</strong> I planned to use Gemini 2.5 Flash, but the API key returned "no longer available to new users." I switched to <code>gemini-3.5-flash</code> (the API currently reports the version it serves as <code>gemini-3.6-flash</code>) with thinking set to its minimal level (about 2–3 seconds per run), with Gemini 3.5 Flash-Lite as the fallback.</li>
+      <li><strong>The newest model was too slow for a demo.</strong> The latest Flash model either returned "high demand" errors or took close to a minute during testing. For this job, speed matters more than having the newest model.</li>
+      <li><strong>Free tier rules shaped the design.</strong> Google's terms say free-tier content may be reviewed and free-tier apps can't be offered in the UK, Switzerland or the EEA. That's why the page has a clear "don't paste private info" note and the Worker turns those regions away. A client build would use a paid tier.</li>
+      <li><strong>Limits before AI.</strong> The Worker checks origin, rate limits and message length before it calls the AI, so abuse costs as little as possible.</li>
+    </ul>
+    <p class="muted" style="font-size:.95rem">The Worker source lives in the site's repository under <code>workers/triage/</code>, with no secrets in it. The API key is stored as an encrypted Worker secret.</p>
+
+    <h2 id="related">Related</h2>
+    <div class="lab-related">
+      <div class="panel">
+        <span class="kicker">Related service</span>
+        <h3 style="margin-top:.4rem">One-Workflow Quick Win</h3>
+        <p class="muted">Want something like this hooked into your own inbox, form or spreadsheet? Each build starts with a short scoping call to decide what's worth automating and what should stay manual.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-sm" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="lab-ai-inquiry-triage">See services</a>
+          <a class="btn btn-ghost btn-sm" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="lab-ai-inquiry-triage">Ask about this</a>
+        </div>
+      </div>
+    </div>
+    <p><a href={url('/lab/')}>← Back to the Lab</a></p>
+  </article>
+</Base>
+
+<script is:inline define:vars={{ apiUrl: TRIAGE_API_URL, samples: triageSamples }}>
+  const form = document.getElementById('triage-form');
+  const ta = document.getElementById('triage-msg');
+  const count = document.getElementById('char-count');
+  const status = document.getElementById('triage-status');
+  const out = document.getElementById('triage-output');
+  const runBtn = document.getElementById('triage-run');
+  const MAX = 2000;
+  const fields = [['name', 'Name'], ['business', 'Business'], ['need', 'Needs'], ['deadline', 'Deadline'], ['budget', 'Budget'], ['contact', 'Contact']];
+
+  const updateCount = () => {
+    const n = ta.value.length;
+    count.textContent = `${n} / ${MAX}`;
+    count.classList.toggle('over', n > MAX * 0.9);
+  };
+  ta.addEventListener('input', () => {
+    updateCount();
+    document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  });
+  document.querySelectorAll('.sample-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const s = samples.find((x) => x.id === btn.dataset.sample);
+      if (!s) return;
+      ta.value = s.message;
+      updateCount();
+      document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      ta.focus();
+    });
+  });
+  updateCount();
+
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+
+  function renderResult(data) {
+    const r = data.result;
+    const card = el('div', 'triage-card');
+    const badges = el('div', 'triage-badges');
+    badges.append(el('span', 'badge badge-cat', r.category), el('span', `badge badge-${r.urgency}`, `Urgency: ${r.urgency}`), el('span', 'badge badge-conf', `Confidence: ${r.confidence}`));
+    card.append(badges, el('p', 'triage-reason', r.urgency_reason));
+    card.append(el('h3', '', 'Summary'), el('p', '', r.summary));
+    card.append(el('h3', '', 'Key details'));
+    const dl = el('dl', 'triage-details');
+    fields.forEach(([k, label]) => {
+      const v = (r.details && r.details[k]) || '';
+      dl.append(el('dt', '', label), el('dd', v ? '' : 'none', v || 'Not mentioned'));
+    });
+    card.append(dl, el('h3', '', 'Suggested next step'), el('p', 'triage-next', r.next_action));
+    card.append(el('h3', '', 'Draft reply (review before sending)'));
+    if (r.reply_draft) {
+      card.append(el('pre', 'triage-reply', r.reply_draft));
+    } else {
+      card.append(el('p', 'muted', 'No reply drafted (marked as spam).'));
+    }
+    const foot = el('div', 'triage-foot');
+    foot.append(el('span', '', `Model: ${data.model}${data.fallback ? ' (fallback)' : ''} · ${(data.ms / 1000).toFixed(1)}s`));
+    if (r.reply_draft && navigator.clipboard) {
+      const copy = el('button', 'btn btn-ghost btn-sm', 'Copy reply');
+      copy.type = 'button';
+      copy.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(r.reply_draft); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed'; }
+        setTimeout(() => (copy.textContent = 'Copy reply'), 1800);
+      });
+      foot.append(copy);
+    }
+    card.append(foot);
+    out.replaceChildren(card);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = ta.value.trim();
+    status.className = 'triage-status';
+    if (message.length < 10) { status.classList.add('error'); status.textContent = 'Please enter a message of at least 10 characters, or load a sample.'; return; }
+    if (message.length > MAX) { status.classList.add('error'); status.textContent = `Please keep it under ${MAX} characters.`; return; }
+    runBtn.disabled = true;
+    runBtn.textContent = 'Running…';
+    status.textContent = 'Sending to the AI. This usually takes a few seconds…';
+    try {
+      const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message }) });
+      let data = null;
+      try { data = await res.json(); } catch {}
+      if (!res.ok || !data || !data.ok) {
+        status.classList.add('error');
+        status.textContent = (data && data.message) || `Something went wrong (HTTP ${res.status}). Please try again in a minute.`;
+        return;
+      }
+      status.textContent = 'Done. Review the draft before sending anything.';
+      renderResult(data);
+    } catch (err) {
+      status.classList.add('error');
+      status.textContent = "Couldn't reach the demo API. Check your connection, or try again in a minute.";
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = 'Run triage';
+    }
+  });
+</script>
