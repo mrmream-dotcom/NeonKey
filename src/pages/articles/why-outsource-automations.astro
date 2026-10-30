@@ -1,12 +1,15 @@
 ---
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import { getArticle } from '../../data/articles';
+const article = getArticle('why-outsource-automations');
 ---
-<Base title={"You Could Automate It Yourself. Here's Why You Might Not Want To."} description="An honest look at DIY automations vs. getting help: what's doable on your own, what tends to go wrong, and how to decide." type="article">
+<Base title={article.title} description={article.description} type="article">
   <article class="narrow page-head prose">
     <span class="kicker">Articles · Automation</span>
-    <h1>You Could Automate It Yourself. Here's Why You Might Not Want To.</h1>
-    <div class="meta"><span>By NeonKey</span></div>
+    <h1>{article.title}</h1>
+    <ArticleMeta article={article} />
 <p class="lead">Let's get this out of the way first: you can absolutely build your own automations.</p>
 <p>Tools like <a data-umami-event="outbound-click" data-umami-event-item="zapier.com" href="https://zapier.com">Zapier</a>, <a data-umami-event="outbound-click" data-umami-event-item="make.com" href="https://www.make.com">Make</a> and <a data-umami-event="outbound-click" data-umami-event-item="n8n.io" href="https://n8n.io">n8n</a> let you connect apps without writing much (or any) code. Plenty of the apps you already use now have AI features and simple workflows built in. Sorting incoming inquiries, copying form submissions into a spreadsheet, sending appointment reminders, nudging a client about an unpaid invoice: all of that is within reach for someone willing to sit down and figure it out.</p>
 <p>Lots of people do exactly that, and it works. If you're curious, we'd genuinely encourage you to try. Learning how automations work is useful even if you never build a big one, because it changes how you look at the repetitive parts of your week.</p>

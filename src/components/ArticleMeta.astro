@@ -1,0 +1,16 @@
+---
+// Byline row for an article page: category badge, author, and (for news) the source link.
+import CategoryBadge from './CategoryBadge.astro';
+import { sourceLabel, type Article } from '../data/articles';
+interface Props { article: Article }
+const { article } = Astro.props;
+const source = sourceLabel(article);
+---
+<div class="meta">
+  <CategoryBadge category={article.category} />
+  <span>By NeonKey</span>
+  {article.date && <time datetime={article.date}>{new Date(article.date + 'T12:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}</time>}
+  {source && (
+    <span class="article-source">Source: <a href={article.sourceUrl} rel="noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item={source}>{source}</a></span>
+  )}
+</div>

@@ -1,0 +1,63 @@
+---
+// Shared Articles listing with All | News | Insights tabs.
+// Tabs are plain links to static pages, so filtering works without JavaScript.
+import { url } from '../config';
+import Base from '../layouts/Base.astro';
+import CategoryBadge from './CategoryBadge.astro';
+import { articlesIn, CATEGORY_LABELS, type ArticleCategory } from '../data/articles';
+interface Props { category?: ArticleCategory }
+const { category } = Astro.props;
+const list = articlesIn(category);
+const tabs: { href: string; label: string; key?: ArticleCategory }[] = [
+  { href: '/articles/', label: 'All' },
+  { href: '/articles/news/', label: CATEGORY_LABELS.news, key: 'news' },
+  { href: '/articles/insights/', label: CATEGORY_LABELS.insights, key: 'insights' },
+];
+const title = category ? `${CATEGORY_LABELS[category]} · Articles` : 'Articles';
+const description = category === 'news'
+  ? 'NeonKey news: short takes on what changed in automation, AI and small-office tech, with links to the original source.'
+  : category === 'insights'
+    ? 'NeonKey insights: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech.'
+    : 'NeonKey articles: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech, whatever your level.';
+const empty = list.length === 0;
+const emptyText = category ? `${CATEGORY_LABELS[category]} posts are coming soon.` : 'Articles are coming soon.';
+---
+<Base title={title} description={description} noindex={empty}>
+  <div class="container page-head">
+    <span class="kicker">Articles{category && ` · ${CATEGORY_LABELS[category]}`}</span>
+    <h1>Articles</h1>
+    <p>Articles and plain-English explainers: honest takes on automation, AI and everyday tech, whatever your level.</p>
+  </div>
+  <div class="container">
+    <nav class="article-tabs" aria-label="Filter articles by category">
+      <ul>
+        {tabs.map((t) => {
+          const active = t.key === category;
+          return (
+            <li><a class={`article-tab${t.key ? ` tab-${t.key}` : ' tab-all'}`} href={url(t.href)} aria-current={active ? 'page' : undefined}>{t.label}</a></li>
+          );
+        })}
+      </ul>
+    </nav>
+    {empty ? (
+      <div class="article-empty">
+        <p>{emptyText}</p>
+        <a href={url('/articles/')}>See all articles</a>
+      </div>
+    ) : (
+      <ul class="article-list">
+        {list.map((a) => (
+          <li class="article-card">
+            <div class="article-card-tags">
+              <CategoryBadge category={a.category} />
+              {a.topic && <span class="tag">{a.topic}</span>}
+            </div>
+            <h2><a href={url(a.href)}>{a.title}</a></h2>
+            <p>{a.description}</p>
+            <span class="article-cta" aria-hidden="true">Read article <span class="arrow">→</span></span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Base>

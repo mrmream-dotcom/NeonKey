@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { articles, ARTICLE_CATEGORIES } from './src/data/articles.ts';
 
 // Build modes are driven by environment variables (see README "Build modes"):
 //   SITE_URL          absolute origin used for canonical URLs, OG tags and the sitemap (default https://neonkey.tech)
@@ -9,6 +10,9 @@ import sitemap from '@astrojs/sitemap';
 const SITE_URL = (process.env.SITE_URL || 'https://neonkey.tech').replace(/\/+$/, '');
 const rawBase = process.env.BASE_PATH || '/';
 const BASE_PATH = ('/' + rawBase.replace(/^\/+|\/+$/g, '') + '/').replace(/\/+/g, '/');
+// Article category pages with no posts yet are noindex (see ArticleIndex.astro), so keep them out of the sitemap too.
+const EMPTY_ARTICLE_CATEGORIES = ARTICLE_CATEGORIES.filter((c) => !articles.some((a) => a.category === c));
+const emptyCategoryRe = EMPTY_ARTICLE_CATEGORIES.length ? new RegExp(`/articles/(${EMPTY_ARTICLE_CATEGORIES.join('|')})/?$`) : null;
 const MODE = process.env.PUBLIC_SITE_MODE === 'live' ? 'live' : 'demo';
 
 export default defineConfig({
@@ -19,7 +23,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'never' },
   vite: { build: { assetsInlineLimit: 0 } },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) })],
+  integrations: [sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) })],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);

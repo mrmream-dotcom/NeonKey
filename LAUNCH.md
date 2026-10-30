@@ -146,7 +146,8 @@ The drafts still contain their old demo badges and "sample" wording, on purpose:
 1. Rewrite it with the real build/review/tutorial, and remove the `DemoBadge` / "sample" / "Demo content" bits (in Lab pages these come from `src/layouts/LabProject.astro`: the badge, the "Sample write-up" line, the warning callout and the "Demo Lab write-up:" description prefix).
 2. Move it back: `git mv src/_drafts/lab/<slug>.astro src/pages/lab/` (same for `learn/`, `reviews/`, `articles/`).
 3. **Lab:** in `src/data/lab.ts` delete `draft: true` (or set `false`) on that project. It then shows on `/lab/` (with tag filters) and in the home page "From the Lab" section automatically. Only list real projects: the Lab page's "Related" links use every project in `lab.ts`.
-4. **Learn / Reviews / Articles:** add a list item linking to it in `src/pages/<section>/index.astro` in place of the `<EmptyState />` (the old list markup is in git history, commit before Oct 29, 2026).
+4. **Learn / Reviews:** add a list item linking to it in `src/pages/<section>/index.astro` in place of the `<EmptyState />` (the old list markup is in git history, commit before Oct 29, 2026).
+   **Articles:** add an entry to `src/data/articles.ts` (`category: 'news'` or `'insights'`, default insights; news posts can set `sourceUrl` and `sourceName`, shown as "Source: <name>") and use `<ArticleMeta article={getArticle('<slug>')} />` on the page, like `why-outsource-automations.astro`. The All / News / Insights tabs, card badges and sitemap update automatically.
 5. Optional: link it from the home page again, and from `/services/remote-it/` (the old Lab callout there linked the network-segmentation write-up).
 6. Build and check: `grep -rni "demo content\|placeholder slot" dist` should be empty.
 

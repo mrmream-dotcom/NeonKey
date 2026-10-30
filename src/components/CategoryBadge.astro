@@ -1,0 +1,6 @@
+---
+import { CATEGORY_LABELS, type ArticleCategory } from '../data/articles';
+interface Props { category: ArticleCategory }
+const { category } = Astro.props;
+---
+<span class={`cat-badge cat-${category}`}>{CATEGORY_LABELS[category]}</span>

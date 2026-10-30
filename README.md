@@ -95,7 +95,7 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 | `/learn/` | Learn index (empty state until the first tutorial; drafts in `src/_drafts/learn/`) |
 | `/lab/` | Lab portfolio with tag filters for published projects (empty state for now; 3 sample case studies are drafts in `src/_drafts/lab/`) |
 | `/reviews/` | Reviews index (empty state; sample review is a draft in `src/_drafts/reviews/`) |
-| `/articles/` | Articles index (lists published articles; the old `/notes/` URL redirects here; sample draft in `src/_drafts/articles/`) |
+| `/articles/` | Articles index with All / News / Insights tabs (static pages `/articles/news/`, `/articles/insights/`; entries and categories in `src/data/articles.ts`; empty categories are noindex and left out of the sitemap; the old `/notes/` URL redirects here; sample draft in `src/_drafts/articles/`) |
 | `/newsletter/` | Unlock the Week: what you get, cadence, privacy, issue format |
 | `/services/` | Featured Remote Small-Office IT Setup plus three automation services |
 | `/services/remote-it/` | Remote Small-Office IT Setup & the monthly remote support plan: scope, exclusions, pricing |
