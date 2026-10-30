@@ -51,8 +51,10 @@ export function absoluteUrl(path: string, site: URL | undefined): string {
 //   PUBLIC_KIT_EMBED_SRC       = alternative: the src of Kit's JavaScript embed, e.g. https://<account>.kit.com/<uid>/index.js
 //                                (Embed > JavaScript). Kit then draws its own form. Used only if PUBLIC_KIT_FORM_ID is unset.
 //   PUBLIC_KIT_FORM_URL        = optional: override the full form action URL (must be https://app.kit.com/... or app.convertkit.com/...).
-const nlProvider = (import.meta.env.PUBLIC_NEWSLETTER_PROVIDER || '').trim().toLowerCase();
-const kitFormId = (import.meta.env.PUBLIC_KIT_FORM_ID || '').trim();
+const nlProvider = (import.meta.env.PUBLIC_NEWSLETTER_PROVIDER || 'kit').trim().toLowerCase();
+// Default: Michael's Kit form "Unlock the Week by NeonKey" (uid 69fa21cf05). Set PUBLIC_KIT_FORM_ID=off to disable.
+const kitFormIdRaw = (import.meta.env.PUBLIC_KIT_FORM_ID || '10118914').trim();
+const kitFormId = kitFormIdRaw.toLowerCase() === 'off' ? '' : kitFormIdRaw;
 const kitFormUrlRaw = (import.meta.env.PUBLIC_KIT_FORM_URL || '').trim();
 const kitEmbedSrc = (import.meta.env.PUBLIC_KIT_EMBED_SRC || '').trim();
 const KIT_ACTION_RE = /^https:\/\/app\.(kit|convertkit)\.com\/forms\/\d+\/subscriptions\/?$/;
