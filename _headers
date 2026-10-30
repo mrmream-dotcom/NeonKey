@@ -1,0 +1,20 @@
+# Cloudflare Pages response headers. Ignored by GitHub Pages and `astro preview`.
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+# CSP allows: Umami Cloud (script from cloud.umami.is; it POSTs to https://gateway.umami.is/api/send, verified in the live script Oct 2026) and Kit newsletter forms.
+# Kit domains (checked Oct 2026 by loading a live Kit JS embed in Chrome):
+#   script:  https://<account>.kit.com/<uid>/index.js (account subdomain varies, hence *.kit.com) and https://f.convertkit.com/ckjs/ck.5.js
+#   connect: Kit's script POSTs to https://app.convertkit.com/forms/<id>/visit and submits to the form action on https://app.kit.com
+#   form-action: our own form posts to https://app.kit.com/forms/<FORM_ID>/subscriptions (older embeds use app.convertkit.com)
+#   img: images in Kit form templates come from https://embed.filekitcdn.com
+# connect: the Lab triage demo (/lab/ai-inquiry-triage/) POSTs to the Cloudflare Worker at https://neonkey-triage.mr-mream.workers.dev
+# If you turn on reCAPTCHA in the Kit form settings you'd also need www.google.com / www.gstatic.com; keep it off or add them.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com; connect-src 'self' https://neonkey-triage.mr-mream.workers.dev https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com; font-src 'self'; frame-src 'none'; form-action 'self' https://api.web3forms.com https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

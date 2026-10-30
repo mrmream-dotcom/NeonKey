@@ -1,0 +1,1 @@
+document.querySelectorAll(`details.toc-dd`).forEach(e=>{let t=e.querySelector(`summary`);e.addEventListener(`click`,t=>{t.target.closest(`a`)&&(e.open=!1)}),e.addEventListener(`keydown`,n=>{n.key===`Escape`&&e.open&&(e.open=!1,t?.focus())}),document.addEventListener(`click`,t=>{e.open&&!e.contains(t.target)&&(e.open=!1)})});

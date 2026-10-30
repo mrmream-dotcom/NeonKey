@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neonkey.tech/sitemap-index.xml
