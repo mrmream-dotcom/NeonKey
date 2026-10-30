@@ -20,3 +20,17 @@ Researched 2026-10-29. These are public freelance-market data points used to set
 
 - These are thin, mixed-quality sources (one blog, one Upwork guide, two individual job posts). Treat the numbers as a floor for a beginner offer, not a market average.
 - If you'd rather not publish prices until you've done a few jobs, change the service copy to "Quote on request" (edit `src/data/services.ts` and `src/pages/services/remote-it.astro`).
+
+## Update, Oct 30, 2026: founding-client price raise
+
+Prices were raised on Oct 30, 2026 (approved by Michael). Bigger builds went up close to 2x because the original numbers were low for the market. Smaller offers went up more modestly, and the Quick Win stays the cheapest way in. The site now shows a "Founding-client rates" note: intro pricing for the first 10 clients, then rates go up. Quoted prices stay locked in for that project.
+
+| Service | Old starting price | New starting price |
+| --- | --- | --- |
+| Remote Small-Office IT Setup | $150 | $299 |
+| Monthly Remote Support Plan | $75/mo | $99/mo |
+| One-Workflow Quick Win | $75 | $99 |
+| AI Intake & FAQ Assistant | $250 | $499 |
+| Lead-Routing & Follow-Up System | $400 | $799 |
+
+The figures above this section are the original research and are kept for reference.

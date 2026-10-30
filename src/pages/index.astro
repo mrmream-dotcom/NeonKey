@@ -4,6 +4,9 @@ import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
+import { remoteIt, automationOffers, introPricing, usd } from '../data/services';
+const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
+const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 const pillars = [
@@ -92,10 +95,11 @@ const pillars = [
     <div class="container">
       <div class="section-head"><h2 id="svc-h">Services for small businesses</h2><a href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services">View services →</a></div>
       <div class="grid grid-3">
-        <article class="card offer-featured"><span class="kicker">Featured · Starting at $150</span><h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-featured">Remote Small-Office IT Setup</a></h3><p>Business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups and password managers, fully remote.</p></article>
-        <article class="card"><span class="kicker">Starting at $75</span><h3>One-Workflow Quick Win</h3><p>Automate one repetitive task end to end.</p></article>
-        <article class="card"><span class="kicker">Starting at $250</span><h3>AI Intake &amp; FAQ Assistant</h3><p>Answer common questions and collect leads consistently.</p></article>
+        <article class="card offer-featured"><span class="kicker">Featured · Starting at {usd(remoteIt.from)}</span><h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-featured">Remote Small-Office IT Setup</a></h3><p>Business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups and password managers, fully remote.</p></article>
+        <article class="card"><span class="kicker">Starting at {usd(quickWin.from)}</span><h3>One-Workflow Quick Win</h3><p>Automate one repetitive task end to end.</p></article>
+        <article class="card"><span class="kicker">Starting at {usd(aiFaq.from)}</span><h3>AI Intake &amp; FAQ Assistant</h3><p>Answer common questions and collect leads consistently.</p></article>
       </div>
+      <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. More automation services are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>

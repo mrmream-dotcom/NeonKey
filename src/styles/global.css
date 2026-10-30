@@ -360,3 +360,8 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .article-empty { border: 1px dashed rgba(167,139,250,.55); border-radius: var(--radius); background: var(--panel); padding: 1.5rem 1.4rem; margin: 0 0 3rem; text-align: center; }
 .article-empty p { color: var(--muted); margin: 0 0 .5rem; }
 .article-empty a { color: var(--cyan); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+
+/* Founding-client (intro) pricing note */
+.intro-pricing { border: 1px solid rgba(34,211,238,.35); background: linear-gradient(90deg, rgba(34,211,238,.08), rgba(244,114,182,.06)); border-radius: 10px; padding: .7rem 1rem; margin: 0 0 1.25rem; color: var(--muted); font-size: .95rem; }
+.intro-pricing strong { color: var(--cyan); }
+.intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }

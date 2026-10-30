@@ -2,7 +2,7 @@
 // Shared by the page (src/pages/services/quiz.astro, runs in the browser) and the plan-email
 // Worker (workers/quiz/), so the on-screen result and the email always match.
 // Names and prices come from ./services.ts only. Never add per-item prices or estimates here.
-import { remoteIt, remoteSupportPlan, automationOffers, type Offer } from './services';
+import { remoteIt, remoteSupportPlan, automationOffers, introPricing, usd, type Offer } from './services';
 
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
@@ -15,10 +15,10 @@ export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it',
 
 export function priceLine(o: Offer): string {
   return o.unit
-    ? `Starting at $${o.from}${o.unit}.`
-    : `Starting at $${o.from}, scoped per project.`;
+    ? `Starting at ${usd(o.from)}${o.unit}.`
+    : `Starting at ${usd(o.from)}, scoped per project.`;
 }
-export const PRICE_DISCLAIMER = 'Pricing is a starting point, not a quote.';
+export const PRICE_DISCLAIMER = `Pricing is a starting point, not a quote. ${introPricing.label} apply to the first 10 clients.`;
 
 // ------------------------------------------------------------------ questions
 
@@ -282,10 +282,10 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
     ? `Your answers flagged ${names.length} ${names.length === 1 ? 'basic' : 'basics'} to tighten up: ${names.join(', ')}. Ask about them on the same call.`
     : k === 'Q' ? (p.wf === 'copy' ? 'Copying information between apps by hand could be a quick win to automate.' : p.wf === 'reminders' ? 'Sending the same emails or reminders by hand could be a quick win to automate.' : 'A repetitive task came up too.')
     : k === 'F' ? 'Repeat questions came up too.' : 'Missed inquiries came up too.';
-  return { name: o.name, price: `Starting at $${o.from}`, text, href: SERVICE_HREF[k] };
+  return { name: o.name, price: `Starting at ${usd(o.from)}`, text, href: SERVICE_HREF[k] };
 }
 
-const BASICS_TIP = `Tip: a business email on your own domain makes any automation cleaner and looks more trustworthy to customers. It\'s part of the ${remoteIt.name} (starting at $${remoteIt.from}).`;
+const BASICS_TIP = `Tip: a business email on your own domain makes any automation cleaner and looks more trustworthy to customers. It\'s part of the ${remoteIt.name} (starting at ${usd(remoteIt.from)}).`;
 
 export function buildPlan(p: Plan): PlanView {
   const v = buildPlanBase(p);
@@ -308,7 +308,7 @@ function buildPlanBase(p: Plan): PlanView {
       ...base, resultName: remoteIt.name, kicker, heading: remoteIt.name,
       intro: `You told me ${pain}. The fixes your answers point to are the basics this setup covers: email, passwords, Wi-Fi and backups, done remotely by video call and screen share, on accounts you own.`,
       items: { title: p.healthCheck ? 'Start with a quick health check' : 'Based on your answers, start with', list },
-      price: `Starting at $${remoteIt.from}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
+      price: `Starting at ${usd(remoteIt.from)}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
       youGet: 'What you get either way: plain-English notes of every change, admin access that stays with you, and a short recorded walkthrough where it helps.',
       footnote: "Handle regulated data (for example HIPAA or PCI), or need someone onsite? That\'s outside this setup. Mention it and I\'ll say so up front and point you somewhere better.",
       links: [
@@ -396,7 +396,7 @@ function buildPlanBase(p: Plan): PlanView {
         `Where you track leads now, ${tracking}`,
       ],
       price: `${priceLine(leadRouting)} ${PRICE_DISCLAIMER}`,
-      note: solo && a.q6 !== 'B' ? `Only one or two places to watch? A ${quickWin.name} (starting at $${quickWin.from}) might cover it. I\'ll tell you honestly on the call.` : undefined,
+      note: solo && a.q6 !== 'B' ? `Only one or two places to watch? A ${quickWin.name} (starting at ${usd(quickWin.from)}) might cover it. I\'ll tell you honestly on the call.` : undefined,
       links: [
         { label: 'Ask about this', href: contact('lead-routing'), primary: true },
         { label: 'See all services', href: '/services/' },
@@ -427,7 +427,7 @@ function buildPlanBase(p: Plan): PlanView {
       intro: 'My paid services are built for small businesses and solo pros, so for personal use the best next step is free: plain-language guides, hands-on Lab builds and a weekly email.',
       freeLinks,
       selfHelp: tips,
-      setupNote: { text: `Want hands-on help with your own setup? The ${remoteIt.name} (starting at $${remoteIt.from}) is available if you want it. Ask, and I\'ll tell you honestly whether it makes sense for you.`, href: '/services/remote-it/' },
+      setupNote: { text: `Want hands-on help with your own setup? The ${remoteIt.name} (starting at ${usd(remoteIt.from)}) is available if you want it. Ask, and I\'ll tell you honestly whether it makes sense for you.`, href: '/services/remote-it/' },
       links: [
         { label: 'Go to Learn', href: '/learn/', primary: true },
         { label: 'Try the Lab', href: '/lab/' },
@@ -457,7 +457,7 @@ function buildPlanBase(p: Plan): PlanView {
   // TALK (11+ people)
   const q3Map: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L' };
   const named = q3Map[a.q3];
-  const touched = TIE.filter((k) => p.scores[k] >= 2).map((k) => `${SERVICES[k].name} (starting at $${SERVICES[k].from})`);
+  const touched = TIE.filter((k) => p.scores[k] >= 2).map((k) => `${SERVICES[k].name} (starting at ${usd(SERVICES[k].from)})`);
   return {
     ...base, resultName: "Let\'s talk it through", kicker, heading: "Let\'s talk it through",
     intro: `My setups are built for teams of about 1–10 people, so a bigger team may need more than I offer. I\'d rather say that up front. A short chat is the honest way to find out, and if it\'s not something I can help with, I\'ll say so.${named ? ` The ${SERVICES[named].name} may still help with one piece.` : ''}`,
@@ -501,7 +501,7 @@ function addDetail(v: PlanView, p: Plan) {
   const r = v.ready ?? [];
   if (p.type === 'R') {
     const list = v.items!.list;
-    v.startPrice = `Starting at $${remoteIt.from}`;
+    v.startPrice = `Starting at ${usd(remoteIt.from)}`;
     v.scope = { title: p.healthCheck ? 'A quick health check of' : 'Based on your answers, your setup would cover', list: list.map((i) => i.name) };
     v.steps = list.map((i) => ({ title: i.name, what: i.covers, why: i.reason.startsWith('a quick check') ? "Your answers didn't flag this directly. It's one of the basics worth a quick check." : cap(i.reason) + '.', ready: i.ready }));
     v.orderNote = "Why this order: email and its authentication come first because most other accounts sign in or reset through your email. Passwords and two-factor sign-in come next because they protect every other account. The network, backups and device checklists build on top of that.";
@@ -509,7 +509,7 @@ function addDetail(v: PlanView, p: Plan) {
   } else if (p.type === 'Q') {
     const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
     const focusName = p.wf === 'copy' ? 'Automating copy-and-paste between apps' : p.wf === 'reminders' ? 'Automating repeat emails and reminders' : 'Automating the one task you repeat most';
-    v.startPrice = `Starting at $${quickWin.from}`;
+    v.startPrice = `Starting at ${usd(quickWin.from)}`;
     v.scope = { title: 'Based on your answers, your Quick Win would cover', list: [focusName, ...quickWin.items] };
     v.steps = [
       { title: 'Write down the task', what: 'A good first candidate: ' + v.focus!.text.charAt(0).toLowerCase() + v.focus!.text.slice(1), why, ready: r.slice(0, 2).concat(r.slice(3)) },
@@ -520,7 +520,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.nextSteps = SCOPING;
   } else if (p.type === 'F') {
     const why = a.q6 === 'A' ? 'You said people ask the same questions (hours, prices, how to book).' : 'You said you answer the same customer questions again and again.';
-    v.startPrice = `Starting at $${aiFaq.from}`;
+    v.startPrice = `Starting at ${usd(aiFaq.from)}`;
     v.scope = { title: 'Based on your answers, your assistant would include', list: v.includes!.list };
     v.steps = [
       { title: 'Gather your common questions and answers', what: 'The assistant is trained on your own FAQ content, so this is the most important prep.', why, ready: [r[0]] },
@@ -532,7 +532,7 @@ function addDetail(v: PlanView, p: Plan) {
   } else if (p.type === 'L') {
     const why = a.q6 === 'B' ? 'You said inquiries come in from several places and some get missed.' : 'You said new inquiries or leads slip through the cracks, or follow-up is slow.';
     const inc = v.includes!.list;
-    v.startPrice = `Starting at $${leadRouting.from}`;
+    v.startPrice = `Starting at ${usd(leadRouting.from)}`;
     v.scope = { title: 'Based on your answers, your system would include', list: ['Form, email or chat intake', p.team ? 'Routing rules to the right person' : 'Routing rules into one list', 'Follow-up reminders and templates', 'Simple tracking view'] };
     v.steps = [
       { title: 'Bring every inquiry into one flow', what: inc[0] + '.', why, ready: [r[0]] },
@@ -545,7 +545,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.scope = { title: 'Where to start (free)', list: ['Learn: plain-language guides', 'The Lab: hands-on builds and a working demo', 'Unlock the Week: one short weekly email'] };
     v.nextSteps = ['Pick one of the quick fixes above and do it this week.', 'Browse Learn or the Lab when you have a few minutes.', 'Reply to this email if you get stuck.'];
   } else if (p.type === 'LEARN-BIZ') {
-    v.startPrice = `${quickWin.name}: starting at $${quickWin.from}`;
+    v.startPrice = `${quickWin.name}: starting at ${usd(quickWin.from)}`;
     v.scope = { title: 'Good places to start', list: ['Free guides in Learn and the Lab', 'Unlock the Week, one short weekly email', `Optional: a ${quickWin.name}`] };
     v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about a ${quickWin.name}.`, 'You get a fixed quote after a short scoping call before any work starts.'];
   } else {
