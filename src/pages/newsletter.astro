@@ -1,35 +1,45 @@
 ---
+import { url, NEWSLETTER } from '../config';
 import Base from '../layouts/Base.astro';
 import DemoBadge from '../components/DemoBadge.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 ---
-<Base title="NeonKey Weekly" description="NeonKey Weekly: one short email a week. A tool, a tip, a deal and a lesson.">
+<Base title="Unlock the Week" description="Unlock the Week by NeonKey: a free weekly email with curated tech and AI articles worth reading, plus one deal or tool pick. Short, skimmable, unsubscribe anytime.">
   <div class="narrow page-head">
-    <span class="kicker">Unlock the Week</span>
-    <h1>NeonKey Weekly</h1>
-    <p class="lead">One short email a week. Built to read in about five minutes.</p>
-    <div class="grid grid-2" style="margin:1.5rem 0">
-      <div class="card"><h3>What's inside</h3><p>A useful tool, a quick how-to tip, one deal worth knowing about, and one thing I learned that week.</p></div>
-      <div class="card"><h3>What's not</h3><p>No spam, no selling your email, no daily blasts. Unsubscribe in one click.</p></div>
-    </div>
-    <div class="nl-box">
+    <span class="kicker">Newsletter · Weekly</span>
+    <h1>Unlock the Week</h1>
+    <p class="lead">A short weekly email with the tech and AI articles actually worth your time, plus one deal or tool pick. Curated, skimmable, free.</p>
+    <div class="nl-box" style="margin-top:1.5rem">
       <h2 style="font-size:1.4rem">Subscribe</h2>
       <NewsletterForm id="page-nl" />
     </div>
   </div>
-  <section>
+
+  <section style="padding-top:1rem" aria-labelledby="get-h">
     <div class="narrow">
-      <h2>Archive</h2>
-      <article class="card">
-        <div class="card-top"><span class="kicker">Issue #0</span><DemoBadge /></div>
-        <h3>NeonKey Weekly #0: The key to your first homelab</h3>
-        <ul class="muted" style="padding-left:1.1rem;margin:.5rem 0 0">
-          <li><strong>Tool:</strong> n8n, open-source automation you can self-host</li>
-          <li><strong>Tip:</strong> label your cables before you need to</li>
-          <li><strong>Deal:</strong> placeholder slot (demo)</li>
-          <li><strong>Learned:</strong> Docker volumes keep your data when containers restart</li>
-        </ul>
-        <p style="margin-top:.8rem"><a href="/learn/self-host-n8n-old-pc/">Related tutorial →</a></p>
+      <h2 id="get-h">What you get</h2>
+      <div class="grid grid-2">
+        <div class="card"><h3>Curated reads</h3><p>A handful of tech and AI articles worth reading that week, each with a one- or two-line note on why it matters. Links go to the original source.</p></div>
+        <div class="card"><h3>One pick</h3><p>A deal, tool or app worth knowing about. If a link is an affiliate link, the issue says so right next to it.</p></div>
+        <div class="card"><h3>Cadence</h3><p>One email a week. No daily blasts and no extra promo sends.</p></div>
+        <div class="card"><h3>Privacy</h3><p>Your email is used only to send the newsletter. It's never sold. Every issue has a one-click unsubscribe. Signups are handled by beehiiv; see the <a href={url('/privacy/')}>privacy policy</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="sample-h">
+    <div class="narrow">
+      <h2 id="sample-h">What an issue looks like</h2>
+      <article class="card sample-issue">
+        <div class="card-top"><span class="kicker">Sample format</span><DemoBadge label="Sample, not a real issue" /></div>
+        <h3>Unlock the Week #[number]: [date]</h3>
+        <ol>
+          <li><strong>The quick take:</strong> two or three sentences on the week's theme.</li>
+          <li><strong>Worth reading (3–5 links):</strong> [Article title] from [source], plus one line on why it's worth your time.</li>
+          <li><strong>Pick of the week:</strong> [a deal, tool or app], what it does and who it's for, with any affiliate link labeled.</li>
+          <li><strong>One small tip:</strong> a short how-to you can try in a few minutes.</li>
+        </ol>
+        <p class="muted" style="margin:.6rem 0 0;font-size:.92rem">This shows the layout only. No issues have been sent yet{NEWSLETTER.mode === 'off' ? ' and signups open soon' : ''}.</p>
       </article>
     </div>
   </section>

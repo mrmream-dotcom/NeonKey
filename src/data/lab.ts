@@ -26,6 +26,7 @@ export const labProjects: LabProject[] = [
     summary: 'Separate networks for IoT gadgets, guests and lab gear on a prosumer router and a mini PC, so one weak device can\'t see everything.',
     tags: ['Networking', 'Security', 'Homelab'],
     level: 'Intermediate',
+    service: { label: 'Remote Small-Office IT Setup', href: '/services/remote-it/' },
   },
   {
     slug: 'ai-faq-assistant-small-business',

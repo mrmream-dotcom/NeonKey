@@ -1,0 +1,77 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import { automationOffers, remoteIt, remoteSupportPlan } from '../../data/services';
+---
+<Base title="Services" description="NeonKey services for small businesses: remote small-office IT setup, a monthly remote support plan, and practical AI automations. Scoped first, plain English.">
+  <div class="container page-head">
+    <span class="kicker">Services</span>
+    <h1>Practical IT and automation for small businesses</h1>
+    <p>Remote setup help and small automations, explained in plain English. Every project starts with a short scoping call so we agree on what "done" looks like before any work begins.</p>
+  </div>
+
+  <section style="padding-top:1rem" aria-labelledby="featured-h">
+    <div class="container">
+      <article class="card offer offer-featured">
+        <div class="offer-featured-grid">
+          <div>
+            <span class="kicker">Featured · Fully remote</span>
+            <h2 id="featured-h" style="font-size:1.6rem;margin-top:.4rem">{remoteIt.name}</h2>
+            <p class="muted">For small offices and solo pros. {remoteIt.for}.</p>
+            <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+          <div class="offer-featured-side">
+            <p class="price">Starting at ${remoteIt.from}<small>Typical range {remoteIt.range}, scoped per project</small></p>
+            <p class="muted" style="font-size:.95rem">Optional add-on: {remoteSupportPlan.name}, from ${remoteSupportPlan.from}/mo.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-featured">See what's included</a>
+              <a class="btn btn-ghost" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name}>Ask about this</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section style="padding-top:0" aria-labelledby="auto-h">
+    <div class="container">
+      <div class="section-head"><h2 id="auto-h">Unlock AI: automation services</h2><p>Small automations that take repetitive work off your plate.</p></div>
+      <div class="grid grid-3">
+        {automationOffers.map((o) => (
+          <article class="card offer">
+            <span class="kicker">Automation</span>
+            <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
+            <p class="price">Starting at ${o.from}<small>Typical range {o.range}, scoped per project</small></p>
+            <p class="muted">{o.for}.</p>
+            <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
+            <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={o.name}>Ask about this</a>
+          </article>
+        ))}
+      </div>
+      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+        <span>Curious how these get built? The Lab documents hands-on builds, including what broke.</span>
+        <a class="btn btn-ghost btn-sm" href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="services">See the builds</a>
+      </div>
+      <p class="muted" style="margin-top:1.25rem;font-size:.95rem">Pricing shown is a starting point, not a quote. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
+    </div>
+  </section>
+  <section class="alt">
+    <div class="container">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li><strong>Scope:</strong> a short call to pick one problem worth solving.</li>
+        <li><strong>Build:</strong> I set it up remotely with the tools you already use where possible.</li>
+        <li><strong>Hand off:</strong> you get notes, a walkthrough and full ownership of every account.</li>
+      </ol>
+    </div>
+  </section>
+  <section>
+    <div class="container">
+      <div class="section-head"><h2>Coming later</h2><p>Not offered yet.</p></div>
+      <div class="coming">
+        <span class="chip">Cloud file cleanup &amp; sharing setup</span>
+        <span class="chip">Automation maintenance plans</span>
+      </div>
+    </div>
+  </section>
+</Base>

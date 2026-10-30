@@ -1,18 +1,39 @@
 ---
 import Base from '../layouts/Base.astro';
+import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 ---
-<Base title="Privacy" description="NeonKey privacy policy (placeholder).">
+<Base title="Privacy" description="How NeonKey handles your data: what is collected, cookieless Umami analytics, and your choices.">
   <article class="narrow page-head prose">
     <span class="kicker">Privacy</span>
     <h1>Privacy policy</h1>
-    <div class="callout warn"><strong>Placeholder.</strong> This demo collects nothing: forms aren't connected and there are no analytics or cookies. Replace this page with a real policy before launch.</div>
-    <h2>To cover at launch</h2>
+    <div class="callout warn"><strong>Draft.</strong> This page is a starting point, not legal advice. Review and complete it before launch.</div>
+
+    <h2>Analytics</h2>
+    {UMAMI.websiteId ? (
+      <p>NeonKey uses <a href="https://umami.is" data-umami-event="outbound-click" data-umami-event-item="umami-site">Umami</a> for privacy-friendly analytics. Umami doesn't use cookies, doesn't collect personal data and doesn't track you across sites. It records anonymous page views and a few button clicks (for example newsletter signups and service enquiries) so I can see what's useful. Blocking the script won't break anything on the site.</p>
+    ) : (
+      <p>This build doesn't load any analytics. If analytics are turned on, NeonKey will use Umami, a cookieless, privacy-friendly tool that records anonymous page views and button clicks only.</p>
+    )}
+
+    <h2>Newsletter</h2>
+    {NEWSLETTER.mode !== 'off' ? (
+      <p>Unlock the Week is sent with <a href="https://www.beehiiv.com/privacy" data-umami-event="outbound-click" data-umami-event-item="beehiiv-privacy">beehiiv</a>. When you subscribe, beehiiv stores your email address and basic delivery data (such as opens and clicks) on NeonKey's behalf. Your email is used only to send the newsletter and is never sold. Every issue has a one-click unsubscribe link.</p>
+    ) : (
+      <p>Newsletter signups aren't open yet, so no email addresses are collected. When they open, Unlock the Week will be sent with beehiiv and this section will describe what it stores.</p>
+    )}
+
+    <h2>Contact</h2>
+    <p>The contact form is a placeholder and isn't connected, so nothing you type in it is sent or stored. If you email {CONTACT_EMAIL}, your message is kept only as long as needed to reply.</p>
+
+    <h2>Cookies</h2>
+    <p>NeonKey itself sets no cookies. Affiliate links may lead to retailer sites that set their own cookies; see the <a href={url('/disclosure/')}>disclosure</a>.</p>
+
+    <h2>Still to complete before launch</h2>
     <ul>
-      <li>What's collected (e.g., newsletter email) and why</li>
-      <li>Which providers process it (email platform, analytics, hosting)</li>
-      <li>Cookies and affiliate tracking</li>
-      <li>How to unsubscribe, access or delete your data</li>
-      <li>Contact for privacy questions</li>
+      <li>Newsletter provider (e.g. beehiiv) and what it stores</li>
+      <li>Contact method and how messages are kept</li>
+      <li>Hosting provider logs (e.g. Cloudflare)</li>
+      <li>How to access or delete your data, and a privacy contact</li>
     </ul>
   </article>
 </Base>

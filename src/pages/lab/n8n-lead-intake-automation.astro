@@ -1,4 +1,5 @@
 ---
+import { url } from '../../config';
 import LabProject from '../../layouts/LabProject.astro';
 ---
 <LabProject slug="n8n-lead-intake-automation" stack={['n8n (self-hosted)', 'Docker', 'Mini PC or old PC', 'HTML form / webhook', 'Google Sheets', 'SMTP email', 'Reverse proxy + HTTPS']}>
@@ -18,7 +19,7 @@ import LabProject from '../../layouts/LabProject.astro';
   </Fragment>
 
   <Fragment slot="stack">
-    <p class="muted">Builds on the <a href="/learn/self-host-n8n-old-pc/">Self-host n8n on an old PC</a> tutorial.</p>
+    <p class="muted">Builds on the <a href={url('/learn/self-host-n8n-old-pc/')}>Self-host n8n on an old PC</a> tutorial.</p>
   </Fragment>
 
   <Fragment slot="build">

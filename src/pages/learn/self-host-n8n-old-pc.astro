@@ -1,8 +1,9 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
 ---
-<Base title="Self-host n8n on an old PC" description="Demo tutorial: run n8n with Docker on a spare computer.">
+<Base title="Self-host n8n on an old PC" description="Beginner tutorial: run the n8n automation tool with Docker on a spare PC at home, plus how to keep it safe.">
   <article class="narrow page-head prose">
     <span class="kicker">Learn · Homelab · Beginner</span>
     <h1>Self-host n8n on an old PC</h1>
@@ -10,7 +11,7 @@ import DemoBadge from '../../components/DemoBadge.astro';
 
     <p class="lead">n8n is an open-source workflow automation tool. Running it on a spare computer at home is a low-cost way to learn automation and Docker in one project.</p>
 
-    <div class="callout warn"><strong>Demo content.</strong> This page shows the tutorial layout. Check the official n8n docs (<a href="https://docs.n8n.io/hosting/">docs.n8n.io/hosting</a>) for current install steps and licensing before you follow along.</div>
+    <div class="callout warn"><strong>Demo content.</strong> This page shows the tutorial layout. Check the official n8n docs (<a data-umami-event="outbound-click" data-umami-event-item="n8n-docs-hosting" href="https://docs.n8n.io/hosting/">docs.n8n.io/hosting</a>) for current install steps and licensing before you follow along.</div>
 
     <h2>What you'll need</h2>
     <ul>
@@ -52,6 +53,6 @@ docker run -d --name n8n --restart unless-stopped \
     <p>Check the logs first: <code>docker logs n8n</code>. Most beginner issues are a port already in use, a firewall rule, or a typo in the run command.</p>
 
     <div class="callout"><strong>Learning in public:</strong> this section will hold my real notes and mistakes from the build once the site launches.</div>
-    <p><a href="/learn/">← Back to Learn</a></p>
+    <p><a href={url('/learn/')}>← Back to Learn</a></p>
   </article>
 </Base>

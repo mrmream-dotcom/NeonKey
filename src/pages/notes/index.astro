@@ -1,8 +1,9 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
 ---
-<Base title="Notes" description="NeonKey notes: short articles, opinions and build logs.">
+<Base title="Notes" description="NeonKey notes: short articles, plain-English explainers, opinions and build logs from a learning-in-public tech journey.">
   <div class="container page-head">
     <span class="kicker">Notes</span>
     <h1>Notes</h1>
@@ -11,7 +12,7 @@ import DemoBadge from '../../components/DemoBadge.astro';
   <div class="container">
     <div class="list-item">
       <div>
-        <h3><a href="/notes/what-unlock-means/">What "unlock tech" means here</a></h3>
+        <h3><a href={url('/notes/what-unlock-means/')}>What "unlock tech" means here</a></h3>
         <p>Why NeonKey exists and how it's built for beginners and builders at the same time.</p>
       </div>
       <div><DemoBadge /></div>

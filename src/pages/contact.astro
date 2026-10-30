@@ -1,20 +1,22 @@
 ---
+import { url, CONTACT_EMAIL, IS_DEMO } from '../config';
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Contact" description="Contact NeonKey.">
+<Base title="Contact" description="Contact NeonKey about remote small-office IT setup, automation services, a tutorial, a review or the Unlock the Week newsletter.">
   <div class="narrow page-head">
     <span class="kicker">Contact</span>
     <h1>Contact</h1>
-    <p>Questions about services, a tutorial or a review? Send a note.</p>
+    <p>Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.{IS_DEMO && <span class="muted"> (Placeholder address: this inbox isn't set up yet.)</span>}</p>
+    <p class="muted" style="font-size:.95rem">Looking for IT help? See <a href={url('/services/remote-it/')}>Remote Small-Office IT Setup</a> for what's in and out of scope.</p>
     <form class="panel" data-demo-form action="#" method="post" novalidate>
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" /></div>
       <div class="field"><label for="c-topic">Topic</label>
-        <select id="c-topic" name="topic"><option>Services (Unlock AI)</option><option>Tutorials</option><option>Reviews</option><option>Newsletter</option><option>Something else</option></select>
+        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>Something else</option></select>
       </div>
       <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5"></textarea></div>
-      <button class="btn btn-primary" type="submit">Send message</button>
-      <p class="form-note" aria-live="polite">Demo form: nothing is sent or stored.</p>
+      <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
+      <p class="form-note" aria-live="polite">Placeholder form: not connected yet, so nothing is sent or stored. Please use email for now.</p>
     </form>
   </div>
 </Base>

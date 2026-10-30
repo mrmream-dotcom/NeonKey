@@ -1,8 +1,9 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
 ---
-<Base title={'What "unlock tech" means here'} description="Demo article: the idea behind NeonKey.">
+<Base title={'What "unlock tech" means here'} description="What 'unlock tech' means at NeonKey: one site for beginners and builders, four doors and a few ground rules.">
   <article class="narrow page-head prose">
     <span class="kicker">Notes</span>
     <h1>What "unlock tech" means here</h1>
@@ -14,11 +15,11 @@ import DemoBadge from '../../components/DemoBadge.astro';
     <ul>
       <li><strong>Unlock AI:</strong> small automations that save real time for small businesses.</li>
       <li><strong>Unlock Deals:</strong> honest picks, disclosed affiliate links, no fake ratings.</li>
-      <li><strong>Unlock Skills:</strong> tutorials, homelab builds and an open certification study path.</li>
+      <li><strong>Unlock Skills:</strong> tutorials and hands-on homelab builds.</li>
       <li><strong>Unlock the Week:</strong> a short weekly email that's worth opening.</li>
     </ul>
     <h2>Ground rules</h2>
     <p>No hype and no guarantees. Clear labels when something is sponsored or an affiliate link. And when I'm still learning something, I'll say so.</p>
-    <p><a href="/notes/">← Back to Notes</a></p>
+    <p><a href={url('/notes/')}>← Back to Notes</a></p>
   </article>
 </Base>

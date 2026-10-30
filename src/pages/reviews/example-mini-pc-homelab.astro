@@ -1,11 +1,12 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
 ---
-<Base title="Example Mini PC for a first homelab (demo review)" description="Demo review layout with pros/cons, verdict and affiliate disclosure.">
+<Base title="Example Mini PC for a first homelab (demo review)" description="Sample NeonKey review layout for a first homelab mini PC: who it's for, pros and cons, a plain verdict and affiliate disclosure.">
   <article class="narrow page-head prose">
     <div class="disclosure" role="note">
-      <strong>Affiliate disclosure:</strong> NeonKey may earn a commission if you buy through links on this page, at no extra cost to you. It doesn't change the verdict. <a href="/disclosure/">Full disclosure</a>.
+      <strong>Affiliate disclosure:</strong> NeonKey may earn a commission if you buy through links on this page, at no extra cost to you. It doesn't change the verdict. <a href={url('/disclosure/')}>Full disclosure</a>.
     </div>
     <span class="kicker">Review · Homelab hardware</span>
     <h1>Example Mini PC for a first homelab</h1>
@@ -43,10 +44,10 @@ import DemoBadge from '../../components/DemoBadge.astro';
     <div class="buy-box" aria-labelledby="buy-h">
       <h2 id="buy-h" style="margin-top:0;font-size:1.25rem">Where to buy</h2>
       <p class="muted" style="font-size:.92rem">Demo links: these go nowhere. Prices aren't shown because they change; check the retailer.</p>
-      <div class="buy-row"><span>Retailer A</span><a class="btn btn-primary btn-sm" href="#" rel="sponsored nofollow">Check price</a></div>
-      <div class="buy-row"><span>Retailer B</span><a class="btn btn-ghost btn-sm" href="#" rel="sponsored nofollow">Check price</a></div>
+      <div class="buy-row"><span>Retailer A</span><a class="btn btn-primary btn-sm" href="#" rel="sponsored nofollow" data-umami-event="affiliate-click" data-umami-event-item="example-mini-pc" data-umami-event-retailer="retailer-a">Check price</a></div>
+      <div class="buy-row"><span>Retailer B</span><a class="btn btn-ghost btn-sm" href="#" rel="sponsored nofollow" data-umami-event="affiliate-click" data-umami-event-item="example-mini-pc" data-umami-event-retailer="retailer-b">Check price</a></div>
     </div>
 
-    <p><a href="/reviews/">← Back to Reviews</a></p>
+    <p><a href={url('/reviews/')}>← Back to Reviews</a></p>
   </article>
 </Base>

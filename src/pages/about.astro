@@ -1,19 +1,20 @@
 ---
+import { url } from '../config';
 import Base from '../layouts/Base.astro';
 ---
-<Base title="About" description="About NeonKey: unlock tech, whatever your level.">
+<Base title="About" description="About NeonKey and Michael Ream: a tech hub for beginners and builders covering AI automation, homelab, honest reviews and a weekly email.">
   <article class="narrow page-head prose">
     <span class="kicker">About</span>
     <h1>About NeonKey</h1>
     <p class="lead">NeonKey is a tech brand about unlocking: making AI, gear, skills and the week's news easier to use, whatever your level.</p>
     <h2>Who's behind it</h2>
-    <p>NeonKey is run by Michael Ream, a CIS student and builder who documents everything in public: homelab projects, automation builds and a certification journey. Security+ is in progress and Network+ is planned; neither is earned yet, and the site will say so until they are.</p>
+    <p>NeonKey is run by Michael Ream, a CIS student and builder who documents everything in public: homelab projects, automation builds and remote IT setups for small offices.</p>
     <h2>How NeonKey works</h2>
     <ul>
       <li><strong>Honest by default:</strong> affiliate links are disclosed, and reviews are never paid placements.</li>
       <li><strong>Beginner-friendly:</strong> plain language first, details for those who want them.</li>
       <li><strong>No hype:</strong> no guarantees and no made-up numbers.</li>
     </ul>
-    <p><a class="btn btn-primary" href="/newsletter/">Get NeonKey Weekly</a></p>
+    <p><a class="btn btn-primary" href={url('/newsletter/')}>Get Unlock the Week</a></p>
   </article>
 </Base>

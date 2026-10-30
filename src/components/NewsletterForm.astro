@@ -1,10 +1,32 @@
 ---
+// Newsletter signup for "Unlock the Week".
+// Modes (see src/config.ts): embed = beehiiv embedded form, link = our form sends to the beehiiv subscribe page,
+// off = clearly labeled "coming soon" state with the form disabled (no fake success).
+import { NEWSLETTER } from '../config';
 interface Props { compact?: boolean; id?: string }
 const { compact = false, id = 'nl' } = Astro.props;
+const { mode } = NEWSLETTER;
 ---
-<form class:list={['nl-form', { compact }]} data-demo-form action="#" method="post" novalidate>
-  <label for={`${id}-email`} class="sr-only">Email address</label>
-  <input id={`${id}-email`} name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
-  <button type="submit" class="btn btn-primary">Get NeonKey Weekly</button>
-  <p class="form-note" aria-live="polite">Demo form: nothing is sent or stored.</p>
-</form>
+{mode === 'embed' && (
+  <div class="nl-embed" data-nl-embed data-form={id}>
+    <script is:inline async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+    <iframe src={`https://subscribe-forms.beehiiv.com/${NEWSLETTER.beehiivEmbedId}`} class="beehiiv-embed" title="Subscribe to Unlock the Week" loading="lazy" scrolling="no"></iframe>
+    <p class="form-note">Signups are handled by beehiiv. Unsubscribe anytime.</p>
+  </div>
+)}
+{mode === 'link' && (
+  <form class:list={['nl-form', { compact }]} action={NEWSLETTER.beehiivFormUrl} method="get" target="_blank" rel="noopener" data-nl-form data-form={id}>
+    <label for={`${id}-email`} class="sr-only">Email address</label>
+    <input id={`${id}-email`} name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+    <button type="submit" class="btn btn-primary" data-umami-event="newsletter-signup" data-umami-event-form={id} data-umami-event-provider="beehiiv">Subscribe</button>
+    <p class="form-note" aria-live="polite">Opens the Unlock the Week signup page on beehiiv to confirm. Unsubscribe anytime.</p>
+  </form>
+)}
+{mode === 'off' && (
+  <form class:list={['nl-form', { compact }]} aria-disabled="true" data-nl-off>
+    <label for={`${id}-email`} class="sr-only">Email address (signups open soon)</label>
+    <input id={`${id}-email`} name="email" type="email" placeholder="Signups open soon" disabled />
+    <button type="button" class="btn btn-primary" disabled>Coming soon</button>
+    <p class="form-note"><span class="nl-soon">Coming soon</span> Unlock the Week isn't accepting signups yet. Nothing is collected here.</p>
+  </form>
+)}

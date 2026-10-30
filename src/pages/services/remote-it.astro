@@ -1,0 +1,105 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import { remoteIt, remoteSupportPlan } from '../../data/services';
+const setup = [
+  { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, aliases like hello@ or billing@, shared calendars and a clean admin account that you own.' },
+  { h: 'Email authentication', p: 'Publish SPF, DKIM and DMARC records so your mail is more likely to land in inboxes and harder to spoof. Start DMARC in monitor mode, then tighten it once reports look clean.' },
+  { h: 'Wi-Fi & router security walkthrough', p: 'A guided video session on your own router: firmware updates, strong admin and Wi-Fi passwords, WPA2/WPA3, a separate guest network and turning off features you don\'t use.' },
+  { h: 'Backups', p: 'A simple 3-2-1 plan for the files that matter: what gets backed up, where, how often, and a test restore so you know it works.' },
+  { h: 'Password manager rollout', p: 'Pick a business password manager, set up shared vaults, turn on two-factor sign-in for key accounts and give everyone a short how-to.' },
+  { h: 'Device setup checklists', p: 'A written checklist for new and departing laptops and phones: updates, disk encryption, screen lock, accounts in and out. Yours to reuse.' },
+];
+---
+<Base title={remoteIt.name} description="Remote small-office IT setup for small businesses and solo pros: business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups, password managers and device checklists. Optional monthly remote support.">
+  <div class="container page-head">
+    <span class="kicker">Services · Fully remote</span>
+    <h1>{remoteIt.name}</h1>
+    <p>For small businesses and solo professionals who want the basics done right without hiring an IT department. Everything happens remotely by video call, screen share and written notes, using your accounts so you keep full ownership.</p>
+    <div class="btn-row" style="margin-top:1rem">
+      <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="remote-it-hero">Ask about a setup</a>
+      <a class="btn btn-ghost" href="#support-plan">Monthly support plan</a>
+    </div>
+  </div>
+
+  <section style="padding-top:1rem" aria-labelledby="setup-h">
+    <div class="container">
+      <div class="section-head"><h2 id="setup-h">What a setup can include</h2><p>Pick what you need; we scope it together first.</p></div>
+      <div class="grid grid-3">
+        {setup.map((s) => <article class="card"><h3>{s.h}</h3><p>{s.p}</p></article>)}
+      </div>
+      <div class="grid grid-2" style="margin-top:1.5rem">
+        <div class="panel">
+          <span class="kicker">Setup pricing</span>
+          <p class="price-inline">Starting at ${remoteIt.from}</p>
+          <p class="muted" style="margin:0">Typical range {remoteIt.range}, depending on how many people, accounts and items are in scope. You get a fixed quote after the scoping call.</p>
+        </div>
+        <div class="panel">
+          <span class="kicker">You get</span>
+          <ul class="muted" style="margin:.4rem 0 0;padding-left:1.1rem">
+            <li>Plain-English notes of everything that was changed</li>
+            <li>Admin access stays with you, not with me</li>
+            <li>A short recorded walkthrough where it helps</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="support-plan" aria-labelledby="plan-h">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:start">
+        <div>
+          <span class="kicker">Optional add-on</span>
+          <h2 id="plan-h">{remoteSupportPlan.name}</h2>
+          <p class="muted">{remoteSupportPlan.for}.</p>
+          <ul class="muted" style="padding-left:1.1rem">{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div class="panel">
+          <span class="kicker">Plan pricing</span>
+          <p class="price-inline">Starting at ${remoteSupportPlan.from}/mo</p>
+          <p class="muted">Typical range {remoteSupportPlan.range}, based on the number of people and requests included. The response window (for example, within one or two business days) is agreed in writing before you start.</p>
+          <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={remoteSupportPlan.name}>Ask about the plan</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="scope-h">
+    <div class="container">
+      <h2 id="scope-h">Scope and exclusions</h2>
+      <div class="proscons">
+        <div class="pros">
+          <h3>In scope</h3>
+          <ul>
+            <li>Small offices and solo pros, roughly 1–10 people</li>
+            <li>Remote work only: video call, screen share, email</li>
+            <li>Mainstream cloud tools: Google Workspace, Microsoft 365, common password managers and backup tools</li>
+            <li>Consumer and prosumer routers and Wi-Fi gear you already own</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h3>Not included</h3>
+          <ul>
+            <li>Onsite visits or hardware installs</li>
+            <li>Government systems or contracts</li>
+            <li>Regulated data handling or compliance work (for example HIPAA or PCI)</li>
+            <li>24/7, emergency or after-hours response</li>
+            <li>Guarantees of security, uptime or deliverability</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.95rem">If something's outside this scope, I'll say so on the scoping call and point you to a better fit.</p>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="lab-tie-h">
+    <div class="container">
+      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+        <span id="lab-tie-h">See the planning behind network separation in the Lab: <strong>Segmenting a home network with VLANs</strong> (sample write-up).</span>
+        <a class="btn btn-ghost btn-sm" href={url('/lab/homelab-network-segmentation/')} data-umami-event="lab-cta" data-umami-event-location="remote-it">Read the build</a>
+      </div>
+      <p class="muted" style="margin-top:1rem;font-size:.95rem"><a href={url('/services/')}>← All services</a></p>
+    </div>
+  </section>
+</Base>

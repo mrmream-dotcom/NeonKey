@@ -1,4 +1,5 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import { labProjects, labTags } from '../../data/lab';
 ---
@@ -14,9 +15,9 @@ import { labProjects, labTags } from '../../data/lab';
     <div class="container">
       <h2 id="lab-grid-h" class="sr-only">Projects</h2>
       <div class="lab-filters" role="group" aria-label="Filter projects by tag">
-        <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="filter-chip" data-filter="all" aria-pressed="true" data-umami-event="lab-filter" data-umami-event-tag="All">All</button>
         {labTags.map((t) => (
-          <button type="button" class="filter-chip" data-filter={t} aria-pressed="false">{t}</button>
+          <button type="button" class="filter-chip" data-filter={t} aria-pressed="false" data-umami-event="lab-filter" data-umami-event-tag={t}>{t}</button>
         ))}
       </div>
       <div class="grid grid-3 lab-grid">
@@ -26,10 +27,10 @@ import { labProjects, labTags } from '../../data/lab';
               <span class="kicker">{p.level}</span>
               <span class="demo-badge">Demo content</span>
             </div>
-            <h3><a href={`/lab/${p.slug}/`}>{p.title}</a></h3>
+            <h3><a href={url(`/lab/${p.slug}/`)}>{p.title}</a></h3>
             <p>{p.summary}</p>
             <p class="lab-tags">{p.tags.map((t) => <span class="tag">{t}</span>)}</p>
-            <a class="lab-read" href={`/lab/${p.slug}/`}>Read the build →</a>
+            <a class="lab-read" href={url(`/lab/${p.slug}/`)}>Read the build →</a>
           </article>
         ))}
         <div class="empty-slot lab-card" data-tags="all">Next build in progress. Placeholder slot.</div>
@@ -55,7 +56,7 @@ import { labProjects, labTags } from '../../data/lab';
           <h2 id="lab-cta-h">Want something like this for your business?</h2>
           <p class="muted" style="margin:0">The same kind of builds, scoped for your tools: intake forms, FAQ assistants, lead routing. Plain-English handoff included.</p>
         </div>
-        <a class="btn btn-primary" href="/services/">See services</a>
+        <a class="btn btn-primary" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="lab">See services</a>
       </div>
     </div>
   </section>

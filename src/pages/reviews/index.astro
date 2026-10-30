@@ -1,4 +1,5 @@
 ---
+import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
 ---
@@ -6,12 +7,12 @@ import DemoBadge from '../../components/DemoBadge.astro';
   <div class="container page-head">
     <span class="kicker">Unlock Deals</span>
     <h1>Reviews</h1>
-    <p>Who a product is for, what's good, what isn't, and a plain verdict. Some links are affiliate links. That never changes the verdict. <a href="/disclosure/">Read the disclosure</a>.</p>
+    <p>Who a product is for, what's good, what isn't, and a plain verdict. Some links are affiliate links. That never changes the verdict. <a href={url('/disclosure/')}>Read the disclosure</a>.</p>
   </div>
   <div class="container">
     <div class="list-item">
       <div>
-        <h3><a href="/reviews/example-mini-pc-homelab/">Example Mini PC for a first homelab</a></h3>
+        <h3><a href={url('/reviews/example-mini-pc-homelab/')}>Example Mini PC for a first homelab</a></h3>
         <p>Sample review showing the pros/cons box, verdict and where-to-buy block.</p>
         <p style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag">Homelab</span><span class="tag">Hardware</span></p>
       </div>

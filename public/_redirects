@@ -1,0 +1,10 @@
+# Cloudflare Pages redirects. Ignored by GitHub Pages and `astro preview`.
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+/portfolio      /lab/                 301
+/portfolio/     /lab/                 301
+/weekly         /newsletter/          301
+/weekly/        /newsletter/          301
+/subscribe      /newsletter/          301
+/subscribe/     /newsletter/          301
+/it             /services/remote-it/  301
+/it/            /services/remote-it/  301

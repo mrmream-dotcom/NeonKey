@@ -1,4 +1,5 @@
 ---
+import { url } from '../config';
 // Case-study template for Lab project pages.
 // Sections: Overview, Goal, Stack/tools, Build steps, What broke & how I fixed it, What I learned, Related.
 import Base from './Base.astro';
@@ -51,21 +52,21 @@ const sections = [
           <span class="kicker">Related service</span>
           <h3 style="margin-top:.4rem">{project.service.label}</h3>
           <p class="muted">Want something like this for your business? Every project starts with a short scoping call.</p>
-          <a class="btn btn-primary btn-sm" href={project.service.href}>See services</a>
+          <a class="btn btn-primary btn-sm" href={url(project.service.href)} data-umami-event="services-cta" data-umami-event-location={`lab-${slug}`}>See this service</a>
         </div>
       ) : (
         <div class="panel">
           <span class="kicker">Related</span>
           <h3 style="margin-top:.4rem">Learn the basics first</h3>
           <p class="muted">Tutorials on home networking and homelab setup live in Learn.</p>
-          <a class="btn btn-ghost btn-sm" href="/learn/">Go to Learn</a>
+          <a class="btn btn-ghost btn-sm" href={url('/learn/')}>Go to Learn</a>
         </div>
       )}
       <slot name="related" />
     </div>
 
     <h3>More from the Lab</h3>
-    <ul>{others.map((o) => <li><a href={`/lab/${o.slug}/`}>{o.title}</a></li>)}</ul>
-    <p><a href="/lab/">← Back to the Lab</a></p>
+    <ul>{others.map((o) => <li><a href={url(`/lab/${o.slug}/`)}>{o.title}</a></li>)}</ul>
+    <p><a href={url('/lab/')}>← Back to the Lab</a></p>
   </article>
 </Base>

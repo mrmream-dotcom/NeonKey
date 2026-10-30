@@ -220,3 +220,17 @@ label { font-weight: 600; display: block; margin-bottom: .35rem; }
 .bubble.user { justify-self: end; background: rgba(34,211,238,.12); border: 1px solid rgba(34,211,238,.4); }
 .bubble.bot { background: rgba(167,139,250,.1); border: 1px solid rgba(167,139,250,.4); }
 .bubble small { display: block; color: var(--muted); font-size: .75rem; margin-bottom: .2rem; text-transform: uppercase; letter-spacing: .06em; }
+
+/* Featured service */
+.offer-featured { border-color: rgba(34,211,238,.55); box-shadow: 0 0 0 1px rgba(34,211,238,.15), 0 0 32px rgba(34,211,238,.08); background: radial-gradient(500px 220px at 100% 0%, rgba(167,139,250,.12), transparent 60%), var(--panel); }
+.offer-featured-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; align-items: center; }
+.offer-featured-side { border-left: 1px solid var(--line); padding-left: 2rem; }
+@media (max-width: 800px) { .offer-featured-grid { grid-template-columns: 1fr; } .offer-featured-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1rem; } }
+.price-inline { font-size: 1.5rem; font-weight: 800; margin: .3rem 0 .5rem; }
+
+/* Newsletter states */
+.nl-form[aria-disabled='true'] input, .nl-form button:disabled { opacity: .55; cursor: not-allowed; }
+.nl-soon { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fde68a; border: 1px solid rgba(251,191,36,.6); background: rgba(251,191,36,.1); padding: .1rem .55rem; border-radius: 999px; }
+.beehiiv-embed { width: 100%; min-height: 150px; border: 0; background: transparent; }
+.sample-issue { border: 1px dashed rgba(167,139,250,.55); }
+.sample-issue ol { padding-left: 1.2rem; color: var(--muted); }
