@@ -1,6 +1,7 @@
 ---
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
+import OfferDetails from '../../components/OfferDetails.astro';
 import { remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
 const setup = [
   { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, aliases like hello@ or billing@, shared calendars and a clean admin account that you own.' },
@@ -47,6 +48,13 @@ const setup = [
     </div>
   </section>
 
+  <section aria-labelledby="how-h">
+    <div class="container">
+      <div class="section-head"><h2 id="how-h">How a setup works</h2><p>Who it's for, the steps, what you provide and what affects the price.</p></div>
+      <OfferDetails offer={remoteIt} mode="open" headingLevel="h3" showIncluded={false} />
+    </div>
+  </section>
+
   <section class="alt" id="support-plan" aria-labelledby="plan-h">
     <div class="container">
       <div class="grid grid-2" style="align-items:start">
@@ -63,6 +71,9 @@ const setup = [
           <p class="muted">The monthly price depends on the number of people and requests included. The response window (for example, within one or two business days) is agreed in writing before you start.</p>
           <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={remoteSupportPlan.name}>Ask about the plan</a>
         </div>
+      </div>
+      <div style="margin-top:1.5rem">
+        <OfferDetails offer={remoteSupportPlan} mode="open" headingLevel="h3" showIncluded={false} />
       </div>
     </div>
   </section>

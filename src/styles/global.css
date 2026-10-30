@@ -366,3 +366,24 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .intro-pricing strong { color: var(--cyan); }
 .intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }
 .offer-upsell { font-size: .92rem; color: var(--muted); margin: .2rem 0 .9rem; }
+
+/* Service "See details" */
+.offer-details { margin: 0 0 1rem; border-top: 1px solid var(--line); padding-top: .7rem; }
+.offer-details > summary { list-style: none; cursor: pointer; font-weight: 700; color: var(--cyan); display: inline-flex; align-items: center; gap: .4rem; }
+.offer-details > summary::-webkit-details-marker { display: none; }
+.offer-details > summary::marker { content: ''; }
+.offer-details > summary::after { content: '+'; font-weight: 800; }
+.offer-details[open] > summary::after { content: '−'; }
+.offer-details > summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+.offer-details-body { font-size: .93rem; color: var(--muted); }
+.offer-details-body p { margin: .2rem 0 .6rem; }
+.offer .offer-details-body ul, .offer .offer-details-body ol { margin: .2rem 0 .7rem; padding-left: 1.1rem; }
+.od-h { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--violet); margin: .9rem 0 .25rem; }
+.od-steps li { margin-bottom: .3rem; }
+.od-steps strong, .offer-details-body strong { color: var(--text); }
+.od-note { font-size: .88rem; border-left: 2px solid var(--line); padding-left: .7rem; }
+.offer-details-open .panel { color: var(--muted); }
+.offer-details-open .panel ul, .offer-details-open .panel ol { padding-left: 1.1rem; margin: .2rem 0 .6rem; }
+.offer-details-open .od-h:first-child { margin-top: 0; }
+.od-grid { align-items: start; }
+.offer-featured-grid:has(details[open]) { align-items: start; }

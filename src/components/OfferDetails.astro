@@ -1,0 +1,56 @@
+---
+// Plain-English detail for a service: who it's for, what's included, how it works,
+// what you provide, tools, turnaround and what affects the price.
+// mode="collapse" renders a "See details" toggle (service cards); mode="open" renders inline (detail pages).
+import type { Offer } from '../data/services';
+interface Props { offer: Offer; mode?: 'collapse' | 'open'; showIncluded?: boolean; headingLevel?: 'h3' | 'h4' }
+const { offer, mode = 'collapse', showIncluded = true, headingLevel = 'h4' } = Astro.props;
+const d = offer.details;
+const H = headingLevel;
+---
+{d && (mode === 'collapse' ? (
+  <details class="offer-details">
+    <summary data-umami-event="service-details" data-umami-event-offer={offer.name}>See details</summary>
+    <div class="offer-details-body">
+      <H class="od-h">Who it's for</H>
+      <p>{d.who}</p>
+      {showIncluded && (<><H class="od-h">What's included</H><ul>{d.included.map((i) => <li>{i}</li>)}</ul></>)}
+      <H class="od-h">How it works</H>
+      <ol class="od-steps">{d.steps.map((s) => <li><strong>{s.h}:</strong> {s.p}</li>)}</ol>
+      <H class="od-h">What you provide</H>
+      <ul>{d.provide.map((i) => <li>{i}</li>)}</ul>
+      <H class="od-h">Works with</H>
+      <p>{d.tools}</p>
+      {d.turnaround && (<><H class="od-h">Typical turnaround</H><p>{d.turnaround}</p></>)}
+      <H class="od-h">What affects the final price</H>
+      <ul>{d.priceFactors.map((i) => <li>{i}</li>)}</ul>
+      {d.note && <p class="od-note">{d.note}</p>}
+    </div>
+  </details>
+) : (
+  <div class="offer-details-open">
+    <div class="grid grid-2 od-grid">
+      <div class="panel">
+        <H class="od-h">Who it's for</H>
+        <p>{d.who}</p>
+        {showIncluded && (<><H class="od-h">What's included</H><ul>{d.included.map((i) => <li>{i}</li>)}</ul></>)}
+      </div>
+      <div class="panel">
+        <H class="od-h">How it works</H>
+        <ol class="od-steps">{d.steps.map((s) => <li><strong>{s.h}:</strong> {s.p}</li>)}</ol>
+      </div>
+      <div class="panel">
+        <H class="od-h">What you provide</H>
+        <ul>{d.provide.map((i) => <li>{i}</li>)}</ul>
+        <H class="od-h">Works with</H>
+        <p>{d.tools}</p>
+      </div>
+      <div class="panel">
+        {d.turnaround && (<><H class="od-h">Typical turnaround</H><p>{d.turnaround}</p></>)}
+        <H class="od-h">What affects the final price</H>
+        <ul>{d.priceFactors.map((i) => <li>{i}</li>)}</ul>
+        {d.note && <p class="od-note">{d.note}</p>}
+      </div>
+    </div>
+  </div>
+))}

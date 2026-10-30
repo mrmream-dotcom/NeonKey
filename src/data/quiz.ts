@@ -512,7 +512,7 @@ function addDetail(v: PlanView, p: Plan) {
     const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
     const focusName = p.wf === 'copy' ? 'Automating copy-and-paste between apps' : p.wf === 'reminders' ? 'Automating repeat emails and reminders' : 'Automating the one task you repeat most';
     v.startPrice = `Starting at ${usd(quickWin.from)}`;
-    v.scope = { title: 'Based on your answers, your Quick Win + Tech Checkup would cover', list: [focusName, ...quickWin.items] };
+    v.scope = { title: 'Based on your answers, your Quick Win + Tech Checkup would cover', list: [`${focusName}: one simple workflow, scoped together first, using tools you already use`, ...quickWin.items.slice(1)] };
     if (!v.footnote) v.footnote = QW_UPSELL;
     v.steps = [
       { title: 'Write down the task', what: 'A good first candidate: ' + v.focus!.text.charAt(0).toLowerCase() + v.focus!.text.slice(1), why, ready: r.slice(0, 2).concat(r.slice(3)) },
