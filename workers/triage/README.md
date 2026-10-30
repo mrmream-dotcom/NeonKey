@@ -10,8 +10,8 @@ Deployed at: https://neonkey-triage.mr-mream.workers.dev
 
 ## Guardrails
 
-- CORS / Origin: only `ALLOWED_ORIGINS` (neonkey.tech) and, while `ALLOW_LOCALHOST` is
-  `"true"`, http://localhost / 127.0.0.1 for testing. Requests without an allowed Origin get 403.
+- CORS / Origin: only `ALLOWED_ORIGINS` (neonkey.tech) and, only when `ALLOW_LOCALHOST` is
+  `"true"` (local `wrangler dev` override; production is `"false"`), http://localhost / 127.0.0.1. Requests without an allowed Origin get 403.
 - Limits are enforced by a small SQLite-backed Durable Object, `Limiter` (available on the free plan):
   - per visitor: `PER_IP_MINUTE` (5) requests per rolling 60 s (every POST counts) and `PER_IP_DAILY` (30) AI runs per UTC day;
   - global: `GLOBAL_DAILY` (150) AI runs per UTC day.
@@ -44,8 +44,9 @@ npx wrangler deploy
 To test limits locally without calling the AI, run `npx wrangler dev` without a `.dev.vars` file
 (requests then stop at `not_configured` after the counters run), optionally with `--var PER_IP_DAILY:1`.
 
-To remove the localhost allowance for production, set `ALLOW_LOCALHOST` to `"false"` in
-`wrangler.jsonc` and redeploy.
+Production runs with `ALLOW_LOCALHOST` = `"false"` (set in `wrangler.jsonc`, Oct 30, 2026).
+For local testing against localhost, override it only for `wrangler dev`, e.g.
+`npx wrangler dev --var ALLOW_LOCALHOST:true`; never deploy it as `"true"`.
 
 ## Example results on the Lab page
 
