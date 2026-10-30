@@ -1,0 +1,21 @@
+# NeonKey "Unlock the Week" welcome email worker.
+# Kit (free plan) webhook -> this Worker -> Resend.
+# Secrets (set with `wrangler secret put`, never committed):
+#   KIT_API_KEY, RESEND_API_KEY, WEBHOOK_PATH_TOKEN, UNSUB_SECRET
+name = "neonkey-welcome"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+PUBLIC_BASE_URL = "https://neonkey-welcome.mr-mream.workers.dev"
+FROM_ADDRESS = "Michael Ream at NeonKey <hello@neonkey.tech>"
+REPLY_TO = "hello@neonkey.tech"
+
+[[kv_namespaces]]
+binding = "WELCOME_SENT"
+id = "eaee8c0a233e4b26992050717e93ef77"
+
+[observability]
+enabled = false
