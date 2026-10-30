@@ -1,0 +1,85 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+interface Props { title: string; description?: string }
+const { title, description = 'NeonKey: unlock tech, whatever your level. AI automation, honest tech picks, hands-on learning and a weekly newsletter.' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const nav = [
+  { href: '/learn/', label: 'Learn' },
+  { href: '/reviews/', label: 'Reviews' },
+  { href: '/notes/', label: 'Notes' },
+  { href: '/newsletter/', label: 'Newsletter' },
+  { href: '/services/', label: 'Services' },
+];
+const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
+const fullTitle = title === 'Home' ? 'NeonKey: Unlock tech, whatever your level' : `${title} | NeonKey`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Demo site: keep out of search engines until launch -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0d17" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="demo-strip" role="note">Demo site: sample content and placeholder numbers. Not live.</div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand" aria-label="NeonKey home"><Logo /></a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">
+          <span class="sr-only">Menu</span><span class="bars" aria-hidden="true"></span>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main">
+          <ul>
+            {nav.map((item) => (
+              <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+            ))}
+          </ul>
+          <a href="/newsletter/" class="btn btn-primary btn-sm nav-cta">Get Weekly</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <Logo size={30} />
+          <p>Unlock tech, whatever your level.</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul class="footer-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/disclosure/">Disclosure</a></li>
+            <li><a href="/privacy/">Privacy</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <p class="footer-fine">&copy; {new Date().getFullYear()} NeonKey. Demo build. Some links may be affiliate links; see the <a href="/disclosure/">disclosure</a>.</p>
+      </div>
+    </footer>
+    <script>
+      const toggle = document.querySelector('.nav-toggle');
+      const nav = document.getElementById('site-nav');
+      toggle?.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!open));
+        nav?.classList.toggle('open', !open);
+      });
+      document.querySelectorAll('form[data-demo-form]').forEach((form) => {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const note = form.querySelector('.form-note');
+          if (note) note.textContent = 'Demo only: this form is not connected, so nothing was sent.';
+        });
+      });
+    </script>
+  </body>
+</html>

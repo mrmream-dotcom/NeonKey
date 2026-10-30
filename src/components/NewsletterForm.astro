@@ -1,0 +1,10 @@
+---
+interface Props { compact?: boolean; id?: string }
+const { compact = false, id = 'nl' } = Astro.props;
+---
+<form class:list={['nl-form', { compact }]} data-demo-form action="#" method="post" novalidate>
+  <label for={`${id}-email`} class="sr-only">Email address</label>
+  <input id={`${id}-email`} name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+  <button type="submit" class="btn btn-primary">Get NeonKey Weekly</button>
+  <p class="form-note" aria-live="polite">Demo form: nothing is sent or stored.</p>
+</form>

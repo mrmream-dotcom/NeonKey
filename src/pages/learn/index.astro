@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import DemoBadge from '../../components/DemoBadge.astro';
+const items = [
+  { href: '/learn/self-host-n8n-old-pc/', title: 'Self-host n8n on an old PC', text: 'Docker, n8n and a spare computer: your own always-on automation box.', tags: ['Homelab', 'Automation', 'Beginner'] },
+];
+const soon = ['Your first home network map', 'Security+ study log #1', 'Backups 101: the 3-2-1 rule at home'];
+---
+<Base title="Learn" description="NeonKey tutorials: homelab, automation, networking and an open Security+ study journey.">
+  <div class="container page-head">
+    <span class="kicker">Unlock Skills</span>
+    <h1>Learn</h1>
+    <p>Hands-on tutorials written for beginners, useful for builders. Every guide lists what you need, the steps, and what to do when it breaks.</p>
+  </div>
+  <div class="container">
+    {items.map((i) => (
+      <div class="list-item">
+        <div>
+          <h3><a href={i.href}>{i.title}</a></h3>
+          <p>{i.text}</p>
+          <p style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap">{i.tags.map((t) => <span class="tag">{t}</span>)}</p>
+        </div>
+        <div><DemoBadge /></div>
+      </div>
+    ))}
+    {soon.map((s) => (
+      <div class="list-item">
+        <div><h3 class="muted">{s}</h3><p>Planned tutorial. Placeholder slot.</p></div>
+        <div><span class="tag">Coming soon</span></div>
+      </div>
+    ))}
+  </div>
+</Base>

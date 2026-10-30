@@ -1,0 +1,5 @@
+---
+interface Props { label?: string }
+const { label = 'Demo content' } = Astro.props;
+---
+<span class="demo-badge" title="Placeholder content for the demo site. Not real data.">{label}</span>

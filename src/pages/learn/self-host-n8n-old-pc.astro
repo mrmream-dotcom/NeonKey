@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import DemoBadge from '../../components/DemoBadge.astro';
+---
+<Base title="Self-host n8n on an old PC" description="Demo tutorial: run n8n with Docker on a spare computer.">
+  <article class="narrow page-head prose">
+    <span class="kicker">Learn · Homelab · Beginner</span>
+    <h1>Self-host n8n on an old PC</h1>
+    <div class="meta"><DemoBadge /><span>Sample tutorial for the demo site</span><span>·</span><span>Reading time: placeholder</span></div>
+
+    <p class="lead">n8n is an open-source workflow automation tool. Running it on a spare computer at home is a low-cost way to learn automation and Docker in one project.</p>
+
+    <div class="callout warn"><strong>Demo content.</strong> This page shows the tutorial layout. Check the official n8n docs (<a href="https://docs.n8n.io/hosting/">docs.n8n.io/hosting</a>) for current install steps and licensing before you follow along.</div>
+
+    <h2>What you'll need</h2>
+    <ul>
+      <li>An old PC or laptop that can run a current 64-bit Linux distribution</li>
+      <li>A USB stick to install Linux (Ubuntu Server or Debian are common picks)</li>
+      <li>A wired network connection if possible</li>
+      <li>About an hour, plus coffee</li>
+    </ul>
+
+    <h2>Steps</h2>
+    <ol class="steps">
+      <li><strong>Install Linux.</strong> Flash an installer to the USB stick, install the OS, and enable SSH so you can manage the box from your main computer.</li>
+      <li><strong>Update the system.</strong>
+        <pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+      </li>
+      <li><strong>Install Docker.</strong> Follow Docker's official install guide for your distribution, then confirm it works:
+        <pre><code>docker --version
+docker run hello-world</code></pre>
+      </li>
+      <li><strong>Create a volume and start n8n.</strong>
+        <pre><code>docker volume create n8n_data
+docker run -d --name n8n --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n</code></pre>
+      </li>
+      <li><strong>Open the editor.</strong> On another computer on the same network, visit <code>http://&lt;your-pc-ip&gt;:5678</code> and create the owner account.</li>
+      <li><strong>Build a first workflow.</strong> Try a Schedule trigger that sends you a daily message. Small wins first.</li>
+    </ol>
+
+    <h2>Keep it safe</h2>
+    <ul>
+      <li>Keep n8n on your home network while you learn. Don't port-forward it to the internet.</li>
+      <li>If you want remote access later, use a VPN-style tool or a reverse proxy with HTTPS and strong auth.</li>
+      <li>Back up the <code>n8n_data</code> volume and keep Docker images updated.</li>
+    </ul>
+
+    <h2>When it breaks</h2>
+    <p>Check the logs first: <code>docker logs n8n</code>. Most beginner issues are a port already in use, a firewall rule, or a typo in the run command.</p>
+
+    <div class="callout"><strong>Learning in public:</strong> this section will hold my real notes and mistakes from the build once the site launches.</div>
+    <p><a href="/learn/">← Back to Learn</a></p>
+  </article>
+</Base>

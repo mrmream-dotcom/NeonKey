@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import DemoBadge from '../components/DemoBadge.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+---
+<Base title="NeonKey Weekly" description="NeonKey Weekly: one short email a week. A tool, a tip, a deal and a lesson.">
+  <div class="narrow page-head">
+    <span class="kicker">Unlock the Week</span>
+    <h1>NeonKey Weekly</h1>
+    <p class="lead">One short email a week. Built to read in about five minutes.</p>
+    <div class="grid grid-2" style="margin:1.5rem 0">
+      <div class="card"><h3>What's inside</h3><p>A useful tool, a quick how-to tip, one deal worth knowing about, and one thing I learned that week.</p></div>
+      <div class="card"><h3>What's not</h3><p>No spam, no selling your email, no daily blasts. Unsubscribe in one click.</p></div>
+    </div>
+    <div class="nl-box">
+      <h2 style="font-size:1.4rem">Subscribe</h2>
+      <NewsletterForm id="page-nl" />
+    </div>
+  </div>
+  <section>
+    <div class="narrow">
+      <h2>Archive</h2>
+      <article class="card">
+        <div class="card-top"><span class="kicker">Issue #0</span><DemoBadge /></div>
+        <h3>NeonKey Weekly #0: The key to your first homelab</h3>
+        <ul class="muted" style="padding-left:1.1rem;margin:.5rem 0 0">
+          <li><strong>Tool:</strong> n8n, open-source automation you can self-host</li>
+          <li><strong>Tip:</strong> label your cables before you need to</li>
+          <li><strong>Deal:</strong> placeholder slot (demo)</li>
+          <li><strong>Learned:</strong> Docker volumes keep your data when containers restart</li>
+        </ul>
+        <p style="margin-top:.8rem"><a href="/learn/self-host-n8n-old-pc/">Related tutorial →</a></p>
+      </article>
+    </div>
+  </section>
+</Base>

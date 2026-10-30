@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Contact" description="Contact NeonKey.">
+  <div class="narrow page-head">
+    <span class="kicker">Contact</span>
+    <h1>Contact</h1>
+    <p>Questions about services, a tutorial or a review? Send a note.</p>
+    <form class="panel" data-demo-form action="#" method="post" novalidate>
+      <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" /></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" /></div>
+      <div class="field"><label for="c-topic">Topic</label>
+        <select id="c-topic" name="topic"><option>Services (Unlock AI)</option><option>Tutorials</option><option>Reviews</option><option>Newsletter</option><option>Something else</option></select>
+      </div>
+      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5"></textarea></div>
+      <button class="btn btn-primary" type="submit">Send message</button>
+      <p class="form-note" aria-live="polite">Demo form: nothing is sent or stored.</p>
+    </form>
+  </div>
+</Base>

@@ -1,0 +1,118 @@
+---
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import DemoBadge from '../components/DemoBadge.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+const pillars = [
+  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Small, practical automations for small businesses: intake, FAQs, follow-ups. Plain-English setup and handoff.',
+    icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
+  { cls: 'm', title: 'Unlock Deals', href: '/reviews/', link: 'Read reviews', text: 'Honest takes on gear and software worth your money, with pros, cons and clear affiliate disclosure.',
+    icon: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>' },
+  { cls: 'v', title: 'Unlock Skills', href: '/learn/', link: 'Start learning', text: 'Step-by-step tutorials, homelab builds and an open Security+ study journey. Beginner-friendly, no gatekeeping.',
+    icon: '<path d="M4 19V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h6M8 11h6"/>' },
+  { cls: 'y', title: 'Unlock the Week', href: '/newsletter/', link: 'Get NeonKey Weekly', text: 'NeonKey Weekly: one short email with a tool, a tip, a deal worth knowing and what I learned this week.',
+    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>' },
+];
+---
+<Base title="Home">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="kicker">AI · Deals · Skills · Weekly</span>
+        <h1>Unlock tech, <span class="glow">whatever</span> <span class="glow-m">your level.</span></h1>
+        <p class="lead">NeonKey helps beginners and builders get more out of technology: practical AI automations, honest gear picks, hands-on tutorials and a weekly email that respects your time.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="/newsletter/">Get NeonKey Weekly</a>
+          <a class="btn btn-ghost" href="/services/">Unlock AI for your business</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 320 320" width="320" height="320">
+          <defs>
+            <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22d3ee"/><stop offset=".55" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/>
+            </linearGradient>
+          </defs>
+          <circle cx="160" cy="160" r="150" fill="none" stroke="#262b52" stroke-width="1.5"/>
+          <circle cx="160" cy="160" r="118" fill="none" stroke="#262b52" stroke-dasharray="4 8"/>
+          <g fill="none" stroke="url(#hg)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="112" cy="160" r="40"/>
+            <path d="M152 160h104M224 160v30M252 160v20"/>
+          </g>
+          <circle cx="112" cy="160" r="12" fill="#f472b6"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="pillars-h">
+    <div class="container">
+      <div class="section-head"><h2 id="pillars-h">Four ways to unlock</h2><p>Pick the door that fits where you are today.</p></div>
+      <div class="grid grid-4">
+        {pillars.map((p) => (
+          <article class={`card pillar ${p.cls}`}>
+            <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={p.icon} /></div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+            <a href={p.href}>{p.link} →</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="latest-h">
+    <div class="container">
+      <div class="section-head"><h2 id="latest-h">Latest tutorials</h2><a href="/learn/">All tutorials →</a></div>
+      <div class="grid grid-3">
+        <Card href="/learn/self-host-n8n-old-pc/" title="Self-host n8n on an old PC" kicker="Homelab · Beginner">Turn a spare computer into an always-on automation box with Docker and n8n.</Card>
+        <Card href="/learn/" title="Coming soon: Your first home network map" kicker="Networking · Beginner">A placeholder slot for an upcoming tutorial.</Card>
+        <Card href="/learn/" title="Coming soon: Security+ study log #1" kicker="Security+ journey">A placeholder slot for the first study log entry.</Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="review-h">
+    <div class="container feature">
+      <div class="placeholder-art">Product image placeholder<br />(no real product shown in demo)</div>
+      <div>
+        <div class="card-top" style="justify-content:flex-start"><span class="kicker">Featured review</span><DemoBadge /></div>
+        <h2 id="review-h">Example Mini PC for a first homelab</h2>
+        <p class="muted">A sample review layout: who it's for, pros and cons, a plain verdict and where to buy. Every review on NeonKey discloses affiliate links up front.</p>
+        <a class="btn btn-ghost" href="/reviews/example-mini-pc-homelab/">Read the review</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="nl-h">
+    <div class="container">
+      <div class="nl-box">
+        <span class="kicker">NeonKey Weekly</span>
+        <h2 id="nl-h">Unlock the week in five minutes</h2>
+        <p class="muted">One tool, one tip, one deal worth knowing and one thing I learned. No spam; unsubscribe anytime.</p>
+        <NewsletterForm id="home-nl" />
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="svc-h">
+    <div class="container">
+      <div class="section-head"><h2 id="svc-h">Unlock AI for your business</h2><a href="/services/">View services →</a></div>
+      <div class="grid grid-3">
+        <article class="card"><span class="kicker">Starting at $75</span><h3>One-Workflow Quick Win</h3><p>Automate one repetitive task end to end.</p></article>
+        <article class="card"><span class="kicker">Starting at $250</span><h3>AI Intake &amp; FAQ Assistant</h3><p>Answer common questions and collect leads consistently.</p></article>
+        <article class="card"><span class="kicker">Starting at $400</span><h3>Lead-Routing &amp; Follow-Up</h3><p>Get new inquiries to the right place with timely follow-ups.</p></article>
+      </div>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Results depend on your business and tools.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="lip-h">
+    <div class="narrow">
+      <div class="callout">
+        <h2 id="lip-h" style="font-size:1.35rem">Learning in public</h2>
+        <p style="margin:0">I'm Michael Ream, and NeonKey is where I build, test and document as I go: homelab projects, AI automations, and my study path toward Security+ and Network+ (in progress and planned, not earned yet). You'll see the wins and the mistakes. <a href="/about/">More about NeonKey →</a></p>
+      </div>
+    </div>
+  </section>
+</Base>

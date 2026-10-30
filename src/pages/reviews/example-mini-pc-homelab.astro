@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import DemoBadge from '../../components/DemoBadge.astro';
+---
+<Base title="Example Mini PC for a first homelab (demo review)" description="Demo review layout with pros/cons, verdict and affiliate disclosure.">
+  <article class="narrow page-head prose">
+    <div class="disclosure" role="note">
+      <strong>Affiliate disclosure:</strong> NeonKey may earn a commission if you buy through links on this page, at no extra cost to you. It doesn't change the verdict. <a href="/disclosure/">Full disclosure</a>.
+    </div>
+    <span class="kicker">Review · Homelab hardware</span>
+    <h1>Example Mini PC for a first homelab</h1>
+    <div class="meta"><DemoBadge /><span>Placeholder product, not a real review</span><span>·</span><span>No rating shown in demo</span></div>
+
+    <div class="placeholder-art" style="margin-bottom:1.5rem">Product image placeholder</div>
+
+    <h2>Who it's for</h2>
+    <p>Beginners who want a quiet, low-power box to run a few containers (like n8n, a DNS filter or a media server) without repurposing their main computer.</p>
+
+    <h2>What I'd check before buying</h2>
+    <ul>
+      <li>RAM: can it be upgraded, and to how much?</li>
+      <li>Storage: is there room for a second drive?</li>
+      <li>Networking: wired Ethernet speed, and does Linux support the NIC well?</li>
+      <li>Power draw and noise if it's running 24/7</li>
+    </ul>
+
+    <div class="proscons">
+      <div class="pros">
+        <h3>Pros (placeholder)</h3>
+        <ul><li>Small and quiet</li><li>Low power for always-on use</li><li>Enough for several light containers</li></ul>
+      </div>
+      <div class="cons">
+        <h3>Cons (placeholder)</h3>
+        <ul><li>Limited upgrade room</li><li>Not for heavy virtualization</li><li>Fan noise varies by unit</li></ul>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <span class="kicker">Verdict</span>
+      <p style="margin:.4rem 0 0"><strong>Placeholder verdict:</strong> a sensible first homelab box if your goals are learning and light self-hosting. If you want many VMs, look at something with more RAM headroom. Real verdicts will only be written after hands-on testing.</p>
+    </div>
+
+    <div class="buy-box" aria-labelledby="buy-h">
+      <h2 id="buy-h" style="margin-top:0;font-size:1.25rem">Where to buy</h2>
+      <p class="muted" style="font-size:.92rem">Demo links: these go nowhere. Prices aren't shown because they change; check the retailer.</p>
+      <div class="buy-row"><span>Retailer A</span><a class="btn btn-primary btn-sm" href="#" rel="sponsored nofollow">Check price</a></div>
+      <div class="buy-row"><span>Retailer B</span><a class="btn btn-ghost btn-sm" href="#" rel="sponsored nofollow">Check price</a></div>
+    </div>
+
+    <p><a href="/reviews/">← Back to Reviews</a></p>
+  </article>
+</Base>
