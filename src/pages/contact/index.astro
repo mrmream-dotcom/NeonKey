@@ -8,11 +8,12 @@ import Base from '../../layouts/Base.astro';
     <h1>Contact</h1>
     <p>Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
     <p class="muted" style="font-size:.95rem">Looking for IT help? See <a href={url('/services/remote-it/')}>Remote Small-Office IT Setup</a> for what's in and out of scope.</p>
-    <form class="panel" action={`https://formsubmit.co/${CONTACT_EMAIL}`} method="post">
-      <input type="hidden" name="_subject" value="New NeonKey contact form message" />
-      <input type="hidden" name="_next" value="https://neonkey.tech/contact/thanks/" />
-      <input type="hidden" name="_template" value="table" />
-      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+    <form class="panel" action="https://api.web3forms.com/submit" method="post">
+      <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
+      <input type="hidden" name="subject" value="New NeonKey contact form message" />
+      <input type="hidden" name="from_name" value="NeonKey website" />
+      <input type="hidden" name="redirect" value="https://neonkey.tech/contact/thanks/" />
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
       <div class="field"><label for="c-topic">Topic</label>
