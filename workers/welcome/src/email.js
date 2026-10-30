@@ -11,6 +11,10 @@ const C = {
 
 export const SUBJECT = "Welcome to Unlock the Week";
 
+// Reply call-to-action: replies help engagement and inbox placement on a new domain.
+const REPLY_ASK = "Hit reply and tell me the one tech thing you're stuck on right now.";
+const REPLY_NOTE = "AI tools, home Wi-Fi, a messy inbox, an automation you can't get working: a sentence or two is plenty. I read every reply, and it shapes what goes into Unlock the Week.";
+
 export function escapeHtml(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -80,7 +84,7 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
   <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
     <tr>
       <td align="center" style="padding:0 0 24px 0;">
-        <a href="https://neonkey.tech/" style="text-decoration:none;"><img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${font};font-size:24px;font-weight:bold;"></a>
+        <img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${font};font-size:24px;font-weight:bold;">
       </td>
     </tr>
     <tr>
@@ -93,11 +97,11 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
 ${bulletRows}
         </table>
-        <p style="${p}">One quick favor: hit reply and let us know what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. Every reply gets read.</p>
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px 0;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px 0;">
           <tr>
-            <td align="center" bgcolor="${C.accent}" style="border-radius:8px;background-color:${C.accent};">
-              <a href="https://neonkey.tech/" style="display:inline-block;padding:13px 28px;font-family:${font};font-size:16px;line-height:1.2;font-weight:700;color:${C.outer};text-decoration:none;border-radius:8px;">Explore NeonKey</a>
+            <td bgcolor="#0e1129" style="background-color:#0e1129;border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:18px 20px;">
+              <p style="margin:0 0 6px 0;font-family:${font};font-size:17px;line-height:1.5;color:${C.text};font-weight:700;">${escapeHtml(REPLY_ASK)}</p>
+              <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:${C.muted};">${escapeHtml(REPLY_NOTE)}</p>
             </td>
           </tr>
         </table>
@@ -129,9 +133,8 @@ Thanks for confirming. You're officially on the list for Unlock the Week, the we
 WHAT TO EXPECT
 ${bullets.map((b) => `- ${b}`).join("\n")}
 
-One quick favor: hit reply and let us know what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. Every reply gets read.
-
-Explore NeonKey: https://neonkey.tech/
+${REPLY_ASK}
+${REPLY_NOTE}
 
 NeonKey
 neonkey.tech · hello@neonkey.tech

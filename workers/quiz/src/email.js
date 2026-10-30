@@ -73,7 +73,7 @@ function shell({ title, preheader, kicker, heading, body, footer, address }) {
   <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
     <tr>
       <td align="center" style="padding:0 0 24px 0;">
-        <a href="https://neonkey.tech/" style="text-decoration:none;"><img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${FONT};font-size:24px;font-weight:bold;"></a>
+        <img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${FONT};font-size:24px;font-weight:bold;">
       </td>
     </tr>
     <tr>
@@ -180,8 +180,11 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
   H.push(button(cta.label, cta.href));
   T.push(`${cta.label}: ${abs(cta.href)}`, "");
   if (v.footnote) { H.push(`<p style="${small}">${e(v.footnote)}</p>`); T.push(v.footnote, ""); }
-  H.push(`<p style="${p}">Questions? Just reply to this email.</p>`);
-  T.push("Questions? Just reply to this email.", "", "NeonKey · neonkey.tech · hello@neonkey.tech", "");
+  // Reply call-to-action: replies help engagement and inbox placement on a new domain.
+  const ask = "Reply with which step you want to start with, or anything I missed about your setup.";
+  const note = "A line or two is plenty. I read every reply.";
+  H.push(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">${e(ask)}</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">${e(note)}</p></td></tr></table>`);
+  T.push(ask, note, "", "NeonKey · neonkey.tech · hello@neonkey.tech", "");
 
   const footer = [
     "Prices on neonkey.tech are starting points, not quotes. You get a fixed quote after a short scoping call. Results depend on your business, your tools and your data, so no specific outcomes are promised.",

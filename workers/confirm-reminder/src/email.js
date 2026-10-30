@@ -69,7 +69,7 @@ export function renderReminder({ firstName, confirmUrl, stopUrl, mailingAddress 
   <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
     <tr>
       <td align="center" style="padding:0 0 24px 0;">
-        <a href="https://neonkey.tech/" style="text-decoration:none;"><img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${FONT};font-size:24px;font-weight:bold;"></a>
+        <img src="https://neonkey.tech/email/neonkey-logo.png" width="320" height="80" alt="NeonKey" style="display:block;width:320px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:${C.text};font-family:${FONT};font-size:24px;font-weight:bold;">
       </td>
     </tr>
     <tr>
@@ -86,6 +86,7 @@ export function renderReminder({ firstName, confirmUrl, stopUrl, mailingAddress 
           </tr>
         </table>
         <p style="${p}">${escapeHtml(AFTER)}</p>
+        <p style="${p}">Questions? Just reply.</p>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr><td style="border-top:1px solid ${C.rule};padding:20px 0 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
         </table>
@@ -114,6 +115,8 @@ ${PARAS.join("\n\n")}
 Confirm my subscription: ${confirmUrl}
 
 ${AFTER}
+
+Questions? Just reply.
 
 NeonKey · neonkey.tech · hello@neonkey.tech
 
