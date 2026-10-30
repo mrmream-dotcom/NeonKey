@@ -7,12 +7,14 @@ const C = {
   muted: "#b3b8d6",
   accent: "#22d3ee",
   rule: "#262b52",
+  pink: "#f472b6",
 };
 
 export const SUBJECT = "Welcome to Unlock the Week";
 
 // Reply call-to-action: replies help engagement and inbox placement on a new domain.
 const REPLY_ASK = "Hit reply and tell me the one tech thing you're stuck on right now.";
+const REPLY_MAILTO = "mailto:hello@neonkey.tech?subject=Hi%20NeonKey";
 const REPLY_NOTE = "AI tools, home Wi-Fi, a messy inbox, an automation you can't get working: a sentence or two is plenty. I read every reply, and it shapes what goes into Unlock the Week.";
 
 export function escapeHtml(s) {
@@ -43,10 +45,11 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
   const u = escapeHtml(unsubscribeUrl);
 
   const bullets = [
-    "One email a week, about a five-minute read.",
-    "A few hand-picked AI and tech reads worth your time.",
-    "One practical tip or tool you can actually use.",
-    "The occasional gear pick or deal, always clearly marked when a link is an affiliate link.",
+    "One email a week, about a three-minute read.",
+    "One AI story worth knowing, with a plain-English takeaway.",
+    "One skill tip you can try in a few minutes.",
+    "Gear picks from NeonKey's reviews.",
+    "A Learn spotlight, plus a tool or demo to try.",
   ];
 
   const bulletRows = bullets
@@ -102,6 +105,11 @@ ${bulletRows}
             <td bgcolor="#0e1129" style="background-color:#0e1129;border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:18px 20px;">
               <p style="margin:0 0 6px 0;font-family:${font};font-size:17px;line-height:1.5;color:${C.text};font-weight:700;">${escapeHtml(REPLY_ASK)}</p>
               <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:${C.muted};">${escapeHtml(REPLY_NOTE)}</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 0 0;"><tr>
+                <td align="center" bgcolor="${C.accent}" style="border-radius:8px;background-color:${C.accent};background-image:linear-gradient(90deg,${C.accent},${C.pink});">
+                  <a href="${REPLY_MAILTO}" style="display:inline-block;padding:12px 24px;font-family:${font};font-size:15px;line-height:1.2;font-weight:700;color:#0b0d17;text-decoration:none;border-radius:8px;">Reply to NeonKey</a>
+                </td>
+              </tr></table>
             </td>
           </tr>
         </table>
@@ -135,6 +143,7 @@ ${bullets.map((b) => `- ${b}`).join("\n")}
 
 ${REPLY_ASK}
 ${REPLY_NOTE}
+Reply to NeonKey: hello@neonkey.tech
 
 NeonKey
 neonkey.tech · hello@neonkey.tech

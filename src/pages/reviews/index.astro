@@ -8,11 +8,11 @@ import { articlesIn } from '../../data/articles';
 // Unpublished drafts live in src/_drafts/reviews/ (see LAUNCH.md "Hidden drafts").
 const reviews = articlesIn('reviews');
 ---
-<Base title="Reviews" description="NeonKey reviews: honest takes on gear and software, with clear affiliate disclosure.">
+<Base title="Reviews" description="NeonKey reviews: honest takes on gear and software, with pros, cons and a plain verdict.">
   <div class="container page-head">
     <span class="kicker">Unlock Deals</span>
     <h1>Reviews</h1>
-    <p>Who a product is for, what's good, what isn't, and a plain verdict. Some links are affiliate links. That never changes the verdict. <a href={url('/disclosure/')}>Read the disclosure</a>.</p>
+    <p>Who a product is for, what's good, what isn't, and a plain verdict. Reviews are never paid placements. <a href={url('/disclosure/')}>Read the disclosure</a>.</p>
   </div>
   <div class="container">
     {reviews.length === 0 ? (
