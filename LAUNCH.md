@@ -4,7 +4,7 @@ Status as of 2026-10-29. **The site is live-ready in code, but it hasn't launche
 
 ## Already done (in this repo)
 
-- [x] Build modes: `PUBLIC_SITE_MODE=demo|live`, `SITE_URL`, `BASE_PATH` (see README). Demo = noindex + banner; live = indexable, no banner.
+- [x] Build modes: `PUBLIC_SITE_MODE=demo|live`, `SITE_URL`, `BASE_PATH` (see README). Demo = noindex + robots Disallow; live = indexable. No visible demo banner in either mode.
 - [x] Base-aware links and assets, so the same code works at `/` and at `/NeonKey/`.
 - [x] `@astrojs/sitemap` (`/sitemap-index.xml`), robots.txt per mode, canonical URLs.
 - [x] Open Graph + Twitter card meta with a generated 1200×630 image (`public/og-default.png`, from `npm run assets`).
@@ -23,7 +23,7 @@ Status as of 2026-10-29. **The site is live-ready in code, but it hasn't launche
 - [x] **DNS today (at Porkbun) points at GitHub Pages for the demo:** GitHub Pages' apex `A`/`AAAA` records for `neonkey.tech`, plus a `www` `CNAME` to `mrmream-dotcom.github.io`. The gh-pages branch carries a `CNAME` file containing `neonkey.tech` (from `public/CNAME`) so GitHub keeps the custom domain on every push.
 - [ ] In GitHub **Settings → Pages**, confirm the custom domain shows `neonkey.tech` with a passing DNS check, then tick **Enforce HTTPS** once the certificate is issued.
 - [ ] Optional hardening: **verify the domain** for your GitHub account (Settings → Pages → Verified domains), so no other repo can claim it.
-- The demo build still uses `PUBLIC_SITE_MODE=demo`, so every page is `noindex` with the demo banner, even on the real domain.
+- The build still uses `PUBLIC_SITE_MODE=demo`, so every page is `noindex` (no visible banner), even on the real domain.
 
 ### Hosting for the real launch: recommendation
 
@@ -74,7 +74,7 @@ Recommendation: **Zoho Mail Forever Free** if you want to reply *from* `hello@`;
 
 - [ ] Set up the inbox and send yourself a test.
 - [ ] Wire or remove the contact form. It's a placeholder (`src/pages/contact.astro`, handled in `Base.astro`), so either connect a form backend or delete the form and keep the email link.
-- [ ] Remove the "(Placeholder address…)" note. It only shows in demo mode, so live mode hides it, but confirm the address really works first.
+- [ ] Remove the "(This inbox is still being set up.)" note. It only shows in demo mode, so live mode hides it, but confirm the address really works first.
 
 ## 5. Newsletter setup: "Unlock the Week by NeonKey" on Kit (You)
 
@@ -120,30 +120,37 @@ Kit won't send until **Settings → Email → Mailing Address** is filled in ([c
 
 ## 7. Switch to live mode (You)
 
-- [ ] `PUBLIC_SITE_MODE=live` in the Production environment. This removes the demo banner and noindex, makes robots.txt allow crawling and lists the sitemap.
+- [ ] `PUBLIC_SITE_MODE=live` in the Production environment. This removes noindex, makes robots.txt allow crawling and lists the sitemap.
 - [ ] After DNS is live: submit `https://neonkey.tech/sitemap-index.xml` in Google Search Console (optional).
 
-## 8. Replace or remove demo content (You)
+## 8. Hidden drafts: sample content (You)
 
-Each of these is placeholder content. Replace it with real content, or delete the file and its links/cards before going live:
+On Oct 29, 2026 the visible demo labels were removed (no demo banner in any mode, no "Demo content" badges) and every sample page was **hidden**: not built, not linked anywhere, not in the sitemap. `PUBLIC_SITE_MODE=demo` still means `noindex, nofollow` + robots.txt `Disallow: /`.
 
-| File | What it is |
-|---|---|
-| `src/pages/learn/self-host-n8n-old-pc.astro` | Sample tutorial (linked from Home, Learn, Newsletter) |
-| `src/pages/reviews/example-mini-pc-homelab.astro` | Sample review of a fictional product; **its "Check price" buttons point to `#`** |
-| `src/pages/notes/what-unlock-means.astro` | Sample notes article |
-| `src/pages/lab/n8n-lead-intake-automation.astro` | Sample Lab case study |
-| `src/pages/lab/homelab-network-segmentation.astro` | Sample Lab case study (linked from the Remote IT page) |
-| `src/pages/lab/ai-faq-assistant-small-business.astro` | Sample Lab case study (fictional business) |
-| `src/data/lab.ts` | Lab card list: update when the above change |
-| `src/pages/index.astro` | "Coming soon" card slot, featured-review placeholder art, sample cards |
-| `src/pages/learn/index.astro`, `reviews/index.astro`, `notes/index.astro` | Index cards for the samples, "coming soon" slots |
-| `src/pages/newsletter.astro` | Sample issue *format* (labeled as a sample; fine to keep) |
-| `src/pages/contact.astro` | Placeholder form (see step 4) |
-| `src/pages/privacy.astro` | **Draft** policy: finish it (hosting logs, data requests, privacy contact). It already covers Umami (cookieless) and Kit as the newsletter processor (draft wording) |
-| `src/pages/disclosure.astro` | Affiliate disclosure placeholder: review the wording |
+Hidden pages live in `src/_drafts/`, which Astro doesn't route (only `src/pages/` becomes URLs). The folder mirrors `src/pages/`, so relative imports keep working:
 
-Tip: `grep -rn "DemoBadge\|Demo content\|placeholder" src` finds the rest.
+| Draft file | Would publish at | What it is |
+|---|---|---|
+| `src/_drafts/learn/self-host-n8n-old-pc.astro` | `/learn/self-host-n8n-old-pc/` | Sample tutorial |
+| `src/_drafts/reviews/example-mini-pc-homelab.astro` | `/reviews/example-mini-pc-homelab/` | Sample review of a fictional product (its "Check price" buttons point to `#`) |
+| `src/_drafts/notes/what-unlock-means.astro` | `/notes/what-unlock-means/` | Sample notes article |
+| `src/_drafts/lab/n8n-lead-intake-automation.astro` | `/lab/n8n-lead-intake-automation/` | Sample Lab case study |
+| `src/_drafts/lab/homelab-network-segmentation.astro` | `/lab/homelab-network-segmentation/` | Sample Lab case study |
+| `src/_drafts/lab/ai-faq-assistant-small-business.astro` | `/lab/ai-faq-assistant-small-business/` | Sample Lab case study (fictional business) |
+
+The drafts still contain their old demo badges and "sample" wording, on purpose: rewrite them as real content before publishing.
+
+**To publish (restore) a page**
+1. Rewrite it with the real build/review/tutorial, and remove the `DemoBadge` / "sample" / "Demo content" bits (in Lab pages these come from `src/layouts/LabProject.astro`: the badge, the "Sample write-up" line, the warning callout and the "Demo Lab write-up:" description prefix).
+2. Move it back: `git mv src/_drafts/lab/<slug>.astro src/pages/lab/` (same for `learn/`, `reviews/`, `notes/`).
+3. **Lab:** in `src/data/lab.ts` delete `draft: true` (or set `false`) on that project. It then shows on `/lab/` (with tag filters) and in the home page "From the Lab" section automatically. Only list real projects: the Lab page's "Related" links use every project in `lab.ts`.
+4. **Learn / Reviews / Notes:** add a list item linking to it in `src/pages/<section>/index.astro` in place of the `<EmptyState />` (the old list markup is in git history, commit before Oct 29, 2026).
+5. Optional: link it from the home page again, and from `/services/remote-it/` (the old Lab callout there linked the network-segmentation write-up).
+6. Build and check: `grep -rni "demo content\|placeholder slot" dist` should be empty.
+
+Empty sections (`/learn/`, `/lab/`, `/reviews/`, `/notes/`) show `src/components/EmptyState.astro` ("First … are on the way — get them in Unlock the Week"). The home page shows one teaser line above the newsletter box instead of the old tutorial/Lab/review grids.
+
+Still to finish separately: the contact form (not connected, see step 4), `src/pages/privacy.astro` (draft policy), and `src/pages/disclosure.astro` (review the wording; its demo callout was removed).
 
 ## 9. Affiliate disclosure (You)
 
@@ -156,7 +163,7 @@ Tip: `grep -rn "DemoBadge\|Demo content\|placeholder" src` finds the rest.
 - **Prices** on `/services/` and `/services/remote-it/` are starter prices based on thin public data (`docs/pricing-research.md`). Confirm them, or switch to "Quote on request".
 - **Remote IT scope:** make sure you're comfortable supporting everything listed (Google Workspace, Microsoft 365, SPF/DKIM/DMARC, routers, backups, password managers). Remove anything you're not.
 - **Monthly support plan:** decide the actual response window and the number of requests, and put them in writing for each client.
-- **Lab samples** describe builds that aren't documented yet. They're labeled as demos, but replace them with real builds before you point people at the Lab.
+- **Lab samples** describe builds that aren't documented yet. They're hidden drafts (step 8); publish only real, documented builds.
 - **"No issues have been sent yet"** on the newsletter page stops being true after issue #1.
 - The site makes **no certification claims**, and there's no cert-study content. Keep it that way until a cert is actually earned.
 
@@ -172,4 +179,4 @@ Tip: `grep -rn "DemoBadge\|Demo content\|placeholder" src` finds the rest.
 
 ## GitHub Pages demo
 
-The demo at **https://neonkey.tech/** (noindex, demo banner) is a clean build pushed to the `gh-pages` branch with `BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`, plus `.nojekyll` and `CNAME` (`neonkey.tech`). Always include `CNAME` when pushing gh-pages by hand, or GitHub drops the custom domain. The old `https://mrmream-dotcom.github.io/NeonKey/` URL redirects to the custom domain. See README → Deploying.
+The demo at **https://neonkey.tech/** (noindex, no visible banner) is a clean build pushed to the `gh-pages` branch with `BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`, plus `.nojekyll` and `CNAME` (`neonkey.tech`). Always include `CNAME` when pushing gh-pages by hand, or GitHub drops the custom domain. The old `https://mrmream-dotcom.github.io/NeonKey/` URL redirects to the custom domain. See README → Deploying.

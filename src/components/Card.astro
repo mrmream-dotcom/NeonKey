@@ -1,11 +1,10 @@
 ---
-interface Props { href: string; title: string; kicker?: string; demo?: boolean }
-const { href, title, kicker, demo = true } = Astro.props;
+interface Props { href: string; title: string; kicker?: string }
+const { href, title, kicker } = Astro.props;
 ---
 <article class="card">
   <div class="card-top">
     {kicker && <span class="kicker">{kicker}</span>}
-    {demo && <span class="demo-badge">Demo content</span>}
   </div>
   <h3><a href={href}>{title}</a></h3>
   <p><slot /></p>

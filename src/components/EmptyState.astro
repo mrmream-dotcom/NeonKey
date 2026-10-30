@@ -1,0 +1,12 @@
+---
+// Honest empty state for a section with no published posts yet.
+import { url } from '../config';
+interface Props { what?: string; location?: string }
+const { what = 'posts', location = 'empty-state' } = Astro.props;
+---
+<div class="empty-state">
+  <span class="kicker">Nothing published yet</span>
+  <h2>First {what} are on the way</h2>
+  <p>Get them in Unlock the Week, the free weekly NeonKey email: curated tech and AI reads plus one pick, once a week.</p>
+  <a class="btn btn-primary" href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location={location}>Get Unlock the Week</a>
+</div>

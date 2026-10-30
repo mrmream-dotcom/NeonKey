@@ -1,7 +1,7 @@
 ---
-import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
-import DemoBadge from '../../components/DemoBadge.astro';
+import EmptyState from '../../components/EmptyState.astro';
+// Published notes go here. Unpublished drafts live in src/_drafts/notes/ (see LAUNCH.md "Hidden drafts").
 ---
 <Base title="Notes" description="NeonKey notes: short articles, plain-English explainers, opinions and build logs from a learning-in-public tech journey.">
   <div class="container page-head">
@@ -10,13 +10,6 @@ import DemoBadge from '../../components/DemoBadge.astro';
     <p>Shorter articles: opinions, explainers and build logs from the learning-in-public journey.</p>
   </div>
   <div class="container">
-    <div class="list-item">
-      <div>
-        <h3><a href={url('/notes/what-unlock-means/')}>What "unlock tech" means here</a></h3>
-        <p>Why NeonKey exists and how it's built for beginners and builders at the same time.</p>
-      </div>
-      <div><DemoBadge /></div>
-    </div>
-    <div class="list-item"><div><h3 class="muted">AI tools I actually kept using</h3><p>Planned note. Placeholder slot.</p></div><div><span class="tag">Coming soon</span></div></div>
+    <EmptyState what="notes" location="notes-empty" />
   </div>
 </Base>

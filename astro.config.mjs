@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // Build modes are driven by environment variables (see README "Build modes"):
 //   SITE_URL          absolute origin used for canonical URLs, OG tags and the sitemap (default https://neonkey.tech)
 //   BASE_PATH         path the site is served from, e.g. "/" or "/NeonKey/" for GitHub Pages (default "/")
-//   PUBLIC_SITE_MODE  "demo" (noindex + demo banner, default) or "live" (indexable, no banner)
+//   PUBLIC_SITE_MODE  "demo" (noindex + robots Disallow, default) or "live" (indexable). No visible banner in either mode
 const SITE_URL = (process.env.SITE_URL || 'https://neonkey.tech').replace(/\/+$/, '');
 const rawBase = process.env.BASE_PATH || '/';
 const BASE_PATH = ('/' + rawBase.replace(/^\/+|\/+$/g, '') + '/').replace(/\/+/g, '/');

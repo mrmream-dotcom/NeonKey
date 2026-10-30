@@ -1,7 +1,7 @@
 # NeonKey
 
 > **Unlock tech, whatever your level.**
-> Static site built with [Astro](https://astro.build). One codebase builds a **demo** version (noindex, demo banner) or a **live** version (indexable, no banner), on any base path.
+> Static site built with [Astro](https://astro.build). One codebase builds a **demo** (pre-launch) version (noindex, robots.txt Disallow) or a **live** version (indexable), on any base path. Neither shows a visible demo banner.
 
 Going live? Follow **[LAUNCH.md](LAUNCH.md)**. It lists what is done and what still needs you.
 
@@ -13,7 +13,7 @@ All settings are environment variables read at build time. Nothing needs editing
 |---|---|---|
 | `SITE_URL` | `https://neonkey.tech` | Origin used for canonical URLs, OG tags, sitemap and robots.txt |
 | `BASE_PATH` | `/` | Sub-path the site is served from (e.g. `/NeonKey/` for a project-pages URL without a custom domain). Every internal link and asset follows it. The neonkey.tech demo uses `/` |
-| `PUBLIC_SITE_MODE` | `demo` | `demo` = `noindex, nofollow` on every page, demo banner, robots.txt blocks crawling. `live` = indexable, no banner, robots.txt allows crawling and lists the sitemap |
+| `PUBLIC_SITE_MODE` | `demo` | `demo` = `noindex, nofollow` on every page, robots.txt blocks crawling (no visible banner). `live` = indexable, robots.txt allows crawling and lists the sitemap |
 | `PUBLIC_UMAMI_WEBSITE_ID` | `2c6a467e-392a-4226-b068-fdfc908a48da` (NeonKey) | Umami website ID, public by design. Built in as the default, so every build includes tracking. Set to `off` to build without analytics |
 | `PUBLIC_UMAMI_SRC` | `https://cloud.umami.is/script.js` | Umami script URL (change for self-hosted Umami) |
 | `PUBLIC_UMAMI_DOMAINS` | `neonkey.tech,www.neonkey.tech` | Umami `data-domains`: the script only reports from these hostnames, so localhost, `*.pages.dev` and `github.io` previews load it but send nothing |
@@ -92,11 +92,11 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 | Route | Page |
 |---|---|
 | `/` | Home: hero, four Unlock pillars, tutorials, From the Lab strip, featured review, newsletter, services teaser |
-| `/learn/`, `/learn/self-host-n8n-old-pc/` | Learn index and a sample tutorial |
-| `/lab/` + 3 case studies | Lab portfolio with tag filters (sample write-ups) |
-| `/reviews/`, `/reviews/example-mini-pc-homelab/` | Reviews index and a sample review |
-| `/notes/`, `/notes/what-unlock-means/` | Notes index and a sample article |
-| `/newsletter/` | Unlock the Week: what you get, cadence, privacy, sample issue format |
+| `/learn/` | Learn index (empty state until the first tutorial; drafts in `src/_drafts/learn/`) |
+| `/lab/` | Lab portfolio with tag filters for published projects (empty state for now; 3 sample case studies are drafts in `src/_drafts/lab/`) |
+| `/reviews/` | Reviews index (empty state; sample review is a draft in `src/_drafts/reviews/`) |
+| `/notes/` | Notes index (empty state; sample note is a draft in `src/_drafts/notes/`) |
+| `/newsletter/` | Unlock the Week: what you get, cadence, privacy, issue format |
 | `/services/` | Featured Remote Small-Office IT Setup plus three automation services |
 | `/services/remote-it/` | Remote Small-Office IT Setup & the monthly remote support plan: scope, exclusions, pricing |
 | `/about/`, `/disclosure/`, `/privacy/`, `/contact/` | Footer pages (privacy is a draft; the contact form isn't connected) |
@@ -108,7 +108,8 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 public/            favicon.svg + generated PNG icons, og-default.png, _headers, _redirects
 scripts/           generate-assets.mjs (sharp: OG image and icons)
 src/config.ts      env-driven settings and the base-aware url() helper
-src/components/    Logo, DemoBadge, Card, NewsletterForm
+src/components/    Logo, Card, EmptyState, NewsletterForm, DemoBadge (drafts only)
+src/_drafts/       hidden sample pages (not built; see LAUNCH.md step 8)
 src/data/          lab.ts (Lab projects), services.ts (service offers and prices)
 src/layouts/       Base.astro (head/meta, nav, footer, Umami), LabProject.astro
 src/pages/         one file per route, plus robots.txt.ts and site.webmanifest.ts

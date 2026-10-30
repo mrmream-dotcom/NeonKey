@@ -5,6 +5,6 @@ import { IS_LIVE, absoluteUrl } from '../config';
 export const GET: APIRoute = ({ site }) => {
   const body = IS_LIVE
     ? `User-agent: *\nAllow: /\n\nSitemap: ${absoluteUrl('/sitemap-index.xml', site)}\n`
-    : `# Demo build: not for indexing.\nUser-agent: *\nDisallow: /\n`;
+    : `# Pre-launch build: not for indexing.\nUser-agent: *\nDisallow: /\n`;
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

@@ -1,7 +1,6 @@
 ---
 import { url, NEWSLETTER } from '../config';
 import Base from '../layouts/Base.astro';
-import DemoBadge from '../components/DemoBadge.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 ---
 <Base title="Unlock the Week" description="Unlock the Week by NeonKey: a free weekly email with curated tech and AI articles worth reading, plus one deal or tool pick. Short, skimmable, unsubscribe anytime.">
@@ -27,11 +26,11 @@ import NewsletterForm from '../components/NewsletterForm.astro';
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="sample-h">
+  <section class="alt" aria-labelledby="format-h">
     <div class="narrow">
-      <h2 id="sample-h">What an issue looks like</h2>
-      <article class="card sample-issue">
-        <div class="card-top"><span class="kicker">Sample format</span><DemoBadge label="Sample, not a real issue" /></div>
+      <h2 id="format-h">What an issue looks like</h2>
+      <article class="card issue-format">
+        <div class="card-top"><span class="kicker">Issue format</span></div>
         <h3>Unlock the Week #[number]: [date]</h3>
         <ol>
           <li><strong>The quick take:</strong> two or three sentences on the week's theme.</li>

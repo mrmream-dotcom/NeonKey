@@ -1,19 +1,23 @@
 ---
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
-import { labProjects, labTags } from '../../data/lab';
+import EmptyState from '../../components/EmptyState.astro';
+import { publishedLabProjects as projects, labTags } from '../../data/lab';
+// Only published projects are listed. Drafts (draft: true in src/data/lab.ts, pages in src/_drafts/lab/) stay hidden.
 ---
 <Base title="Lab" description="The NeonKey Lab: real builds, documented. What I built, why, what broke and what I learned.">
   <div class="container page-head">
     <span class="kicker">The Lab · Hands-on builds</span>
     <h1>Real builds, <span class="glow-c">documented.</span></h1>
     <p>What I built, why, what broke, and what I learned. The Lab is my project portfolio: homelab, automation, networking, security and AI builds written up as honest case studies, mistakes included.</p>
-    <p class="muted" style="font-size:.95rem">The three write-ups below are <strong>demo samples</strong> that show the case-study format. They'll be replaced by real, documented builds.</p>
   </div>
 
   <section style="padding-top:.5rem" aria-labelledby="lab-grid-h">
     <div class="container">
       <h2 id="lab-grid-h" class="sr-only">Projects</h2>
+      {projects.length === 0 ? (
+        <EmptyState what="Lab builds" location="lab-empty" />
+      ) : (<>
       <div class="lab-filters" role="group" aria-label="Filter projects by tag">
         <button type="button" class="filter-chip" data-filter="all" aria-pressed="true" data-umami-event="lab-filter" data-umami-event-tag="All">All</button>
         {labTags.map((t) => (
@@ -21,11 +25,10 @@ import { labProjects, labTags } from '../../data/lab';
         ))}
       </div>
       <div class="grid grid-3 lab-grid">
-        {labProjects.map((p) => (
+        {projects.map((p) => (
           <article class="card lab-card" data-tags={p.tags.join(',')}>
             <div class="card-top">
               <span class="kicker">{p.level}</span>
-              <span class="demo-badge">Demo content</span>
             </div>
             <h3><a href={url(`/lab/${p.slug}/`)}>{p.title}</a></h3>
             <p>{p.summary}</p>
@@ -33,9 +36,9 @@ import { labProjects, labTags } from '../../data/lab';
             <a class="lab-read" href={url(`/lab/${p.slug}/`)}>Read the build →</a>
           </article>
         ))}
-        <div class="empty-slot lab-card" data-tags="all">Next build in progress. Placeholder slot.</div>
       </div>
-      <p class="filter-empty muted" hidden>No sample builds with that tag yet.</p>
+      <p class="filter-empty muted" hidden>No builds with that tag yet.</p>
+      </>)}
     </div>
   </section>
 

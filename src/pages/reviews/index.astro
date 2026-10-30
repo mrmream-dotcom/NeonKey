@@ -1,7 +1,8 @@
 ---
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
-import DemoBadge from '../../components/DemoBadge.astro';
+import EmptyState from '../../components/EmptyState.astro';
+// Published reviews go here. Unpublished drafts live in src/_drafts/reviews/ (see LAUNCH.md "Hidden drafts").
 ---
 <Base title="Reviews" description="NeonKey reviews: honest takes on gear and software, with clear affiliate disclosure.">
   <div class="container page-head">
@@ -10,15 +11,6 @@ import DemoBadge from '../../components/DemoBadge.astro';
     <p>Who a product is for, what's good, what isn't, and a plain verdict. Some links are affiliate links. That never changes the verdict. <a href={url('/disclosure/')}>Read the disclosure</a>.</p>
   </div>
   <div class="container">
-    <div class="list-item">
-      <div>
-        <h3><a href={url('/reviews/example-mini-pc-homelab/')}>Example Mini PC for a first homelab</a></h3>
-        <p>Sample review showing the pros/cons box, verdict and where-to-buy block.</p>
-        <p style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap"><span class="tag">Homelab</span><span class="tag">Hardware</span></p>
-      </div>
-      <div><DemoBadge /></div>
-    </div>
-    <div class="list-item"><div><h3 class="muted">Password managers for beginners</h3><p>Planned comparison. Placeholder slot.</p></div><div><span class="tag">Coming soon</span></div></div>
-    <div class="list-item"><div><h3 class="muted">Budget mesh Wi-Fi picks</h3><p>Planned roundup. Placeholder slot.</p></div><div><span class="tag">Coming soon</span></div></div>
+    <EmptyState what="reviews" location="reviews-empty" />
   </div>
 </Base>

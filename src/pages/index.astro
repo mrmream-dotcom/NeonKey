@@ -2,9 +2,10 @@
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
-import DemoBadge from '../components/DemoBadge.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
-import { labProjects } from '../data/lab';
+import { publishedLabProjects } from '../data/lab';
+// Tutorials, reviews and notes have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
+// so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 const pillars = [
   { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Practical automations and remote small-office IT setup for small businesses. Plain-English setup and handoff.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
@@ -17,32 +18,30 @@ const pillars = [
 ];
 ---
 <Base title="Home" description="NeonKey helps beginners and builders get more out of tech: practical AI automations, honest gear picks, hands-on tutorials, Lab builds and a weekly email.">
-  <section class="hero">
-    <div class="container hero-grid">
-      <div>
-        <span class="kicker">AI · Deals · Skills · Weekly</span>
-        <h1>Unlock tech, <span class="glow">whatever</span> <span class="glow-m">your level.</span></h1>
-        <p class="lead">NeonKey helps beginners and builders get more out of technology: practical AI automations, honest gear picks, hands-on tutorials and a weekly email that respects your time.</p>
-        <div class="btn-row">
-          <a class="btn btn-primary" href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="home-hero">Get Unlock the Week</a>
-          <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">Services for your business</a>
-        </div>
-      </div>
-      <div class="hero-art" aria-hidden="true">
-        <svg viewBox="0 0 320 320" width="320" height="320">
-          <defs>
-            <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#22d3ee"/><stop offset=".55" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/>
-            </linearGradient>
-          </defs>
-          <circle cx="160" cy="160" r="150" fill="none" stroke="#262b52" stroke-width="1.5"/>
-          <circle cx="160" cy="160" r="118" fill="none" stroke="#262b52" stroke-dasharray="4 8"/>
-          <g fill="none" stroke="url(#hg)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="112" cy="160" r="40"/>
-            <path d="M152 160h104M224 160v30M252 160v20"/>
-          </g>
-          <circle cx="112" cy="160" r="12" fill="#f472b6"/>
-        </svg>
+  <section class="hero hero-bg">
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 320 320" width="320" height="320" focusable="false">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22d3ee"/><stop offset=".55" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="160" cy="160" r="150" fill="none" stroke="#262b52" stroke-width="1.5"/>
+        <circle cx="160" cy="160" r="118" fill="none" stroke="#262b52" stroke-dasharray="4 8"/>
+        <g fill="none" stroke="url(#hg)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="112" cy="160" r="40"/>
+          <path d="M152 160h104M224 160v30M252 160v20"/>
+        </g>
+        <circle cx="112" cy="160" r="12" fill="#f472b6"/>
+      </svg>
+    </div>
+    <div class="container hero-content">
+      <span class="kicker">AI · Deals · Skills · Weekly</span>
+      <h1>Unlock tech,<br /> <span class="glow">whatever</span> <span class="glow-m">your level.</span></h1>
+      <p class="lead">NeonKey helps beginners and builders get more out of technology: practical AI automations, honest gear picks, hands-on tutorials and a weekly email that respects your time.</p>
+      <div class="btn-row hero-ctas">
+        <a class="btn btn-primary" href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="home-hero">Get Unlock the Week</a>
+        <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">Services for your business</a>
       </div>
     </div>
   </section>
@@ -63,43 +62,23 @@ const pillars = [
     </div>
   </section>
 
-  <section aria-labelledby="latest-h">
-    <div class="container">
-      <div class="section-head"><h2 id="latest-h">Latest tutorials</h2><a href={url('/learn/')}>All tutorials →</a></div>
-      <div class="grid grid-3">
-        <Card href={url('/learn/self-host-n8n-old-pc/')} title="Self-host n8n on an old PC" kicker="Homelab · Beginner">Turn a spare computer into an always-on automation box with Docker and n8n.</Card>
-        <Card href={url('/learn/')} title="Coming soon: Your first home network map" kicker="Networking · Beginner">A placeholder slot for an upcoming tutorial.</Card>
-        <Card href={url('/learn/')} title="Coming soon: Small-office Wi-Fi checklist" kicker="Tutorial">A placeholder slot for an upcoming beginner tutorial.</Card>
-      </div>
-    </div>
-  </section>
-
+  {publishedLabProjects.length > 0 && (
   <section class="alt" aria-labelledby="lab-h">
     <div class="container">
       <div class="section-head"><h2 id="lab-h">From the Lab</h2><a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home">All builds →</a></div>
       <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, what broke and what I learned.</p>
       <div class="grid grid-3">
-        {labProjects.map((p) => (
+        {publishedLabProjects.map((p) => (
           <Card href={url(`/lab/${p.slug}/`)} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
         ))}
       </div>
     </div>
   </section>
-
-  <section aria-labelledby="review-h">
-    <div class="container feature">
-      <div class="placeholder-art">Product image placeholder<br />(no real product shown in demo)</div>
-      <div>
-        <div class="card-top" style="justify-content:flex-start"><span class="kicker">Featured review</span><DemoBadge /></div>
-        <h2 id="review-h">Example Mini PC for a first homelab</h2>
-        <p class="muted">A sample review layout: who it's for, pros and cons, a plain verdict and where to buy. Every review on NeonKey discloses affiliate links up front.</p>
-        <a class="btn btn-ghost" href={url('/reviews/example-mini-pc-homelab/')}>Read the review</a>
-      </div>
-    </div>
-  </section>
+  )}
 
   <section aria-labelledby="nl-h">
     <div class="container">
+      <p class="home-teaser" id="first-posts">Tutorials, Lab builds, reviews and notes: <strong>first posts are on the way.</strong> Get them in Unlock the Week.</p>
       <div class="nl-box">
         <span class="kicker">Newsletter · Weekly</span>
         <h2 id="nl-h">Unlock the Week</h2>
