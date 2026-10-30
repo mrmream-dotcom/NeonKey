@@ -4,8 +4,8 @@
 name: Deploy demo to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  # Manual only for now: the demo is served from the gh-pages branch.
+  # Re-enable push after switching Pages Source to "GitHub Actions".
   workflow_dispatch:
 
 permissions:
