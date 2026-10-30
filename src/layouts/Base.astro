@@ -129,17 +129,15 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
           if (note) note.textContent = 'Placeholder form: it is not connected yet, so nothing was sent.';
         });
       });
-      // beehiiv embed lives in a cross-origin iframe, so clicks inside it can't be seen.
-      // Record a single "newsletter-form-focus" event when a visitor first interacts with it.
-      // Actual subscriptions are counted in beehiiv.
-      let nlFocused = false;
-      window.addEventListener('blur', () => {
-        const el = document.activeElement;
-        if (nlFocused || !el || el.tagName !== 'IFRAME' || !el.closest('[data-nl-embed]')) return;
-        nlFocused = true;
-        const form = (el.closest('[data-nl-embed]') as HTMLElement).dataset.form || '';
-        (window as any).umami?.track?.('newsletter-form-focus', { form, provider: 'beehiiv' });
-      });
+      // Newsletter (Kit): count a "newsletter-signup" only when a signup form is actually submitted
+      // (the browser has already validated the email). Works for our own form and for Kit's JS embed,
+      // which renders a form.formkit-form inside [data-nl-embed]. Confirmed subscribers are counted in Kit.
+      document.addEventListener('submit', (e) => {
+        const form = e.target as HTMLElement | null;
+        const host = form?.closest('[data-nl-form], [data-nl-embed]') as HTMLElement | null;
+        if (!host) return;
+        (window as any).umami?.track?.('newsletter-signup', { form: host.dataset.form || '', provider: 'kit' });
+      }, true);
     </script>
   </body>
 </html>

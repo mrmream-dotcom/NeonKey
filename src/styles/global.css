@@ -231,6 +231,6 @@ label { font-weight: 600; display: block; margin-bottom: .35rem; }
 /* Newsletter states */
 .nl-form[aria-disabled='true'] input, .nl-form button:disabled { opacity: .55; cursor: not-allowed; }
 .nl-soon { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fde68a; border: 1px solid rgba(251,191,36,.6); background: rgba(251,191,36,.1); padding: .1rem .55rem; border-radius: 999px; }
-.beehiiv-embed { width: 100%; min-height: 150px; border: 0; background: transparent; }
+.kit-embed { min-height: 120px; }
 .sample-issue { border: 1px dashed rgba(167,139,250,.55); }
 .sample-issue ol { padding-left: 1.2rem; color: var(--muted); }

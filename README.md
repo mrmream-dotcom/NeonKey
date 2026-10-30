@@ -12,14 +12,15 @@ All settings are environment variables read at build time. Nothing needs editing
 | Variable | Default | What it does |
 |---|---|---|
 | `SITE_URL` | `https://neonkey.tech` | Origin used for canonical URLs, OG tags, sitemap and robots.txt |
-| `BASE_PATH` | `/` | Sub-path the site is served from, e.g. `/NeonKey/` for GitHub Pages. Every internal link and asset follows it |
+| `BASE_PATH` | `/` | Sub-path the site is served from (e.g. `/NeonKey/` for a project-pages URL without a custom domain). Every internal link and asset follows it. The neonkey.tech demo uses `/` |
 | `PUBLIC_SITE_MODE` | `demo` | `demo` = `noindex, nofollow` on every page, demo banner, robots.txt blocks crawling. `live` = indexable, no banner, robots.txt allows crawling and lists the sitemap |
-| `PUBLIC_UMAMI_WEBSITE_ID` | *(unset)* | Umami website ID. The analytics script is only added when this is set |
+| `PUBLIC_UMAMI_WEBSITE_ID` | `2c6a467e-392a-4226-b068-fdfc908a48da` (NeonKey) | Umami website ID, public by design. Built in as the default, so every build includes tracking. Set to `off` to build without analytics |
 | `PUBLIC_UMAMI_SRC` | `https://cloud.umami.is/script.js` | Umami script URL (change for self-hosted Umami) |
-| `PUBLIC_UMAMI_DOMAINS` | *(unset)* | Optional comma-separated `data-domains`, e.g. `neonkey.tech`, so previews and localhost aren't counted |
-| `PUBLIC_NEWSLETTER_PROVIDER` | *(unset)* | Set to `beehiiv` to turn on newsletter signups |
-| `PUBLIC_BEEHIIV_EMBED_ID` | *(unset)* | beehiiv subscribe-form ID (embeds the beehiiv form) |
-| `PUBLIC_BEEHIIV_FORM_URL` | *(unset)* | Alternative to the embed: your beehiiv subscribe page URL; the site's own form sends visitors there |
+| `PUBLIC_UMAMI_DOMAINS` | `neonkey.tech,www.neonkey.tech` | Umami `data-domains`: the script only reports from these hostnames, so localhost, `*.pages.dev` and `github.io` previews load it but send nothing |
+| `PUBLIC_NEWSLETTER_PROVIDER` | *(unset)* | Set to `kit` to turn on newsletter signups (Kit, formerly ConvertKit) |
+| `PUBLIC_KIT_FORM_ID` | *(unset)* | Numeric Kit form ID. The site's own form posts `email_address` to `https://app.kit.com/forms/<ID>/subscriptions` (recommended) |
+| `PUBLIC_KIT_EMBED_SRC` | *(unset)* | Alternative: Kit's JavaScript embed `src`, e.g. `https://<account>.kit.com/<uid>/index.js`. Used only when `PUBLIC_KIT_FORM_ID` is unset |
+| `PUBLIC_KIT_FORM_URL` | *(unset)* | Optional override for the full form action URL (`https://app.kit.com/forms/<ID>/subscriptions`) |
 | `PUBLIC_CONTACT_EMAIL` | `hello@neonkey.tech` | Public contact address (placeholder until the inbox exists) |
 
 Examples:
@@ -28,7 +29,7 @@ Examples:
 npm install
 npm run build                                                     # demo, https://neonkey.tech, base /
 PUBLIC_SITE_MODE=live npm run build                               # live build for neonkey.tech
-BASE_PATH=/NeonKey/ SITE_URL=https://mrmream-dotcom.github.io npm run build   # GitHub Pages demo
+SITE_URL=https://neonkey.tech npm run build   # GitHub Pages demo at neonkey.tech (demo mode is the default)
 npm run dev                                                       # dev server at http://localhost:4321
 npx astro preview --port 4322 --host 127.0.0.1                    # serve ./dist
 npm run assets                                                    # regenerate OG image + PNG icons (sharp)
@@ -40,28 +41,28 @@ Requires Node 22.23.4+ (developed on Node 24). `.env` files work too (see Astro'
 
 Umami is cookieless and doesn't collect personal data, so it needs no cookie banner. The privacy page switches its wording automatically when an ID is set.
 
-**Set up**
-1. Create a free account at [cloud.umami.is](https://cloud.umami.is).
-2. **Settings → Websites → Add website.** Name: NeonKey. Domain: `neonkey.tech` (or the Pages preview domain while testing).
-3. Open the website's settings and copy the **Website ID** (a UUID).
-4. Set `PUBLIC_UMAMI_WEBSITE_ID=<that id>` in Cloudflare Pages (**Settings → Environment variables**) or locally, then rebuild. Optionally set `PUBLIC_UMAMI_DOMAINS=neonkey.tech`.
+**Set up (done):** the NeonKey website exists in Umami Cloud, and its ID `2c6a467e-392a-4226-b068-fdfc908a48da` is the default in `src/config.ts`. No env var is needed. The script is `https://cloud.umami.is/script.js`, which sends to `https://gateway.umami.is/api/send`, as checked in the live script in Oct 2026. Both hosts are in the CSP in `public/_headers`.
+
+**Stats only come from the real domain.** `data-domains="neonkey.tech,www.neonkey.tech"` means visits on localhost, `astro preview`, `*.pages.dev` previews or `github.io` aren't counted. To test locally, either:
+- build with `PUBLIC_UMAMI_DOMAINS=localhost,127.0.0.1` (this adds test visits to the real stats), or
+- open the deployed site.
+
+To turn tracking off on your own browser, run `localStorage.setItem('umami.disabled', 1)` in the devtools console on neonkey.tech.
 
 **Test it**
-1. Build and serve with the ID set: `PUBLIC_UMAMI_WEBSITE_ID=<id> npm run build && npx astro preview --port 4322 --host 127.0.0.1` (leave `PUBLIC_UMAMI_DOMAINS` unset for local tests, or localhost won't be counted).
-2. Open the site in a normal browser window and open devtools → **Network**:
+1. Open https://neonkey.tech/ in a normal browser window with extensions off, and open devtools → **Network**:
    - `script.js` from `cloud.umami.is` loads with status **200**.
-   - A request to **`/api/send`** (Umami Cloud's collection endpoint) returns **200** on each page view and on tracked clicks.
-3. In Umami, open the website's **Realtime** view: you should appear as a current visitor within a few seconds.
-4. Click a tracked button (e.g. Services "Ask about this"); the event shows under **Events**.
-5. Ad-blockers and privacy extensions (uBlock Origin, Brave Shields and others) often block Umami. If nothing shows up, test in a clean profile with extensions off.
+   - A POST to **`gateway.umami.is/api/send`** returns **200** on each page view and on tracked clicks.
+2. In Umami, open the website's **Realtime** view: you should appear as a current visitor within a few seconds.
+3. Click a tracked button (e.g. Services "Ask about this"); the event shows under **Events**.
+4. Ad-blockers and privacy extensions (uBlock Origin, Brave Shields and others) often block Umami. If nothing shows up, test in a clean profile.
 
-**Tracked events** (via `data-umami-event` attributes, no extra JS):
+**Tracked events** (via `data-umami-event` attributes; `newsletter-signup` is sent by a small submit listener in `Base.astro`):
 
 | Event | Where | Extra data |
 |---|---|---|
 | `newsletter-cta` | Header "Newsletter" button, home hero | `location` |
-| `newsletter-signup` | Signup submit (link mode) | `form`, `provider` |
-| `newsletter-form-focus` | First interaction with an embedded beehiiv form (embed mode; real signups are counted in beehiiv) | `form`, `provider` |
+| `newsletter-signup` | A valid signup form submit (form and embed modes; confirmed subscribers are counted in Kit) | `form`, `provider` (`kit`) |
 | `services-cta` | Service "Ask about this" / "See what's included" buttons, home and Lab CTAs | `offer`, `location` |
 | `contact-click` / `contact-submit` | Contact links, email links, contact form | `location`, `offer` |
 | `lab-cta` | "See the builds" / "All builds" links | `location` |
@@ -69,18 +70,18 @@ Umami is cookieless and doesn't collect personal data, so it needs no cookie ban
 | `affiliate-click` | Review "where to buy" buttons | `item`, `retailer` |
 | `outbound-click` | Selected outbound links | `item` |
 
-## Newsletter: Unlock the Week (beehiiv)
+## Newsletter: Unlock the Week (Kit)
 
-With no newsletter variables set, every signup form shows a clear **Coming soon** state: the field and button are disabled and nothing is collected. To turn it on:
+With no newsletter variables set, every signup form shows a clear **Coming soon** state: the field and button are disabled and nothing is collected. To turn it on (full steps in [LAUNCH.md](LAUNCH.md), section 5):
 
-- **Embed (recommended):** in beehiiv, **Subscribers → Subscribe forms → create a form → Get embed code**. The code contains `https://subscribe-forms.beehiiv.com/<FORM-ID>`. Set `PUBLIC_NEWSLETTER_PROVIDER=beehiiv` and `PUBLIC_BEEHIIV_EMBED_ID=<FORM-ID>`.
-- **Link:** set `PUBLIC_NEWSLETTER_PROVIDER=beehiiv` and `PUBLIC_BEEHIIV_FORM_URL=https://<your-publication>.beehiiv.com/subscribe`. The site's form opens that page in a new tab (the email is passed as `?email=`; check whether beehiiv pre-fills it).
+- **Site form (recommended):** in Kit, **Grow → Landing Pages & Forms → your form → Embed → HTML**. The code's `<form action="https://app.kit.com/forms/<FORM_ID>/subscriptions">` contains the numeric ID. Set `PUBLIC_NEWSLETTER_PROVIDER=kit` and `PUBLIC_KIT_FORM_ID=<FORM_ID>`. The site renders its own styled form (email field named `email_address`, as Kit expects) and the visitor lands on Kit's confirmation, or your redirect URL if you set one in the form settings. No third-party script runs on the site.
+- **Kit JavaScript embed:** **Embed → JavaScript** gives `<script async data-uid="<uid>" src="https://<account>.kit.com/<uid>/index.js"></script>`. Set `PUBLIC_NEWSLETTER_PROVIDER=kit` and `PUBLIC_KIT_EMBED_SRC=<that src>`. Kit draws its own form, and changes made in Kit show up automatically. Use an **Inline** form.
 
-beehiiv docs: [Creating an embedded subscribe form](https://www.beehiiv.com/support/article/12977090590487-creating-an-embedded-subscribe-form). `public/_headers` already allows beehiiv's form script and iframe.
+Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-embedding-basics). `public/_headers` already allows the Kit domains both modes need.
 
 ## Hosting files
 
-- `public/_headers`: Cloudflare Pages security headers (CSP allowing Umami Cloud and beehiiv forms, nosniff, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`) and long caching for `/_astro/*`.
+- `public/_headers`: Cloudflare Pages security headers (CSP allowing Umami Cloud and Kit forms, nosniff, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`) and long caching for `/_astro/*`.
 - `public/_redirects`: a few short URLs (`/portfolio`, `/weekly`, `/subscribe`, `/it`).
 - Both are ignored by GitHub Pages and `astro preview`.
 - The build emits no inline scripts or stylesheets (`build.inlineStylesheets: 'never'`, `assetsInlineLimit: 0`), so the strict `script-src` works. Inline `style=""` attributes are used, so `style-src` includes `'unsafe-inline'`.
@@ -120,4 +121,6 @@ Internal links must use `url('/path/')` from `src/config.ts` so they respect `BA
 ## Deploying
 
 - **Cloudflare Pages (production):** see [LAUNCH.md](LAUNCH.md).
-- **GitHub Pages (demo preview):** `.github/workflows/pages.yml` builds with `BASE_PATH=/NeonKey/` and deploys with `actions/deploy-pages` once **Settings → Pages → Source** is set to **GitHub Actions**. A copy lives at `docs/pages.yml.example`. The `gh-pages` branch currently holds a manual demo build.
+- **Domain:** `neonkey.tech`, registered at Porkbun on Oct 29, 2026. It renews Oct 30, 2027 at $50.98/yr, with auto-renew on. DNS is at Porkbun and points at GitHub Pages (apex `A`/`AAAA` + `www` CNAME) for the demo.
+- **GitHub Pages (demo, https://neonkey.tech/):** the `gh-pages` branch holds a clean demo build (`BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`) with `.nojekyll` and `CNAME`. `public/CNAME` puts `CNAME` into every build automatically. `.github/workflows/pages.yml` (manual-only, copy in `docs/pages.yml.example`) builds the same thing once **Settings → Pages → Source** is set to **GitHub Actions**. GitHub Pages ignores `_headers`/`_redirects`.
+- **Launch plan:** move DNS to Cloudflare and deploy on Cloudflare Pages in live mode, so headers, redirects and Email Routing work. See LAUNCH.md, step 1.

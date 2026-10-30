@@ -17,9 +17,15 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 
     <h2>Newsletter</h2>
     {NEWSLETTER.mode !== 'off' ? (
-      <p>Unlock the Week is sent with <a href="https://www.beehiiv.com/privacy" data-umami-event="outbound-click" data-umami-event-item="beehiiv-privacy">beehiiv</a>. When you subscribe, beehiiv stores your email address and basic delivery data (such as opens and clicks) on NeonKey's behalf. Your email is used only to send the newsletter and is never sold. Every issue has a one-click unsubscribe link.</p>
+      <>
+        <p>Unlock the Week is sent with <a href="https://kit.com/privacy" data-umami-event="outbound-click" data-umami-event-item="kit-privacy">Kit</a> (formerly ConvertKit), which processes subscriber data on NeonKey's behalf. When you subscribe, your email address goes straight to Kit. Kit stores it along with basic sign-up and delivery data, such as when and where you signed up and whether an issue was delivered, opened or clicked.</p>
+        <p>Your email is used only to send the newsletter and is never sold. Every issue has an unsubscribe link, and you can ask for your data to be deleted at any time by emailing {CONTACT_EMAIL}.</p>
+        {NEWSLETTER.mode === 'embed' && (
+          <p>The signup form on this site is loaded from Kit. Kit's form script may store a small cookie or local-storage entry, for example to remember that you've already subscribed.</p>
+        )}
+      </>
     ) : (
-      <p>Newsletter signups aren't open yet, so no email addresses are collected. When they open, Unlock the Week will be sent with beehiiv and this section will describe what it stores.</p>
+      <p>Newsletter signups aren't open yet, so no email addresses are collected. When they open, Unlock the Week will be sent with Kit (formerly ConvertKit), and this section will describe what Kit stores.</p>
     )}
 
     <h2>Contact</h2>
@@ -30,7 +36,7 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 
     <h2>Still to complete before launch</h2>
     <ul>
-      <li>Newsletter provider (e.g. beehiiv) and what it stores</li>
+      <li>Confirm the newsletter wording against Kit's current privacy policy and data processing terms</li>
       <li>Contact method and how messages are kept</li>
       <li>Hosting provider logs (e.g. Cloudflare)</li>
       <li>How to access or delete your data, and a privacy contact</li>

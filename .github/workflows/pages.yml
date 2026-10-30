@@ -1,4 +1,4 @@
-# Builds the demo site for GitHub Pages at https://mrmream-dotcom.github.io/NeonKey/
+# Builds the demo site for GitHub Pages at https://neonkey.tech/ (custom domain; public/CNAME is copied into dist).
 # Requires: repo Settings > Pages > Build and deployment > Source = "GitHub Actions".
 # Until that is switched on, the deploy job will fail harmlessly; the build job still checks the site compiles.
 name: Deploy demo to GitHub Pages
@@ -21,8 +21,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SITE_URL: https://mrmream-dotcom.github.io
-      BASE_PATH: /NeonKey/
+      SITE_URL: https://neonkey.tech
+      BASE_PATH: /
       PUBLIC_SITE_MODE: demo
     steps:
       - uses: actions/checkout@v4

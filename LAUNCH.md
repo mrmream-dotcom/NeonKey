@@ -1,6 +1,6 @@
 # NeonKey launch checklist
 
-Status as of 2026-10-29. **The site is live-ready in code, but nothing has been launched.** No domain has been bought, no DNS has been changed and no Cloudflare project exists yet. Everything below marked "You" needs Michael.
+Status as of 2026-10-29. **The site is live-ready in code, but it hasn't launched in live mode.** `neonkey.tech` was bought on Oct 29, 2026 (Porkbun) and currently serves the **noindex demo** from GitHub Pages. No Cloudflare project exists yet. Everything below marked "You" needs Michael.
 
 ## Already done (in this repo)
 
@@ -11,16 +11,34 @@ Status as of 2026-10-29. **The site is live-ready in code, but nothing has been 
 - [x] Favicon set (SVG, 32px PNG, Apple touch icon), web manifest with 192/512/maskable icons.
 - [x] Meta descriptions on every page; a proper 404 page (noindex).
 - [x] Accessibility basics: skip link, visible focus styles, `aria-current` on nav, Escape closes the mobile menu, color contrast checked (all text pairs at least 6.3:1, WCAG AA needs 4.5:1).
-- [x] No `<img>` tags in use (art is inline SVG); the beehiiv iframe is `loading="lazy"`.
-- [x] `public/_headers` (CSP allowing Umami Cloud and beehiiv, nosniff, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`) and `public/_redirects`.
-- [x] Umami wired in, off until `PUBLIC_UMAMI_WEBSITE_ID` is set; custom events on key buttons.
-- [x] Newsletter "Unlock the Week" wired for beehiiv, with an honest "Coming soon" state until configured.
+- [x] No `<img>` tags in use (art is inline SVG). The newsletter form is the site's own HTML by default, so no third-party script loads.
+- [x] `public/_headers` (CSP allowing Umami Cloud and Kit, nosniff, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`) and `public/_redirects`.
+- [x] Umami wired in with NeonKey's website ID as the default (`2c6a467e-…`). It only reports from `neonkey.tech`/`www.neonkey.tech` (`data-domains`), with custom events on key buttons.
+- [x] Newsletter "Unlock the Week" wired for Kit (formerly ConvertKit), with an honest "Coming soon" state until configured.
 - [x] Services: Remote Small-Office IT Setup (featured) + monthly support plan, plus the three automation services. Pricing basis in `docs/pricing-research.md`.
 
-## 1. Domain (You)
+## 1. Domain (done)
 
-- [ ] Buy `neonkey.tech` (or your pick). If you use Cloudflare Registrar, DNS is on Cloudflare automatically, which Email Routing needs.
-- [ ] If you pick a different domain, update `SITE_URL`, `PUBLIC_CONTACT_EMAIL` and the `neonkey.tech` text in `scripts/generate-assets.mjs` (then `npm run assets`).
+- [x] **`neonkey.tech` bought at Porkbun on Oct 29, 2026.** It renews Oct 30, 2027 at **$50.98/yr**, with auto-renew on. Keep the card on file current, and put a reminder in your calendar before renewal.
+- [x] **DNS today (at Porkbun) points at GitHub Pages for the demo:** GitHub Pages' apex `A`/`AAAA` records for `neonkey.tech`, plus a `www` `CNAME` to `mrmream-dotcom.github.io`. The gh-pages branch carries a `CNAME` file containing `neonkey.tech` (from `public/CNAME`) so GitHub keeps the custom domain on every push.
+- [ ] In GitHub **Settings → Pages**, confirm the custom domain shows `neonkey.tech` with a passing DNS check, then tick **Enforce HTTPS** once the certificate is issued.
+- [ ] Optional hardening: **verify the domain** for your GitHub account (Settings → Pages → Verified domains), so no other repo can claim it.
+- The demo build still uses `PUBLIC_SITE_MODE=demo`, so every page is `noindex` with the demo banner, even on the real domain.
+
+### Hosting for the real launch: recommendation
+
+**Move to Cloudflare Pages for launch; keep GitHub Pages only for the demo until then.** Reasons:
+- GitHub Pages **ignores `public/_headers` and `public/_redirects`**. On GitHub Pages the CSP, `nosniff`, Referrer-Policy, Permissions-Policy, `frame-ancestors` and the short-URL redirects don't apply. Cloudflare Pages applies all of them.
+- Cloudflare Email Routing (the free `hello@`/`newsletter@` forwarding used in steps 4–5) needs the domain's **nameservers on Cloudflare**. Moving DNS to Cloudflare gets you Email Routing too.
+- Per-branch preview deploys that stay in demo mode (noindex), separate from production.
+
+Migration outline (when ready, no downtime needed):
+1. Add `neonkey.tech` to a free Cloudflare account. Cloudflare imports the existing records; check that the GitHub Pages `A`/`AAAA`/`www` records came across.
+2. At Porkbun, switch the nameservers to the two Cloudflare gives you. The registration stays at Porkbun, and renewal is unchanged.
+3. Create the Pages project (step 2), then attach `neonkey.tech` and `www` to it. Cloudflare replaces the GitHub Pages records.
+4. Afterwards, remove the custom domain in GitHub Pages settings and delete `public/CNAME`. Optionally keep the gh-pages demo at the `github.io` URL.
+
+**Staying on GitHub Pages instead** works if you accept no custom security headers and no `_redirects`. You'd then set up the inbox with Porkbun's own email forwarding (check current terms in the Porkbun dashboard) or Zoho, and add Kit's DNS records at Porkbun.
 
 ## 2. Cloudflare Pages project (You)
 
@@ -30,16 +48,18 @@ Status as of 2026-10-29. **The site is live-ready in code, but nothing has been 
    - `PUBLIC_SITE_MODE=live`
    - `SITE_URL=https://neonkey.tech`
    - `NODE_VERSION=24` (Astro 7 needs Node 22.23.4+)
-   - `PUBLIC_UMAMI_WEBSITE_ID=<id>` and `PUBLIC_UMAMI_DOMAINS=neonkey.tech` (step 6)
-   - `PUBLIC_NEWSLETTER_PROVIDER=beehiiv` + `PUBLIC_BEEHIIV_EMBED_ID=<form id>` (step 5)
+   - Umami needs nothing: the website ID and `data-domains` are built-in defaults (step 6)
+   - `PUBLIC_NEWSLETTER_PROVIDER=kit` + `PUBLIC_KIT_FORM_ID=<numeric form id>` (step 5)
    - Leave `BASE_PATH` unset.
 4. Tip: keep **Preview** deployments on `PUBLIC_SITE_MODE=demo` so `*.pages.dev` previews stay noindex.
 5. First deploy to `<project>.pages.dev`, check it, then add the custom domain.
 
 ## 3. DNS (You)
 
-- [ ] Pages project → **Custom domains → Set up a domain** → `neonkey.tech` (and `www.neonkey.tech`, redirected to the apex with a Redirect Rule or Bulk Redirect).
-- [ ] Email records (MX, SPF, DKIM, DMARC) come from steps 4–5. Only one SPF TXT record is allowed per name, so merge them if two services need SPF.
+- [x] Demo: Porkbun DNS → GitHub Pages (`A`/`AAAA` apex + `www` CNAME), see step 1.
+- [ ] Launch: after moving nameservers to Cloudflare, Pages project → **Custom domains → Set up a domain** → `neonkey.tech` (and `www.neonkey.tech`, redirected to the apex with a Redirect Rule or Bulk Redirect).
+- [ ] Add mail and Kit records wherever DNS is hosted at the time (Cloudflare after the move, Porkbun before). On Cloudflare, Kit's CNAMEs must be **DNS only** (grey cloud).
+- [ ] Email records come from steps 4–5: MX/SPF/DKIM for the inbox (step 4), and Kit's two CNAMEs plus one DMARC TXT (step 5). Kit uses CNAMEs, not an SPF TXT, so it doesn't clash with Email Routing's SPF record. Only one SPF TXT and **one** `_dmarc` TXT are allowed per name, so merge rather than add a second.
 
 ## 4. Business inbox and contact method (You)
 
@@ -56,24 +76,47 @@ Recommendation: **Zoho Mail Forever Free** if you want to reply *from* `hello@`;
 - [ ] Wire or remove the contact form. It's a placeholder (`src/pages/contact.astro`, handled in `Base.astro`), so either connect a form backend or delete the form and keep the email link.
 - [ ] Remove the "(Placeholder address…)" note. It only shows in demo mode, so live mode hides it, but confirm the address really works first.
 
-## 5. Newsletter setup: "Unlock the Week by NeonKey" (You)
+## 5. Newsletter setup: "Unlock the Week by NeonKey" on Kit (You)
 
-1. Create a beehiiv account and a publication named **Unlock the Week by NeonKey**. Use a dedicated sender identity, **not your personal Gmail**.
-2. **Sending address on the free plan:** without a custom domain, beehiiv sends from a beehiiv-managed address (e.g. `<publication>@mail.beehiiv.com`). That's fine to start.
-3. **Free plan:** up to 2,500 subscribers with unlimited sends ([beehiiv pricing](https://www.beehiiv.com/pricing), [beehiiv 2026 pricing overview](https://www.beehiiv.com/blog/beehiiv-pricing-2026), which says the new plans took effect Oct 1, 2026).
-4. **Custom sending domain later** (e.g. `newsletter@neonkey.tech`, or `hello@`): beehiiv's help center lists custom domains, including the email/sending domain, under **all paid plans** ([How to use a custom domain](https://www.beehiiv.com/support/article/14492990172823-how-to-use-a-custom-domain-for-your-publication)). The pricing material we found showed Lite around $49/mo (yearly billing) and Pro around $95/mo. One older pricing page listed "Custom Domains" under the old free Launch plan, which conflicts with the help article, so treat the help article as current and **confirm on the pricing page before paying**.
-   - beehiiv recommends a **subdomain** for sending (e.g. `mail.neonkey.tech` or `email.neonkey.tech`). It gives you the SPF/DKIM records to add in Cloudflare DNS.
-   - Add a DMARC record for the domain (start with `v=DMARC1; p=none; rua=mailto:<your inbox>` and tighten later).
-5. Make a subscribe form: **Subscribers → Subscribe forms → Get embed code** ([guide](https://www.beehiiv.com/support/article/12977090590487-creating-an-embedded-subscribe-form)). Copy the form ID from `https://subscribe-forms.beehiiv.com/<FORM-ID>`.
-6. In Cloudflare Pages, set `PUBLIC_NEWSLETTER_PROVIDER=beehiiv` and `PUBLIC_BEEHIIV_EMBED_ID=<FORM-ID>`, then redeploy. The "Coming soon" state disappears and the beehiiv form shows on Home and `/newsletter/`.
-7. Add a postal address to the publication's email footer. The US CAN-SPAM Act requires a valid physical postal address in commercial email ([FTC CAN-SPAM guide](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business)). A PO box or virtual mailbox keeps your home address private.
-8. Send a test issue to yourself, then remove "No issues have been sent yet" wording if needed. The newsletter page shows a sample *format* labeled as a sample, not a fake issue.
+**Why Kit Free:** up to 10,000 subscribers, unlimited forms and landing pages, and unlimited broadcasts for $0/month. Visual automations, email sequences, RSS campaigns and paid apps need a paid plan ([The Kit Free plan](https://help.kit.com/en/articles/16627071-the-kit-free-plan), updated Sep 23, 2026). The pricing page lists **removing Kit branding** and a **custom link-tracking domain** as paid features, so expect a small Kit badge or footer link on the free plan ([kit.com/pricing](https://kit.com/pricing)). Neither source lists verified sending domains as paid. Confirm in the app when you sign up, before you rely on it.
 
-## 6. Umami (You)
+**A. Account and form (can be done now)**
+1. Create a free account from [kit.com/pricing](https://kit.com/pricing) (pick **Free**), using the name **Michael Ream**. Use a dedicated sign-in, not your personal Gmail as the public sender.
+2. **Grow → Landing Pages & Forms → Create new → Form**. Name it **Unlock the Week by NeonKey** and pick an **Inline** format. (Kit forms can be embedded; landing pages can't, [Form embedding basics](https://help.kit.com/en/articles/4009572-form-embedding-basics).) Optionally, also make a Kit landing page with the same name to use as a shareable link.
+3. In the form's settings, keep the **confirmation (double opt-in) email** on. The site's form tells people "You'll get an email to confirm", so change that wording in `src/components/NewsletterForm.astro` if you turn it off. Optionally, set the after-subscribe action to redirect to `https://neonkey.tech/newsletter/`. Leave **reCAPTCHA off**, or add Google's domains to the CSP in `public/_headers`.
+4. Get the form ID: **Embed → HTML** and copy the number in `<form action="https://app.kit.com/forms/<FORM_ID>/subscriptions" …>`. The email input there is named `email_address`, and the site's form uses the same name.
+5. In Cloudflare Pages, set `PUBLIC_NEWSLETTER_PROVIDER=kit` and `PUBLIC_KIT_FORM_ID=<FORM_ID>`, then redeploy. The "Coming soon" state is replaced by a working form on Home and `/newsletter/`, and submits go straight to Kit.
+   - Alternative: Kit's **Embed → JavaScript** code is `<script async data-uid="<uid>" src="https://<account>.kit.com/<uid>/index.js"></script>`. Kit recommends it because changes made in Kit show up automatically. To use it, set `PUBLIC_KIT_EMBED_SRC=<that src>` instead of `PUBLIC_KIT_FORM_ID`. It loads Kit's script, which the CSP already allows.
+6. Test: submit your own address in live mode, confirm it, and check it shows under **Subscribers**. If Umami is on, a `newsletter-signup` event appears.
 
-- [ ] Create the website in Umami Cloud and copy the Website ID (README → "Analytics: Umami").
-- [ ] Set `PUBLIC_UMAMI_WEBSITE_ID` and `PUBLIC_UMAMI_DOMAINS=neonkey.tech` in Cloudflare Pages, then redeploy.
-- [ ] Test: devtools shows `script.js` 200 and `/api/send` 200; you appear in **Realtime**. Ad-blockers may hide it.
+**B. Sending from your own domain (after buying `neonkey.tech`)**
+
+Without a verified domain, Kit puts its own address in the hidden return-path. A verified sending domain gives you SPF, DKIM and DMARC alignment on your domain ([Verify your domain](https://help.kit.com/en/articles/2502558-verify-your-domain-to-optimize-your-deliverability)).
+1. Set up the From inbox first (step 4). Use **Cloudflare Email Routing** (needs the domain's DNS on Cloudflare, see step 1; until then, Porkbun's email forwarding can do the same job) to forward `newsletter@neonkey.tech` (or `hello@neonkey.tech`) to your own inbox, so Kit's verification email and subscriber replies reach you.
+2. Kit → **Settings → Email → Verified Sending Domains → Set up your Verified Sending Domain**, enter `neonkey.tech`, then **Next**. A subdomain isn't required, and Kit says its records don't interfere with the top-level domain.
+3. Pick **Set this up for me** (Entri logs in to Cloudflare for you) or copy the records manually. The records are two **CNAME** records with hosts like `ckespa` and `cka._domainkey`, with the values Kit shows. In Cloudflare, set both to **DNS only** (grey cloud, not proxied). If Cloudflare rejects the full host name, use the short form (`ckespa` instead of `ckespa.neonkey.tech`). Then click **Validate**.
+4. DMARC: Kit shows a default record (`v=DMARC1; p=none`) under Verified Sending Domain. Add it as a **TXT** record on `_dmarc.neonkey.tech`, unless you already have one; there can only be one `_dmarc` record. Kit says DMARC can take 24–48 hours to take effect, and **don't remove** the record or the verified domain afterwards ([Add a DMARC record](https://help.kit.com/en/articles/8540237-how-to-add-a-dmarc-record-to-your-verified-sending-domain)). Tighten `p=` later, once reports look clean.
+5. **Settings → Email → Add from address**: name "Unlock the Week by NeonKey" or "Michael at NeonKey", address `newsletter@neonkey.tech` or `hello@neonkey.tech`. Click the link in Kit's verification email, which Email Routing forwards to you ([new account checklist](https://help.kit.com/en/articles/14005977-how-to-set-up-your-new-kit-account-a-complete-checklist)).
+
+**C. Mailing address (required before you can send anything)**
+
+Kit won't send until **Settings → Email → Mailing Address** is filled in ([checklist](https://help.kit.com/en/articles/14005977-how-to-set-up-your-new-kit-account-a-complete-checklist)). CAN-SPAM requires a valid physical postal address in every commercial email ([FTC CAN-SPAM guide](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business)). Options, from [Kit: Alternatives for your physical address](https://help.kit.com/en/articles/2502494-alternatives-for-your-physical-address):
+- A **UPS Store mailbox** or a PO box: you get a real address that receives mail, without exposing your home.
+- **Kit's shared address** (600 1st Ave, Ste 330 PMB 92768, Seattle, WA 98104-2246): free and for compliance only. Kit doesn't forward any mail sent there. Fine to start with; switch to your own box if you want to receive mail.
+- Kit's email templates add the address through `{{ address }}` along with the required unsubscribe link.
+
+**D. Later**
+- Send a test issue to yourself first. Then update the newsletter page's "No issues have been sent yet" line.
+- **Upgrade path:** move to a paid Kit plan (Creator, then Creator Pro) when you need welcome sequences, automations or RSS-to-email, want to remove Kit branding, or pass 10,000 subscribers. Kit says everything you built stays in place when you upgrade ([The Kit Free plan](https://help.kit.com/en/articles/16627071-the-kit-free-plan)). Check current prices on [kit.com/pricing](https://kit.com/pricing).
+- Alternative considered: beehiiv. Its free plan caps at 2,500 subscribers, and its help center lists custom sending domains under paid plans, which is why Kit was chosen.
+
+## 6. Umami
+
+- [x] Website created in Umami Cloud; ID `2c6a467e-392a-4226-b068-fdfc908a48da` is the default in `src/config.ts`. Override it with `PUBLIC_UMAMI_WEBSITE_ID`, or set it to `off` to disable.
+- [x] `data-domains="neonkey.tech,www.neonkey.tech"`: only the real domain is counted, not localhost, previews or `github.io` (`PUBLIC_UMAMI_DOMAINS` overrides).
+- [x] CSP allows `cloud.umami.is` (script) and `gateway.umami.is` (the `/api/send` endpoint the script posts to).
+- [ ] Note: the **demo on neonkey.tech is counted too**, because it's the real domain. That's fine for testing. Exclude your own visits with `localStorage.setItem('umami.disabled', 1)` in devtools.
+- [ ] Check **Realtime** in Umami after visiting the site; ad-blockers may hide your visit.
 
 ## 7. Switch to live mode (You)
 
@@ -97,7 +140,7 @@ Each of these is placeholder content. Replace it with real content, or delete th
 | `src/pages/learn/index.astro`, `reviews/index.astro`, `notes/index.astro` | Index cards for the samples, "coming soon" slots |
 | `src/pages/newsletter.astro` | Sample issue *format* (labeled as a sample; fine to keep) |
 | `src/pages/contact.astro` | Placeholder form (see step 4) |
-| `src/pages/privacy.astro` | **Draft** policy: finish it (hosting logs, data requests, privacy contact). It already covers Umami (cookieless) and beehiiv |
+| `src/pages/privacy.astro` | **Draft** policy: finish it (hosting logs, data requests, privacy contact). It already covers Umami (cookieless) and Kit as the newsletter processor (draft wording) |
 | `src/pages/disclosure.astro` | Affiliate disclosure placeholder: review the wording |
 
 Tip: `grep -rn "DemoBadge\|Demo content\|placeholder" src` finds the rest.
@@ -129,4 +172,4 @@ Tip: `grep -rn "DemoBadge\|Demo content\|placeholder" src` finds the rest.
 
 ## GitHub Pages demo
 
-The demo preview at `https://mrmream-dotcom.github.io/NeonKey/` comes from a clean build with `BASE_PATH=/NeonKey/`. See README → Deploying.
+The demo at **https://neonkey.tech/** (noindex, demo banner) is a clean build pushed to the `gh-pages` branch with `BASE_PATH=/`, `SITE_URL=https://neonkey.tech`, `PUBLIC_SITE_MODE=demo`, plus `.nojekyll` and `CNAME` (`neonkey.tech`). Always include `CNAME` when pushing gh-pages by hand, or GitHub drops the custom domain. The old `https://mrmream-dotcom.github.io/NeonKey/` URL redirects to the custom domain. See README → Deploying.

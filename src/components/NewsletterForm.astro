@@ -1,31 +1,34 @@
 ---
-// Newsletter signup for "Unlock the Week".
-// Modes (see src/config.ts): embed = beehiiv embedded form, link = our form sends to the beehiiv subscribe page,
-// off = clearly labeled "coming soon" state with the form disabled (no fake success).
+// Newsletter signup for "Unlock the Week", sent with Kit (formerly ConvertKit).
+// Modes (see src/config.ts):
+//   form  = our own form, posting the email (field "email_address") to Kit's form action URL
+//           https://app.kit.com/forms/<FORM_ID>/subscriptions. Kit then shows its confirmation (or redirects, per the form's settings).
+//   embed = Kit's JavaScript embed (<script async data-uid src="https://<account>.kit.com/<uid>/index.js">); Kit draws the form.
+//   off   = clearly labeled "coming soon" state with the form disabled (no fake success).
+// The "newsletter-signup" Umami event is sent from Base.astro on a real submit in both form and embed modes.
 import { NEWSLETTER } from '../config';
 interface Props { compact?: boolean; id?: string }
 const { compact = false, id = 'nl' } = Astro.props;
 const { mode } = NEWSLETTER;
 ---
-{mode === 'embed' && (
-  <div class="nl-embed" data-nl-embed data-form={id}>
-    <script is:inline async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
-    <iframe src={`https://subscribe-forms.beehiiv.com/${NEWSLETTER.beehiivEmbedId}`} class="beehiiv-embed" title="Subscribe to Unlock the Week" loading="lazy" scrolling="no"></iframe>
-    <p class="form-note">Signups are handled by beehiiv. Unsubscribe anytime.</p>
-  </div>
-)}
-{mode === 'link' && (
-  <form class:list={['nl-form', { compact }]} action={NEWSLETTER.beehiivFormUrl} method="get" target="_blank" rel="noopener" data-nl-form data-form={id}>
+{mode === 'form' && (
+  <form class:list={['nl-form', { compact }]} action={NEWSLETTER.kitFormAction} method="post" data-nl-form data-form={id}>
     <label for={`${id}-email`} class="sr-only">Email address</label>
-    <input id={`${id}-email`} name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
-    <button type="submit" class="btn btn-primary" data-umami-event="newsletter-signup" data-umami-event-form={id} data-umami-event-provider="beehiiv">Subscribe</button>
-    <p class="form-note" aria-live="polite">Opens the Unlock the Week signup page on beehiiv to confirm. Unsubscribe anytime.</p>
+    <input id={`${id}-email`} name="email_address" type="email" placeholder="you@example.com" autocomplete="email" required />
+    <button type="submit" class="btn btn-primary">Subscribe</button>
+    <p class="form-note" aria-live="polite">Signups are handled by Kit. You'll get an email to confirm. Unsubscribe anytime.</p>
   </form>
+)}
+{mode === 'embed' && (
+  <div class="nl-embed kit-embed" data-nl-embed data-form={id}>
+    <script is:inline async data-uid={NEWSLETTER.kitEmbedUid} src={NEWSLETTER.kitEmbedSrc}></script>
+    <p class="form-note">Signups are handled by Kit. Unsubscribe anytime.</p>
+  </div>
 )}
 {mode === 'off' && (
   <form class:list={['nl-form', { compact }]} aria-disabled="true" data-nl-off>
     <label for={`${id}-email`} class="sr-only">Email address (signups open soon)</label>
-    <input id={`${id}-email`} name="email" type="email" placeholder="Signups open soon" disabled />
+    <input id={`${id}-email`} name="email_address" type="email" placeholder="Signups open soon" disabled />
     <button type="button" class="btn btn-primary" disabled>Coming soon</button>
     <p class="form-note"><span class="nl-soon">Coming soon</span> Unlock the Week isn't accepting signups yet. Nothing is collected here.</p>
   </form>

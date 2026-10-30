@@ -1,8 +1,14 @@
 # Cloudflare Pages response headers. Ignored by GitHub Pages and `astro preview`.
 # Docs: https://developers.cloudflare.com/pages/configuration/headers/
-# CSP allows: Umami Cloud (script + data collection) and beehiiv subscribe forms (script, iframe, form posts).
+# CSP allows: Umami Cloud (script from cloud.umami.is; it POSTs to https://gateway.umami.is/api/send, verified in the live script Oct 2026) and Kit newsletter forms.
+# Kit domains (checked Oct 2026 by loading a live Kit JS embed in Chrome):
+#   script:  https://<account>.kit.com/<uid>/index.js (account subdomain varies, hence *.kit.com) and https://f.convertkit.com/ckjs/ck.5.js
+#   connect: Kit's script POSTs to https://app.convertkit.com/forms/<id>/visit and submits to the form action on https://app.kit.com
+#   form-action: our own form posts to https://app.kit.com/forms/<FORM_ID>/subscriptions (older embeds use app.convertkit.com)
+#   img: images in Kit form templates come from https://embed.filekitcdn.com
+# If you turn on reCAPTCHA in the Kit form settings you'd also need www.google.com / www.gstatic.com; keep it off or add them.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://subscribe-forms.beehiiv.com; connect-src 'self' https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://subscribe-forms.beehiiv.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src https://subscribe-forms.beehiiv.com https://embeds.beehiiv.com; form-action 'self' https://*.beehiiv.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com; connect-src 'self' https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com; font-src 'self'; frame-src 'none'; form-action 'self' https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
