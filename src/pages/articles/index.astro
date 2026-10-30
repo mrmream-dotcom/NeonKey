@@ -10,12 +10,13 @@ import Base from '../../layouts/Base.astro';
     <p>Articles and plain-English explainers: honest takes on automation, AI and everyday tech, whatever your level.</p>
   </div>
   <div class="container">
-    <div class="list-item">
-      <div>
-        <h3><a href={url('/articles/why-outsource-automations/')}>You Could Automate It Yourself. Here's Why You Might Not Want To.</a></h3>
+    <ul class="article-list">
+      <li class="article-card">
+        <span class="tag">Automation</span>
+        <h2><a href={url('/articles/why-outsource-automations/')}>You Could Automate It Yourself. Here's Why You Might Not Want To.</a></h2>
         <p>An honest look at DIY automations vs. getting help: what's doable on your own, what tends to go wrong, and how to decide.</p>
-      </div>
-      <div><span class="tag">Automation</span></div>
-    </div>
+        <span class="article-cta" aria-hidden="true">Read article <span class="arrow">→</span></span>
+      </li>
+    </ul>
   </div>
 </Base>

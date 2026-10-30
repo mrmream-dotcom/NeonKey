@@ -306,3 +306,31 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .triage-foot { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; font-size: .82rem; color: var(--muted); }
 .triage-examples { display: grid; gap: 1.25rem; }
 .triage-example .sample-text { font-size: .92rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: .8rem; margin: .4rem 0 .9rem; }
+
+/* Articles listing: titles read as links, whole card is clickable (stretched link) */
+.article-list { list-style: none; margin: 0 0 3rem; padding: 0; display: grid; gap: 1rem; }
+.article-card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem 1.15rem; transition: border-color .18s, box-shadow .18s, transform .18s; }
+.article-card .tag { margin-bottom: .6rem; }
+.article-card h2 { font-size: 1.3rem; margin: .55rem 0 .45rem; }
+.article-card h2 a { color: var(--cyan); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: rgba(34,211,238,.45); transition: text-decoration-color .15s, color .15s; }
+.article-card h2 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.article-card p { color: var(--muted); margin: 0 0 .8rem; }
+.article-cta { color: var(--cyan); font-weight: 700; font-size: .92rem; }
+.article-cta .arrow { display: inline-block; transition: transform .18s; }
+.article-card:hover, .article-card:focus-within { border-color: rgba(34,211,238,.7); box-shadow: 0 0 0 1px rgba(34,211,238,.25), 0 0 26px rgba(34,211,238,.16); }
+.article-card:hover h2 a, .article-card h2 a:focus-visible { color: #67e8f9; text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+.article-card:hover .arrow, .article-card:focus-within .arrow { transform: translateX(4px); }
+.article-card h2 a:focus-visible { outline: none; }
+.article-card:has(a:focus-visible) { outline: 3px solid var(--cyan); outline-offset: 3px; }
+
+/* Inline links in body text (articles, Lab, Learn, About, Privacy...): cyan + visible underline. Not nav, buttons, tags or the TOC. */
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a) {
+  color: var(--cyan); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: rgba(34,211,238,.5); transition: text-decoration-color .15s, color .15s;
+}
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a):hover {
+  color: #67e8f9; text-decoration-color: currentColor; text-decoration-thickness: 2px;
+}
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a):focus-visible {
+  outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 3px; text-decoration-color: currentColor;
+}
