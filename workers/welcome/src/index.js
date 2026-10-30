@@ -238,9 +238,13 @@ function kitFetch(env, path, init = {}) {
   });
 }
 
+// Same rule as /^[^\s@]+@[^\s@]+\.[^\s@]+$/ (a dot inside the domain), but checked
+// without a backtracking regex and with the length cap first (avoids polynomial ReDoS).
 function normalizeEmail(e) {
   const s = String(e || "").trim().toLowerCase();
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254 ? s : "";
+  if (s.length > 254 || !/^[^\s@]+@[^\s@]+$/.test(s)) return "";
+  const domain = s.slice(s.indexOf("@") + 1);
+  return domain.slice(1, -1).includes(".") ? s : "";
 }
 
 async function sha256Hex(s) {
