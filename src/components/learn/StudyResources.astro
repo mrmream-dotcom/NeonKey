@@ -1,0 +1,17 @@
+---
+// Resources box + disclaimer. The official link comes from track.json so an affiliate URL can be swapped in later
+// without touching pages. When isAffiliate is true it adds rel="sponsored" and a disclosure line.
+import { url } from '../../config';
+import track from '../../data/security-plus/track.json';
+const l = track.officialLink;
+const href = l.isAffiliate && l.affiliateUrl ? l.affiliateUrl : l.url;
+const rel = l.isAffiliate ? 'sponsored noopener' : 'noopener';
+---
+<aside class="callout study-resources" aria-label="Official resources">
+  <strong>Official source</strong>
+  <p>Always check exam details, objectives, and pricing with CompTIA directly:
+    <a href={href} rel={rel} data-umami-event="outbound-click" data-umami-event-item="comptia-security-plus">{l.label}</a>.
+  </p>
+  {l.isAffiliate && <p class="muted">This is an affiliate link. See our <a href={url('/disclosure/')}>disclosure</a>.</p>}
+  <p class="muted small">NeonKey is an independent site and is not affiliated with, endorsed by, or sponsored by CompTIA. CompTIA and Security+ are trademarks of CompTIA, Inc. These notes are a study aid, not official material, and using them does not guarantee a passing score. Last reviewed {track.lastReviewed}.</p>
+</aside>

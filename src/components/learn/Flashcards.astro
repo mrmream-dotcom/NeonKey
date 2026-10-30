@@ -1,0 +1,28 @@
+---
+// Flip-style key terms using native <details>. No JS, no saved progress.
+import data from '../../data/security-plus/flashcards.json';
+interface Props { domain: number; title?: string }
+const { domain, title = 'Key terms' } = Astro.props;
+const cards = data.cards.filter((c) => c.domain === domain);
+---
+<section class="flashcards" aria-labelledby={`fc-${domain}`}>
+  <h2 id={`fc-${domain}`}>{title}</h2>
+  <p class="muted">Try to define each term before you tap it.</p>
+  <div class="fc-grid">
+    {cards.map((c) => (
+      <details class="fc">
+        <summary>{c.front}</summary>
+        <p>{c.back}</p>
+      </details>
+    ))}
+  </div>
+</section>
+<style>
+  .flashcards { margin: 2.5rem 0; }
+  .fc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .75rem; }
+  .fc { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: .85rem 1rem; }
+  .fc summary { cursor: pointer; font-weight: 700; color: var(--cyan); list-style: none; }
+  .fc summary::-webkit-details-marker { display: none; }
+  .fc[open] { border-color: var(--violet); }
+  .fc p { margin: .5rem 0 0; color: var(--muted); font-size: .92rem; }
+</style>

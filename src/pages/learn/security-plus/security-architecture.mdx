@@ -1,0 +1,58 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: "Domain 3: Security Architecture"
+description: Plain-language Security+ notes on cloud and on-prem models, secure network design, data protection, and resilience and recovery.
+kicker: Learn · Security+ · Domain 3 of 5
+back: { href: /learn/security-plus/, label: Back to the Security+ guide }
+---
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import Flashcards from '../../../components/learn/Flashcards.astro';
+import SelfCheck from '../../../components/learn/SelfCheck.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+
+<p class="lead">Architecture is about designing things to be secure from the start: where systems live, how networks are split up, how data is protected, and how you keep running when something fails. It's about 18% of SY0-701.</p>
+
+<ExamVersionNote v8="Weight is about 19%. The four objectives look much the same in CompTIA's V8 summary, with operational technology and connected environments called out." />
+
+## Architecture models
+
+- **On-premises:** you control everything and you're responsible for everything.
+- **Cloud and the shared responsibility model:** in **IaaS** the provider runs the hardware and you manage the OS and apps. In **PaaS** the provider also runs the platform and you manage your code and data. In **SaaS** the provider runs the app, but you still own your users, data and settings.
+- **Hybrid:** a mix of on-premises and cloud.
+- **Virtualization and containers:** containers share the host's kernel, which affects how well they're isolated.
+- **Serverless, edge, IoT, embedded, and OT/ICS:** each has different limits. Industrial systems put safety and uptime first, so they often can't just be patched and rebooted.
+- **Infrastructure as Code:** environments defined in version-controlled files, so they're repeatable and reviewable.
+
+## Secure enterprise infrastructure
+
+Plan trust boundaries and allow only the traffic you need. Avoid one big flat network.
+
+- **Screened subnet (DMZ):** where internet-facing servers go, kept apart from internal systems.
+- **Firewalls** enforce rules, **VPNs** create encrypted tunnels, and **NAC** checks a device before it joins the network.
+- **Microsegmentation:** fine-grained rules between individual workloads.
+- **SDN:** network control handled by software, so it can be programmed.
+- **Jump server:** a single, controlled place admins connect through.
+- **Fail-secure vs. fail-open:** decide whether a failure should lock things down or keep them usable.
+
+## Data protection
+
+Data needs protection in three states: **at rest** (stored), **in transit** (moving over a network), and **in use** (being processed in memory).
+
+- **Classification** labels data by sensitivity and sets the handling rules.
+- **Encryption** protects data at rest and in transit.
+- **Tokenization** swaps a real value for a token that maps back to it in a protected vault.
+- **Masking** hides part of a value, like showing only the last four digits.
+- **DLP** watches for sensitive data leaving where it shouldn't and blocks it.
+- **Retention** rules set how long to keep data and when to destroy it.
+
+## Resilience and recovery
+
+- **RTO:** how fast a service must be back. **RPO:** how much data, measured in time, you can afford to lose.
+- **Backups:** *full* copies everything. *Incremental* copies changes since the last backup of any kind. *Differential* copies changes since the last full backup.
+- **3-2-1 rule:** three copies, on two types of media, with one off-site.
+- **RAID** handles a failed drive. It is **not** a backup.
+- **High availability:** redundancy, load balancing, and capacity in more than one location. Test your restores, not just your backups.
+
+<Flashcards domain={3} />
+<SelfCheck domain={3} />
+<StudyResources />

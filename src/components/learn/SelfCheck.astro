@@ -1,0 +1,59 @@
+---
+// Short self-check quiz for one domain. Works without JS: each answer sits in a <details> "Show answer".
+// With JS, clicking an option marks it right/wrong and opens the explanation. Nothing is saved anywhere.
+import quiz from '../../data/security-plus/quiz.json';
+interface Props { domain: number; title?: string }
+const { domain, title = 'Quick self-check' } = Astro.props;
+const items = quiz.questions.filter((q) => q.domain === domain);
+const letters = ['A', 'B', 'C', 'D'];
+---
+<section class="selfcheck" aria-labelledby={`sc-${domain}`}>
+  <h2 id={`sc-${domain}`}>{title}</h2>
+  <p class="muted">{items.length} practice questions in our own words. Pick an answer to see the explanation. Practice only: it doesn't predict exam results.</p>
+  <ol class="sc-list">
+    {items.map((q) => (
+      <li class="sc-q" data-answer={q.answer}>
+        <p class="sc-prompt"><strong>{q.q}</strong> <span class="sc-obj">Obj. {q.objective}</span></p>
+        <div class="sc-opts" role="group" aria-label="Answer options">
+          {q.options.map((o, i) => (
+            <button type="button" class="sc-opt" data-i={i}><span aria-hidden="true">{letters[i]}.</span> {o}</button>
+          ))}
+        </div>
+        <p class="sc-result" aria-live="polite"></p>
+        <details class="sc-why">
+          <summary>Show answer</summary>
+          <p><strong>{letters[q.answer]}. {q.options[q.answer]}.</strong> {q.why}</p>
+        </details>
+      </li>
+    ))}
+  </ol>
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('.sc-q').forEach((li) => {
+    const answer = Number(li.dataset.answer);
+    li.querySelectorAll<HTMLButtonElement>('.sc-opt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const right = Number(btn.dataset.i) === answer;
+        li.querySelectorAll('.sc-opt').forEach((b) => b.classList.remove('is-right', 'is-wrong'));
+        btn.classList.add(right ? 'is-right' : 'is-wrong');
+        if (!right) li.querySelector(`.sc-opt[data-i="${answer}"]`)?.classList.add('is-right');
+        const out = li.querySelector('.sc-result');
+        if (out) out.textContent = right ? 'Correct.' : 'Not quite.';
+        li.querySelector('details')?.setAttribute('open', '');
+      });
+    });
+  });
+</script>
+<style>
+  .selfcheck { margin: 2.5rem 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+  .sc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.5rem; }
+  .sc-prompt { margin: 0 0 .6rem; }
+  .sc-obj { font: 600 .72rem var(--mono); color: var(--violet); margin-left: .35rem; white-space: nowrap; }
+  .sc-opts { display: grid; gap: .45rem; }
+  .sc-opt { text-align: left; padding: .6rem .8rem; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+  .sc-opt:hover, .sc-opt:focus-visible { border-color: var(--cyan); outline: none; }
+  .sc-opt.is-right { border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 14%, transparent); }
+  .sc-opt.is-wrong { border-color: var(--magenta); background: color-mix(in srgb, var(--magenta) 14%, transparent); }
+  .sc-result { min-height: 1.2em; margin: .4rem 0 0; font-weight: 600; }
+  .sc-why summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+</style>

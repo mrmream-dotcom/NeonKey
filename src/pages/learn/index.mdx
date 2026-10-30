@@ -1,0 +1,27 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: Learn
+description: Learn tech skills on NeonKey. Plain-language study guides and hands-on tutorials on security, networking, automation and more.
+kicker: Unlock Skills
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
+
+We're building this section around a few areas: **security**, **networking**, **automation**, and **practical IT**. Every guide explains the ideas in everyday language first, then gets specific.
+
+## Study tracks
+
+<div class="grid grid-2">
+  <a class="card" href={siteUrl('/learn/security-plus/')}>
+    <span class="kicker">Track 1 · Security</span>
+    <h3>CompTIA Security+ study guide</h3>
+    <p>Notes for all five exam domains, with key-term cards and a short self-check on each page.</p>
+  </a>
+</div>
+
+## Tutorials
+
+<div class="callout">
+  <strong>Coming soon.</strong> Step-by-step tutorials will show up here once they're ready. <a href={siteUrl('/newsletter/')}>Get the newsletter</a> to hear when the first ones go live.
+</div>

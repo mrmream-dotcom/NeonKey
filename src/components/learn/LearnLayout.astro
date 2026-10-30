@@ -1,0 +1,15 @@
+---
+// Layout for Learn MDX pages: a normal NeonKey page (Base + .narrow.prose), not an app shell.
+import Base from '../../layouts/Base.astro';
+import { url } from '../../config';
+const { frontmatter } = Astro.props;
+const { title, description, kicker = 'Learn', back } = frontmatter;
+---
+<Base title={title} description={description}>
+  <article class="narrow page-head prose">
+    <span class="kicker">{kicker}</span>
+    <h1>{title}</h1>
+    <slot />
+    {back && <p><a href={url(back.href)}>← {back.label}</a></p>}
+  </article>
+</Base>

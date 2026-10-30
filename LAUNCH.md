@@ -151,7 +151,7 @@ The drafts still contain their old demo badges and "sample" wording, on purpose:
 5. Optional: link it from the home page again, and from `/services/remote-it/` (the old Lab callout there linked the network-segmentation write-up).
 6. Build and check: `grep -rni "demo content\|placeholder slot" dist` should be empty.
 
-Empty sections (`/learn/`, `/lab/`, `/reviews/`) show `src/components/EmptyState.astro` ("First … are on the way — get them in Unlock the Week"). The home page shows one teaser line above the newsletter box instead of the old tutorial/Lab/review grids.
+Empty sections (`/lab/`, `/reviews/`; `/learn/` now has the Security+ track) show `src/components/EmptyState.astro` ("First … are on the way — get them in Unlock the Week"). The home page shows one teaser line above the newsletter box instead of the old tutorial/Lab/review grids.
 
 Still to finish separately: the contact form (not connected, see step 4), `src/pages/privacy.astro` (draft policy), and `src/pages/disclosure.astro` (review the wording; its demo callout was removed).
 

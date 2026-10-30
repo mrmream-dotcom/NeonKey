@@ -1,0 +1,426 @@
+{
+ "_note": "Short self-check per domain. Adapted from the original SEC+ // ACADEMY scenario questions: rewritten with plausible distractors, objective numbers checked against SY0-701. Practice only, not a predictor of exam results.",
+ "version": "SY0-701",
+ "questions": [
+  {
+   "id": "d1-1",
+   "domain": 1,
+   "objective": "1.1",
+   "q": "A team installs a camera so unauthorized entry can be identified and reviewed afterward. What is the camera's main function?",
+   "options": [
+    "Preventive",
+    "Detective",
+    "Corrective",
+    "Directive"
+   ],
+   "answer": 1,
+   "why": "It records and identifies an event rather than stopping it, so its main job is detective. (A visible camera can also deter, but that is a secondary effect.)"
+  },
+  {
+   "id": "d1-2",
+   "domain": 1,
+   "objective": "1.1",
+   "q": "A legacy app cannot support MFA, so the team puts it behind a jump host and adds extra monitoring. What kind of control is this?",
+   "options": [
+    "Compensating",
+    "Corrective",
+    "Deterrent",
+    "Managerial"
+   ],
+   "answer": 0,
+   "why": "When the preferred control cannot be used, an alternative that reduces the same risk is a compensating control."
+  },
+  {
+   "id": "d1-3",
+   "domain": 1,
+   "objective": "1.2",
+   "q": "An employee signs in successfully but is blocked from opening payroll records. Which step blocked them?",
+   "options": [
+    "Authentication",
+    "Authorization",
+    "Accounting",
+    "Non-repudiation"
+   ],
+   "answer": 1,
+   "why": "Authentication already proved who they are. Authorization decides what they are allowed to do, and payroll was not on the list."
+  },
+  {
+   "id": "d1-4",
+   "domain": 1,
+   "objective": "1.3",
+   "q": "A production firewall change is approved, but nobody has written down how to undo it if it breaks things. What is missing?",
+   "options": [
+    "Impact analysis",
+    "Backout (rollback) plan",
+    "Maintenance window",
+    "Version control"
+   ],
+   "answer": 1,
+   "why": "A backout or rollback plan is the documented way to safely reverse a change that goes wrong."
+  },
+  {
+   "id": "d1-5",
+   "domain": 1,
+   "objective": "1.4",
+   "q": "You want to confirm a downloaded installer was not altered. What is the most direct way?",
+   "options": [
+    "Encrypt it with AES",
+    "Compare its hash to the publisher's published hash",
+    "Tokenize the file",
+    "Store the key in escrow"
+   ],
+   "answer": 1,
+   "why": "Hashes detect changes. Get the expected hash from a trusted source and compare it with the hash of your copy."
+  },
+  {
+   "id": "d2-1",
+   "domain": 2,
+   "objective": "2.1",
+   "q": "A well-funded group quietly copies a company's proprietary research over many months. What is the most likely motivation?",
+   "options": [
+    "Financial gain through ransomware",
+    "Espionage",
+    "Hacktivism",
+    "Revenge by a former employee"
+   ],
+   "answer": 1,
+   "why": "Long, quiet, targeted theft of strategic information points to espionage, often by an APT or nation-state group."
+  },
+  {
+   "id": "d2-2",
+   "domain": 2,
+   "objective": "2.2",
+   "q": "A trusted vendor ships a software update that contains malicious code. Which threat vector is this?",
+   "options": [
+    "Watering hole",
+    "Supply chain",
+    "Smishing",
+    "Removable media"
+   ],
+   "answer": 1,
+   "why": "The malware reached victims through a trusted supplier's product, which makes it a supply chain attack."
+  },
+  {
+   "id": "d2-3",
+   "domain": 2,
+   "objective": "2.3",
+   "q": "An app builds database queries by pasting raw user input into the SQL text. What is the best fix?",
+   "options": [
+    "Hide database error messages",
+    "Use parameterized queries",
+    "Add a CAPTCHA to the form",
+    "Encrypt the database at rest"
+   ],
+   "answer": 1,
+   "why": "Parameterized queries keep user input as data so it can never change the structure of the SQL command. The other options do not fix the root cause."
+  },
+  {
+   "id": "d2-4",
+   "domain": 2,
+   "objective": "2.4",
+   "q": "One workstation contacts the same unfamiliar external IP every 60 seconds, around the clock. What pattern is this?",
+   "options": [
+    "Beaconing",
+    "Impossible travel",
+    "Resource exhaustion",
+    "Account lockout"
+   ],
+   "answer": 0,
+   "why": "Regular, repeated check-ins to an outside host are a classic sign of command-and-control beaconing."
+  },
+  {
+   "id": "d2-5",
+   "domain": 2,
+   "objective": "2.5",
+   "q": "An unsupported legacy device cannot be patched. What most directly limits an attacker's ability to move from it to other systems?",
+   "options": [
+    "Network segmentation",
+    "Antivirus on other hosts",
+    "A stronger password policy",
+    "Monthly vulnerability scans"
+   ],
+   "answer": 0,
+   "why": "Segmentation controls which systems the device can talk to, which limits lateral movement even when the device itself stays vulnerable."
+  },
+  {
+   "id": "d3-1",
+   "domain": 3,
+   "objective": "3.1",
+   "q": "A company runs its own operating system on a cloud virtual machine (IaaS). Who usually patches that guest OS?",
+   "options": [
+    "The cloud customer",
+    "The cloud provider",
+    "The hypervisor vendor",
+    "The ISP"
+   ],
+   "answer": 0,
+   "why": "In IaaS, the provider runs the physical hardware and virtualization layer. The customer manages the guest OS and everything on it."
+  },
+  {
+   "id": "d3-2",
+   "domain": 3,
+   "objective": "3.2",
+   "q": "Where should a public-facing web server usually go?",
+   "options": [
+    "On the internal user network",
+    "In a screened subnet (DMZ)",
+    "On the management VLAN",
+    "In the same segment as the domain controllers"
+   ],
+   "answer": 1,
+   "why": "A screened subnet separates internet-facing systems from sensitive internal networks, with tightly limited traffic between them."
+  },
+  {
+   "id": "d3-3",
+   "domain": 3,
+   "objective": "3.3",
+   "q": "A sensitive field is replaced with a stand-in value, and the real value can only be looked up in a protected vault. What is this called?",
+   "options": [
+    "Masking",
+    "Tokenization",
+    "Hashing",
+    "Obfuscation"
+   ],
+   "answer": 1,
+   "why": "Tokenization swaps the real value for a token and keeps the mapping somewhere protected. Masking just hides part of the value on display."
+  },
+  {
+   "id": "d3-4",
+   "domain": 3,
+   "objective": "3.4",
+   "q": "A system has an RPO of 10 minutes. What does that number describe?",
+   "options": [
+    "The most data (in time) you can afford to lose",
+    "The longest acceptable restore time",
+    "The average time between failures",
+    "The average time to repair"
+   ],
+   "answer": 0,
+   "why": "RPO is about data loss measured in time. RTO is about how long recovery takes."
+  },
+  {
+   "id": "d3-5",
+   "domain": 3,
+   "objective": "3.4",
+   "q": "You need backups that copy only what changed since the last FULL backup. Which type is that?",
+   "options": [
+    "Incremental",
+    "Differential",
+    "Snapshot",
+    "Full"
+   ],
+   "answer": 1,
+   "why": "Differential backups copy everything changed since the last full backup. Incremental backups copy changes since the last backup of any type."
+  },
+  {
+   "id": "d4-1",
+   "domain": 4,
+   "objective": "4.1",
+   "q": "A laptop is stolen while powered off. What best protects the files stored on it?",
+   "options": [
+    "Full-disk encryption",
+    "EDR agent",
+    "Host firewall",
+    "Application allowlisting"
+   ],
+   "answer": 0,
+   "why": "Full-disk encryption keeps data at rest unreadable without the key. The other tools mostly help while the system is running."
+  },
+  {
+   "id": "d4-2",
+   "domain": 4,
+   "objective": "4.2",
+   "q": "What is the most reliable way to find servers nobody is managing?",
+   "options": [
+    "Reconcile the asset inventory against network discovery",
+    "Require stronger admin passwords",
+    "Turn on DNS logging only",
+    "Buy cyber insurance"
+   ],
+   "answer": 0,
+   "why": "You can't secure what you don't know about. Comparing the inventory with what is actually on the network turns up unknown or orphaned systems."
+  },
+  {
+   "id": "d4-3",
+   "domain": 4,
+   "objective": "4.3",
+   "q": "After patching a critical vulnerability, what confirms the fix actually worked?",
+   "options": [
+    "Rescanning or otherwise validating the system",
+    "Closing the ticket",
+    "Rebooting once",
+    "Raising the CVSS score"
+   ],
+   "answer": 0,
+   "why": "A rescan or other validation checks that the original weakness is really gone."
+  },
+  {
+   "id": "d4-4",
+   "domain": 4,
+   "objective": "4.4",
+   "q": "Which tool most directly correlates sign-in events and network events from many sources?",
+   "options": [
+    "SIEM",
+    "IPS",
+    "Load balancer",
+    "NAC"
+   ],
+   "answer": 0,
+   "why": "A SIEM gathers logs from many sources and correlates them, so related events show up together."
+  },
+  {
+   "id": "d4-5",
+   "domain": 4,
+   "objective": "4.5",
+   "q": "A domain owner wants receiving mail servers to reject messages that fail SPF/DKIM alignment. Which record does that?",
+   "options": [
+    "DMARC",
+    "DNSSEC",
+    "MX",
+    "PTR"
+   ],
+   "answer": 0,
+   "why": "DMARC tells receivers how to handle mail that fails aligned SPF or DKIM checks, and where to send reports."
+  },
+  {
+   "id": "d4-6",
+   "domain": 4,
+   "objective": "4.6",
+   "q": "Access depends on the user's department AND whether their device is compliant. Which access model fits best?",
+   "options": [
+    "ABAC",
+    "RBAC",
+    "DAC",
+    "MAC"
+   ],
+   "answer": 0,
+   "why": "Attribute-based access control looks at attributes of the user, the resource, and the context (like device health) to make each decision."
+  },
+  {
+   "id": "d4-7",
+   "domain": 4,
+   "objective": "4.7",
+   "q": "An automated workflow is about to disable hundreds of accounts after one noisy alert. What is the best safeguard?",
+   "options": [
+    "An approval gate and limits on scope",
+    "Running it faster",
+    "Giving the workflow global admin rights",
+    "Skipping testing to save time"
+   ],
+   "answer": 0,
+   "why": "High-impact automated actions need guardrails: human approval, limits on how much they can change, and logging."
+  },
+  {
+   "id": "d4-8",
+   "domain": 4,
+   "objective": "4.8",
+   "q": "The team isolates infected machines to stop the spread. Which incident response phase is this?",
+   "options": [
+    "Containment",
+    "Eradication",
+    "Recovery",
+    "Lessons learned"
+   ],
+   "answer": 0,
+   "why": "Containment limits ongoing damage. Eradication (removing the cause) and recovery come after."
+  },
+  {
+   "id": "d4-9",
+   "domain": 4,
+   "objective": "4.9",
+   "q": "You need a list of which internal hosts talked to an external IP, without full packet contents. What is the best source?",
+   "options": [
+    "NetFlow / flow logs",
+    "Full packet capture",
+    "Endpoint antivirus logs",
+    "Application debug logs"
+   ],
+   "answer": 0,
+   "why": "Flow data records who talked to whom, on which ports, and how much, without storing payloads. Packet capture works but is heavier than you need."
+  },
+  {
+   "id": "d5-1",
+   "domain": 5,
+   "objective": "5.1",
+   "q": "Which document usually gives step-by-step instructions for following a policy?",
+   "options": [
+    "Procedure",
+    "Standard",
+    "Guideline",
+    "Policy"
+   ],
+   "answer": 0,
+   "why": "Policies set the rule, standards set required specifics, guidelines suggest, and procedures give the steps."
+  },
+  {
+   "id": "d5-2",
+   "domain": 5,
+   "objective": "5.2",
+   "q": "A loss event costs $20,000 each time and is expected 0.5 times per year. What is the ALE?",
+   "options": [
+    "$40,000",
+    "$10,000",
+    "$20,000",
+    "$5,000"
+   ],
+   "answer": 1,
+   "why": "ALE = SLE x ARO = $20,000 x 0.5 = $10,000."
+  },
+  {
+   "id": "d5-3",
+   "domain": 5,
+   "objective": "5.3",
+   "q": "A new supplier will store your employee data. What should happen first?",
+   "options": [
+    "Security due diligence and contract terms",
+    "Grant access now and review later",
+    "Send the data encrypted, then sign the contract",
+    "Rely on the supplier's marketing materials"
+   ],
+   "answer": 0,
+   "why": "Assess the vendor and agree on contract terms (notification, right to audit, data handling) before sharing sensitive data."
+  },
+  {
+   "id": "d5-4",
+   "domain": 5,
+   "objective": "5.4",
+   "q": "A company wants to reduce its privacy exposure. Which practice fits best?",
+   "options": [
+    "Data minimization",
+    "Longer retention periods",
+    "Wider internal sharing",
+    "Making more backup copies"
+   ],
+   "answer": 0,
+   "why": "Collecting and keeping only the personal data you actually need reduces what can be exposed."
+  },
+  {
+   "id": "d5-5",
+   "domain": 5,
+   "objective": "5.5",
+   "q": "An authorized test actually exploits weaknesses to show what an attacker could do. What is it?",
+   "options": [
+    "Penetration test",
+    "Vulnerability scan",
+    "Tabletop exercise",
+    "Compliance attestation"
+   ],
+   "answer": 0,
+   "why": "A penetration test tries controlled exploitation. A vulnerability scan only finds and ranks weaknesses."
+  },
+  {
+   "id": "d5-6",
+   "domain": 5,
+   "objective": "5.6",
+   "q": "Besides course completion rates, what best shows a phishing-awareness program is working?",
+   "options": [
+    "More people reporting suspicious messages, and reporting faster",
+    "More training slides",
+    "Longer training sessions",
+    "Fewer emails sent company-wide"
+   ],
+   "answer": 0,
+   "why": "Behavior is the real measure. More reports, faster, and fewer repeat clicks show the training is changing what people do."
+  }
+ ]
+}

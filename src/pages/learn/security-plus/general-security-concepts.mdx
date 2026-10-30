@@ -1,0 +1,55 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: "Domain 1: General Security Concepts"
+description: Plain-language Security+ notes on security controls, the CIA triad, Zero Trust, change management and cryptography basics.
+kicker: Learn · Security+ · Domain 1 of 5
+back: { href: /learn/security-plus/, label: Back to the Security+ guide }
+---
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import Flashcards from '../../../components/learn/Flashcards.astro';
+import SelfCheck from '../../../components/learn/SelfCheck.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+
+<p class="lead">This domain covers the vocabulary the rest of the exam builds on: what kinds of controls exist, what security is trying to protect, how changes are managed safely, and what cryptography is for. It's about 12% of SY0-701.</p>
+
+<ExamVersionNote v8="Weight rises to about 16%. CompTIA's V8 summary lists three objectives here (controls, change management, cryptography). Check the full V8 objectives to see where topics like the CIA triad and Zero Trust are covered." />
+
+## Security controls
+
+Every control can be described two ways: **how it's implemented** (its category) and **what it's meant to do** (its type or function).
+
+- **Categories:** *technical* (enforced by hardware or software, like firewall rules or MFA), *managerial* (policies, risk assessments, planning), *operational* (things people do day to day, like awareness training or reviewing logs), and *physical* (fences, locks, bollards).
+- **Types:** *preventive* stops something before it happens, *detective* spots or records it, *corrective* fixes things afterward, *deterrent* discourages an attacker from trying, *directive* tells people what to do, and *compensating* stands in when the preferred control can't be used.
+
+A locked door is physical and preventive. A camera is physical and mainly detective. If an old app can't support MFA, putting it behind a jump host with extra monitoring is a compensating control.
+
+## Core security ideas
+
+- **CIA triad:** *confidentiality* (only the right people see it), *integrity* (it isn't changed without permission), and *availability* (it works when people need it).
+- **AAA:** *authentication* proves who you are, *authorization* decides what you're allowed to do, and *accounting* records what you did.
+- **Non-repudiation:** proof that someone really did something, usually through a digital signature, so they can't credibly deny it.
+- **Least privilege:** give people and systems only the access they actually need.
+- **Zero Trust:** don't trust anything just because it's "inside" the network. Check identity, device and context on every request.
+
+## Change management
+
+Most outages and plenty of security holes come from changes made in a hurry. A good change process includes an owner, a reason, an impact analysis, approval, a maintenance window, testing, a **backout (rollback) plan**, and documentation.
+
+- *Standard* changes are pre-approved, low-risk and repeatable.
+- *Normal* changes go through review and approval.
+- *Emergency* changes get fast-tracked approval, then a review afterward.
+
+Version control helps too: it shows who changed what, and it lets you roll back.
+
+## Cryptography basics
+
+- **Symmetric encryption** (like AES) uses one shared key. It's fast, so it's used for bulk data such as full-disk encryption.
+- **Asymmetric encryption** (like RSA or ECC) uses a public/private key pair. It's used for key exchange and digital signatures.
+- **Hashing** (like SHA-256) makes a one-way fingerprint of data. It isn't encryption. Use it to check whether something has changed.
+- **Digital signatures:** you sign with your private key and anyone can verify with your public key. That gives integrity, authenticity and non-repudiation.
+- **PKI:** certificates link an identity to a public key. Certificate authorities issue them and revocation lists (CRL/OCSP) cancel them.
+- **Salting** adds random data to each password before hashing, which defeats precomputed "rainbow table" attacks.
+
+<Flashcards domain={1} />
+<SelfCheck domain={1} />
+<StudyResources />

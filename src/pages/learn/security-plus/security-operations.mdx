@@ -1,0 +1,86 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: "Domain 4: Security Operations"
+description: Plain-language Security+ notes on hardening, asset and vulnerability management, monitoring, identity and access, automation, incident response and investigations.
+kicker: Learn · Security+ · Domain 4 of 5
+back: { href: /learn/security-plus/, label: Back to the Security+ guide }
+---
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import Flashcards from '../../../components/learn/Flashcards.astro';
+import SelfCheck from '../../../components/learn/SelfCheck.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+
+<p class="lead">This is the biggest domain, at about 28% of SY0-701. It's the day-to-day work: keeping systems hardened, knowing what you own, finding and fixing weaknesses, watching for trouble, managing who has access, and handling incidents.</p>
+
+<ExamVersionNote v8="Weight is about 27%. CompTIA's V8 summary lists eight objectives here. 'Enhancing enterprise capabilities' (secure protocols, email security and similar) no longer appears as its own objective, and automation now mentions AI-assisted workflows." />
+
+## Securing computing resources
+
+Start every device from a **secure baseline**, then keep it there. Remove unused software, turn off unneeded services, patch, enable secure boot, and watch for **configuration drift**.
+
+- **EDR** spots suspicious behavior on endpoints and helps you investigate and contain it.
+- **MDM/UEM** enforces policy on phones and laptops.
+- **Full-disk encryption** protects a lost or stolen device.
+- **Sandboxing** runs untrusted code somewhere it can't do harm.
+
+## Asset management
+
+You can't protect what you don't know you have. Track assets through their whole life: purchase, inventory, owner, classification, maintenance, and disposal. Watch for shadow IT and forgotten devices. Sanitize media before it's reused or thrown out, using overwriting, **cryptographic erase**, shredding or physical destruction, depending on the media.
+
+## Vulnerability management
+
+It's a loop: discover, scan, confirm, prioritize, fix or mitigate, then **rescan**.
+
+- **CVSS** scores how severe a flaw is technically, not your actual business risk. An exposed system with a known, actively used exploit can matter more than a higher score on an isolated lab box.
+- **Authenticated scans** log in to the system, so they see more.
+- **False positives** waste time. Confirm a finding before you act on it.
+- If you can't fix something, document a **risk exception** and add compensating controls.
+
+## Alerting and monitoring
+
+- **SIEM** collects and correlates logs from many sources.
+- **IDS** detects and alerts. **IPS** sits inline and can block.
+- **Tuning** balances missed attacks (false negatives) against alert overload (false positives).
+- Use accurate time sync (NTP) and set clear log-retention rules, or you won't be able to reconstruct what happened.
+
+## Enterprise security capabilities
+
+Replace cleartext protocols with secure ones: SSH instead of Telnet, HTTPS/TLS instead of HTTP. For email:
+
+- **SPF** lists the servers allowed to send mail for your domain.
+- **DKIM** signs messages cryptographically.
+- **DMARC** tells receiving servers what to do with mail that fails those checks, and where to send reports.
+
+**DNSSEC** proves DNS answers are genuine, but it does *not* encrypt them. **File integrity monitoring** flags unexpected changes to important files.
+
+## Identity and access management
+
+- **Lifecycle:** provision access, update it when roles change, and remove it quickly when it's no longer needed.
+- **MFA** means factors from different categories: something you know, have, or are.
+- **SSO and federation** (SAML, OIDC) let one sign-in work across many apps.
+- **RBAC** grants access by role. **ABAC** decides based on attributes like department, device health and time.
+- **PAM** locks down and monitors admin accounts.
+
+## Automation and orchestration
+
+**Automation** handles single repeatable tasks. **Orchestration** chains tools into a workflow (SOAR is the security version). They save time but can spread mistakes fast, so add guardrails: limited service accounts, approval steps before anything destructive, logging, and testing.
+
+## Incident response
+
+The phases: **preparation → detection and analysis → containment → eradication → recovery → lessons learned**. Preserve evidence and keep a **chain of custody** before you make destructive changes. Practice with tabletop exercises.
+
+## Investigation data sources
+
+Pick the source that answers your question:
+
+- **Firewall and flow logs (NetFlow)** show who talked to whom.
+- **DNS logs** show name lookups.
+- **Authentication logs** show sign-ins.
+- **Endpoint telemetry** shows processes and file changes.
+- **Packet capture** shows full traffic content, when it isn't encrypted.
+
+Line things up by timestamp, host and user, and hash evidence to show it hasn't been altered.
+
+<Flashcards domain={4} />
+<SelfCheck domain={4} />
+<StudyResources />

@@ -1,0 +1,64 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: "Domain 5: Security Program Management and Oversight"
+description: Plain-language Security+ notes on governance, risk management, third-party risk, compliance, audits and security awareness.
+kicker: Learn · Security+ · Domain 5 of 5
+back: { href: /learn/security-plus/, label: Back to the Security+ guide }
+---
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import Flashcards from '../../../components/learn/Flashcards.astro';
+import SelfCheck from '../../../components/learn/SelfCheck.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+
+<p class="lead">This domain covers the business side of security: who decides, how risk is measured and handled, how vendors are checked, which rules apply, and how you build good habits across an organization. It's about 20% of SY0-701.</p>
+
+<ExamVersionNote v8="Weight drops to about 14%. CompTIA's V8 summary lists the same six themes: governance, risk, third parties, compliance and privacy, audits, and awareness." />
+
+## Governance
+
+- **Policy:** the high-level rule (for example, "sensitive data must be encrypted").
+- **Standard:** the required specifics (which algorithms are approved).
+- **Procedure:** the step-by-step instructions (how to turn encryption on).
+- **Guideline:** recommended, but not required.
+
+Governance also defines who owns what (data owners, custodians), how often documents are reviewed, and how exceptions are handled.
+
+## Risk management
+
+Risk is **likelihood × impact**. You can **avoid**, **mitigate**, **transfer** (for example, with insurance), or **accept** a risk. Record decisions in a **risk register**, with an owner for each risk. **Risk appetite** is how much risk leadership is willing to take on.
+
+Quick math:
+
+- **SLE** (single loss expectancy) = asset value × exposure factor
+- **ALE** (annualized loss expectancy) = SLE × **ARO** (annualized rate of occurrence)
+
+So a $20,000 loss expected every other year (ARO 0.5) gives an ALE of $10,000. These are estimates, not forecasts. A **business impact analysis (BIA)** identifies what's critical and how long it can be down.
+
+## Third-party risk
+
+A vendor's security becomes part of yours. Do **due diligence** before signing, and keep checking afterward. Useful contract terms include **SLAs** (service targets), **NDAs** (confidentiality), **right to audit**, breach-notification timelines, and an exit plan that covers how data is returned or destroyed.
+
+## Compliance and privacy
+
+Being compliant isn't the same as being secure. Know which rules actually apply to you:
+
+- **PCI DSS** if you handle payment cards.
+- **HIPAA** for covered US health information.
+- **GDPR** for personal data of people in the EU, within its scope.
+
+**Data minimization** (collect only what you need) and clear **retention schedules** reduce your exposure.
+
+## Audits and assessments
+
+- An **audit** checks evidence against defined criteria. It can be internal or done by an independent outside party.
+- A **vulnerability assessment** finds and ranks weaknesses.
+- A **penetration test** actually tries to exploit them, with permission.
+- **Attestation** is a formal statement about controls. Every finding needs an owner and a fix-by date.
+
+## Security awareness
+
+Training works best when it fits people's roles and focuses on real behavior: spotting phishing, reporting quickly, and handling data safely. Measure **reporting rates and speed**, not just course completion. Phishing simulations should teach, not shame.
+
+<Flashcards domain={5} />
+<SelfCheck domain={5} />
+<StudyResources />

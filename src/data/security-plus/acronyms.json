@@ -1,0 +1,881 @@
+{
+ "_note": "Acronym glossary adapted from the original file. Domain = closest SY0-701 domain.",
+ "acronyms": [
+  {
+   "abbr": "AAA",
+   "exp": "Authentication, Authorization, and Accounting",
+   "definition": "Verify identity, grant permissions, and log actions.",
+   "domain": 1
+  },
+  {
+   "abbr": "CIA",
+   "exp": "Confidentiality, Integrity, Availability",
+   "definition": "Core goals of information security.",
+   "domain": 1
+  },
+  {
+   "abbr": "MFA",
+   "exp": "Multifactor Authentication",
+   "definition": "Requires at least two distinct authentication factor categories.",
+   "domain": 1
+  },
+  {
+   "abbr": "SSO",
+   "exp": "Single Sign-On",
+   "definition": "One login provides access to multiple connected services.",
+   "domain": 1
+  },
+  {
+   "abbr": "PKI",
+   "exp": "Public Key Infrastructure",
+   "definition": "System of certificates, keys, and trust authorities.",
+   "domain": 1
+  },
+  {
+   "abbr": "CA",
+   "exp": "Certificate Authority",
+   "definition": "Issues and signs trusted digital certificates.",
+   "domain": 1
+  },
+  {
+   "abbr": "CSR",
+   "exp": "Certificate Signing Request",
+   "definition": "Request containing certificate identity and public key information.",
+   "domain": 1
+  },
+  {
+   "abbr": "CRL",
+   "exp": "Certificate Revocation List",
+   "definition": "Published list of revoked certificates.",
+   "domain": 1
+  },
+  {
+   "abbr": "OCSP",
+   "exp": "Online Certificate Status Protocol",
+   "definition": "Queries whether a certificate has been revoked.",
+   "domain": 1
+  },
+  {
+   "abbr": "AES",
+   "exp": "Advanced Encryption Standard",
+   "definition": "Widely used symmetric block cipher.",
+   "domain": 1
+  },
+  {
+   "abbr": "RSA",
+   "exp": "Rivest–Shamir–Adleman",
+   "definition": "Public-key cryptography algorithm used for signing and encryption.",
+   "domain": 1
+  },
+  {
+   "abbr": "ECC",
+   "exp": "Elliptic Curve Cryptography",
+   "definition": "Public-key cryptography using elliptic-curve mathematics.",
+   "domain": 1
+  },
+  {
+   "abbr": "HMAC",
+   "exp": "Hash-based Message Authentication Code",
+   "definition": "Verifies message integrity and authenticity with a shared secret.",
+   "domain": 1
+  },
+  {
+   "abbr": "SHA",
+   "exp": "Secure Hash Algorithm",
+   "definition": "Family of cryptographic hashing functions.",
+   "domain": 1
+  },
+  {
+   "abbr": "TLS",
+   "exp": "Transport Layer Security",
+   "definition": "Protects communications in transit.",
+   "domain": 1
+  },
+  {
+   "abbr": "TPM",
+   "exp": "Trusted Platform Module",
+   "definition": "Hardware-backed security for keys and device integrity.",
+   "domain": 1
+  },
+  {
+   "abbr": "HSM",
+   "exp": "Hardware Security Module",
+   "definition": "Tamper-resistant device protecting cryptographic keys.",
+   "domain": 1
+  },
+  {
+   "abbr": "PFS",
+   "exp": "Perfect Forward Secrecy",
+   "definition": "Past sessions stay protected if a long-term key is later exposed.",
+   "domain": 1
+  },
+  {
+   "abbr": "PSK",
+   "exp": "Pre-Shared Key",
+   "definition": "Secret agreed upon before an authenticated exchange.",
+   "domain": 1
+  },
+  {
+   "abbr": "RBAC",
+   "exp": "Role-Based Access Control",
+   "definition": "Permissions assigned according to job roles.",
+   "domain": 1
+  },
+  {
+   "abbr": "ABAC",
+   "exp": "Attribute-Based Access Control",
+   "definition": "Access decisions based on user, resource, and context attributes.",
+   "domain": 1
+  },
+  {
+   "abbr": "DAC",
+   "exp": "Discretionary Access Control",
+   "definition": "Resource owner determines access permissions.",
+   "domain": 1
+  },
+  {
+   "abbr": "MAC",
+   "exp": "Mandatory Access Control",
+   "definition": "System-enforced access based on labels and clearances.",
+   "domain": 1
+  },
+  {
+   "abbr": "FDE",
+   "exp": "Full-Disk Encryption",
+   "definition": "Encrypts an entire storage drive.",
+   "domain": 1
+  },
+  {
+   "abbr": "PIV",
+   "exp": "Personal Identity Verification",
+   "definition": "US government smart-card credential standard for identity verification.",
+   "domain": 1
+  },
+  {
+   "abbr": "TOTP",
+   "exp": "Time-based One-Time Password",
+   "definition": "Temporary code derived from a secret and time.",
+   "domain": 1
+  },
+  {
+   "abbr": "HOTP",
+   "exp": "HMAC-based One-Time Password",
+   "definition": "Counter-based one-time authentication code.",
+   "domain": 1
+  },
+  {
+   "abbr": "FIDO",
+   "exp": "Fast Identity Online",
+   "definition": "Standards for phishing-resistant modern authentication.",
+   "domain": 1
+  },
+  {
+   "abbr": "APT",
+   "exp": "Advanced Persistent Threat",
+   "definition": "Sophisticated attacker conducting sustained, targeted activity.",
+   "domain": 2
+  },
+  {
+   "abbr": "CVE",
+   "exp": "Common Vulnerabilities and Exposures",
+   "definition": "Identifier assigned to a publicly disclosed vulnerability.",
+   "domain": 2
+  },
+  {
+   "abbr": "CVSS",
+   "exp": "Common Vulnerability Scoring System",
+   "definition": "Framework scoring vulnerability severity.",
+   "domain": 2
+  },
+  {
+   "abbr": "CWE",
+   "exp": "Common Weakness Enumeration",
+   "definition": "Catalog of classes of software and hardware weaknesses.",
+   "domain": 2
+  },
+  {
+   "abbr": "DDoS",
+   "exp": "Distributed Denial of Service",
+   "definition": "Traffic from multiple systems overwhelms a target.",
+   "domain": 2
+  },
+  {
+   "abbr": "DoS",
+   "exp": "Denial of Service",
+   "definition": "Attack degrades or prevents service availability.",
+   "domain": 2
+  },
+  {
+   "abbr": "SQLi",
+   "exp": "SQL Injection",
+   "definition": "Malicious input changes database queries.",
+   "domain": 2
+  },
+  {
+   "abbr": "XSS",
+   "exp": "Cross-Site Scripting",
+   "definition": "Injected script executes in a user's browser.",
+   "domain": 2
+  },
+  {
+   "abbr": "CSRF",
+   "exp": "Cross-Site Request Forgery",
+   "definition": "Tricks an authenticated browser into making an unwanted request.",
+   "domain": 2
+  },
+  {
+   "abbr": "SSRF",
+   "exp": "Server-Side Request Forgery",
+   "definition": "Makes a server issue requests chosen by an attacker.",
+   "domain": 2
+  },
+  {
+   "abbr": "RCE",
+   "exp": "Remote Code Execution",
+   "definition": "Ability to execute code on another system.",
+   "domain": 2
+  },
+  {
+   "abbr": "RAT",
+   "exp": "Remote Access Trojan",
+   "definition": "Malware allowing unauthorized remote control.",
+   "domain": 2
+  },
+  {
+   "abbr": "IOC",
+   "exp": "Indicator of Compromise",
+   "definition": "Observable clue suggesting malicious activity.",
+   "domain": 2
+  },
+  {
+   "abbr": "IOA",
+   "exp": "Indicator of Attack",
+   "definition": "Evidence of suspicious attacker behavior or technique.",
+   "domain": 2
+  },
+  {
+   "abbr": "MITM",
+   "exp": "Man-in-the-Middle (on-path attack)",
+   "definition": "Attacker sits between two parties to read or change traffic. CompTIA now calls this an on-path attack.",
+   "domain": 2
+  },
+  {
+   "abbr": "BEC",
+   "exp": "Business Email Compromise",
+   "definition": "Social-engineering fraud through trusted-looking business messages.",
+   "domain": 2
+  },
+  {
+   "abbr": "OSINT",
+   "exp": "Open-Source Intelligence",
+   "definition": "Information gathered from publicly available sources.",
+   "domain": 2
+  },
+  {
+   "abbr": "ASLR",
+   "exp": "Address Space Layout Randomization",
+   "definition": "Randomizes memory locations to impede exploitation.",
+   "domain": 2
+  },
+  {
+   "abbr": "DEP",
+   "exp": "Data Execution Prevention",
+   "definition": "Prevents execution in memory regions marked as data.",
+   "domain": 2
+  },
+  {
+   "abbr": "EDR",
+   "exp": "Endpoint Detection and Response",
+   "definition": "Endpoint telemetry, detection, investigation, and response.",
+   "domain": 2
+  },
+  {
+   "abbr": "AV",
+   "exp": "Antivirus",
+   "definition": "Detects and blocks known or suspicious malicious software.",
+   "domain": 2
+  },
+  {
+   "abbr": "NIDS",
+   "exp": "Network Intrusion Detection System",
+   "definition": "Monitors network traffic for suspicious activity.",
+   "domain": 2
+  },
+  {
+   "abbr": "NIPS",
+   "exp": "Network Intrusion Prevention System",
+   "definition": "Detects and actively blocks malicious network traffic.",
+   "domain": 2
+  },
+  {
+   "abbr": "WAF",
+   "exp": "Web Application Firewall",
+   "definition": "Filters HTTP traffic to protect web applications.",
+   "domain": 2
+  },
+  {
+   "abbr": "SAST",
+   "exp": "Static Application Security Testing",
+   "definition": "Analyzes source or binary code without running it.",
+   "domain": 2
+  },
+  {
+   "abbr": "DAST",
+   "exp": "Dynamic Application Security Testing",
+   "definition": "Tests running applications for weaknesses.",
+   "domain": 2
+  },
+  {
+   "abbr": "C2",
+   "exp": "Command and Control",
+   "definition": "Attacker's channel for managing compromised systems.",
+   "domain": 2
+  },
+  {
+   "abbr": "ATT&CK",
+   "exp": "Adversarial Tactics, Techniques, and Common Knowledge",
+   "definition": "MITRE knowledge base of observed adversary behaviors.",
+   "domain": 2
+  },
+  {
+   "abbr": "DMZ",
+   "exp": "Demilitarized Zone (screened subnet)",
+   "definition": "Isolated network segment for internet-facing systems. Current CompTIA wording is screened subnet.",
+   "domain": 3
+  },
+  {
+   "abbr": "VLAN",
+   "exp": "Virtual Local Area Network",
+   "definition": "Logical segmentation of a switched network.",
+   "domain": 3
+  },
+  {
+   "abbr": "VPN",
+   "exp": "Virtual Private Network",
+   "definition": "Protected logical connection across another network.",
+   "domain": 3
+  },
+  {
+   "abbr": "IPsec",
+   "exp": "Internet Protocol Security",
+   "definition": "Protocol suite securing IP traffic.",
+   "domain": 3
+  },
+  {
+   "abbr": "IKE",
+   "exp": "Internet Key Exchange",
+   "definition": "Negotiates secure associations and keys for IPsec.",
+   "domain": 3
+  },
+  {
+   "abbr": "DNS",
+   "exp": "Domain Name System",
+   "definition": "Resolves domain names to network records.",
+   "domain": 3
+  },
+  {
+   "abbr": "DNSSEC",
+   "exp": "Domain Name System Security Extensions",
+   "definition": "Authenticates DNS responses with digital signatures.",
+   "domain": 3
+  },
+  {
+   "abbr": "DHCP",
+   "exp": "Dynamic Host Configuration Protocol",
+   "definition": "Automatically distributes IP settings to hosts.",
+   "domain": 3
+  },
+  {
+   "abbr": "NAT",
+   "exp": "Network Address Translation",
+   "definition": "Translates network addresses between domains.",
+   "domain": 3
+  },
+  {
+   "abbr": "SDN",
+   "exp": "Software-Defined Networking",
+   "definition": "Separates control and forwarding for programmable networks.",
+   "domain": 3
+  },
+  {
+   "abbr": "SASE",
+   "exp": "Secure Access Service Edge",
+   "definition": "Combines network connectivity with cloud-delivered security.",
+   "domain": 3
+  },
+  {
+   "abbr": "ZTNA",
+   "exp": "Zero Trust Network Access",
+   "definition": "Grants application access through identity-aware verification.",
+   "domain": 3
+  },
+  {
+   "abbr": "CASB",
+   "exp": "Cloud Access Security Broker",
+   "definition": "Enforces security policies for cloud service usage.",
+   "domain": 3
+  },
+  {
+   "abbr": "CSP",
+   "exp": "Cloud Service Provider",
+   "definition": "Vendor supplying cloud infrastructure or services.",
+   "domain": 3
+  },
+  {
+   "abbr": "IaaS",
+   "exp": "Infrastructure as a Service",
+   "definition": "Provider supplies compute, storage, and networking resources.",
+   "domain": 3
+  },
+  {
+   "abbr": "PaaS",
+   "exp": "Platform as a Service",
+   "definition": "Provider supplies managed application runtime and development platform.",
+   "domain": 3
+  },
+  {
+   "abbr": "SaaS",
+   "exp": "Software as a Service",
+   "definition": "Application delivered and operated by a provider.",
+   "domain": 3
+  },
+  {
+   "abbr": "VDI",
+   "exp": "Virtual Desktop Infrastructure",
+   "definition": "Desktop environments hosted centrally.",
+   "domain": 3
+  },
+  {
+   "abbr": "BYOD",
+   "exp": "Bring Your Own Device",
+   "definition": "Personal devices are allowed for organizational work.",
+   "domain": 3
+  },
+  {
+   "abbr": "COPE",
+   "exp": "Corporate Owned, Personally Enabled",
+   "definition": "Organization-owned device permitting personal use.",
+   "domain": 3
+  },
+  {
+   "abbr": "MDM",
+   "exp": "Mobile Device Management",
+   "definition": "Manages configuration and security of mobile devices.",
+   "domain": 3
+  },
+  {
+   "abbr": "MTD",
+   "exp": "Mobile Threat Defense",
+   "definition": "Detects threats on mobile endpoints.",
+   "domain": 3
+  },
+  {
+   "abbr": "SDLC",
+   "exp": "Software Development Life Cycle",
+   "definition": "Phases for developing and maintaining software.",
+   "domain": 3
+  },
+  {
+   "abbr": "CI/CD",
+   "exp": "Continuous Integration / Continuous Delivery",
+   "definition": "Automated processes to build, test, and release changes.",
+   "domain": 3
+  },
+  {
+   "abbr": "IaC",
+   "exp": "Infrastructure as Code",
+   "definition": "Manages infrastructure through versioned configuration code.",
+   "domain": 3
+  },
+  {
+   "abbr": "RTO",
+   "exp": "Recovery Time Objective",
+   "definition": "Maximum acceptable time to restore a service.",
+   "domain": 3
+  },
+  {
+   "abbr": "RPO",
+   "exp": "Recovery Point Objective",
+   "definition": "Maximum acceptable data loss measured in time.",
+   "domain": 3
+  },
+  {
+   "abbr": "UPS",
+   "exp": "Uninterruptible Power Supply",
+   "definition": "Provides short-term backup electrical power.",
+   "domain": 3
+  },
+  {
+   "abbr": "HVAC",
+   "exp": "Heating, Ventilation, and Air Conditioning",
+   "definition": "Controls building temperature and airflow.",
+   "domain": 3
+  },
+  {
+   "abbr": "SOC",
+   "exp": "Security Operations Center",
+   "definition": "Team or facility monitoring and responding to security events.",
+   "domain": 4
+  },
+  {
+   "abbr": "SIEM",
+   "exp": "Security Information and Event Management",
+   "definition": "Aggregates and correlates logs for detection and investigation.",
+   "domain": 4
+  },
+  {
+   "abbr": "SOAR",
+   "exp": "Security Orchestration, Automation, and Response",
+   "definition": "Coordinates and automates security-response workflows.",
+   "domain": 4
+  },
+  {
+   "abbr": "XDR",
+   "exp": "Extended Detection and Response",
+   "definition": "Correlates detection data across multiple security layers.",
+   "domain": 4
+  },
+  {
+   "abbr": "IDS",
+   "exp": "Intrusion Detection System",
+   "definition": "Alerts on suspected malicious activity.",
+   "domain": 4
+  },
+  {
+   "abbr": "IPS",
+   "exp": "Intrusion Prevention System",
+   "definition": "Detects and blocks prohibited traffic or behavior.",
+   "domain": 4
+  },
+  {
+   "abbr": "NGFW",
+   "exp": "Next-Generation Firewall",
+   "definition": "Firewall with application awareness and advanced inspection.",
+   "domain": 4
+  },
+  {
+   "abbr": "NAC",
+   "exp": "Network Access Control",
+   "definition": "Enforces device or user access requirements on networks.",
+   "domain": 4
+  },
+  {
+   "abbr": "DLP",
+   "exp": "Data Loss Prevention",
+   "definition": "Detects and restricts unauthorized sensitive-data movement.",
+   "domain": 4
+  },
+  {
+   "abbr": "IAM",
+   "exp": "Identity and Access Management",
+   "definition": "Manages identities, authentication, and access rights.",
+   "domain": 4
+  },
+  {
+   "abbr": "PAM",
+   "exp": "Privileged Access Management",
+   "definition": "Controls, monitors, and secures privileged accounts.",
+   "domain": 4
+  },
+  {
+   "abbr": "LDAP",
+   "exp": "Lightweight Directory Access Protocol",
+   "definition": "Queries and manages directory information.",
+   "domain": 4
+  },
+  {
+   "abbr": "SAML",
+   "exp": "Security Assertion Markup Language",
+   "definition": "Exchanges identity assertions for federation and SSO.",
+   "domain": 4
+  },
+  {
+   "abbr": "OAuth",
+   "exp": "Open Authorization",
+   "definition": "Delegates limited access to resources without sharing passwords.",
+   "domain": 4
+  },
+  {
+   "abbr": "OIDC",
+   "exp": "OpenID Connect",
+   "definition": "Authentication layer built on OAuth 2.0.",
+   "domain": 4
+  },
+  {
+   "abbr": "RADIUS",
+   "exp": "Remote Authentication Dial-In User Service",
+   "definition": "Centralized authentication and accounting for network access.",
+   "domain": 4
+  },
+  {
+   "abbr": "TACACS+",
+   "exp": "Terminal Access Controller Access-Control System Plus",
+   "definition": "AAA protocol often used for network device administration.",
+   "domain": 4
+  },
+  {
+   "abbr": "SSH",
+   "exp": "Secure Shell",
+   "definition": "Encrypted remote command-line access.",
+   "domain": 4
+  },
+  {
+   "abbr": "RDP",
+   "exp": "Remote Desktop Protocol",
+   "definition": "Remote graphical desktop connection.",
+   "domain": 4
+  },
+  {
+   "abbr": "SNMP",
+   "exp": "Simple Network Management Protocol",
+   "definition": "Monitors and manages network devices.",
+   "domain": 4
+  },
+  {
+   "abbr": "NTP",
+   "exp": "Network Time Protocol",
+   "definition": "Synchronizes device clocks.",
+   "domain": 4
+  },
+  {
+   "abbr": "HTTP",
+   "exp": "Hypertext Transfer Protocol",
+   "definition": "Application protocol used for web traffic.",
+   "domain": 4
+  },
+  {
+   "abbr": "HTTPS",
+   "exp": "Hypertext Transfer Protocol Secure",
+   "definition": "HTTP transmitted over TLS.",
+   "domain": 4
+  },
+  {
+   "abbr": "SMTP",
+   "exp": "Simple Mail Transfer Protocol",
+   "definition": "Transfers outgoing email between servers.",
+   "domain": 4
+  },
+  {
+   "abbr": "SPF",
+   "exp": "Sender Policy Framework",
+   "definition": "DNS policy listing permitted email senders.",
+   "domain": 4
+  },
+  {
+   "abbr": "DKIM",
+   "exp": "DomainKeys Identified Mail",
+   "definition": "Cryptographically signs mail to validate sending domains.",
+   "domain": 4
+  },
+  {
+   "abbr": "DMARC",
+   "exp": "Domain-based Message Authentication, Reporting, and Conformance",
+   "definition": "Email-domain policy coordinating SPF/DKIM alignment and reporting.",
+   "domain": 4
+  },
+  {
+   "abbr": "CIRT",
+   "exp": "Computer Incident Response Team",
+   "definition": "Group coordinating cyber incident handling.",
+   "domain": 4
+  },
+  {
+   "abbr": "IR",
+   "exp": "Incident Response",
+   "definition": "Process of detecting, containing, and recovering from incidents.",
+   "domain": 4
+  },
+  {
+   "abbr": "DFIR",
+   "exp": "Digital Forensics and Incident Response",
+   "definition": "Investigating digital evidence and managing incidents.",
+   "domain": 4
+  },
+  {
+   "abbr": "PCAP",
+   "exp": "Packet Capture",
+   "definition": "Recorded network packets for troubleshooting and investigation.",
+   "domain": 4
+  },
+  {
+   "abbr": "FIM",
+   "exp": "File Integrity Monitoring",
+   "definition": "Detects unexpected file changes.",
+   "domain": 4
+  },
+  {
+   "abbr": "SCAP",
+   "exp": "Security Content Automation Protocol",
+   "definition": "Standards for automated security configuration checks.",
+   "domain": 4
+  },
+  {
+   "abbr": "STIX",
+   "exp": "Structured Threat Information Expression",
+   "definition": "Structured format for cyber threat intelligence.",
+   "domain": 4
+  },
+  {
+   "abbr": "TAXII",
+   "exp": "Trusted Automated Exchange of Intelligence Information",
+   "definition": "Protocol for exchanging cyber threat intelligence.",
+   "domain": 4
+  },
+  {
+   "abbr": "GRC",
+   "exp": "Governance, Risk, and Compliance",
+   "definition": "Framework aligning security oversight, risks, and obligations.",
+   "domain": 5
+  },
+  {
+   "abbr": "BIA",
+   "exp": "Business Impact Analysis",
+   "definition": "Identifies critical operations and impacts of disruption.",
+   "domain": 5
+  },
+  {
+   "abbr": "BCP",
+   "exp": "Business Continuity Plan",
+   "definition": "Maintains essential operations during disruptions.",
+   "domain": 5
+  },
+  {
+   "abbr": "DRP",
+   "exp": "Disaster Recovery Plan",
+   "definition": "Restores systems and services after disruption.",
+   "domain": 5
+  },
+  {
+   "abbr": "COOP",
+   "exp": "Continuity of Operations Plan",
+   "definition": "Maintains mission-essential functions during emergencies.",
+   "domain": 5
+  },
+  {
+   "abbr": "SLE",
+   "exp": "Single Loss Expectancy",
+   "definition": "Expected cost from one realized risk event.",
+   "domain": 5
+  },
+  {
+   "abbr": "ARO",
+   "exp": "Annualized Rate of Occurrence",
+   "definition": "Expected frequency of a risk event per year.",
+   "domain": 5
+  },
+  {
+   "abbr": "ALE",
+   "exp": "Annualized Loss Expectancy",
+   "definition": "Estimated annual loss: SLE multiplied by ARO.",
+   "domain": 5
+  },
+  {
+   "abbr": "MTTR",
+   "exp": "Mean Time to Repair",
+   "definition": "Average time required to repair a failed component.",
+   "domain": 5
+  },
+  {
+   "abbr": "MTBF",
+   "exp": "Mean Time Between Failures",
+   "definition": "Average operating time between repairable failures.",
+   "domain": 5
+  },
+  {
+   "abbr": "MTTF",
+   "exp": "Mean Time to Failure",
+   "definition": "Expected time until a nonrepairable item fails.",
+   "domain": 5
+  },
+  {
+   "abbr": "NDA",
+   "exp": "Non-Disclosure Agreement",
+   "definition": "Contract requiring confidentiality.",
+   "domain": 5
+  },
+  {
+   "abbr": "SLA",
+   "exp": "Service Level Agreement",
+   "definition": "Defines expected service performance and obligations.",
+   "domain": 5
+  },
+  {
+   "abbr": "MOU",
+   "exp": "Memorandum of Understanding",
+   "definition": "Documents shared intentions between parties.",
+   "domain": 5
+  },
+  {
+   "abbr": "MOA",
+   "exp": "Memorandum of Agreement",
+   "definition": "Documents agreed responsibilities between parties.",
+   "domain": 5
+  },
+  {
+   "abbr": "AUP",
+   "exp": "Acceptable Use Policy",
+   "definition": "Defines permitted use of systems and networks.",
+   "domain": 5
+  },
+  {
+   "abbr": "PII",
+   "exp": "Personally Identifiable Information",
+   "definition": "Data that identifies or can identify an individual.",
+   "domain": 5
+  },
+  {
+   "abbr": "PHI",
+   "exp": "Protected Health Information",
+   "definition": "Sensitive health information protected by applicable rules.",
+   "domain": 5
+  },
+  {
+   "abbr": "GDPR",
+   "exp": "General Data Protection Regulation",
+   "definition": "European Union personal-data protection law.",
+   "domain": 5
+  },
+  {
+   "abbr": "PCI DSS",
+   "exp": "Payment Card Industry Data Security Standard",
+   "definition": "Industry security requirements for cardholder data.",
+   "domain": 5
+  },
+  {
+   "abbr": "HIPAA",
+   "exp": "Health Insurance Portability and Accountability Act",
+   "definition": "US law establishing requirements for protected health information.",
+   "domain": 5
+  },
+  {
+   "abbr": "DPO",
+   "exp": "Data Protection Officer",
+   "definition": "Person overseeing organizational data-protection obligations.",
+   "domain": 5
+  },
+  {
+   "abbr": "RACI",
+   "exp": "Responsible, Accountable, Consulted, Informed",
+   "definition": "Matrix assigning roles for a task or decision.",
+   "domain": 5
+  },
+  {
+   "abbr": "KPI",
+   "exp": "Key Performance Indicator",
+   "definition": "Metric tracking performance against an objective.",
+   "domain": 5
+  },
+  {
+   "abbr": "KRI",
+   "exp": "Key Risk Indicator",
+   "definition": "Metric indicating changing risk exposure.",
+   "domain": 5
+  },
+  {
+   "abbr": "ROI",
+   "exp": "Return on Investment",
+   "definition": "Benefit compared with cost of an investment.",
+   "domain": 5
+  }
+ ]
+}

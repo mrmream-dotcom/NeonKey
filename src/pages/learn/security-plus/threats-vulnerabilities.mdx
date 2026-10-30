@@ -1,0 +1,72 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: "Domain 2: Threats, Vulnerabilities, and Mitigations"
+description: Plain-language Security+ notes on threat actors, attack vectors, common vulnerabilities, signs of compromise and mitigation techniques.
+kicker: Learn · Security+ · Domain 2 of 5
+back: { href: /learn/security-plus/, label: Back to the Security+ guide }
+---
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import Flashcards from '../../../components/learn/Flashcards.astro';
+import SelfCheck from '../../../components/learn/SelfCheck.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+
+<p class="lead">This domain is about the other side: who attacks, how they get in, what weaknesses they use, how you'd notice, and what reduces the risk. It's about 22% of SY0-701.</p>
+
+<ExamVersionNote v8="V8 renames this domain 'Threats, Vulnerabilities, and Attacks' (about 24%) and adds a new objective on AI-related risks: models, prompts, privacy and data exposure. In CompTIA's V8 summary, mitigation is no longer its own objective here." />
+
+## Threat actors and motivations
+
+Attackers differ in **resources**, **skill**, **access**, and **motive**. Look at capability and motivation separately.
+
+- **Nation-state / APT:** well-funded and patient. Often after strategic information (espionage).
+- **Organized crime:** in it for money, through ransomware, fraud and theft.
+- **Hacktivists:** driven by a cause or ideology.
+- **Insider threats:** people who already have access and misuse it, on purpose or by accident.
+- **Unskilled attackers:** rely on existing tools and scripts.
+- **Shadow IT:** well-meaning staff using unapproved tech, which creates unmanaged risk.
+
+## Threat vectors and attack surface
+
+A **vector** is the path in. The **attack surface** is everything exposed: public services, accounts, devices, apps, vendors, and people.
+
+- **Phishing** (email), **vishing** (voice), and **smishing** (SMS) trick people into handing over access.
+- **Watering hole:** attackers compromise a site their targets already visit.
+- **Supply chain:** attackers get in through a trusted vendor, update or dependency.
+- **Removable media / baiting:** a USB stick left where someone will plug it in.
+
+Shrinking the attack surface means turning off what you don't need: unused services, open ports, old accounts.
+
+## Vulnerability types
+
+A **vulnerability** is a weakness. A **threat** is something that could exploit it.
+
+- **SQL injection:** user input changes a database query. Fix it with parameterized queries.
+- **Cross-site scripting (XSS):** injected script runs in other users' browsers.
+- **CSRF:** tricks a logged-in browser into sending a request the user didn't intend.
+- **Buffer overflow:** writing past the end of a memory buffer.
+- **Race condition:** a bug that depends on the timing between operations.
+- **Zero-day:** a flaw attackers know about before a fix exists.
+- **Misconfiguration:** a public storage bucket, default passwords, an open admin port.
+
+## Indicators of malicious activity
+
+One odd event is a lead, not proof. Look for signs that line up:
+
+- **Beaconing:** regular check-ins to an outside server (command and control).
+- **Impossible travel:** logins from two places too far apart for the time between them.
+- **Privilege escalation** and **lateral movement:** an attacker gaining rights and spreading.
+- **Data exfiltration:** unusual outbound transfers.
+- New scheduled tasks or services, unexpected file changes, and account lockouts.
+
+## Mitigation techniques
+
+- **Segmentation:** limits where an attacker can move.
+- **Hardening:** removes unneeded services, defaults and access.
+- **Patching:** fixes known flaws, followed by a check that nothing broke.
+- **Application allowlisting:** only approved software can run.
+- **Least privilege**, **isolation/quarantine**, and **compensating controls** for systems you can't patch.
+- **Defense in depth:** layers of protection, so one failure isn't fatal.
+
+<Flashcards domain={2} />
+<SelfCheck domain={2} />
+<StudyResources />

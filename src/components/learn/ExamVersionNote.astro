@@ -1,0 +1,9 @@
+---
+// Shown on every Security+ page while SY0-701 and SY0-801 overlap. Remove or update once 701 retires.
+interface Props { v8?: string }
+const { v8 } = Astro.props;
+---
+<div class="callout warn">
+  <strong>Exam version:</strong> these notes follow <strong>SY0-701</strong> (V7). CompTIA plans to launch <strong>SY0-801</strong> (V8) on or around November 17, 2026. SY0-701 stays available in English until June 11, 2027. Book the version you studied for.
+  {v8 && <p><strong>What changes in V8 for this domain:</strong> {v8}</p>}
+</div>

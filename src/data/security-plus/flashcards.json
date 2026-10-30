@@ -1,0 +1,930 @@
+{
+ "_note": "Flip-style key terms per domain. Adapted from the original SEC+ // ACADEMY file (original wording). Render with <details>.",
+ "cards": [
+  {
+   "domain": 1,
+   "front": "Technical",
+   "back": "Enforced through hardware or software, such as MFA, EDR, or firewall rules"
+  },
+  {
+   "domain": 1,
+   "front": "Managerial",
+   "back": "Policies, governance, planning, and risk assessment"
+  },
+  {
+   "domain": 1,
+   "front": "Operational",
+   "back": "Day-to-day activities carried out by people, such as awareness training or reviewing logs"
+  },
+  {
+   "domain": 1,
+   "front": "Physical",
+   "back": "Fences, locks, bollards, and physical barriers"
+  },
+  {
+   "domain": 1,
+   "front": "Preventive",
+   "back": "Blocks an event before it occurs"
+  },
+  {
+   "domain": 1,
+   "front": "Detective",
+   "back": "Identifies or records an event"
+  },
+  {
+   "domain": 1,
+   "front": "Corrective",
+   "back": "Restores operations or repairs harm after an event"
+  },
+  {
+   "domain": 1,
+   "front": "Compensating",
+   "back": "Alternative mitigation when the preferred control cannot be deployed"
+  },
+  {
+   "domain": 1,
+   "front": "Directive",
+   "back": "Tells people what to do, like a policy or an acceptable use agreement"
+  },
+  {
+   "domain": 1,
+   "front": "Deterrent",
+   "back": "Discourages an attacker from trying, like warning signs or visible cameras"
+  },
+  {
+   "domain": 1,
+   "front": "Confidentiality",
+   "back": "Prevent unauthorized disclosure, often with encryption and access control"
+  },
+  {
+   "domain": 1,
+   "front": "Integrity",
+   "back": "Protect accuracy and detect modification using hashes and signatures"
+  },
+  {
+   "domain": 1,
+   "front": "Availability",
+   "back": "Keep services usable via redundancy and recovery"
+  },
+  {
+   "domain": 1,
+   "front": "Authentication",
+   "back": "Verify identity with credentials or factors"
+  },
+  {
+   "domain": 1,
+   "front": "Authorization",
+   "back": "Decide permitted actions after identity is verified"
+  },
+  {
+   "domain": 1,
+   "front": "Accounting",
+   "back": "Record user and system activity for audit"
+  },
+  {
+   "domain": 1,
+   "front": "Zero Trust",
+   "back": "Verify explicitly and minimize implicit trust"
+  },
+  {
+   "domain": 1,
+   "front": "Non-repudiation",
+   "back": "Provide evidence that a party performed an action, often through digital signatures"
+  },
+  {
+   "domain": 1,
+   "front": "Request for change",
+   "back": "Formal record of a proposed modification"
+  },
+  {
+   "domain": 1,
+   "front": "Impact analysis",
+   "back": "Evaluate downtime, dependencies, security effects, and business risk"
+  },
+  {
+   "domain": 1,
+   "front": "Approval",
+   "back": "Authorized decision before implementation"
+  },
+  {
+   "domain": 1,
+   "front": "Rollback plan",
+   "back": "Defined way to safely undo a change"
+  },
+  {
+   "domain": 1,
+   "front": "Version control",
+   "back": "Tracks who changed what and supports reproducibility"
+  },
+  {
+   "domain": 1,
+   "front": "Emergency change",
+   "back": "Urgent change with expedited review and retrospective"
+  },
+  {
+   "domain": 1,
+   "front": "AES",
+   "back": "Modern symmetric encryption algorithm"
+  },
+  {
+   "domain": 1,
+   "front": "RSA",
+   "back": "Asymmetric algorithm used for signatures and certain key-transport uses"
+  },
+  {
+   "domain": 1,
+   "front": "ECC",
+   "back": "Public-key cryptography with smaller comparable key sizes"
+  },
+  {
+   "domain": 1,
+   "front": "SHA-256",
+   "back": "Cryptographic hash function; not encryption"
+  },
+  {
+   "domain": 1,
+   "front": "Digital signature",
+   "back": "Uses private-key signing to support integrity, authenticity, and non-repudiation"
+  },
+  {
+   "domain": 1,
+   "front": "PKI",
+   "back": "Trust framework using certificates, certificate authorities, and revocation"
+  },
+  {
+   "domain": 1,
+   "front": "Key escrow",
+   "back": "Protected retention of decryption keys for authorized recovery"
+  },
+  {
+   "domain": 1,
+   "front": "Salting",
+   "back": "Unique random data added before password hashing to resist precomputed attacks"
+  },
+  {
+   "domain": 2,
+   "front": "Nation-state",
+   "back": "Government-backed actor often interested in strategic intelligence"
+  },
+  {
+   "domain": 2,
+   "front": "Hacktivist",
+   "back": "Ideologically motivated attacker"
+  },
+  {
+   "domain": 2,
+   "front": "Organized crime",
+   "back": "Often profit-driven groups pursuing extortion, theft, or fraud"
+  },
+  {
+   "domain": 2,
+   "front": "Insider threat",
+   "back": "Someone with legitimate access who misuses it or makes damaging mistakes"
+  },
+  {
+   "domain": 2,
+   "front": "Unskilled attacker",
+   "back": "Relies on existing tools and scripts with limited technical skill (older slang: \"script kiddie\")"
+  },
+  {
+   "domain": 2,
+   "front": "APT",
+   "back": "Persistent, coordinated intrusion often associated with significant resources"
+  },
+  {
+   "domain": 2,
+   "front": "Phishing",
+   "back": "Fraudulent messages seeking credentials or malicious actions"
+  },
+  {
+   "domain": 2,
+   "front": "Vishing",
+   "back": "Voice-based social engineering"
+  },
+  {
+   "domain": 2,
+   "front": "Smishing",
+   "back": "SMS-based social engineering"
+  },
+  {
+   "domain": 2,
+   "front": "Watering hole",
+   "back": "Compromise of a website regularly visited by intended targets"
+  },
+  {
+   "domain": 2,
+   "front": "Supply-chain attack",
+   "back": "Compromise through vendor, update, or upstream dependency"
+  },
+  {
+   "domain": 2,
+   "front": "Attack surface reduction",
+   "back": "Disable unnecessary exposure, services, accounts, and paths"
+  },
+  {
+   "domain": 2,
+   "front": "USB baiting",
+   "back": "Social engineering through attractive or planted removable media"
+  },
+  {
+   "domain": 2,
+   "front": "SQL injection",
+   "back": "Untrusted input alters backend database queries"
+  },
+  {
+   "domain": 2,
+   "front": "Cross-site scripting",
+   "back": "Untrusted script executes in users’ browsers"
+  },
+  {
+   "domain": 2,
+   "front": "CSRF",
+   "back": "Causes a logged-in browser to submit unwanted actions"
+  },
+  {
+   "domain": 2,
+   "front": "Zero-day",
+   "back": "A vulnerability exploited or disclosed before a fix is available; terminology varies by context"
+  },
+  {
+   "domain": 2,
+   "front": "Misconfiguration",
+   "back": "Unsafe settings such as public storage or open administrative ports"
+  },
+  {
+   "domain": 2,
+   "front": "Buffer overflow",
+   "back": "Writing beyond intended memory boundaries"
+  },
+  {
+   "domain": 2,
+   "front": "Race condition",
+   "back": "Unexpected behavior caused by timing between operations"
+  },
+  {
+   "domain": 2,
+   "front": "Beaconing",
+   "back": "Repeated outbound communication to a remote endpoint"
+  },
+  {
+   "domain": 2,
+   "front": "Privilege escalation",
+   "back": "Obtaining higher permissions than initially held"
+  },
+  {
+   "domain": 2,
+   "front": "Lateral movement",
+   "back": "Moving between systems after initial access"
+  },
+  {
+   "domain": 2,
+   "front": "Impossible travel",
+   "back": "Logins from geographically incompatible locations in a short period"
+  },
+  {
+   "domain": 2,
+   "front": "Data exfiltration",
+   "back": "Unauthorized movement of information out of an environment"
+  },
+  {
+   "domain": 2,
+   "front": "File integrity alert",
+   "back": "Signal that monitored files have changed"
+  },
+  {
+   "domain": 2,
+   "front": "Segmentation",
+   "back": "Separates traffic and limits lateral movement"
+  },
+  {
+   "domain": 2,
+   "front": "Hardening",
+   "back": "Removes unnecessary services, default settings, and access"
+  },
+  {
+   "domain": 2,
+   "front": "Patching",
+   "back": "Installs updates that remediate known flaws"
+  },
+  {
+   "domain": 2,
+   "front": "Application allowlisting",
+   "back": "Permits only approved executables or applications"
+  },
+  {
+   "domain": 2,
+   "front": "Least privilege",
+   "back": "Restricts accounts to the minimum necessary access"
+  },
+  {
+   "domain": 2,
+   "front": "Quarantine",
+   "back": "Separates a potentially compromised asset for investigation"
+  },
+  {
+   "domain": 2,
+   "front": "Compensating mitigation",
+   "back": "Alternative risk reduction when direct remediation is infeasible"
+  },
+  {
+   "domain": 3,
+   "front": "IaaS",
+   "back": "Provider handles physical infrastructure; customer commonly manages OS and workloads"
+  },
+  {
+   "domain": 3,
+   "front": "PaaS",
+   "back": "Provider also manages runtime/platform components; customer manages applications and data"
+  },
+  {
+   "domain": 3,
+   "front": "SaaS",
+   "back": "Provider operates application; customer configures access and protects appropriate data"
+  },
+  {
+   "domain": 3,
+   "front": "Hybrid cloud",
+   "back": "Mix of on-premises and cloud environments"
+  },
+  {
+   "domain": 3,
+   "front": "Container",
+   "back": "OS-level isolation with shared kernel implications"
+  },
+  {
+   "domain": 3,
+   "front": "OT/ICS",
+   "back": "Operational technology prioritizing safe, continuous physical processes"
+  },
+  {
+   "domain": 3,
+   "front": "Infrastructure as Code",
+   "back": "Reproducible configuration defined through version-controlled code"
+  },
+  {
+   "domain": 3,
+   "front": "Screened subnet (DMZ)",
+   "back": "Isolated segment for internet-facing services, kept apart from the internal network"
+  },
+  {
+   "domain": 3,
+   "front": "NAC",
+   "back": "Controls network admission based on device or user posture"
+  },
+  {
+   "domain": 3,
+   "front": "VPN",
+   "back": "Encrypted tunnel across an untrusted network"
+  },
+  {
+   "domain": 3,
+   "front": "Microsegmentation",
+   "back": "Granular policies between workloads"
+  },
+  {
+   "domain": 3,
+   "front": "SDN",
+   "back": "Separates network control logic from forwarding for programmable management"
+  },
+  {
+   "domain": 3,
+   "front": "Jump server",
+   "back": "Controlled intermediary for privileged administration"
+  },
+  {
+   "domain": 3,
+   "front": "Fail secure",
+   "back": "A failure preserves restricted access even if usability is reduced"
+  },
+  {
+   "domain": 3,
+   "front": "Data at rest",
+   "back": "Information stored on disk or other media"
+  },
+  {
+   "domain": 3,
+   "front": "Data in transit",
+   "back": "Information moving over a network"
+  },
+  {
+   "domain": 3,
+   "front": "Data in use",
+   "back": "Information actively processed in memory"
+  },
+  {
+   "domain": 3,
+   "front": "DLP",
+   "back": "Monitoring and blocking unauthorized sensitive-data movement"
+  },
+  {
+   "domain": 3,
+   "front": "Tokenization",
+   "back": "Substitutes sensitive data with a mapped surrogate token"
+  },
+  {
+   "domain": 3,
+   "front": "Masking",
+   "back": "Hides portions of sensitive information for display or testing"
+  },
+  {
+   "domain": 3,
+   "front": "Classification",
+   "back": "Labels data according to sensitivity and handling needs"
+  },
+  {
+   "domain": 3,
+   "front": "RTO",
+   "back": "Target maximum time to restore a service"
+  },
+  {
+   "domain": 3,
+   "front": "RPO",
+   "back": "Target maximum age of lost data after recovery"
+  },
+  {
+   "domain": 3,
+   "front": "Full backup",
+   "back": "Copies all selected data"
+  },
+  {
+   "domain": 3,
+   "front": "Incremental backup",
+   "back": "Copies changes since the most recent backup of any type"
+  },
+  {
+   "domain": 3,
+   "front": "Differential backup",
+   "back": "Copies changes since the most recent full backup"
+  },
+  {
+   "domain": 3,
+   "front": "High availability",
+   "back": "Design intended to minimize service interruption"
+  },
+  {
+   "domain": 3,
+   "front": "3-2-1 backup rule",
+   "back": "Three copies, two media types, one off-site copy"
+  },
+  {
+   "domain": 4,
+   "front": "EDR",
+   "back": "Endpoint detection and response with investigation and containment"
+  },
+  {
+   "domain": 4,
+   "front": "MDM",
+   "back": "Centralized mobile device policy and management"
+  },
+  {
+   "domain": 4,
+   "front": "Secure baseline",
+   "back": "Approved reference configuration for system settings"
+  },
+  {
+   "domain": 4,
+   "front": "Application sandbox",
+   "back": "Restricted execution environment"
+  },
+  {
+   "domain": 4,
+   "front": "Disk encryption",
+   "back": "Protects stored data if a device is stolen"
+  },
+  {
+   "domain": 4,
+   "front": "Configuration drift",
+   "back": "Deviation from a known approved configuration"
+  },
+  {
+   "domain": 4,
+   "front": "Asset inventory",
+   "back": "Record of devices, software, systems, and owners"
+  },
+  {
+   "domain": 4,
+   "front": "Shadow IT",
+   "back": "Unapproved technology in an organization"
+  },
+  {
+   "domain": 4,
+   "front": "Data custodian",
+   "back": "Party responsible for day-to-day handling of data under policy"
+  },
+  {
+   "domain": 4,
+   "front": "End-of-life",
+   "back": "End of vendor support or planned asset usability"
+  },
+  {
+   "domain": 4,
+   "front": "Sanitization",
+   "back": "Removing sensitive information before reuse or disposal"
+  },
+  {
+   "domain": 4,
+   "front": "Cryptographic erase",
+   "back": "Destroying encryption keys so encrypted data becomes inaccessible"
+  },
+  {
+   "domain": 4,
+   "front": "CVSS",
+   "back": "Standardized technical vulnerability severity scoring"
+  },
+  {
+   "domain": 4,
+   "front": "False positive",
+   "back": "Finding reported as present when it is not"
+  },
+  {
+   "domain": 4,
+   "front": "Authenticated scan",
+   "back": "Scanner uses credentials for deeper host visibility"
+  },
+  {
+   "domain": 4,
+   "front": "Remediation",
+   "back": "Fixing the root weakness, e.g. patching software"
+  },
+  {
+   "domain": 4,
+   "front": "Risk exception",
+   "back": "Documented acceptance or temporary exception"
+  },
+  {
+   "domain": 4,
+   "front": "Rescan",
+   "back": "Verifies that a mitigation or patch worked"
+  },
+  {
+   "domain": 4,
+   "front": "SIEM",
+   "back": "Centralizes and correlates security telemetry"
+  },
+  {
+   "domain": 4,
+   "front": "IDS",
+   "back": "Detects suspicious activity and generates alerts"
+  },
+  {
+   "domain": 4,
+   "front": "IPS",
+   "back": "Can actively block malicious network activity"
+  },
+  {
+   "domain": 4,
+   "front": "False negative",
+   "back": "Missed malicious activity"
+  },
+  {
+   "domain": 4,
+   "front": "NetFlow",
+   "back": "Summarized flow metadata rather than full packet payload"
+  },
+  {
+   "domain": 4,
+   "front": "Syslog",
+   "back": "Common mechanism for sending system and network logs"
+  },
+  {
+   "domain": 4,
+   "front": "RBAC",
+   "back": "Permission assignment based on organizational role"
+  },
+  {
+   "domain": 4,
+   "front": "ABAC",
+   "back": "Access decision based on attributes of identity, resource, action, and context"
+  },
+  {
+   "domain": 4,
+   "front": "MFA",
+   "back": "Two or more distinct authentication factor categories"
+  },
+  {
+   "domain": 4,
+   "front": "SSO",
+   "back": "One authentication session for multiple applications"
+  },
+  {
+   "domain": 4,
+   "front": "PAM",
+   "back": "Controls and monitors privileged access"
+  },
+  {
+   "domain": 4,
+   "front": "Provisioning",
+   "back": "Creation or granting of identities and privileges"
+  },
+  {
+   "domain": 4,
+   "front": "Deprovisioning",
+   "back": "Revocation of access when no longer needed"
+  },
+  {
+   "domain": 4,
+   "front": "SSH",
+   "back": "Encrypted remote terminal and administration"
+  },
+  {
+   "domain": 4,
+   "front": "TLS",
+   "back": "Protects communications in transit"
+  },
+  {
+   "domain": 4,
+   "front": "SPF",
+   "back": "Specifies permitted sending hosts for a mail domain"
+  },
+  {
+   "domain": 4,
+   "front": "DKIM",
+   "back": "Cryptographic signature for email authenticity/integrity"
+  },
+  {
+   "domain": 4,
+   "front": "DMARC",
+   "back": "Email authentication alignment and domain policy"
+  },
+  {
+   "domain": 4,
+   "front": "DNSSEC",
+   "back": "Authenticates DNS data using digital signatures"
+  },
+  {
+   "domain": 4,
+   "front": "FIM",
+   "back": "Monitors selected files for unauthorized modification"
+  },
+  {
+   "domain": 4,
+   "front": "SOAR",
+   "back": "Security orchestration, automation, and response tooling"
+  },
+  {
+   "domain": 4,
+   "front": "Playbook",
+   "back": "Documented sequence of incident or administrative actions"
+  },
+  {
+   "domain": 4,
+   "front": "Runbook",
+   "back": "Operational steps for a specific repeatable procedure"
+  },
+  {
+   "domain": 4,
+   "front": "Idempotence",
+   "back": "Repeating an action produces the same intended state"
+  },
+  {
+   "domain": 4,
+   "front": "API",
+   "back": "Defined interface between software systems"
+  },
+  {
+   "domain": 4,
+   "front": "Automation guardrail",
+   "back": "Limit or approval mechanism to prevent damaging actions"
+  },
+  {
+   "domain": 4,
+   "front": "Preparation",
+   "back": "Plans, tools, contacts, and exercises before an incident"
+  },
+  {
+   "domain": 4,
+   "front": "Containment",
+   "back": "Limits ongoing damage or spread"
+  },
+  {
+   "domain": 4,
+   "front": "Eradication",
+   "back": "Removes attacker persistence or root cause"
+  },
+  {
+   "domain": 4,
+   "front": "Recovery",
+   "back": "Restores validated normal operations"
+  },
+  {
+   "domain": 4,
+   "front": "Chain of custody",
+   "back": "Documented tracking of who handled evidence and when"
+  },
+  {
+   "domain": 4,
+   "front": "Lessons learned",
+   "back": "Post-incident review to improve defenses"
+  },
+  {
+   "domain": 4,
+   "front": "PCAP",
+   "back": "Packet capture data showing packets and, where visible, payloads"
+  },
+  {
+   "domain": 4,
+   "front": "Authentication log",
+   "back": "Record of logon events and identity decisions"
+  },
+  {
+   "domain": 4,
+   "front": "DNS log",
+   "back": "Record of queries and resolutions"
+  },
+  {
+   "domain": 4,
+   "front": "Endpoint telemetry",
+   "back": "Process, file, registry, and host activity"
+  },
+  {
+   "domain": 4,
+   "front": "Hash verification",
+   "back": "Comparison of cryptographic digests for evidence integrity"
+  },
+  {
+   "domain": 5,
+   "front": "Policy",
+   "back": "High-level mandatory organizational rule"
+  },
+  {
+   "domain": 5,
+   "front": "Standard",
+   "back": "Mandatory detailed requirement supporting policy"
+  },
+  {
+   "domain": 5,
+   "front": "Procedure",
+   "back": "Step-by-step instructions for an activity"
+  },
+  {
+   "domain": 5,
+   "front": "Guideline",
+   "back": "Recommended, generally nonmandatory advice"
+  },
+  {
+   "domain": 5,
+   "front": "Risk appetite",
+   "back": "Amount and type of risk an organization is willing to pursue or retain"
+  },
+  {
+   "domain": 5,
+   "front": "Data owner",
+   "back": "Accountable for classification and authorized use of data"
+  },
+  {
+   "domain": 5,
+   "front": "SLE",
+   "back": "Expected monetary loss from one event"
+  },
+  {
+   "domain": 5,
+   "front": "ARO",
+   "back": "Expected frequency of an event per year"
+  },
+  {
+   "domain": 5,
+   "front": "ALE",
+   "back": "Annualized loss expectancy: SLE × ARO"
+  },
+  {
+   "domain": 5,
+   "front": "Mitigate",
+   "back": "Lower likelihood or impact with controls"
+  },
+  {
+   "domain": 5,
+   "front": "Transfer",
+   "back": "Shift some financial impact by contract or insurance"
+  },
+  {
+   "domain": 5,
+   "front": "Accept",
+   "back": "Explicitly retain a risk after informed approval"
+  },
+  {
+   "domain": 5,
+   "front": "BIA",
+   "back": "Business impact analysis of disruption and recovery priorities"
+  },
+  {
+   "domain": 5,
+   "front": "Due diligence",
+   "back": "Pre-contract examination of a supplier’s capabilities and risks"
+  },
+  {
+   "domain": 5,
+   "front": "SLA",
+   "back": "Contractual service-level targets and remedies"
+  },
+  {
+   "domain": 5,
+   "front": "NDA",
+   "back": "Confidentiality agreement between parties"
+  },
+  {
+   "domain": 5,
+   "front": "Right to audit",
+   "back": "Contract term allowing defined assurance activities"
+  },
+  {
+   "domain": 5,
+   "front": "Supply chain risk",
+   "back": "Exposure introduced by upstream vendors and components"
+  },
+  {
+   "domain": 5,
+   "front": "Vendor offboarding",
+   "back": "Revocation of access and recovery or destruction of data"
+  },
+  {
+   "domain": 5,
+   "front": "PCI DSS",
+   "back": "Industry security requirements for environments handling payment card data"
+  },
+  {
+   "domain": 5,
+   "front": "HIPAA",
+   "back": "US legal framework with privacy and security obligations for covered health data"
+  },
+  {
+   "domain": 5,
+   "front": "GDPR",
+   "back": "EU data-protection regulation with extraterritorial scope in some situations"
+  },
+  {
+   "domain": 5,
+   "front": "Data minimization",
+   "back": "Collect and retain only needed personal information"
+  },
+  {
+   "domain": 5,
+   "front": "Retention schedule",
+   "back": "Rules defining how long records must be kept"
+  },
+  {
+   "domain": 5,
+   "front": "Regulatory compliance",
+   "back": "Conformity to applicable legal and regulatory requirements"
+  },
+  {
+   "domain": 5,
+   "front": "Internal audit",
+   "back": "Review conducted by an organization’s own independent audit function"
+  },
+  {
+   "domain": 5,
+   "front": "External audit",
+   "back": "Review performed by an outside independent party"
+  },
+  {
+   "domain": 5,
+   "front": "Penetration test",
+   "back": "Authorized exercise attempting to demonstrate exploitability"
+  },
+  {
+   "domain": 5,
+   "front": "Vulnerability assessment",
+   "back": "Identification and ranking of vulnerabilities"
+  },
+  {
+   "domain": 5,
+   "front": "Attestation",
+   "back": "Formal declaration about controls or compliance"
+  },
+  {
+   "domain": 5,
+   "front": "Remediation plan",
+   "back": "Assigned corrective actions with deadlines and evidence"
+  },
+  {
+   "domain": 5,
+   "front": "Phishing simulation",
+   "back": "Controlled test of response to deceptive messages"
+  },
+  {
+   "domain": 5,
+   "front": "Tabletop exercise",
+   "back": "Discussion-based rehearsal of incident scenarios"
+  },
+  {
+   "domain": 5,
+   "front": "Role-based training",
+   "back": "Security instruction tailored to job responsibilities"
+  },
+  {
+   "domain": 5,
+   "front": "Reporting culture",
+   "back": "Environment encouraging quick reporting without unnecessary blame"
+  },
+  {
+   "domain": 5,
+   "front": "Social engineering",
+   "back": "Manipulating people into unsafe actions or disclosure"
+  },
+  {
+   "domain": 5,
+   "front": "Security champion",
+   "back": "Team member supporting good security practices locally"
+  }
+ ]
+}

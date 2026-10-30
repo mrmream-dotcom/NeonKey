@@ -1,0 +1,49 @@
+---
+layout: ../../../components/learn/LearnLayout.astro
+title: CompTIA Security+ study guide
+description: Free plain-language study notes for the CompTIA Security+ exam (SY0-701), one page per domain, with key terms and short self-checks.
+kicker: Learn · Security+
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../../config';
+import ExamVersionNote from '../../../components/learn/ExamVersionNote.astro';
+import StudyResources from '../../../components/learn/StudyResources.astro';
+import track from '../../../data/security-plus/track.json';
+
+<p class="lead">CompTIA Security+ is an entry-level cybersecurity certification. This guide breaks the exam into its five domains and explains each one in plain language, with key terms and a short self-check on every page.</p>
+
+<ExamVersionNote />
+
+## Why Security+ matters
+
+- **A common starting point.** Security+ is a vendor-neutral certification. It covers core security skills instead of one company's products, which is why it's often listed for entry-level security and IT jobs, such as security analyst or systems administrator.
+- **Used by the US Department of Defense.** Security+ is one of the certifications that can meet the qualification requirements for several cybersecurity and IT work roles under the US DoD 8140 program.
+- **A foundation for what comes next.** The exam covers the basics most security work builds on: controls, threats, architecture, day-to-day operations, and risk and governance.
+
+## Is this for you?
+
+Be realistic before you start:
+
+- **Time.** The exam has up to 90 questions (multiple choice plus hands-on "performance-based" questions) and you get 90 minutes. Most people study for weeks or months first.
+- **Money.** Each attempt needs a paid exam voucher. At the time of writing, CompTIA's US store lists a voucher at around US$439, and a retake means buying another voucher. Check CompTIA for current pricing in your country.
+- **Experience.** CompTIA recommends having Network+ and two years of experience in a security or systems administrator role first. That's a recommendation, not a requirement. If you're brand new to IT, the networking and systems basics will help a lot.
+- **No guarantees.** These notes are a study aid. They don't replace the official exam objectives and they can't promise a pass. You need a scaled score of 750 (on a 100–900 scale).
+
+## The five domains
+
+<ol class="stack-list">
+  {track.domains.map((d) => (
+    <li><a href={siteUrl(`/learn/security-plus/${d.slug}/`)}><strong>Domain {d.n}: {d.title}</strong></a> <span class="muted">· {d.weight701}% of SY0-701</span></li>
+  ))}
+</ol>
+
+Also handy: the <a href={siteUrl("/learn/security-plus/acronyms/")}>acronym list</a> (Security+ uses a lot of them).
+
+## How to use this guide
+
+1. Read the notes for one domain. Each section is short on purpose.
+2. Go through the key-term cards. Try to say each definition out loud before you open the card.
+3. Do the self-check at the bottom. If you miss one, reread that section.
+4. Compare what you've covered against CompTIA's official exam objectives, then practice with hands-on labs and full-length practice tests.
+
+<StudyResources />

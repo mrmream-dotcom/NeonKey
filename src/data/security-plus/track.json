@@ -1,0 +1,21 @@
+{
+  "_note": "Track metadata. To swap in an affiliate link later, set officialLink.affiliateUrl and set officialLink.isAffiliate to true; components prefer affiliateUrl when present and add rel=\"sponsored\" plus a disclosure line automatically.",
+  "slug": "security-plus",
+  "title": "CompTIA Security+ study guide",
+  "examVersion": "SY0-701",
+  "nextVersion": { "code": "SY0-801", "launch": "2026-11-17", "currentRetiresEnglish": "2027-06-11", "currentRetiresOtherLanguages": "2027-08-13" },
+  "lastReviewed": "2026-10-30",
+  "officialLink": {
+    "label": "CompTIA Security+ (official page)",
+    "url": "https://www.comptia.org/certifications/security",
+    "affiliateUrl": null,
+    "isAffiliate": false
+  },
+  "domains": [
+    { "n": 1, "slug": "general-security-concepts", "title": "General Security Concepts", "weight701": 12, "weight801": 16 },
+    { "n": 2, "slug": "threats-vulnerabilities", "title": "Threats, Vulnerabilities, and Mitigations", "titleV8": "Threats, Vulnerabilities, and Attacks", "weight701": 22, "weight801": 24 },
+    { "n": 3, "slug": "security-architecture", "title": "Security Architecture", "weight701": 18, "weight801": 19 },
+    { "n": 4, "slug": "security-operations", "title": "Security Operations", "weight701": 28, "weight801": 27 },
+    { "n": 5, "slug": "program-management", "title": "Security Program Management and Oversight", "weight701": 20, "weight801": 14 }
+  ]
+}
