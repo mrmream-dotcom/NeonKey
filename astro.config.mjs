@@ -19,7 +19,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'never' },
   vite: { build: { assetsInlineLimit: 0 } },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) })],
+  integrations: [sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) })],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);

@@ -133,7 +133,7 @@ Hidden pages live in `src/_drafts/`, which Astro doesn't route (only `src/pages/
 |---|---|---|
 | `src/_drafts/learn/self-host-n8n-old-pc.astro` | `/learn/self-host-n8n-old-pc/` | Sample tutorial |
 | `src/_drafts/reviews/example-mini-pc-homelab.astro` | `/reviews/example-mini-pc-homelab/` | Sample review of a fictional product (its "Check price" buttons point to `#`) |
-| `src/_drafts/notes/what-unlock-means.astro` | `/notes/what-unlock-means/` | Sample notes article |
+| `src/_drafts/articles/what-unlock-means.astro` | `/articles/what-unlock-means/` | Sample article |
 | `src/_drafts/lab/n8n-lead-intake-automation.astro` | `/lab/n8n-lead-intake-automation/` | Sample Lab case study |
 | `src/_drafts/lab/homelab-network-segmentation.astro` | `/lab/homelab-network-segmentation/` | Sample Lab case study |
 | `src/_drafts/lab/ai-faq-assistant-small-business.astro` | `/lab/ai-faq-assistant-small-business/` | Sample Lab case study (fictional business) |
@@ -142,13 +142,13 @@ The drafts still contain their old demo badges and "sample" wording, on purpose:
 
 **To publish (restore) a page**
 1. Rewrite it with the real build/review/tutorial, and remove the `DemoBadge` / "sample" / "Demo content" bits (in Lab pages these come from `src/layouts/LabProject.astro`: the badge, the "Sample write-up" line, the warning callout and the "Demo Lab write-up:" description prefix).
-2. Move it back: `git mv src/_drafts/lab/<slug>.astro src/pages/lab/` (same for `learn/`, `reviews/`, `notes/`).
+2. Move it back: `git mv src/_drafts/lab/<slug>.astro src/pages/lab/` (same for `learn/`, `reviews/`, `articles/`).
 3. **Lab:** in `src/data/lab.ts` delete `draft: true` (or set `false`) on that project. It then shows on `/lab/` (with tag filters) and in the home page "From the Lab" section automatically. Only list real projects: the Lab page's "Related" links use every project in `lab.ts`.
-4. **Learn / Reviews / Notes:** add a list item linking to it in `src/pages/<section>/index.astro` in place of the `<EmptyState />` (the old list markup is in git history, commit before Oct 29, 2026).
+4. **Learn / Reviews / Articles:** add a list item linking to it in `src/pages/<section>/index.astro` in place of the `<EmptyState />` (the old list markup is in git history, commit before Oct 29, 2026).
 5. Optional: link it from the home page again, and from `/services/remote-it/` (the old Lab callout there linked the network-segmentation write-up).
 6. Build and check: `grep -rni "demo content\|placeholder slot" dist` should be empty.
 
-Empty sections (`/learn/`, `/lab/`, `/reviews/`, `/notes/`) show `src/components/EmptyState.astro` ("First … are on the way — get them in Unlock the Week"). The home page shows one teaser line above the newsletter box instead of the old tutorial/Lab/review grids.
+Empty sections (`/learn/`, `/lab/`, `/reviews/`) show `src/components/EmptyState.astro` ("First … are on the way — get them in Unlock the Week"). The home page shows one teaser line above the newsletter box instead of the old tutorial/Lab/review grids.
 
 Still to finish separately: the contact form (not connected, see step 4), `src/pages/privacy.astro` (draft policy), and `src/pages/disclosure.astro` (review the wording; its demo callout was removed).
 

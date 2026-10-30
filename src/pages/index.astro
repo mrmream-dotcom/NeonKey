@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-// Tutorials, reviews and notes have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
+// Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 const pillars = [
   { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Practical automations and remote small-office IT setup for small businesses. Plain-English setup and handoff.',
@@ -78,7 +78,7 @@ const pillars = [
 
   <section aria-labelledby="nl-h">
     <div class="container">
-      <p class="home-teaser" id="first-posts">Tutorials, Lab builds, reviews and notes: <strong>first posts are on the way.</strong> Get them in Unlock the Week.</p>
+      <p class="home-teaser" id="first-posts">Tutorials, Lab builds, reviews and articles: <strong>more posts are on the way.</strong> Get them in Unlock the Week.</p>
       <div class="nl-box">
         <span class="kicker">Newsletter · Weekly</span>
         <h2 id="nl-h">Unlock the Week</h2>

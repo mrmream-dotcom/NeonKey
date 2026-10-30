@@ -1,0 +1,21 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+// Published articles go here. Unpublished drafts live in src/_drafts/articles/ (see LAUNCH.md "Hidden drafts").
+---
+<Base title="Articles" description="NeonKey articles: plain-English explainers, honest takes and practical advice on automation, AI and small-office tech, whatever your level.">
+  <div class="container page-head">
+    <span class="kicker">Articles</span>
+    <h1>Articles</h1>
+    <p>Articles and plain-English explainers: honest takes on automation, AI and everyday tech, whatever your level.</p>
+  </div>
+  <div class="container">
+    <div class="list-item">
+      <div>
+        <h3><a href={url('/articles/why-outsource-automations/')}>You Could Automate It Yourself. Here's Why You Might Not Want To.</a></h3>
+        <p>An honest look at DIY automations vs. getting help: what's doable on your own, what tends to go wrong, and how to decide.</p>
+      </div>
+      <div><span class="tag">Automation</span></div>
+    </div>
+  </div>
+</Base>

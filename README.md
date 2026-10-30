@@ -95,7 +95,7 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 | `/learn/` | Learn index (empty state until the first tutorial; drafts in `src/_drafts/learn/`) |
 | `/lab/` | Lab portfolio with tag filters for published projects (empty state for now; 3 sample case studies are drafts in `src/_drafts/lab/`) |
 | `/reviews/` | Reviews index (empty state; sample review is a draft in `src/_drafts/reviews/`) |
-| `/notes/` | Notes index (empty state; sample note is a draft in `src/_drafts/notes/`) |
+| `/articles/` | Articles index (lists published articles; the old `/notes/` URL redirects here; sample draft in `src/_drafts/articles/`) |
 | `/newsletter/` | Unlock the Week: what you get, cadence, privacy, issue format |
 | `/services/` | Featured Remote Small-Office IT Setup plus three automation services |
 | `/services/remote-it/` | Remote Small-Office IT Setup & the monthly remote support plan: scope, exclusions, pricing |
@@ -108,7 +108,7 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 public/            favicon.svg + generated PNG icons, og-default.png, _headers, _redirects
 scripts/           generate-assets.mjs (sharp: OG image and icons)
 src/config.ts      env-driven settings and the base-aware url() helper
-src/components/    Logo, Card, EmptyState, NewsletterForm, DemoBadge (drafts only)
+src/components/    Logo, Card, EmptyState, NewsletterForm, Redirect (static redirect pages), DemoBadge (drafts only)
 src/_drafts/       hidden sample pages (not built; see LAUNCH.md step 8)
 src/data/          lab.ts (Lab projects), services.ts (service offers and prices)
 src/layouts/       Base.astro (head/meta, nav, footer, Umami), LabProject.astro

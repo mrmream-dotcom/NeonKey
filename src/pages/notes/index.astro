@@ -1,15 +1,5 @@
 ---
-import Base from '../../layouts/Base.astro';
-import EmptyState from '../../components/EmptyState.astro';
-// Published notes go here. Unpublished drafts live in src/_drafts/notes/ (see LAUNCH.md "Hidden drafts").
+// /notes/ was renamed to /articles/ (Oct 30, 2026). Kept as a static redirect page.
+import Redirect from '../../components/Redirect.astro';
 ---
-<Base title="Notes" description="NeonKey notes: short articles, plain-English explainers, opinions and build logs from a learning-in-public tech journey.">
-  <div class="container page-head">
-    <span class="kicker">Notes</span>
-    <h1>Notes</h1>
-    <p>Shorter articles: opinions, explainers and build logs from the learning-in-public journey.</p>
-  </div>
-  <div class="container">
-    <EmptyState what="notes" location="notes-empty" />
-  </div>
-</Base>
+<Redirect to="/articles/" />

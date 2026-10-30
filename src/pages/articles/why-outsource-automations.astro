@@ -1,0 +1,77 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+---
+<Base title={"You Could Automate It Yourself. Here's Why You Might Not Want To."} description="An honest look at DIY automations vs. getting help: what's doable on your own, what tends to go wrong, and how to decide." type="article">
+  <article class="narrow page-head prose">
+    <span class="kicker">Articles · Automation</span>
+    <h1>You Could Automate It Yourself. Here's Why You Might Not Want To.</h1>
+    <div class="meta"><span>By NeonKey</span></div>
+<p class="lead">Let's get this out of the way first: you can absolutely build your own automations.</p>
+<p>Tools like <a data-umami-event="outbound-click" data-umami-event-item="zapier.com" href="https://zapier.com">Zapier</a>, <a data-umami-event="outbound-click" data-umami-event-item="make.com" href="https://www.make.com">Make</a> and <a data-umami-event="outbound-click" data-umami-event-item="n8n.io" href="https://n8n.io">n8n</a> let you connect apps without writing much (or any) code. Plenty of the apps you already use now have AI features and simple workflows built in. Sorting incoming inquiries, copying form submissions into a spreadsheet, sending appointment reminders, nudging a client about an unpaid invoice: all of that is within reach for someone willing to sit down and figure it out.</p>
+<p>Lots of people do exactly that, and it works. If you're curious, we'd genuinely encourage you to try. Learning how automations work is useful even if you never build a big one, because it changes how you look at the repetitive parts of your week.</p>
+<p>So this isn't a "don't try this at home" post. It's the other half of the conversation: the honest reasons someone might still hand it off, and how to tell which camp you're in.</p>
+<h2>Why someone might hand it off anyway</h2>
+<h3>1. Time is the real price</h3>
+<p>The tools themselves are often cheap or free to start. The cost is your hours.</p>
+<p>There's the learning: how triggers work, how data moves between steps, why a field shows up empty. Then there's the trial and error: testing, fixing, testing again. For a first project, that can easily eat a few evenings or weekends.</p>
+<p>If you enjoy that, great, it's time well spent. If those are hours you'd otherwise spend running your business, serving customers or just resting, it's worth counting them.</p>
+<h3>2. Automations need upkeep</h3>
+<p>This is the part most people don't hear about until it happens. An automation isn't a one-time setup. It's closer to a small machine that keeps running in the background, and machines need maintenance.</p>
+<p>A few common reasons things stop working:</p>
+<ul>
+<li>An app changes how it shares data, and a step that used to work now fails.</li>
+<li>A login or access connection expires, and the workflow quietly stops.</li>
+<li>Someone renames a spreadsheet column or a form field, and data lands in the wrong place (or nowhere).</li>
+</ul>
+<p>The tricky bit is that many failures are silent. Nothing crashes on your screen. You just notice, two weeks later, that new inquiries haven't been showing up. Someone has to notice, figure out what broke and fix it. If you build it yourself, that someone is you.</p>
+<h3>3. Getting it right the first time</h3>
+<p>A simple "when this happens, do that" workflow is easy to set up. Making it behave well in real life takes more thought.</p>
+<p>What happens if the same form gets submitted twice? If a customer's email address has a typo? If the AI step isn't sure how to sort a message? If the step that sends an email runs again after a hiccup, does your customer get the same reminder twice?</p>
+<p>None of this is rocket science. But these edge cases are where most of the work lives, and they're easy to miss when you're building something for the first time. Someone who has built similar workflows before has usually already tripped over them.</p>
+<h3>4. Security and access</h3>
+<p>To automate anything, you have to give tools access: to your email, your calendar, your customer list, sometimes your payment or invoicing system. That usually means connecting accounts and, sometimes, handling API keys (think of them as passwords for apps).</p>
+<p>It's worth asking: Does this tool need access to everything, or just one folder? Where do the keys live, and who can see them? Is customer information being copied somewhere it doesn't need to be?</p>
+<p>You can absolutely learn to handle this well. It's just one more thing to get right, and it matters more when the data belongs to your customers.</p>
+<h3>5. Opportunity cost</h3>
+<p>This one's simple. Every hour spent on automation is an hour not spent on something else. Sometimes that trade is worth it: you learn a skill, you save time later, you enjoy the process. Sometimes the best use of your time is the thing only you can do, and letting someone else handle the plumbing.</p>
+<p>Neither answer is wrong. It just helps to make the choice on purpose.</p>
+<h2>When DIY makes sense</h2>
+<p>Doing it yourself is often the right call when:</p>
+<ul>
+<li><strong>It's simple.</strong> One trigger, one or two steps, like saving form entries to a spreadsheet.</li>
+<li><strong>It's low-stakes.</strong> If it breaks for a day, nobody is harmed and no customer notices.</li>
+<li><strong>You enjoy it.</strong> Tinkering is fun for you, and you'd like to understand how it works.</li>
+<li><strong>You have the time.</strong> You can afford some evenings of learning and a bit of ongoing checking.</li>
+<li><strong>You want the skill.</strong> You plan to build more automations later, and this is a good first step.</li>
+</ul>
+<p>If most of those fit, go for it. Start small, test with fake data, and add a simple alert so you find out if something stops.</p>
+<h2>When it may make sense to get help</h2>
+<p>Getting help can be worth considering when:</p>
+<ul>
+<li><strong>Customers are on the other end.</strong> Emails, reminders or messages go to real people, and a mistake is visible.</li>
+<li><strong>Money is involved.</strong> Invoices, payments or anything that touches your books.</li>
+<li><strong>It connects several tools.</strong> The more apps in the chain, the more places it can break.</li>
+<li><strong>You need it to just work.</strong> You'd rather not be the one checking whether it's still running.</li>
+<li><strong>Sensitive data is involved.</strong> Customer details, health info, financial records.</li>
+<li><strong>You've tried and got stuck.</strong> That's not failure. It often means you've found the hard part.</li>
+</ul>
+<p>Getting help doesn't have to mean handing everything over, either. Some people have a workflow built and then learn to maintain it. Others build it themselves and ask for a review before turning it on.</p>
+<h2>A quick self-check</h2>
+<p>Before you decide, ask yourself:</p>
+<ol>
+<li>If this automation stopped working, how long would it take me to notice?</li>
+<li>What's the worst thing that happens if it does the wrong thing, like sending a duplicate email or skipping a customer?</li>
+<li>Do I know what access I'm giving each tool, and could I remove it later?</li>
+<li>How many hours am I realistically willing to spend learning and fixing this?</li>
+<li>Would I enjoy building it, or just want it done?</li>
+<li>Is this something I'll want to change or expand over time?</li>
+</ol>
+<p>There's no score at the end. Your answers will usually point one way or the other on their own.</p>
+<h2>The bottom line</h2>
+<p>DIY automation is real, doable and worth learning, whatever your level. Getting help is also a perfectly reasonable choice, for the same reason people hire an accountant even though tax software exists. It comes down to time, stakes and what you'd rather be doing.</p>
+<p>If you want to see what a small automation can look like in practice, our <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sorts a customer message, flags urgency and drafts a reply for a person to review.</p>
+<p>And if you ever decide you'd like a hand, NeonKey <a href={url('/services/')}>offers this kind of help</a>. Either way, we hope this helps you decide.</p>
+    <p><a href={url('/articles/')}>← Back to Articles</a></p>
+  </article>
+</Base>
