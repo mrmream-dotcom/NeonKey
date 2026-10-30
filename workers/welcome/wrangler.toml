@@ -10,7 +10,7 @@ preview_urls = false
 
 [vars]
 PUBLIC_BASE_URL = "https://neonkey-welcome.mr-mream.workers.dev"
-FROM_ADDRESS = "Michael Ream at NeonKey <hello@neonkey.tech>"
+FROM_ADDRESS = "NeonKey <hello@neonkey.tech>"
 REPLY_TO = "hello@neonkey.tech"
 
 [[kv_namespaces]]

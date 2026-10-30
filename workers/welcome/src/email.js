@@ -93,7 +93,7 @@ export function renderWelcome({ firstName, unsubscribeUrl }) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
 ${bulletRows}
         </table>
-        <p style="${p}">One quick favor: hit reply and tell me what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. I read every reply.</p>
+        <p style="${p}">One quick favor: hit reply and let us know what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. Every reply gets read.</p>
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px 0;">
           <tr>
             <td align="center" bgcolor="${C.accent}" style="border-radius:8px;background-color:${C.accent};">
@@ -104,8 +104,8 @@ ${bulletRows}
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr><td style="border-top:1px solid ${C.rule};padding:20px 0 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
         </table>
-        <p style="margin:0 0 4px 0;font-family:${font};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Michael Ream</p>
-        <p style="margin:0;font-family:${font};font-size:14px;line-height:1.5;color:${C.muted};">NeonKey &middot; <a href="https://neonkey.tech/" style="color:${C.accent};text-decoration:none;">neonkey.tech</a> &middot; <a href="mailto:hello@neonkey.tech" style="color:${C.accent};text-decoration:none;">hello@neonkey.tech</a></p>
+        <p style="margin:0 0 4px 0;font-family:${font};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">NeonKey</p>
+        <p style="margin:0;font-family:${font};font-size:14px;line-height:1.5;color:${C.muted};"><a href="https://neonkey.tech/" style="color:${C.accent};text-decoration:none;">neonkey.tech</a> &middot; <a href="mailto:hello@neonkey.tech" style="color:${C.accent};text-decoration:none;">hello@neonkey.tech</a></p>
       </td>
     </tr>
     <tr>
@@ -128,12 +128,12 @@ Thanks for confirming. You're officially on the list for Unlock the Week, the we
 WHAT TO EXPECT
 ${bullets.map((b) => `- ${b}`).join("\n")}
 
-One quick favor: hit reply and tell me what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. I read every reply.
+One quick favor: hit reply and let us know what you'd most like to learn about, whether that's AI tools, home networking, automations, or something else. Every reply gets read.
 
 Explore NeonKey: https://neonkey.tech/
 
-Michael Ream
-NeonKey · neonkey.tech · hello@neonkey.tech
+NeonKey
+neonkey.tech · hello@neonkey.tech
 
 --
 You're receiving this because you subscribed to Unlock the Week at neonkey.tech.
