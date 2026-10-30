@@ -47,6 +47,16 @@ function defineArticle(input: ArticleInput): Article {
 
 export const articles: Article[] = [
   defineArticle({
+    slug: 'ai-hacking-defender',
+    title: "Everyone's Worried About AI Hacking. It's Also Becoming a Defender.",
+    description: "AI is speeding up cyberattacks, but it's also helping defenders catch intrusions, find weak spots and decide what to fix first. Here's what that means.",
+    topic: 'Security',
+    category: 'news',
+    date: '2026-10-30',
+    sourceUrl: 'https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/',
+    sourceName: 'AvalonX launch announcement (Presswire, Oct 28, 2026)',
+  }),
+  defineArticle({
     slug: 'why-outsource-automations',
     title: "You Could Automate It Yourself. Here's Why You Might Not Want To.",
     description: "An honest look at DIY automations vs. getting help: what's doable on your own, what tends to go wrong, and how to decide.",

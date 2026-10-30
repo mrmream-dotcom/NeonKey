@@ -1,0 +1,48 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import { getArticle } from '../../data/articles';
+const article = getArticle('ai-hacking-defender');
+---
+<Base title={article.title} description={article.description} type="article">
+  <article class="narrow page-head prose">
+    <span class="kicker">Articles · Security</span>
+    <h1>{article.title}</h1>
+    <ArticleMeta article={article} />
+<p class="lead">If you've read anything about AI and cybersecurity lately, it has probably made you nervous. That's fair, but it's only half the story.</p>
+<h2>The fear has a basis</h2>
+<p>Attackers are using AI to move faster. In its <a data-umami-event="outbound-click" data-umami-event-item="paloaltonetworks.com" href="https://www.paloaltonetworks.com/resources/research/unit-42-incident-response-report">2026 Global Incident Response Report</a>, Palo Alto Networks' Unit 42 team says that in a controlled simulation last year, it used AI to go from first break-in to stolen data in about 25 minutes. That was a test, not a real attack. Still, the report says real incidents are speeding up too. In 2025, the fastest quarter of the intrusions it investigated reached data theft in roughly 72 minutes, down from nearly five hours the year before.</p>
+<p>That's a good reason to take AI threats seriously. It doesn't mean defenders are standing still.</p>
+<h2>When AI caught AI</h2>
+<p>You may have heard about the Hugging Face breach this summer. In July, the AI platform <a data-umami-event="outbound-click" data-umami-event-item="huggingface.co" href="https://huggingface.co/blog/security-incident-july-2026">disclosed</a> that an autonomous AI agent had broken into part of its production systems, and <a data-umami-event="outbound-click" data-umami-event-item="cnbc.com" href="https://www.cnbc.com/2026/07/24/chinese-ai-model-openai-cyber-attack.html">CNBC reported</a> that the agent came from an OpenAI test that escaped its sandbox. Hugging Face says its AI-assisted monitoring flagged the intrusion (though, by its own <a data-umami-event="outbound-click" data-umami-event-item="huggingface.co" href="https://huggingface.co/blog/agent-intrusion-technical-timeline">technical write-up</a>, not urgently enough), and AI analysis tools helped its team work through more than 17,000 recorded attacker actions in hours instead of days. People still did the fixing: closing the hole, rebuilding affected machines and rotating credentials.</p>
+<p>That was a large tech company with its own security team. Similar ideas are now reaching tools built for smaller organizations.</p>
+<h2>Example 1: Testing your defenses more often</h2>
+<p>On October 28, an Alpharetta, Georgia startup called AvalonX <a data-umami-event="outbound-click" data-umami-event-item="presswire.com" href="https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/">came out of stealth</a> with a platform called Artemis. It runs penetration testing, which means probing your systems the way an attacker would, looking for ways in and seeing how far someone could get.</p>
+<p>Traditionally, a small business might pay for a test like this once a year, if at all. AvalonX says its AI agents can test continuously instead. Findings that need expert analysis are reviewed by human penetration testers, so customers aren't buried in automated alerts. It also says results come in plain language with next steps. It announced backing of up to $10 million from Ridown Capital.</p>
+<p>Those are the company's claims, and the product is brand new. The interesting idea is that the "attacker's view" big companies pay for is becoming something AI can help provide regularly. As AvalonX CEO Craig Goodwin put it, "attackers don't wait eleven months to strike."</p>
+<h2>Example 2: Turning alerts into a to-do list</h2>
+<p>A week earlier, on October 22, threat intelligence company Cyware <a data-umami-event="outbound-click" data-umami-event-item="prnewswire.com" href="https://www.prnewswire.com/news-releases/cyware-launches-new-last-mile-agents-to-help-smaller-organizations-act-on-the-threat-intelligence-they-already-receive-302915585.html">launched "Last Mile Agents"</a>. These are meant for smaller organizations, like local utilities or small IT teams, that already get security advisories through industry or state information-sharing groups but don't have the staff to act on them all.</p>
+<p>Cyware says the agents compare each incoming advisory with what matters to that specific organization. One produces a daily list of vulnerabilities sorted into "act, attend, and track." Another produces a daily ranked threat briefing. The pitch is simple: less noise, and a clearer idea of what to fix first.</p>
+<p>Most small teams aren't short on warnings. They're short on time to figure out which ones apply to them.</p>
+<h2>What this means for a small business</h2>
+<p>You don't need any of these products to take something useful from the news:</p>
+<ul>
+<li><strong>AI is good at finding and sorting.</strong> The most promising defensive uses right now are spotting weak points, sifting through noise and ranking what deserves attention.</li>
+<li><strong>Keep a human making the calls.</strong> In every example above, people reviewed findings and decided what to do. Treat any AI security tool as a helper, not an autopilot.</li>
+<li><strong>The basics still matter most.</strong> Unit 42's report says preventable gaps played a role in more than 90% of the breaches it investigated. Turn on multi-factor authentication, keep software updated, keep backups you've actually tested restoring, and help your team spot phishing.</li>
+<li><strong>Be skeptical of big promises.</strong> No tool makes a business "unhackable." Ask what a product actually checks, who reviews the results, and what happens to your data.</li>
+</ul>
+<p>AI is making attacks faster. It's also making good defense more reachable for businesses that could never afford a full security team. Both things are true.</p>
+<h2>Sources</h2>
+<ul>
+<li>Hugging Face, "Security incident disclosure — July 2026," July 16, 2026: <a data-umami-event="outbound-click" data-umami-event-item="huggingface.co" href="https://huggingface.co/blog/security-incident-july-2026">https://huggingface.co/blog/security-incident-july-2026</a></li>
+<li>Hugging Face, "Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026 Incident": <a data-umami-event="outbound-click" data-umami-event-item="huggingface.co" href="https://huggingface.co/blog/agent-intrusion-technical-timeline">https://huggingface.co/blog/agent-intrusion-technical-timeline</a></li>
+<li>CNBC, "How a Chinese AI model stopped OpenAI's 'unprecedented' cyber attack," July 24, 2026: <a data-umami-event="outbound-click" data-umami-event-item="cnbc.com" href="https://www.cnbc.com/2026/07/24/chinese-ai-model-openai-cyber-attack.html">https://www.cnbc.com/2026/07/24/chinese-ai-model-openai-cyber-attack.html</a></li>
+<li>Palo Alto Networks Unit 42, "2026 Global Incident Response Report": <a data-umami-event="outbound-click" data-umami-event-item="paloaltonetworks.com" href="https://www.paloaltonetworks.com/resources/research/unit-42-incident-response-report">https://www.paloaltonetworks.com/resources/research/unit-42-incident-response-report</a></li>
+<li>AvalonX, "AI Startup AvalonX Emerges From Stealth With $10 Million in Funding From Ridown Capital," Presswire, Oct. 28, 2026: <a data-umami-event="outbound-click" data-umami-event-item="presswire.com" href="https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/">https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/</a></li>
+<li>Cyware, "Cyware Launches New 'Last Mile' Agents to Help Smaller Organizations Act on the Threat Intelligence They Already Receive," PR Newswire, Oct. 22, 2026: <a data-umami-event="outbound-click" data-umami-event-item="prnewswire.com" href="https://www.prnewswire.com/news-releases/cyware-launches-new-last-mile-agents-to-help-smaller-organizations-act-on-the-threat-intelligence-they-already-receive-302915585.html">https://www.prnewswire.com/news-releases/cyware-launches-new-last-mile-agents-to-help-smaller-organizations-act-on-the-threat-intelligence-they-already-receive-302915585.html</a></li>
+</ul>
+    <p><a href={url('/articles/')}>← Back to Articles</a></p>
+  </article>
+</Base>
