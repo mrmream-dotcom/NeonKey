@@ -26,7 +26,7 @@ const nav = [
   { href: '/services/', label: 'Services' },
 ];
 const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
-const fullTitle = title === 'Home' ? 'NeonKey: Unlock tech, whatever your level' : `${title} | NeonKey`;
+const fullTitle = title === 'Home' ? 'NeonKey: Unlock AI Automation, IT Setup & Tech Skills' : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 const ogImage = absoluteUrl(image, Astro.site);
