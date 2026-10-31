@@ -83,3 +83,7 @@ export const TRIAGE_API_URL = (import.meta.env.PUBLIC_TRIAGE_API_URL || 'https:/
 // Service quiz: plan-email Worker endpoint (source in workers/quiz/). Public URL, not a secret.
 //   PUBLIC_QUIZ_API_URL = override, e.g. http://localhost:8787/plan when running `wrangler dev`.
 export const QUIZ_API_URL = (import.meta.env.PUBLIC_QUIZ_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/plan').trim();
+
+// Lab (draft): AI receipt & invoice sorter. Cloudflare Worker endpoint (source in workers/receipts/). Public URL, not a secret.
+//   PUBLIC_RECEIPT_API_URL = override, e.g. http://localhost:8787/extract when running `wrangler dev`.
+export const RECEIPT_API_URL = (import.meta.env.PUBLIC_RECEIPT_API_URL || 'https://neonkey-receipts.mr-mream.workers.dev/extract').trim();

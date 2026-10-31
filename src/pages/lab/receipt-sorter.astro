@@ -1,0 +1,558 @@
+---
+// DRAFT Labs build: noindex, hidden from /lab/ (draft: true in src/data/lab.ts) and excluded from the sitemap
+// (DRAFT_PAGES in astro.config.mjs). Remove all three to publish. Worker source: workers/receipts/.
+import { url, RECEIPT_API_URL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import Toc from '../../components/Toc.astro';
+const CATEGORIES = ['Office supplies', 'Software & subscriptions', 'Meals', 'Travel', 'Fuel', 'Equipment', 'Utilities', 'Advertising', 'Professional services', 'Sales / client payments', 'Other'];
+const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add an entry'], ['ledger', 'Your ledger'], ['privacy', 'Privacy'], ['how', 'How it works'], ['limits', 'Limitations'], ['why', 'Why custom?']];
+---
+<Base title="AI receipt & invoice sorter" description="Snap a receipt or upload an invoice, check what the AI read, and keep a simple ledger in your browser that exports to a spreadsheet." noindex>
+  <div class="container page-head">
+    <span class="kicker">Lab · AI · Automation · Draft</span>
+    <h1>Receipt &amp; invoice <span class="glow-c">sorter.</span></h1>
+    <p>Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
+    <Toc sections={sections} />
+  </div>
+
+  <section id="scan" style="padding-top:0" aria-labelledby="scan-h">
+    <div class="container">
+      <div class="rs-grid">
+        <div class="panel rs-upload">
+          <h2 id="scan-h" class="rs-h">1. Read a receipt or invoice</h2>
+          <label class="rs-drop" for="rs-file" id="rs-drop">
+            <span class="rs-drop-icon" aria-hidden="true">📄</span>
+            <span><strong>Take a photo or choose a file</strong><br /><span class="muted">JPG, PNG, WebP, HEIC or PDF, up to 5 MB</span></span>
+          </label>
+          <input class="rs-file" id="rs-file" type="file" accept="image/*,application/pdf" />
+          <div class="btn-row rs-pick">
+            <label class="btn btn-primary btn-sm" for="rs-camera">Use camera</label>
+            <label class="btn btn-ghost btn-sm" for="rs-file">Choose file</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="rs-manual">Add by hand instead</button>
+          </div>
+          <input class="rs-file" id="rs-camera" type="file" accept="image/*,application/pdf" capture="environment" />
+          <div class="rs-thumb" id="rs-thumb" hidden></div>
+          <p class="triage-status" id="rs-status" role="status" aria-live="polite"></p>
+          <p class="form-note">The file is sent once to be read, then thrown away. It isn't saved anywhere. On the free AI tier this runs on, Google may use what's submitted to improve its products, so cover anything sensitive (like a full card number or home address) before you take the photo. Limit: 5 reads a minute, 20 a day.</p>
+        </div>
+
+        <form class="panel rs-form" id="rs-form" novalidate aria-labelledby="entry-h">
+          <h2 id="entry-h" class="rs-h"><span id="rs-form-title">2. Check and save</span></h2>
+          <div id="rs-ai-note" hidden></div>
+          <fieldset class="rs-dir">
+            <legend>Money</legend>
+            <label><input type="radio" name="direction" value="out" checked /> Out (expense, bill I pay)</label>
+            <label><input type="radio" name="direction" value="in" /> In (income, payment I got)</label>
+          </fieldset>
+          <div class="rs-fields">
+            <div><label for="f-date">Date</label><input id="f-date" name="date" type="date" required /></div>
+            <div><label for="f-party" id="f-party-label">Paid to (vendor)</label><input id="f-party" name="party" type="text" maxlength="120" autocomplete="off" required /></div>
+            <div><label for="f-amount">Total amount</label><input id="f-amount" name="amount" type="text" inputmode="decimal" placeholder="0.00" required /></div>
+            <div><label for="f-tax">Tax <span class="muted">(optional)</span></label><input id="f-tax" name="tax" type="text" inputmode="decimal" placeholder="0.00" /></div>
+            <div><label for="f-currency">Currency</label><input id="f-currency" name="currency" type="text" maxlength="3" placeholder="USD" autocapitalize="characters" /></div>
+            <div><label for="f-category">Category</label><select id="f-category" name="category"><option value="">Choose…</option>{CATEGORIES.map((c) => <option value={c}>{c}</option>)}</select></div>
+            <div><label for="f-method">Payment method <span class="muted">(optional)</span></label><input id="f-method" name="method" type="text" maxlength="60" placeholder="e.g. Visa ending 1234, cash" /></div>
+            <div><label for="f-doctype">Type</label><select id="f-doctype" name="docType"><option value="receipt">Receipt</option><option value="invoice">Invoice</option><option value="payment">Payment (no document)</option><option value="other">Other</option></select></div>
+            <div><label for="f-ref">Receipt / invoice # <span class="muted">(optional)</span></label><input id="f-ref" name="ref" type="text" maxlength="60" /></div>
+            <div><label for="f-due">Due date <span class="muted">(invoices)</span></label><input id="f-due" name="due" type="date" /></div>
+            <div class="rs-wide"><label for="f-notes">Notes <span class="muted">(optional)</span></label><textarea id="f-notes" name="notes" rows="2" maxlength="500"></textarea></div>
+          </div>
+          <details class="rs-items" id="rs-items" hidden><summary>Line items read from the document</summary><ul id="rs-items-list"></ul></details>
+          <div class="btn-row" style="margin-top:1rem">
+            <button class="btn btn-primary" type="submit" id="rs-save">Save to ledger</button>
+            <button class="btn btn-ghost" type="button" id="rs-reset">Clear form</button>
+          </div>
+          <p class="triage-status" id="rs-form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="ledger" aria-labelledby="ledger-h" style="padding-top:.5rem">
+    <div class="container">
+      <div class="panel">
+        <h2 id="ledger-h" class="rs-h">3. Your ledger <span class="muted rs-count" id="rs-count"></span></h2>
+        <p class="form-note" style="margin:0 0 1rem">Saved only in this browser on this device. Clearing your browser data deletes it, so export a CSV now and then as a backup.</p>
+        <div class="rs-filters">
+          <div><label for="flt-month">Month</label><select id="flt-month"><option value="">All months</option></select></div>
+          <div><label for="flt-cat">Category</label><select id="flt-cat"><option value="">All categories</option>{CATEGORIES.map((c) => <option value={c}>{c}</option>)}<option value="__none">No category</option></select></div>
+          <div><label for="flt-dir">In / Out</label><select id="flt-dir"><option value="">Both</option><option value="in">In only</option><option value="out">Out only</option></select></div>
+        </div>
+        <div class="rs-totals" id="rs-totals" aria-live="polite"></div>
+        <div class="rs-table-wrap" id="rs-table-wrap"></div>
+        <details class="rs-cat-totals" id="rs-cat-wrap"><summary>Totals by category</summary><div id="rs-cat-totals"></div></details>
+        <div class="btn-row rs-ledger-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="rs-export">Export CSV</button>
+          <label class="btn btn-ghost btn-sm" for="rs-import">Import CSV</label>
+          <input class="rs-file" id="rs-import" type="file" accept=".csv,text/csv" />
+          <button type="button" class="btn btn-ghost btn-sm" id="rs-clear">Delete all</button>
+        </div>
+        <p class="triage-status" id="rs-ledger-status" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <article class="narrow prose lab-case" style="padding-bottom:3rem">
+    <div class="callout warn"><strong>Not accounting or tax advice.</strong> This is a simple record-keeping helper. The AI can misread numbers, dates and names, so double-check every value against the original before you save it, and keep your original receipts. Ask an accountant or tax professional how to categorize and report anything.</div>
+
+    <h2 id="privacy">Privacy: where your data goes</h2>
+    <ul>
+      <li><strong>Your ledger stays in your browser.</strong> Entries are saved in this browser's local storage on this device. Nothing in the ledger is sent to NeonKey or stored on a server.</li>
+      <li><strong>Photos and PDFs are read, then discarded.</strong> When you take a photo or choose a file, it goes to a small Cloudflare Worker, which passes it to Google's Gemini API and returns the fields. The Worker doesn't save or log the file or what was read from it.</li>
+      <li><strong>Free AI tier caveat.</strong> This runs on Gemini's free tier. Google says it may use free-tier submissions to improve its products, and its reviewers may read them. Cover sensitive details before you upload, or type the entry by hand. A business setup would use a paid tier with different data terms.</li>
+      <li><strong>Manual entries never leave your device.</strong> Adding an entry by hand doesn't call the AI at all.</li>
+    </ul>
+
+    <h2 id="how">How it works</h2>
+    <ol>
+      <li><strong>Photo or PDF:</strong> large photos are shrunk in your browser first so they upload faster on a phone.</li>
+      <li><strong>Worker:</strong> a Cloudflare Worker checks the file type and size (5 MB max), where the request came from, and the rate limits before anything reaches the AI.</li>
+      <li><strong>AI:</strong> Gemini reads the document and fills in a fixed JSON schema: type, date, vendor, total, tax, currency, payment method, category, line items and a confidence note. It's told to leave a field blank rather than guess.</li>
+      <li><strong>Checks:</strong> the Worker validates every value (real dates, real numbers, known categories, no full card numbers) and flags things worth a second look, like a subtotal plus tax that doesn't match the total.</li>
+      <li><strong>You review:</strong> the fields land in an editable form. Nothing is saved until you press "Save to ledger".</li>
+    </ol>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li><strong>The AI can misread.</strong> Faded thermal paper, creases, glare and handwriting cause mistakes. Blank fields mean it couldn't read them clearly.</li>
+      <li><strong>It doesn't know who you are.</strong> For an invoice, choose whether it's a bill you owe (Out) or one you sent a client (In).</li>
+      <li><strong>One device only.</strong> The ledger doesn't sync between your phone and computer. Export a CSV on one and import it on the other.</li>
+      <li><strong>Mixed currencies aren't converted.</strong> Totals are shown separately for each currency.</li>
+      <li><strong>Free tiers can run out.</strong> If the AI is busy or its daily quota is used up, you can still add entries by hand.</li>
+    </ul>
+
+    <h2 id="why">Why build this instead of buying an app?</h2>
+    <p>There are plenty of good expense apps. A small custom tool like this one is worth considering when:</p>
+    <ul>
+      <li><strong>It fits how you already work.</strong> Your categories, your spreadsheet columns, your way of filing, instead of changing your process to match someone else's app.</li>
+      <li><strong>It can replace overlap.</strong> One build can sometimes cover what two or three subscriptions each do part of, or connect them.</li>
+      <li><strong>It plugs into what you use.</strong> The CSV here could just as easily be a row in your existing Google Sheet or bookkeeping tool.</li>
+      <li><strong>No surprise changes.</strong> No price hikes or features moved to a higher plan on someone else's schedule.</li>
+      <li><strong>You decide where the data goes.</strong> This one keeps the ledger in your browser; another build could keep it in your own cloud storage.</li>
+      <li><strong>You own it.</strong> It's yours outright, and NeonKey can look after it for you if you'd rather not.</li>
+    </ul>
+    <p>And honestly: if an off-the-shelf app already does exactly what you need, use it. NeonKey can help you set it up.</p>
+    <div class="btn-row" style="margin-top:1rem">
+      <a class="btn btn-ghost btn-sm" href={url('/services/')}>See services</a>
+      <a class="btn btn-ghost btn-sm" href={url('/contact/')}>Ask about a custom build</a>
+    </div>
+    <p style="margin-top:1.5rem"><a href={url('/lab/')}>← Back to the Lab</a></p>
+  </article>
+</Base>
+
+<style is:global>
+  .rs-h { font-size: 1.15rem; margin: 0 0 .9rem; }
+  .rs-count { font-size: .9rem; font-weight: 500; }
+  .rs-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.5rem; align-items: start; }
+  @media (max-width: 900px) { .rs-grid { grid-template-columns: 1fr; } }
+  .rs-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .rs-drop { display: flex; gap: .9rem; align-items: center; border: 1px dashed rgba(167,139,250,.6); border-radius: var(--radius); padding: 1.3rem 1.1rem; cursor: pointer; font-weight: 400; background: radial-gradient(400px 160px at 50% 0%, rgba(34,211,238,.07), transparent 70%), #10132c; margin: 0; }
+  .rs-drop:hover, .rs-drop.drag { border-color: var(--cyan); }
+  .rs-drop-icon { font-size: 1.8rem; }
+  .rs-pick { margin-top: .9rem; }
+  .rs-pick label.btn { margin: 0; }
+  .rs-thumb { margin-top: 1rem; display: flex; gap: .8rem; align-items: center; font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; }
+  .rs-thumb img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); flex: none; }
+  .rs-thumb .rs-pdf { width: 84px; height: 84px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--line); font-weight: 700; flex: none; }
+  .rs-form fieldset { border: 0; padding: 0; margin: 0 0 .9rem; }
+  .rs-dir legend { font-weight: 600; margin-bottom: .35rem; }
+  .rs-dir { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; }
+  .rs-dir legend { width: 100%; }
+  .rs-dir label { display: flex; align-items: center; gap: .45rem; font-weight: 500; margin: 0; }
+  .rs-dir input { width: auto; accent-color: var(--cyan); }
+  .rs-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
+  .rs-fields label { font-size: .92rem; }
+  .rs-fields .rs-wide { grid-column: 1 / -1; }
+  @media (max-width: 520px) { .rs-fields { grid-template-columns: 1fr; } }
+  .rs-fields input, .rs-fields select, .rs-fields textarea, .rs-filters select { padding: .65rem .8rem; }
+  .rs-blank { border-color: #fbbf24 !important; }
+  .rs-flag { font-size: .8rem; color: #fde68a; margin-top: .2rem; }
+  .rs-ai { border: 1px solid rgba(34,211,238,.45); background: rgba(34,211,238,.06); border-radius: 10px; padding: .75rem .9rem; margin-bottom: 1rem; font-size: .92rem; }
+  .rs-ai ul { margin: .4rem 0 0; padding-left: 1.1rem; }
+  .rs-ai .badge { margin-right: .35rem; }
+  .rs-items { margin-top: .9rem; font-size: .92rem; }
+  .rs-items summary { cursor: pointer; color: var(--muted); }
+  .rs-items ul { margin: .5rem 0 0; padding-left: 1.1rem; }
+  .rs-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; margin-bottom: 1rem; }
+  @media (max-width: 600px) { .rs-filters { grid-template-columns: 1fr 1fr; } .rs-filters > div:first-child { grid-column: 1 / -1; } }
+  .rs-filters label { font-size: .85rem; }
+  .rs-totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+  .rs-total { background: #10132c; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .85rem; }
+  .rs-total span { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .rs-total strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .rs-in { color: #6ee7b7; } .rs-out { color: #fda4af; }
+  .rs-table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  .rs-table th, .rs-table td { text-align: left; padding: .55rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .rs-table th { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .rs-table th button { all: unset; cursor: pointer; }
+  .rs-table th button:focus-visible { outline: 2px solid var(--cyan); }
+  .rs-table td.num, .rs-table th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rs-table .rs-sub { display: block; font-size: .8rem; color: var(--muted); }
+  .rs-act { white-space: nowrap; text-align: right; }
+  .rs-act button { background: none; border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: .3rem .6rem; font: inherit; font-size: .85rem; cursor: pointer; margin-left: .3rem; }
+  .rs-act button:hover { border-color: var(--cyan); }
+  .rs-empty { color: var(--muted); text-align: center; padding: 1.5rem .5rem; border: 1px dashed var(--line); border-radius: 10px; }
+  .rs-cat-totals { margin-top: 1rem; }
+  .rs-cat-totals summary { cursor: pointer; font-weight: 600; }
+  .rs-cat-totals table { margin-top: .6rem; }
+  .rs-ledger-actions { margin-top: 1.1rem; }
+  .rs-ledger-actions label.btn { margin: 0; }
+  @media (max-width: 700px) {
+    .rs-totals { grid-template-columns: 1fr 1fr 1fr; gap: .4rem; }
+    .rs-total { padding: .55rem .6rem; }
+    .rs-total strong { font-size: .98rem; }
+    .rs-table.rs-ledger thead { display: none; }
+    .rs-table.rs-ledger, .rs-table.rs-ledger tbody { display: block; }
+    .rs-table.rs-ledger tr { display: grid; grid-template-columns: 1fr auto; gap: .15rem .8rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+    .rs-table.rs-ledger td { border: 0; padding: 0; }
+    .rs-table.rs-ledger td.rs-c-date { grid-column: 1 / -1; font-size: .82rem; color: var(--muted); }
+    .rs-table.rs-ledger td.rs-c-cat { grid-column: 1; font-size: .85rem; color: var(--muted); }
+    .rs-table.rs-ledger td.rs-c-act { grid-column: 2; grid-row: 2 / span 2; align-self: center; }
+    .rs-table.rs-ledger td.rs-c-amt { grid-column: 2; grid-row: 2; }
+    .rs-table.rs-ledger td.rs-c-act { grid-row: 3; }
+  }
+</style>
+
+<script is:inline define:vars={{ apiUrl: RECEIPT_API_URL, CATEGORIES }}>
+(() => {
+  const KEY = 'neonkey-receipt-sorter-v1';
+  const MAX_BYTES = 5 * 1024 * 1024;
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const form = $('rs-form');
+  const F = (n) => form.elements[n];
+  const statusMsg = (node, text, isErr) => { node.className = 'triage-status' + (isErr ? ' error' : ''); node.textContent = text; };
+
+  // ---------- storage ----------
+  let storageOk = true;
+  const load = () => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch { storageOk = false; return []; } };
+  const store = () => { try { localStorage.setItem(KEY, JSON.stringify(entries)); return true; } catch { storageOk = false; statusMsg($('rs-ledger-status'), "This browser won't let the page save (private mode or storage full). Export a CSV so you don't lose entries.", true); return false; } };
+  let entries = load();
+  const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+  // ---------- numbers ----------
+  const parseAmount = (v) => {
+    let t = String(v ?? '').trim().replace(/[^\d.,\-]/g, '');
+    if (!t || !/\d/.test(t)) return null;
+    if (/^-?\d{1,3}(\.\d{3})+,\d{1,2}$/.test(t) || /^-?\d+,\d{1,2}$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); else t = t.replace(/,/g, '');
+    const n = Number(t);
+    return Number.isFinite(n) ? Math.round(n * 100) / 100 : null;
+  };
+  const fmt = (n, cur) => {
+    if (n == null) return '';
+    try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur || 'USD' }).format(n); } catch { return `${n.toFixed(2)} ${cur || ''}`.trim(); }
+  };
+  const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+
+  // ---------- form ----------
+  let editingId = null;
+  let scanMeta = null; // { model, lineItems } from the last AI read
+  const partyLabel = () => { $('f-party-label').textContent = F('direction').value === 'in' ? 'Received from (payer)' : 'Paid to (vendor)'; };
+  form.querySelectorAll('input[name=direction]').forEach((r) => r.addEventListener('change', partyLabel));
+  const clearFlags = () => { form.querySelectorAll('.rs-blank').forEach((x) => x.classList.remove('rs-blank')); form.querySelectorAll('.rs-flag').forEach((x) => x.remove()); };
+  function resetForm(keepStatus) {
+    form.reset(); editingId = null; scanMeta = null; clearFlags();
+    F('date').value = today();
+    F('currency').value = localStorage.getItem(KEY + '-cur') || '';
+    $('rs-ai-note').hidden = true; $('rs-ai-note').replaceChildren();
+    $('rs-items').hidden = true; $('rs-items-list').replaceChildren();
+    $('rs-form-title').textContent = '2. Check and save';
+    $('rs-save').textContent = 'Save to ledger';
+    partyLabel();
+    if (!keepStatus) statusMsg($('rs-form-status'), '');
+  }
+  const flag = (name, text) => { const inp = F(name); if (!inp || inp instanceof RadioNodeList) return; inp.classList.add('rs-blank'); inp.insertAdjacentElement('afterend', el('div', 'rs-flag', text)); };
+  form.addEventListener('input', (e) => { if (e.target.classList?.contains('rs-blank') && e.target.value) { e.target.classList.remove('rs-blank'); e.target.nextElementSibling?.classList.contains('rs-flag') && e.target.nextElementSibling.remove(); } });
+
+  function fillFromScan(data) {
+    resetForm(true);
+    const r = data.result;
+    scanMeta = { model: data.model, lineItems: r.line_items || [] };
+    const isInvoice = r.doc_type === 'invoice';
+    F('docType').value = isInvoice ? 'invoice' : r.doc_type === 'receipt' ? 'receipt' : 'other';
+    F('date').value = r.date || '';
+    F('party').value = r.vendor || '';
+    F('amount').value = r.total != null ? r.total.toFixed(2) : '';
+    F('tax').value = r.tax != null ? r.tax.toFixed(2) : '';
+    if (r.currency) F('currency').value = r.currency;
+    F('category').value = r.category || '';
+    F('method').value = r.payment_method || '';
+    F('ref').value = r.doc_number || '';
+    F('due').value = r.due_date || '';
+    if (isInvoice && r.bill_to) F('notes').value = `Bill to: ${r.bill_to}`;
+    form.querySelector('input[name=direction][value=out]').checked = true;
+    if (isInvoice && r.category === 'Sales / client payments') form.querySelector('input[name=direction][value=in]').checked = true;
+    partyLabel();
+    const miss = 'Not found on the document. Please fill in.';
+    if (!r.date) flag('date', miss);
+    if (!r.vendor) flag('party', miss);
+    if (r.total == null) flag('amount', miss);
+    if (!r.category) flag('category', 'Choose a category.');
+
+    const box = $('rs-ai-note'); box.replaceChildren();
+    const card = el('div', 'rs-ai');
+    const head = el('div');
+    const docLabel = { receipt: 'Receipt', invoice: 'Invoice', other: 'Not a receipt or invoice', unreadable: 'Unreadable' }[r.doc_type] || r.doc_type;
+    head.append(el('span', 'badge badge-cat', docLabel), el('span', 'badge badge-conf', `Confidence: ${r.confidence}`));
+    card.append(head);
+    const notes = [];
+    if (r.confidence_note) notes.push(r.confidence_note);
+    (data.checks || []).forEach((c) => notes.push(c));
+    if (isInvoice) notes.push('Invoice: choose Out if it is a bill you owe, or In if you sent it to a client.');
+    if (notes.length) { const ul = el('ul'); notes.forEach((n) => ul.append(el('li', '', n))); card.append(ul); }
+    else card.append(el('p', '', 'Everything read clearly. Still compare it with the original before saving.'));
+    card.append(el('p', 'muted', `Read by ${data.model}${data.fallback ? ' (fallback)' : ''} in ${(data.ms / 1000).toFixed(1)}s.`)); card.lastChild.style.margin = '.4rem 0 0'; card.lastChild.style.fontSize = '.8rem';
+    box.append(card); box.hidden = false;
+
+    if (r.line_items && r.line_items.length) {
+      const ul = $('rs-items-list'); ul.replaceChildren();
+      r.line_items.forEach((li) => ul.append(el('li', '', `${li.description || '(no description)'}${li.quantity ? ` × ${li.quantity}` : ''}${li.amount != null ? ` · ${li.amount.toFixed(2)}` : ''}`)));
+      $('rs-items').hidden = false;
+    }
+    $('rs-form-title').textContent = '2. Check what the AI read';
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const st = $('rs-form-status');
+    const amount = parseAmount(F('amount').value);
+    const tax = F('tax').value.trim() ? parseAmount(F('tax').value) : null;
+    const date = F('date').value;
+    const party = F('party').value.trim();
+    const currency = F('currency').value.trim().toUpperCase();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return statusMsg(st, 'Please enter a date.', true);
+    if (!party) return statusMsg(st, F('direction').value === 'in' ? 'Please enter who paid you.' : 'Please enter who you paid.', true);
+    if (amount == null || amount <= 0) return statusMsg(st, 'Please enter the total as a number above zero, like 12.50.', true);
+    if (F('tax').value.trim() && tax == null) return statusMsg(st, 'Tax should be a number, like 1.25, or left blank.', true);
+    if (currency && !/^[A-Z]{3}$/.test(currency)) return statusMsg(st, 'Currency should be a 3-letter code like USD or CAD, or left blank.', true);
+    const prev = editingId ? entries.find((x) => x.id === editingId) : null;
+    const entry = {
+      id: prev ? prev.id : uid(), date, party, amount, tax, currency: currency || 'USD',
+      direction: F('direction').value === 'in' ? 'in' : 'out', category: F('category').value || '',
+      method: F('method').value.trim(), docType: F('docType').value, ref: F('ref').value.trim(), due: F('due').value || '',
+      notes: F('notes').value.trim(),
+      lineItems: prev ? prev.lineItems || [] : (scanMeta ? scanMeta.lineItems : []),
+      source: prev ? prev.source : (scanMeta ? 'ai' : 'manual'), createdAt: prev ? prev.createdAt : new Date().toISOString(),
+    };
+    if (prev) entries = entries.map((x) => (x.id === prev.id ? entry : x)); else entries.push(entry);
+    if (currency) try { localStorage.setItem(KEY + '-cur', currency); } catch {}
+    const saved = store();
+    resetForm(true);
+    statusMsg(st, saved ? (prev ? 'Entry updated.' : 'Saved to your ledger.') : 'Added, but this browser could not save it permanently.', !saved);
+    render();
+  });
+  $('rs-reset').addEventListener('click', () => resetForm());
+  $('rs-manual').addEventListener('click', () => { resetForm(); F('docType').value = 'payment'; $('rs-form-title').textContent = '2. Add an entry by hand'; form.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => F('party').focus({ preventScroll: true }), 400); });
+
+  // ---------- upload ----------
+  const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf'];
+  const guessType = (f) => f.type || ({ jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic', heif: 'image/heif', pdf: 'application/pdf' })[(f.name.split('.').pop() || '').toLowerCase()] || '';
+  const toB64 = (blob) => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1] || ''); fr.onerror = rej; fr.readAsDataURL(blob); });
+  async function shrink(file) {
+    // Phone photos are often 3-8 MB. Shrink to at most 2000 px on the long side (plenty for reading text).
+    try {
+      const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+      const scale = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+      if (scale === 1 && file.size < 1.5 * 1024 * 1024 && file.type !== 'image/heic' && file.type !== 'image/heif') { bmp.close?.(); return null; }
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height); bmp.close?.();
+      const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.88));
+      return blob && blob.size < file.size ? blob : null;
+    } catch { return null; }
+  }
+  let busy = false;
+  async function handleFile(file) {
+    const st = $('rs-status');
+    if (!file || busy) return;
+    let type = guessType(file);
+    if (!ALLOWED.includes(type)) return statusMsg(st, 'Please choose a JPG, PNG, WebP or HEIC photo, or a PDF.', true);
+    const thumb = $('rs-thumb'); thumb.replaceChildren(); thumb.hidden = false;
+    if (type === 'application/pdf') thumb.append(el('div', 'rs-pdf', 'PDF'));
+    else { const img = el('img'); img.alt = 'Preview of the uploaded document'; img.src = URL.createObjectURL(file); img.onload = () => URL.revokeObjectURL(img.src); thumb.append(img); }
+    thumb.append(el('span', '', file.name || 'Photo'));
+    let blob = file;
+    if (type.startsWith('image/')) { statusMsg(st, 'Preparing the photo…'); const small = await shrink(file); if (small) { blob = small; type = 'image/jpeg'; } }
+    if (blob.size > MAX_BYTES) return statusMsg(st, `That file is ${(blob.size / 1048576).toFixed(1)} MB. The limit is 5 MB. Try a photo, or a smaller PDF.`, true);
+    busy = true;
+    document.querySelectorAll('.rs-pick label, #rs-drop').forEach((x) => x.setAttribute('aria-disabled', 'true'));
+    statusMsg(st, 'Reading the document. This usually takes 5–30 seconds…');
+    try {
+      const data64 = await toB64(blob);
+      const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, data: data64 }) });
+      let data = null; try { data = await res.json(); } catch {}
+      if (!res.ok || !data || !data.ok) return statusMsg(st, (data && data.message) || `Something went wrong (HTTP ${res.status}). Please try again in a minute, or add it by hand.`, true);
+      fillFromScan(data);
+      statusMsg(st, 'Done. Check every field against the original, then save.');
+      if (window.matchMedia('(max-width: 900px)').matches) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      statusMsg(st, "Couldn't reach the reader. Check your connection and try again, or add the entry by hand.", true);
+    } finally {
+      busy = false;
+      document.querySelectorAll('[aria-disabled]').forEach((x) => x.removeAttribute('aria-disabled'));
+    }
+  }
+  ['rs-file', 'rs-camera'].forEach((id) => $(id).addEventListener('change', (e) => { handleFile(e.target.files[0]); e.target.value = ''; }));
+  const drop = $('rs-drop');
+  ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop', (e) => handleFile(e.dataTransfer.files[0]));
+
+  // ---------- ledger ----------
+  let sortKey = 'date', sortDir = -1;
+  const monthName = (m) => { const [y, mo] = m.split('-'); return new Date(+y, +mo - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }); };
+  const filtered = () => {
+    const m = $('flt-month').value, c = $('flt-cat').value, d = $('flt-dir').value;
+    return entries.filter((x) => (!m || x.date.slice(0, 7) === m) && (!c || (c === '__none' ? !x.category : x.category === c)) && (!d || x.direction === d));
+  };
+  function totalsBy(list) {
+    const t = {};
+    list.forEach((x) => { const k = x.currency || 'USD'; t[k] = t[k] || { in: 0, out: 0 }; t[k][x.direction] += x.amount; });
+    return t;
+  }
+  function render() {
+    const mSel = $('flt-month'); const cur = mSel.value;
+    const months = [...new Set(entries.map((x) => x.date.slice(0, 7)))].sort().reverse();
+    mSel.replaceChildren(new Option('All months', ''), ...months.map((m) => new Option(monthName(m), m)));
+    mSel.value = months.includes(cur) ? cur : '';
+    const list = filtered().sort((a, b) => {
+      const va = sortKey === 'amount' ? (a.direction === 'in' ? a.amount : -a.amount) : String(a[sortKey] || '').toLowerCase();
+      const vb = sortKey === 'amount' ? (b.direction === 'in' ? b.amount : -b.amount) : String(b[sortKey] || '').toLowerCase();
+      return (va < vb ? -1 : va > vb ? 1 : 0) * sortDir || String(b.createdAt).localeCompare(String(a.createdAt));
+    });
+    $('rs-count').textContent = entries.length ? `(${list.length === entries.length ? entries.length : `${list.length} of ${entries.length}`} entries)` : '';
+
+    // totals
+    const tot = totalsBy(list); const curs = Object.keys(tot); const tw = $('rs-totals'); tw.replaceChildren();
+    if (!curs.length) curs.push('USD'), (tot.USD = { in: 0, out: 0 });
+    const box = (label, val, cls) => { const d = el('div', 'rs-total'); d.append(el('span', '', label)); const s = el('strong', cls); s.innerHTML = ''; val.forEach((v, i) => { if (i) s.append(el('br')); s.append(document.createTextNode(v)); }); d.append(s); return d; };
+    tw.append(box('In', curs.map((c) => fmt(tot[c].in, c)), 'rs-in'), box('Out', curs.map((c) => fmt(tot[c].out, c)), 'rs-out'), box('Net', curs.map((c) => fmt(tot[c].in - tot[c].out, c)), ''));
+
+    // table
+    const wrap = $('rs-table-wrap'); wrap.replaceChildren();
+    if (!list.length) { wrap.append(el('p', 'rs-empty', entries.length ? 'No entries match these filters.' : 'No entries yet. Read a receipt or add one by hand and it will show up here.')); }
+    else {
+      const t = el('table', 'rs-table rs-ledger'); const thead = el('thead'); const hr = el('tr');
+      [['date', 'Date'], ['party', 'Payee / payer'], ['category', 'Category'], ['amount', 'Amount', 'num'], [null, '']].forEach(([k, label, cls]) => {
+        const th = el('th', cls || ''); th.scope = 'col';
+        if (k) { const b = el('button', '', label + (sortKey === k ? (sortDir > 0 ? ' ↑' : ' ↓') : '')); b.type = 'button'; b.addEventListener('click', () => { sortDir = sortKey === k ? -sortDir : (k === 'date' ? -1 : 1); sortKey = k; render(); }); th.append(b); th.setAttribute('aria-sort', sortKey === k ? (sortDir > 0 ? 'ascending' : 'descending') : 'none'); }
+        else th.append(el('span', 'sr-only', 'Actions'));
+        hr.append(th);
+      });
+      thead.append(hr); t.append(thead);
+      const tb = el('tbody');
+      list.forEach((x) => {
+        const tr = el('tr');
+        tr.append(el('td', 'rs-c-date', x.date));
+        const p = el('td', 'rs-c-party'); p.append(document.createTextNode(x.party)); const sub = [x.method, x.ref ? `#${x.ref}` : '', x.source === 'ai' ? 'AI-read' : ''].filter(Boolean).join(' · '); if (sub) p.append(el('span', 'rs-sub', sub)); tr.append(p);
+        tr.append(el('td', 'rs-c-cat', x.category || '—'));
+        const a = el('td', 'num rs-c-amt ' + (x.direction === 'in' ? 'rs-in' : 'rs-out'), (x.direction === 'in' ? '+' : '−') + fmt(x.amount, x.currency)); tr.append(a);
+        const act = el('td', 'rs-act rs-c-act');
+        const eb = el('button', '', 'Edit'); eb.type = 'button'; eb.setAttribute('aria-label', `Edit ${x.party} ${x.date}`); eb.addEventListener('click', () => editEntry(x.id));
+        const db = el('button', '', 'Delete'); db.type = 'button'; db.setAttribute('aria-label', `Delete ${x.party} ${x.date}`); db.addEventListener('click', () => { if (confirm(`Delete ${x.party} (${fmt(x.amount, x.currency)}, ${x.date})?`)) { entries = entries.filter((y) => y.id !== x.id); store(); render(); statusMsg($('rs-ledger-status'), 'Entry deleted.'); } });
+        act.append(eb, db); tr.append(act); tb.append(tr);
+      });
+      t.append(tb); wrap.append(t);
+    }
+
+    // per-category totals
+    const cw = $('rs-cat-totals'); cw.replaceChildren();
+    const byCat = {}; list.forEach((x) => { const k = (x.category || 'No category') + '|' + (x.currency || 'USD'); byCat[k] = byCat[k] || { in: 0, out: 0, n: 0 }; byCat[k][x.direction] += x.amount; byCat[k].n++; });
+    const keys = Object.keys(byCat).sort((a, b) => (byCat[b].out + byCat[b].in) - (byCat[a].out + byCat[a].in));
+    if (!keys.length) cw.append(el('p', 'muted', 'Nothing to total yet.'));
+    else {
+      const t = el('table', 'rs-table'); const h = el('tr'); ['Category', 'Entries', 'In', 'Out'].forEach((x, i) => { const th = el('th', i ? 'num' : '', x); th.scope = 'col'; h.append(th); }); const th = el('thead'); th.append(h); t.append(th);
+      const tb = el('tbody'); keys.forEach((k) => { const [c, cur] = k.split('|'); const r = el('tr'); r.append(el('td', '', c), el('td', 'num', String(byCat[k].n)), el('td', 'num rs-in', byCat[k].in ? fmt(byCat[k].in, cur) : '—'), el('td', 'num rs-out', byCat[k].out ? fmt(byCat[k].out, cur) : '—')); tb.append(r); });
+      t.append(tb); cw.append(t);
+    }
+    $('rs-export').textContent = list.length && list.length !== entries.length ? `Export CSV (${list.length} shown)` : 'Export CSV';
+  }
+  function editEntry(id) {
+    const x = entries.find((y) => y.id === id); if (!x) return;
+    resetForm(); editingId = id;
+    form.querySelector(`input[name=direction][value=${x.direction}]`).checked = true;
+    F('date').value = x.date; F('party').value = x.party; F('amount').value = x.amount.toFixed(2); F('tax').value = x.tax != null ? x.tax.toFixed(2) : '';
+    F('currency').value = x.currency || ''; F('category').value = x.category || ''; F('method').value = x.method || ''; F('docType').value = x.docType || 'other';
+    F('ref').value = x.ref || ''; F('due').value = x.due || ''; F('notes').value = x.notes || '';
+    partyLabel(); $('rs-form-title').textContent = 'Edit entry'; $('rs-save').textContent = 'Save changes';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  ['flt-month', 'flt-cat', 'flt-dir'].forEach((id) => $(id).addEventListener('change', render));
+
+  // ---------- CSV ----------
+  const COLS = [['Date', 'date'], ['Direction', 'direction'], ['Payee/Payer', 'party'], ['Category', 'category'], ['Amount', 'amount'], ['Signed amount', null], ['Tax', 'tax'], ['Currency', 'currency'], ['Payment method', 'method'], ['Type', 'docType'], ['Reference', 'ref'], ['Due date', 'due'], ['Notes', 'notes'], ['Line items', null], ['Source', 'source'], ['ID', 'id']];
+  const safeText = (v) => { const s = String(v ?? ''); return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; }; // stop spreadsheet formula injection
+  const q = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  function toCsv(list) {
+    const rows = [COLS.map((c) => c[0]).join(',')];
+    list.slice().sort((a, b) => a.date.localeCompare(b.date)).forEach((x) => {
+      rows.push(COLS.map(([h, k]) => {
+        if (h === 'Signed amount') return (x.direction === 'in' ? x.amount : -x.amount).toFixed(2);
+        if (h === 'Line items') return q(safeText((x.lineItems || []).map((li) => `${li.description}${li.amount != null ? ' ' + li.amount.toFixed(2) : ''}`).join('; ')));
+        if (k === 'amount') return x.amount.toFixed(2);
+        if (k === 'tax') return x.tax != null ? x.tax.toFixed(2) : '';
+        if (k === 'direction') return x.direction === 'in' ? 'In' : 'Out';
+        return q(safeText(x[k]));
+      }).join(','));
+    });
+    return '\ufeff' + rows.join('\r\n') + '\r\n';
+  }
+  $('rs-export').addEventListener('click', () => {
+    const list = filtered();
+    if (!list.length) return statusMsg($('rs-ledger-status'), 'Nothing to export yet.', true);
+    const blob = new Blob([toCsv(list)], { type: 'text/csv;charset=utf-8' });
+    const a = el('a'); a.href = URL.createObjectURL(blob); a.download = `neonkey-ledger-${today()}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    statusMsg($('rs-ledger-status'), `Exported ${list.length} entr${list.length === 1 ? 'y' : 'ies'}.`);
+  });
+  function parseCsv(text) {
+    const rows = []; let row = [], f = '', inQ = false;
+    text = text.replace(/^\ufeff/, '');
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (inQ) { if (ch === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else inQ = false; } else f += ch; }
+      else if (ch === '"') inQ = true;
+      else if (ch === ',') { row.push(f); f = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(f); rows.push(row); row = []; f = ''; }
+      else f += ch;
+    }
+    if (f || row.length) { row.push(f); rows.push(row); }
+    return rows.filter((r) => r.some((c) => c.trim()));
+  }
+  $('rs-import').addEventListener('change', async (e) => {
+    const file = e.target.files[0]; e.target.value = ''; const st = $('rs-ledger-status');
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) return statusMsg(st, 'That CSV is over 2 MB. Please split it up.', true);
+    const rows = parseCsv(await file.text());
+    if (rows.length < 2) return statusMsg(st, 'That CSV has no rows to import.', true);
+    const head = rows[0].map((h) => h.trim().toLowerCase());
+    const col = (...names) => head.findIndex((h) => names.includes(h));
+    const ix = { date: col('date'), dir: col('direction', 'in/out', 'type (in/out)'), party: col('payee/payer', 'payee', 'payer', 'vendor', 'merchant', 'description'), cat: col('category'), amt: col('amount', 'total'), signed: col('signed amount'), tax: col('tax'), cur: col('currency'), method: col('payment method', 'method'), type: col('type'), ref: col('reference', 'invoice #', 'receipt #'), due: col('due date'), notes: col('notes'), id: col('id') };
+    if (ix.date < 0 || (ix.amt < 0 && ix.signed < 0)) return statusMsg(st, 'The CSV needs at least a Date and an Amount column (an export from this page works).', true);
+    const unq = (v) => String(v ?? '').replace(/^'(?=[=+\-@])/, '').trim();
+    let added = 0, skipped = 0; const ids = new Set(entries.map((x) => x.id));
+    rows.slice(1).forEach((r) => {
+      const g = (i) => (i >= 0 ? unq(r[i]) : '');
+      let date = g(ix.date); const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(date); if (m) date = `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}`;
+      const signed = parseAmount(g(ix.signed)); let amount = parseAmount(g(ix.amt));
+      let direction = /^in/i.test(g(ix.dir)) ? 'in' : /^out/i.test(g(ix.dir)) ? 'out' : signed != null ? (signed >= 0 ? 'in' : 'out') : amount != null && amount < 0 ? 'out' : 'out';
+      if (amount == null && signed != null) amount = signed; amount = amount != null ? Math.abs(amount) : null;
+      const id = g(ix.id);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || amount == null || amount === 0 || (id && ids.has(id))) { skipped++; return; }
+      const cat = g(ix.cat); const tax = parseAmount(g(ix.tax)); const cur = g(ix.cur).toUpperCase();
+      const type = g(ix.type).toLowerCase();
+      entries.push({ id: id || uid(), date, party: g(ix.party).slice(0, 120) || '(no name)', amount, tax, currency: /^[A-Z]{3}$/.test(cur) ? cur : 'USD', direction, category: CATEGORIES.includes(cat) ? cat : '', method: g(ix.method).slice(0, 60), docType: ['receipt', 'invoice', 'payment', 'other'].includes(type) ? type : 'other', ref: g(ix.ref).slice(0, 60), due: /^\d{4}-\d{2}-\d{2}$/.test(g(ix.due)) ? g(ix.due) : '', notes: g(ix.notes).slice(0, 500), lineItems: [], source: 'import', createdAt: new Date().toISOString() });
+      if (id) ids.add(id); added++;
+    });
+    store(); render();
+    statusMsg(st, `Imported ${added} entr${added === 1 ? 'y' : 'ies'}${skipped ? `, skipped ${skipped} (duplicates or rows without a valid date and amount)` : ''}.`, added === 0);
+  });
+  $('rs-clear').addEventListener('click', () => {
+    if (!entries.length) return;
+    if (!confirm(`Delete all ${entries.length} entries from this browser? Export a CSV first if you want a copy.`)) return;
+    entries = []; store(); render(); statusMsg($('rs-ledger-status'), 'All entries deleted.');
+  });
+
+  resetForm();
+  render();
+  if (!storageOk) statusMsg($('rs-ledger-status'), "This browser isn't letting the page save. Entries will be lost when you close it, so export a CSV.", true);
+})();
+</script>

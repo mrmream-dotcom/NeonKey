@@ -26,6 +26,17 @@ export const labProjects: LabProject[] = [
     service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
   },
   {
+    // DRAFT (Labs build being tested): page at src/pages/lab/receipt-sorter.astro is built but noindex,
+    // hidden from /lab/ (draft: true) and excluded from the sitemap (DRAFT_PAGES in astro.config.mjs). Remove all three to publish.
+    draft: true,
+    slug: 'receipt-sorter',
+    title: 'AI receipt & invoice sorter',
+    summary: 'Snap a receipt or upload an invoice and an AI reads the date, vendor, total, tax and category into a form you check. Add payments by hand too, then export a simple ledger to a spreadsheet.',
+    tags: ['AI', 'Automation'],
+    level: 'Beginner',
+    service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
+  },
+  {
     draft: true,
     slug: 'n8n-lead-intake-automation',
     title: 'Lead intake automation with self-hosted n8n',

@@ -1,0 +1,30 @@
+// Cloudflare Worker for the NeonKey Lab "AI receipt & invoice sorter" (draft).
+// Separate from neonkey-triage; it has its own Durable Object limiter and its own secret.
+// No secrets in this file. The Gemini key is a Worker secret:  printf %s "$GEMINI_API_KEY" | npx wrangler secret put GEMINI_API_KEY
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neonkey-receipts",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  // Private test preview: the built draft page (noindex) is served from this Worker's workers.dev URL.
+  // Built by scripts/build-preview.sh into ./preview (gitignored). /extract and /health run in the Worker.
+  "assets": { "directory": "./preview", "binding": "ASSETS", "not_found_handling": "none" },
+  // Same limiter pattern as neonkey-triage: SQLite-backed Durable Object (free plan), hashed IP+date names,
+  // data deleted 48 h after last use. Receipt images are never written anywhere.
+  "durable_objects": {
+    "bindings": [{ "name": "LIMITER", "class_name": "Limiter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Limiter"] }],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://neonkey.tech,https://www.neonkey.tech,https://neonkey-receipts.mr-mream.workers.dev",
+    "ALLOW_LOCALHOST": "false",
+    "PRIMARY_MODEL": "gemini-3.5-flash",
+    "FALLBACK_MODEL": "gemini-3.5-flash-lite",
+    "MAX_FILE_BYTES": "5242880",
+    "PER_IP_MINUTE": "5",
+    "PER_IP_DAILY": "20",
+    "GLOBAL_DAILY": "100"
+  }
+}
