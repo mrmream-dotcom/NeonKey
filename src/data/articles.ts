@@ -52,6 +52,16 @@ function defineArticle(input: ArticleInput): Article {
 
 export const articles: Article[] = [
   defineArticle({
+    slug: 'update-week',
+    title: "Chrome, Firefox and iPhone All Got Security Fixes This Week. Here's How to Update.",
+    description: "Google, Mozilla and Apple all shipped security updates in the last week of October. Here's what that means in everyday terms and how to install them in a few minutes.",
+    topic: 'Security',
+    category: 'news',
+    date: '2026-10-31',
+    sourceUrl: 'https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html',
+    sourceName: 'Google Chrome Releases (Oct 27, 2026)',
+  }),
+  defineArticle({
     slug: 'lenovo-legion-pro-7i-review',
     title: 'Lenovo Legion Pro 7i Gen 10 Review: A Gaming Laptop I Use for Work',
     description: "Six months with the Legion Pro 7i Gen 10 (RTX 5080, 32GB) as a work machine. It's good for virtualization, multitasking and two external monitors, but it's heavy.",

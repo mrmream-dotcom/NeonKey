@@ -398,3 +398,7 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .tut-shot { border: 1px solid var(--line); background: #0f1230; border-radius: 14px; padding: .75rem; margin: 1.5rem 0; }
 .tut-shot img { display: block; width: 100%; height: auto; border-radius: 9px; }
 .tut-shot figcaption { color: var(--muted); font-size: .88rem; margin-top: .6rem; }
+
+/* Small print at the end of an article (e.g. image credits) */
+.prose .fine-print { font-size: .78rem; line-height: 1.5; color: var(--muted); margin-top: 2.5rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+.prose .fine-print a { color: var(--muted); }
