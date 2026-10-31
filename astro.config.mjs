@@ -16,7 +16,7 @@ const BASE_PATH = ('/' + rawBase.replace(/^\/+|\/+$/g, '') + '/').replace(/\/+/g
 const EMPTY_ARTICLE_CATEGORIES = ARTICLE_CATEGORIES.filter((c) => !articles.some((a) => a.category === c));
 const emptyCategoryRe = EMPTY_ARTICLE_CATEGORIES.length ? new RegExp(`/articles/(${EMPTY_ARTICLE_CATEGORIES.join('|')})/?$`) : null;
 // Draft pages built for review that must stay out of the sitemap (they also set noindex and are hidden from lists).
-const DRAFT_PAGES = ['/learn/wifi-network-checkup'];
+const DRAFT_PAGES = [];
 const isDraftPage = (page) => { const p = new URL(page).pathname.replace(/\/$/, ''); return DRAFT_PAGES.some((d) => p.endsWith(d)); };
 const MODE = process.env.PUBLIC_SITE_MODE === 'live' ? 'live' : 'demo';
 
