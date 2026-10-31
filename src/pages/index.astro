@@ -4,11 +4,10 @@ import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, automationOffers, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, introPricing, usd } from '../data/services';
+import { absoluteUrl, CONTACT_EMAIL } from '../config';
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
-// Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
-// so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 const pillars = [
   { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Practical automations and remote small-office IT setup for small businesses. Plain-English setup and handoff.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
@@ -19,8 +18,115 @@ const pillars = [
   { cls: 'y', title: 'Unlock the Week', href: '/newsletter/', link: 'Get the newsletter', text: 'A weekly email with one tech story in plain English, a skill tip, gear picks and something to learn.',
     icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>' },
 ];
+// JSON-LD structured data (one @graph). Prices and service text come from src/data/services.ts.
+const abs = (p: string) => absoluteUrl(p, Astro.site);
+const home = abs('/');
+const orgId = `${home}#organization`;
+const usArea = { '@type': 'Country', name: 'United States' };
+const serviceNode = (o: typeof remoteIt, offerPath: string, monthly = false) => ({
+  '@type': 'Service',
+  '@id': `${home}#service-${o.slug}`,
+  name: o.name,
+  description: o.for,
+  url: abs(offerPath),
+  provider: { '@id': orgId },
+  areaServed: usArea,
+  offers: {
+    '@type': 'Offer',
+    url: abs(offerPath),
+    price: o.from,
+    priceCurrency: 'USD',
+    priceSpecification: {
+      '@type': monthly ? 'UnitPriceSpecification' : 'PriceSpecification',
+      price: o.from,
+      minPrice: o.from,
+      priceCurrency: 'USD',
+      ...(monthly ? { unitCode: 'MON', unitText: 'month' } : {}),
+      description: monthly ? 'Starting monthly price; final price agreed before you start' : 'Starting price; fixed quote after a scoping call',
+    },
+  },
+});
+const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${home}#website`,
+      url: home,
+      name: 'NeonKey',
+      description: 'Practical AI automations, honest gear picks, hands-on tutorials, Lab builds and a weekly tech email for beginners and builders.',
+      inLanguage: 'en',
+      publisher: { '@id': orgId },
+    },
+    {
+      '@type': 'Organization',
+      '@id': orgId,
+      name: 'NeonKey',
+      url: home,
+      logo: abs('/icon-512.png'),
+      email: CONTACT_EMAIL,
+      description: 'NeonKey helps beginners and builders get more out of tech through practical AI automations, remote small-office IT services, honest gear picks, hands-on tutorials and a weekly email.',
+      founder: { '@type': 'Person', name: 'Michael Ream', url: abs('/about/') },
+      areaServed: usArea,
+      knowsAbout: ['AI automation', 'Small-office IT setup', 'Cybersecurity basics', 'Technology tutorials', 'Computer hardware and software'],
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${home}#webpage`,
+      url: home,
+      name: 'NeonKey: Unlock tech, whatever your level',
+      headline: 'Unlock tech, whatever your level.',
+      description: 'NeonKey helps beginners and builders get more out of tech: practical AI automations, honest gear picks, hands-on tutorials, Lab builds and a weekly email.',
+      inLanguage: 'en',
+      isPartOf: { '@id': `${home}#website` },
+      about: { '@id': orgId },
+      publisher: { '@id': orgId },
+      mainEntity: { '@id': `${home}#sections` },
+      potentialAction: [
+        { '@type': 'SubscribeAction', target: abs('/newsletter/'), object: { '@id': `${home}#unlock-the-week` } },
+      ],
+    },
+    {
+      '@type': 'ItemList',
+      '@id': `${home}#sections`,
+      name: 'NeonKey content and services',
+      itemListElement: pillars.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: abs(p.href) })),
+    },
+    {
+      '@type': 'CreativeWorkSeries',
+      '@id': `${home}#unlock-the-week`,
+      name: 'Unlock the Week',
+      url: abs('/newsletter/'),
+      description: 'A free weekly email with one tech story in plain English, a skill tip, gear picks and something to learn.',
+      inLanguage: 'en',
+      publisher: { '@id': orgId },
+      isAccessibleForFree: true,
+    },
+    serviceNode(remoteIt, '/services/remote-it/'),
+    serviceNode(remoteSupportPlan, '/services/remote-it/#support-plan', true),
+    serviceNode(quickWin, '/services/#quick-win'),
+    serviceNode(aiFaq, '/services/#ai-faq'),
+    serviceNode(leadRouting, '/services/#lead-routing'),
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${home}#ai-inquiry-triage`,
+      name: 'AI Inquiry Triage (demo)',
+      url: abs('/lab/ai-inquiry-triage/'),
+      description: 'A working AI demo that sorts a customer message, flags urgency, pulls out key details and drafts a reply for a human to review.',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web browser',
+      creator: { '@id': orgId },
+      offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+    },
+  ],
+};
+const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+// Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
+// so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
 <Base title="Home" description="NeonKey helps beginners and builders get more out of tech: practical AI automations, honest gear picks, hands-on tutorials, Lab builds and a weekly email.">
+  <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="hero hero-bg">
     <div class="hero-art" aria-hidden="true">
       <svg viewBox="0 0 320 320" width="320" height="320" focusable="false">
