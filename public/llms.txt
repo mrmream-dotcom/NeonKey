@@ -1,0 +1,71 @@
+# NeonKey: Unlock tech, whatever your level
+
+> NeonKey provides structured, beginner-friendly guides, practical AI automation tutorials, honest gear reviews, and documented lab builds. It offers evergreen content for learning, deploying, and understanding technology and automation for small businesses and enthusiasts.
+
+NeonKey is an accessible resource designed for beginners and builders alike, focusing on practical applications of technology. It helps readers learn about automations, IT setup, gear evaluation, and hands-on projects, with clear explanations, real-world examples, and ongoing updates.
+
+## Core Content
+
+- [Unlock AI](https://neonkey.tech/services/)  
+  Practical AI automations, remote small-office IT setup, plain-English instructions, and handoff for small businesses.
+
+- [Unlock Deals](https://neonkey.tech/reviews/)  
+  Honest gear and software reviews, pros and cons, straightforward verdicts to help make informed purchasing decisions.
+
+- [Unlock Skills](https://neonkey.tech/learn/)  
+  Beginner-friendly tech learning guides, including free resources like a CompTIA Security+ study guide, with plain-language explanations.
+
+- [Unlock the Week](https://neonkey.tech/newsletter/)  
+  Weekly email featuring a tech story explained in plain English, useful skill tips, gear recommendations, and learning resources.
+
+- [From the Lab](https://neonkey.tech/lab/)  
+  Documented hands-on builds, projects, and experiments, with insights into what was built, why, results, and lessons learned.
+
+- [AI Inquiry Triage Demo](https://neonkey.tech/lab/ai-inquiry-triage/)  
+  Live demo of AI sorting customer inquiries, flagging urgency, extracting key info, and drafting responses.
+
+- [Articles](https://neonkey.tech/articles/)  
+  Plain-English explainers, honest takes, and practical advice on automation, AI, and small-office tech.
+
+- [What Is NeonKey?](https://neonkey.tech/articles/what-is-neonkey/)  
+  A plain-English introduction to NeonKey: what it covers and the idea behind it.
+
+## Resources & Guides
+
+- [Services for your business](https://neonkey.tech/services/)  
+  Small business IT setup, automation, AI assistants, and monthly remote support with transparent starting prices.
+
+- [Remote Small-Office IT Setup](https://neonkey.tech/services/remote-it/)  
+  Complete remote IT setup including business email on your own domain, Wi-Fi and router hardening, backups, and password managers, starting at $299.
+
+- [Monthly Remote Support Plan](https://neonkey.tech/services/#support-plan)  
+  Optional add-on after setup: async help by email or ticket within an agreed response window, starting at $99/mo.
+
+- [Quick Win + Tech Checkup](https://neonkey.tech/services/#quick-win)  
+  One automation improvement plus a tech basics review, with a plain-language to-do list, starting at $99.
+
+- [AI Intake & FAQ Assistant](https://neonkey.tech/services/#ai-faq)  
+  Automated FAQ answers and lead collection, starting at $499.
+
+- [Lead-Routing & Follow-Up System](https://neonkey.tech/services/#lead-routing)  
+  Sends new leads to the right place with follow-up reminders and templates, starting at $799.
+
+- [All Builds & Projects](https://neonkey.tech/lab/)  
+  Portfolio of practical builds and lessons from real-world system setups and automations.
+
+Prices are "starting at" guides, not quotes; every project gets a written quote first ([Terms](https://neonkey.tech/terms/)). Founding-client rates apply to the first 10 clients.
+
+## Optional
+
+- [About NeonKey](https://neonkey.tech/about/)  
+  Background on Michael Ream’s projects, approach, and public documentation of building and learning in tech.
+
+**Important Pages:**
+- [Home](https://neonkey.tech/)
+- [Lab](https://neonkey.tech/lab/)
+- [Services](https://neonkey.tech/services/)
+- [Reviews](https://neonkey.tech/reviews/)
+- [Learn](https://neonkey.tech/learn/)
+- [Articles](https://neonkey.tech/articles/)
+- [Newsletter](https://neonkey.tech/newsletter/)
+- [About](https://neonkey.tech/about/)
