@@ -129,15 +129,6 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .pillar p { color: var(--muted); }
 .pillar a { font-weight: 700; color: currentColor; }
 
-/* Home: "See it in action" screenshots */
-.showcase-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; text-decoration: none; color: var(--text); }
-.showcase-card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); background: var(--panel); }
-.showcase-body { display: flex; flex-direction: column; gap: .3rem; padding: 1.1rem 1.3rem 1.3rem; }
-.showcase-body .kicker { margin: 0; }
-.showcase-title { font-weight: 800; font-size: 1.15rem; color: var(--text); }
-.showcase-card:hover .showcase-title, .showcase-card:focus-visible .showcase-title { color: var(--cyan); }
-.showcase-text { color: var(--muted); }
-
 /* Feature review */
 .feature { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: center; }
 @media (max-width: 800px) { .feature { grid-template-columns: 1fr; } }

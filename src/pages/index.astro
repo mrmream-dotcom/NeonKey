@@ -19,16 +19,6 @@ const pillars = [
   { cls: 'y', title: 'Unlock the Week', href: '/newsletter/', link: 'Get the newsletter', text: 'A weekly email with one tech story in plain English, a skill tip, gear picks and something to learn.',
     icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>' },
 ];
-// "See it in action": real screenshots (public/images/home/), captured from a local build of each page with a result showing.
-const showcase = [
-  { href: '/lab/ai-inquiry-triage/', img: '/images/home/triage-demo-result', mobileLarge: '-mobile-1170.webp', event: 'lab-cta', kicker: 'Lab · Live demo', title: 'AI inquiry triage',
-    text: 'Paste a customer message and get a category, urgency, key details and a draft reply for a person to review.',
-    alt: 'The AI inquiry triage demo after running a made-up bakery order request. The result is labeled Sales / new project with medium urgency, followed by a summary, key details including the name, a mid-November deadline and a $300 budget, and a suggested next step.' },
-  { href: '/services/quiz/', img: '/images/home/quiz-result', mobileLarge: '-mobile-1100.webp', event: 'quiz-cta', kicker: 'Services · 2-minute quiz', title: 'What service do I need?',
-    text: 'Eight quick questions and an instant recommendation in your browser. No email needed.',
-    alt: 'A quiz result recommending Remote Small-Office IT Setup, starting at $299, listing what the setup would cover: business email and domain, email authentication, a password manager rollout and backups.' },
-];
-const otherLab = publishedLabProjects.filter((p) => !showcase.some((s) => s.href === `/lab/${p.slug}/`));
 ---
 <Base title="Home" description="NeonKey helps beginners and builders get more out of tech: practical AI automations, honest gear picks, hands-on tutorials, Lab builds and a weekly email.">
   <section class="hero hero-bg">
@@ -75,34 +65,19 @@ const otherLab = publishedLabProjects.filter((p) => !showcase.some((s) => s.href
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="action-h">
+  {publishedLabProjects.length > 0 && (
+  <section class="alt" aria-labelledby="lab-h">
     <div class="container">
-      <div class="section-head"><h2 id="action-h">See it in action</h2><a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home">All Lab builds →</a></div>
-      <p class="muted" style="margin-top:-.75rem">Two things you can try right now, free.</p>
-      <div class="grid grid-2 showcase">
-        {showcase.map((s) => (
-          <a class="card showcase-card" href={url(s.href)} data-umami-event={s.event} data-umami-event-location="home-showcase">
-            <picture>
-              <source media="(max-width: 640px)" srcset={`${url(s.img + '-mobile-640.webp')} 640w, ${url(s.img + s.mobileLarge)} ${s.mobileLarge.match(/(\d+)\.webp$/)![1]}w`} sizes="100vw" width="640" height="400" />
-              <img src={url(s.img + '-1200.webp')} srcset={`${url(s.img + '-640.webp')} 640w, ${url(s.img + '-1200.webp')} 1200w`} sizes="(max-width: 1200px) 50vw, 560px" width="1200" height="750" loading="lazy" decoding="async" alt={s.alt} />
-            </picture>
-            <span class="showcase-body">
-              <span class="kicker">{s.kicker}</span>
-              <span class="showcase-title">{s.title} →</span>
-              <span class="showcase-text">{s.text}</span>
-            </span>
-          </a>
+      <div class="section-head"><h2 id="lab-h">From the Lab</h2><a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home">All builds →</a></div>
+      <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, what broke and what I learned.</p>
+      <div class="grid grid-3">
+        {publishedLabProjects.map((p) => (
+          <Card href={url(`/lab/${p.slug}/`)} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
         ))}
       </div>
-      {otherLab.length > 0 && (
-        <div class="grid grid-3" style="margin-top:1.25rem">
-          {otherLab.map((p) => (
-            <Card href={url(`/lab/${p.slug}/`)} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
-          ))}
-        </div>
-      )}
     </div>
   </section>
+  )}
 
   <section aria-labelledby="nl-h">
     <div class="container">
