@@ -7,9 +7,11 @@
 #   form-action: our own form posts to https://app.kit.com/forms/<FORM_ID>/subscriptions (older embeds use app.convertkit.com)
 #   img: images in Kit form templates come from https://embed.filekitcdn.com
 # connect: the Lab triage demo (/lab/ai-inquiry-triage/) POSTs to the Cloudflare Worker at https://neonkey-triage.mr-mream.workers.dev
+# Google tag (Google Ads AW-18547389944, loaded in Base.astro + /js/gtag-init.js): script from www.googletagmanager.com (and www.google.com);
+#   conversion pings/pixels go to www.google.com, googleads.g.doubleclick.net, www.googleadservices.com, *.google-analytics.com
 # If you turn on reCAPTCHA in the Kit form settings you'd also need www.google.com / www.gstatic.com; keep it off or add them.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com; connect-src 'self' https://neonkey-triage.mr-mream.workers.dev https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com; font-src 'self'; frame-src 'none'; form-action 'self' https://api.web3forms.com https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com https://www.googletagmanager.com https://www.google.com; connect-src 'self' https://neonkey-triage.mr-mream.workers.dev https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com; font-src 'self'; frame-src 'none'; form-action 'self' https://api.web3forms.com https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
