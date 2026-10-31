@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, url } from '../config';
+---
+<Base title="Terms of Service" description="The plain-English terms for using the NeonKey site and hiring NeonKey for remote tech services: quotes, payment, responsibilities and limits.">
+  <article class="narrow page-head prose">
+    <span class="kicker">Terms</span>
+    <h1>Terms of Service</h1>
+    <p class="muted">Last updated October 30, 2026.</p>
+    <p>These terms cover your use of neonkey.tech and any services you hire NeonKey for. NeonKey is a small, one-person business that offers remote tech services. "I", "me" and "NeonKey" mean the business; "you" means the visitor or client. By using the site or hiring me, you agree to these terms. If you don't agree, please don't use the site or services.</p>
+
+    <h2>Services</h2>
+    <p>The services I offer are described on the <a href={url('/services/')}>services page</a>, such as remote small-office IT setup, small automations, AI assistants and monthly remote support. All work is done remotely. The exact work for your project is whatever we agree in writing in your quote, which takes priority over the general descriptions on the site.</p>
+
+    <h2>Quotes and pricing</h2>
+    <p>Prices on the site are "Starting at" prices. They're a guide, not a quote. Before any work starts, we go over what you need and I send you a written quote with the scope and the final price. Work starts only after you accept that quote in writing (email is fine). If the scope changes along the way, I'll tell you what it means for the price and timing, and we agree any change in writing before I do the extra work.</p>
+
+    <h2>Payment</h2>
+    <p>Payment terms, such as when payment is due, whether a deposit is needed and how to pay, are set out in your written quote or invoice. Please pay invoices by the due date shown. For a monthly plan, the price and billing schedule are in the plan we agree in writing. I may pause work on a project while a payment that's due is outstanding.</p>
+
+    <h2>Cancellations and refunds</h2>
+    <p>Cancellations and refunds are handled as described in your written quote or plan. If no terms were agreed, tell me as soon as you want to cancel and we'll work out a fair outcome based on the work already done. You can cancel the Monthly Remote Support Plan at any time, as described on the services page.</p>
+
+    <h2>Your responsibilities</h2>
+    <p>To do the work well, I need some help from you. You agree to:</p>
+    <ul>
+      <li>Give me the access I need (accounts, admin rights, devices or a screen-share session) when it's needed, and remove access I no longer need when the work is done.</li>
+      <li>Keep current backups of your important data before work starts, and tell me about anything that must not be changed or lost.</li>
+      <li>Give accurate, complete information about your setup, tools and needs.</li>
+      <li>Make sure you have the right to let me work on the accounts, systems and data you share with me.</li>
+      <li>Keep your own passwords and recovery details safe, and change any shared ones when the work is finished.</li>
+    </ul>
+
+    <h2>No guarantee of specific results</h2>
+    <p>I do careful, honest work, but I can't promise specific results, such as a set amount of time saved, more sales, a number of leads or that your systems will never have a security problem. Results depend on your business, your tools and many things outside my control.</p>
+
+    <h2>Third-party tools and services</h2>
+    <p>Much of my work uses tools and services that NeonKey doesn't own or control, such as email and office suites, password managers, backup services, automation platforms and AI models. Those services have their own terms, prices and privacy policies, and you're responsible for your accounts with them and any fees they charge. I'm not responsible for their outages, changes, price increases or decisions, though I'll help where I reasonably can.</p>
+
+    <h2>Limitation of liability</h2>
+    <p>To the extent the law allows, NeonKey isn't liable for indirect or consequential losses, such as lost profits, lost data, lost business or downtime. My total liability for any claim related to a project is limited to the amount you paid me for that project (or, for a monthly plan, the fees you paid in the three months before the claim). Nothing in these terms limits liability that can't be limited by law.</p>
+
+    <h2>Intellectual property</h2>
+    <p>The site's content, design, logo and name belong to NeonKey. Please don't copy or republish them without permission, though you're welcome to link to any page and quote short parts with a link back.</p>
+    <p>For client work, once you've paid in full, you own the specific deliverables made for you, such as your configured automations, documents and handoff notes. I keep the right to reuse my general know-how, methods, templates and tools that aren't specific to your business. I keep your business details and data confidential and use them only to do the work you hired me for.</p>
+
+    <h2>Free content</h2>
+    <p>The guides, articles, reviews, <a href={url('/learn/')}>Learn</a> study materials, the Unlock the Week newsletter, the Lab demos and the <a href={url('/services/quiz/')}>service quiz</a> are free and provided as-is, for general information. They aren't professional advice for your specific situation, and they may contain mistakes or go out of date. Use your own judgment and check the details before relying on them, especially for exams, purchases or changes to systems you depend on. Quiz results and demo output are suggestions, not quotes.</p>
+
+    <h2>Using the site</h2>
+    <p>Please don't misuse the site, for example by trying to break or overload it, abusing the demos or forms, or sending spam through them. I may limit or block access that does. How the site handles your data is covered in the <a href={url('/privacy/')}>privacy policy</a>.</p>
+
+    <h2>Governing law and disputes</h2>
+    <p>These terms are governed by the applicable laws of the United States and the state whose laws apply to NeonKey's business. If something goes wrong, please email me first. Most problems can be sorted out with a quick conversation, and I'll do my best to make things right.</p>
+
+    <h2>Changes to these terms</h2>
+    <p>I may update these terms from time to time. The date at the top shows when they last changed. Changes don't affect a quote you've already accepted unless we both agree in writing.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about these terms? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </article>
+</Base>

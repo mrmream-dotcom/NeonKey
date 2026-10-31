@@ -95,7 +95,6 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .hero h1 .glow-m { color: var(--magenta); text-shadow: 0 0 22px rgba(244,114,182,.3); }
 .hero-bg { position: relative; overflow: hidden; isolation: isolate; padding-bottom: clamp(3.5rem, 8vw, 6rem); }
 .hero-bg .hero-art { position: absolute; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, 118vw); pointer-events: none; opacity: .32; }
-.hero-bg .hero-art::before { content: ''; position: absolute; inset: 12%; border-radius: 50%; background: radial-gradient(circle, rgba(167,139,250,.45), rgba(34,211,238,.18) 45%, transparent 70%); filter: blur(40px); }
 .hero-bg .hero-art svg { position: relative; display: block; width: 100%; height: auto; filter: drop-shadow(0 0 28px rgba(167,139,250,.7)) drop-shadow(0 0 60px rgba(34,211,238,.35)); }
 .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .hero-bg { min-height: min(78vh, 640px); display: flex; align-items: center; }
@@ -129,7 +128,15 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .pillar h3 { color: var(--text); }
 .pillar p { color: var(--muted); }
 .pillar a { font-weight: 700; color: currentColor; }
-.pillar::after { content: ''; position: absolute; inset: auto -40px -40px auto; width: 120px; height: 120px; border-radius: 50%; background: currentColor; opacity: .07; filter: blur(10px); }
+
+/* Home: "See it in action" screenshots */
+.showcase-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; text-decoration: none; color: var(--text); }
+.showcase-card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); background: var(--panel); }
+.showcase-body { display: flex; flex-direction: column; gap: .3rem; padding: 1.1rem 1.3rem 1.3rem; }
+.showcase-body .kicker { margin: 0; }
+.showcase-title { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+.showcase-card:hover .showcase-title, .showcase-card:focus-visible .showcase-title { color: var(--cyan); }
+.showcase-text { color: var(--muted); }
 
 /* Feature review */
 .feature { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: center; }
