@@ -35,13 +35,13 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
           <div>
             <span class="kicker">Featured · Fully remote</span>
             <h2 id="featured-h" style="font-size:1.6rem;margin-top:.4rem">{remoteIt.name}</h2>
+            <p class="offer-outcome">{remoteIt.outcome}.</p>
             <p class="muted">For small offices and solo pros. {remoteIt.for}.</p>
             <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
             <OfferDetails offer={remoteIt} />
           </div>
           <div class="offer-featured-side">
             <p class="price">Starting at {usd(remoteIt.from)}<small>Scoped per project</small></p>
-            <p class="intro-tag">{introPricing.short}</p>
             <p class="muted" style="font-size:.95rem">Optional add-on: <a href="#support-plan">{remoteSupportPlan.name}</a>, starting at {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-featured">See what's included</a>
@@ -56,13 +56,13 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
           <div>
             <span class="kicker">Optional add-on</span>
             <h3 style="font-size:1.3rem;margin-top:.4rem">{remoteSupportPlan.name}</h3>
+            <p class="offer-outcome">{remoteSupportPlan.outcome}.</p>
             <p class="muted">{remoteSupportPlan.for}.</p>
             <ul>{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
             <OfferDetails offer={remoteSupportPlan} />
           </div>
           <div class="offer-featured-side">
             <p class="price">Starting at {usd(remoteSupportPlan.from)}/mo<small>Scoped to your team</small></p>
-            <p class="intro-tag">{introPricing.short}</p>
             <div class="btn-row">
               <a class="btn btn-ghost" href={url('/contact/?topic=support-plan')} data-umami-event="contact-click" data-umami-event-offer={remoteSupportPlan.name}>Ask about the plan</a>
             </div>
@@ -80,8 +80,8 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
           <article class="card offer" id={o.slug}>
             <span class="kicker">{o.kicker ?? 'Automation'}</span>
             <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
+            {o.outcome && <p class="offer-outcome">{o.outcome}.</p>}
             <p class="price">Starting at {usd(o.from)}<small>Scoped per project</small></p>
-            <p class="intro-tag">{introPricing.short}</p>
             <p class="muted">{o.for}.</p>
             <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
             <OfferDetails offer={o} />

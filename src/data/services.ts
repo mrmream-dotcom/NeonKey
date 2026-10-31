@@ -5,6 +5,8 @@ export interface Offer {
   name: string;
   from: number;
   for: string;
+  /** Plain-English business outcome, shown first on the home and services cards. */
+  outcome?: string;
   items: string[];
   href?: string;
   featured?: boolean;
@@ -46,6 +48,7 @@ export const remoteIt: Offer = {
   slug: 'remote-it',
   name: 'Remote Small-Office IT Setup',
   from: 299,
+  outcome: "Help your emails reach inboxes instead of spam, make it harder for scammers to fake your domain, and get your Wi-Fi, backups and passwords locked down",
   for: 'Get email, Wi-Fi, backups and passwords set up properly for a small office or solo business, fully remote',
   items: [
     'Business email on your own domain (Google Workspace or Microsoft 365)',
@@ -94,6 +97,7 @@ export const remoteSupportPlan: Offer = {
   name: 'Monthly Remote Support Plan',
   from: 99,
   unit: '/mo',
+  outcome: "Get small IT changes and questions handled without hiring an IT department",
   for: 'Optional add-on after setup: async help by email or ticket, with an agreed response window',
   items: [
     'A set number of small requests each month, agreed up front',
@@ -137,6 +141,7 @@ export const automationOffers: Offer[] = [
     name: 'Quick Win + Tech Checkup',
     kicker: 'Start here',
     from: 99,
+    outcome: "Get one repetitive task off your plate and a clear list of the tech fixes that matter most",
     for: 'Automate one repetitive task and get a quick remote check of your tech basics',
     items: [
       'One simple workflow automated, scoped together first, using tools you already use',
@@ -147,7 +152,7 @@ export const automationOffers: Offer[] = [
     demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' },
     upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
   },
-  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], details: {
+  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], details: {
       who: "For businesses that answer the same questions every day (hours, prices, booking, what's included) and lose track of new inquiries. The assistant answers from your own FAQ content and collects the details of anyone who wants more.",
       included: [
       'An assistant set up on your own FAQ, policies and service info, written or cleaned up together',
@@ -180,7 +185,7 @@ export const automationOffers: Offer[] = [
       ],
       note: 'AI usage and any tool subscriptions are billed to you directly by those providers. AI answers can be wrong, so the assistant is set up to hand off to a person, and you should review it regularly.',
     }, },
-  { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
+  { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
