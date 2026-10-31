@@ -5,7 +5,8 @@
 //   /learn/              All: both sections
 //   /learn/study-tracks/ Study tracks only
 //   /learn/tutorials/    Tutorials only
-// To add a study track or tutorial, add a card to the matching list below.
+// To add a study track or tutorial, add a card to the matching list below. `draft: true` hides a card everywhere
+// (the page itself should also set `noindex: true` and be listed in DRAFT_PAGES in astro.config.mjs).
 import { url } from '../../config';
 export type LearnView = 'study-tracks' | 'tutorials';
 interface Props { view?: LearnView }
@@ -16,7 +17,9 @@ const studyTracks = [
 ];
 const tutorials = [
   { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial' },
-];
+  // Draft: remove `draft: true` here, `noindex: true` in the page and its DRAFT_PAGES entry to publish.
+  { draft: true, kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a plain-English router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial' },
+].filter((c) => !c.draft);
 
 const tabs: { href: string; label: string; key?: LearnView }[] = [
   { href: '/learn/', label: 'All' },

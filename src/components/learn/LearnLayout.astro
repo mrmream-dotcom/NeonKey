@@ -3,9 +3,10 @@
 import Base from '../../layouts/Base.astro';
 import { url } from '../../config';
 const { frontmatter } = Astro.props;
-const { title, description, kicker = 'Learn', back } = frontmatter;
+// `noindex: true` in frontmatter keeps a draft page out of search engines (pair it with DRAFT_PAGES in astro.config.mjs).
+const { title, description, kicker = 'Learn', back, noindex = false } = frontmatter;
 ---
-<Base title={title} description={description}>
+<Base title={title} description={description} noindex={noindex}>
   <article class="narrow page-head prose">
     <span class="kicker">{kicker}</span>
     <h1>{title}</h1>
