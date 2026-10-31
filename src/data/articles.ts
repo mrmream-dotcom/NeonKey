@@ -86,6 +86,14 @@ export const articles: Article[] = [
     topic: 'Automation',
     category: 'insights',
   }),
+  defineArticle({
+    slug: 'what-is-neonkey',
+    title: 'What Is NeonKey? The Vision and What We Do',
+    description: "A plain-English introduction to NeonKey: a new tech help brand for individuals and small businesses, what it covers, the idea behind it, and how to share feedback.",
+    topic: 'About',
+    category: 'insights',
+    date: '2026-10-29',
+  }),
 ];
 
 export function getArticle(slug: string): Article {

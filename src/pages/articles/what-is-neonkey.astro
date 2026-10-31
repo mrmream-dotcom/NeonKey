@@ -1,0 +1,50 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import { getArticle } from '../../data/articles';
+const article = getArticle('what-is-neonkey');
+---
+<Base title={article.title} description={article.description} type="article">
+  <article class="narrow page-head prose">
+    <span class="kicker">Articles · About</span>
+    <h1>{article.title}</h1>
+    <ArticleMeta article={article} />
+<p class="lead">NeonKey is brand new. This post is a simple introduction: what NeonKey is, who it's for, what you'll find here and where we hope it goes.</p>
+<p>The <a href={url('/about/')}>About page</a> covers the short version. This is the longer one, kept general on purpose, because a lot of the details are still taking shape.</p>
+<h2>What NeonKey is</h2>
+<p>NeonKey is a tech help brand. It covers IT, automation and everyday technology, explained in plain language. The idea behind the name is unlocking: making AI, gear, skills and the week's tech news easier to understand and use, whatever your level.</p>
+<p>Some people want to learn how to do things themselves. Others would rather hand a task off and get back to their day. NeonKey tries to be useful either way.</p>
+<h2>Who it's for</h2>
+<p>NeonKey is for two groups of people that overlap more than you'd think:</p>
+<ul>
+<li><strong>Individuals</strong> who want to get more out of their tech, whether they're total beginners or already tinkering with their own projects.</li>
+<li><strong>Small businesses and solo professionals</strong> who need their tech basics done properly but don't have an IT department to call.</li>
+</ul>
+<p>You don't need to know the jargon to start here. Plain language comes first, with more detail for anyone who wants it.</p>
+<h2>What NeonKey does</h2>
+<p>Right now, NeonKey is built around a few areas. Each one is small today and meant to grow over time.</p>
+<h3>Services</h3>
+<p>For small businesses, NeonKey offers <a href={url('/services/')}>practical IT and automation help</a>. That includes remote small-office IT setup (things like business email, Wi-Fi security, backups and password managers) and small automations that take repetitive work off your plate. Every project starts with a short scoping conversation, and you keep ownership of your own accounts. If you're not sure what you need, there's a short <a href={url('/services/quiz/')}>services quiz</a> to help you think it through.</p>
+<h3>Learn</h3>
+<p>The <a href={url('/learn/')}>Learn hub</a> is for building skills. It has plain-language study guides and step-by-step tutorials, starting with a free CompTIA Security+ study guide and a tutorial on turning on two-factor authentication. Security, networking, automation and practical IT are the main areas we plan to cover.</p>
+<h3>The Lab</h3>
+<p><a href={url('/lab/')}>The Lab</a> is where real builds get documented: what was built, why, what broke and what was learned. It also includes hands-on demos you can try, like the AI inquiry triage demo. Mistakes stay in the write-ups, because that's often the most useful part.</p>
+<h3>Reviews and articles</h3>
+<p><a href={url('/reviews/')}>Reviews</a> are honest takes on gear and software: who something suits, what's good, what isn't and a plain verdict. Reviews are never paid placements, and any sponsorship or free product is always disclosed. <a href={url('/articles/')}>Articles</a> cover explainers, news and practical advice.</p>
+<h3>Unlock the Week</h3>
+<p><a href={url('/newsletter/')}>Unlock the Week</a> is NeonKey's weekly email. It covers tech news in general, not just AI, explained in plain English, along with a skill tip, gear picks and something to learn. One email a week, free, and you can unsubscribe anytime.</p>
+<h2>The vision</h2>
+<p>The big idea is simple: tech should feel approachable, and the advice around it should be honest.</p>
+<p>A lot of tech content is either too technical to follow or too focused on selling you something. NeonKey aims for the middle: clear explanations, real tradeoffs and no hype. That means no guarantees, no made-up numbers and no pretending a tool is perfect when it isn't.</p>
+<p>It also means being useful whether or not you ever hire anyone. If a tutorial helps you fix something yourself, that's a win. If you'd rather have someone set it up for you, the services are there. Both are reasonable choices, and neither is the "right" one for everyone.</p>
+<h2>New, and a work in progress</h2>
+<p>NeonKey is just getting started, and we'd rather say so plainly. Some sections are still small. Some pages will change as we learn what's actually helpful. More tutorials, Lab builds, reviews and articles are on the way, and some things will probably get rebuilt along the way.</p>
+<p>That's part of the approach: building and learning in public, with the wins and the mistakes both visible.</p>
+<h2>We'd love your feedback</h2>
+<p>Because NeonKey is so new, feedback matters a lot right now, and we're open to any and all of it. Something confusing? A topic you'd like covered? A page that didn't work the way you expected? An idea for a tutorial or a review? We want to hear it.</p>
+<p>You can reach us through the <a href={url('/contact/')}>contact page</a>, or subscribe to <a href={url('/newsletter/')}>Unlock the Week</a> and hit reply on any issue. Every reply gets read.</p>
+<p>Thanks for being here early.</p>
+    <p><a href={url('/articles/')}>← Back to Articles</a></p>
+  </article>
+</Base>
