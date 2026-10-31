@@ -1,0 +1,80 @@
+---
+// Learn hub body with All | Study tracks | Tutorials tabs.
+// Same mechanism as the Articles tabs (ArticleIndex.astro): plain links to static pages, styled with the shared
+// .article-tabs / .article-tab classes, so filtering works without JavaScript.
+//   /learn/              All: both sections
+//   /learn/study-tracks/ Study tracks only
+//   /learn/tutorials/    Tutorials only
+// To add a study track or tutorial, add a card to the matching list below.
+import { url } from '../../config';
+export type LearnView = 'study-tracks' | 'tutorials';
+interface Props { view?: LearnView }
+const { view } = Astro.props;
+
+const studyTracks = [
+  { kicker: 'Track 1 · Security', title: 'CompTIA Security+ study guide', href: '/learn/security-plus/', text: 'Notes for all five exam domains, with key-term cards and a short self-check on each page.', cta: 'Open the guide' },
+];
+const tutorials = [
+  { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial' },
+];
+
+const tabs: { href: string; label: string; key?: LearnView }[] = [
+  { href: '/learn/', label: 'All' },
+  { href: '/learn/study-tracks/', label: 'Study tracks', key: 'study-tracks' },
+  { href: '/learn/tutorials/', label: 'Tutorials', key: 'tutorials' },
+];
+const showStudy = !view || view === 'study-tracks';
+const showTutorials = !view || view === 'tutorials';
+---
+<p class="lead">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
+
+<p>We're building this section around a few areas: <strong>security</strong>, <strong>networking</strong>, <strong>automation</strong>, and <strong>practical IT</strong>. Every guide explains the ideas in everyday language first, then gets specific.</p>
+
+<nav class="article-tabs learn-tabs" aria-label="Filter Learn by type">
+  <ul>
+    {tabs.map((t) => (
+      <li><a class={`article-tab${t.key === 'study-tracks' ? ' tab-study' : t.key === 'tutorials' ? ' tab-tutorials' : ' tab-all'}`} href={url(t.href)} aria-current={t.key === view ? 'page' : undefined} data-umami-event="learn-tab" data-umami-event-tab={t.label}>{t.label}</a></li>
+    ))}
+  </ul>
+</nav>
+
+{showStudy && (
+  <section aria-labelledby="study-tracks">
+    <h2 id="study-tracks">Study tracks</h2>
+    <div class="grid grid-2">
+      {studyTracks.map((c) => (
+        <article class="card">
+          <span class="kicker">{c.kicker}</span>
+          <h3><a href={url(c.href)}>{c.title}</a></h3>
+          <p>{c.text}</p>
+          <p style="margin-top:.8rem"><a class="lab-read" href={url(c.href)}>{c.cta} →</a></p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+{showTutorials && (
+  <section aria-labelledby="tutorials">
+    <h2 id="tutorials">Tutorials</h2>
+    <div class="grid grid-2">
+      {tutorials.map((c) => (
+        <article class="card">
+          <span class="kicker">{c.kicker}</span>
+          <h3><a href={url(c.href)}>{c.title}</a></h3>
+          <p>{c.text}</p>
+          <p style="margin-top:.8rem"><a class="lab-read" href={url(c.href)}>{c.cta} →</a></p>
+        </article>
+      ))}
+    </div>
+    <p class="muted" style="margin-top:1.2rem">More tutorials are on the way. <a href={url('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
+  </section>
+)}
+
+<style>
+  .learn-tabs { margin-top: 1.5rem; }
+  /* Override the site-wide section padding so the sections sit close under the tabs. */
+  section { padding: 0; }
+  section h2 { margin-top: 1.25rem; }
+  section + section { margin-top: 2rem; }
+</style>

@@ -322,18 +322,18 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .article-card:has(a:focus-visible) { outline: 3px solid var(--cyan); outline-offset: 3px; }
 
 /* Inline links in body text (articles, Lab, Learn, About, Privacy...): cyan + visible underline. Not nav, buttons, tags or the TOC. */
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a) {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab) {
   color: var(--cyan); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
   text-decoration-color: rgba(34,211,238,.5); transition: text-decoration-color .15s, color .15s;
 }
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a):hover {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab):hover {
   color: #67e8f9; text-decoration-color: currentColor; text-decoration-thickness: 2px;
 }
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a):focus-visible {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab):focus-visible {
   outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 3px; text-decoration-color: currentColor;
 }
 
-/* Articles: category tabs (All | News | Insights) and badges */
+/* Articles: category tabs (All | News | Insights) and badges. Also reused by the Learn hub tabs (All | Study tracks | Tutorials). */
 .article-tabs { margin: 0 0 1.25rem; }
 .article-tabs ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
 .article-tab { display: inline-block; font-size: .9rem; font-weight: 600; line-height: 1.3; color: var(--muted); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: .4rem 1rem; transition: border-color .2s, color .2s, box-shadow .2s, background-color .2s; }
@@ -342,6 +342,8 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .article-tab[aria-current='page'] { color: #04121a; background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 14px rgba(34,211,238,.35); }
 .article-tab.tab-news[aria-current='page'] { background: var(--magenta); border-color: var(--magenta); box-shadow: 0 0 14px rgba(244,114,182,.35); }
 .article-tab.tab-insights[aria-current='page'] { background: var(--violet); border-color: var(--violet); box-shadow: 0 0 14px rgba(167,139,250,.35); }
+.article-tab.tab-study[aria-current='page'] { background: var(--violet); border-color: var(--violet); box-shadow: 0 0 14px rgba(167,139,250,.35); }
+.article-tab.tab-tutorials[aria-current='page'] { background: var(--magenta); border-color: var(--magenta); box-shadow: 0 0 14px rgba(244,114,182,.35); }
 .article-tab[aria-current='page']:hover { color: #04121a; }
 .article-card-tags { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
 .article-card .article-card-tags .tag { margin-bottom: 0; }

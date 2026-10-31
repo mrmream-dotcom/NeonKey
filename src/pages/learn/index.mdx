@@ -4,32 +4,7 @@ title: Learn
 description: Learn tech skills on NeonKey. Plain-language study guides and hands-on tutorials on security, networking, automation and more.
 kicker: Unlock Skills
 ---
-import { url as siteUrl } from '../../config';
+import LearnHub from '../../components/learn/LearnHub.astro';
 
-<p class="lead">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
-
-We're building this section around a few areas: **security**, **networking**, **automation**, and **practical IT**. Every guide explains the ideas in everyday language first, then gets specific.
-
-## Study tracks
-
-<div class="grid grid-2">
-  <article class="card">
-    <span class="kicker">Track 1 · Security</span>
-    <h3><a href={siteUrl('/learn/security-plus/')}>CompTIA Security+ study guide</a></h3>
-    <p>Notes for all five exam domains, with key-term cards and a short self-check on each page.</p>
-    <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/learn/security-plus/')}>Open the guide →</a></p>
-  </article>
-</div>
-
-## Tutorials
-
-<div class="grid grid-2">
-  <article class="card">
-    <span class="kicker">Security · Beginner</span>
-    <h3><a href={siteUrl('/learn/two-factor-authentication/')}>Why 2FA matters and how to turn it on</a></h3>
-    <p>Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.</p>
-    <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/learn/two-factor-authentication/')}>Read the tutorial →</a></p>
-  </article>
-</div>
-
-<p class="muted" style="margin-top:1.2rem">More tutorials are on the way. <a href={siteUrl('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
+{/* Intro, tabs (All | Study tracks | Tutorials) and cards live in LearnHub so /learn/, /learn/study-tracks/ and /learn/tutorials/ stay in sync. */}
+<LearnHub />

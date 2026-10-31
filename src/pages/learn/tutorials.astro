@@ -1,0 +1,12 @@
+---
+// Learn hub filtered to one tab. Shares LearnHub with /learn/ (see that component for how tabs work).
+import Base from '../../layouts/Base.astro';
+import LearnHub from '../../components/learn/LearnHub.astro';
+---
+<Base title="Tutorials · Learn" description="NeonKey tutorials: step-by-step, beginner-friendly how-tos for everyday tech and security, like turning on two-factor authentication.">
+  <article class="narrow page-head prose">
+    <span class="kicker">Unlock Skills · Tutorials</span>
+    <h1>Learn</h1>
+    <LearnHub view="tutorials" />
+  </article>
+</Base>
