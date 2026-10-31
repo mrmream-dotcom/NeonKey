@@ -1,0 +1,104 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: How to turn on two-factor authentication (2FA) on your most important accounts
+description: A beginner, step-by-step guide to turning on two-factor authentication for Google, Apple, Microsoft, Instagram and Facebook, choosing between an authenticator app, text codes and passkeys, and saving backup codes.
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+
+<p class="lead">Two-factor authentication (2FA) means a stolen password isn't enough to get into your account. Signing in takes a second step too, like a code from your phone or your fingerprint. It's one of the most useful security settings you can turn on, and it takes a few minutes per account.</p>
+
+You'll also see it called 2-Step Verification or multifactor authentication (MFA). Same basic idea.
+
+## What you'll need
+
+- Your phone
+- The password for each account you're securing
+- About 10 minutes per account
+- Somewhere safe to keep backup codes (a printed copy in a drawer, or a password manager you already trust)
+
+## Step 1: Pick your second step
+
+Most services let you choose. From strongest to weakest:
+
+1. **Passkey or security key.** You sign in with your fingerprint, face or device PIN, or by tapping a small hardware key. These resist phishing because they only work on the real site. CISA, the US cybersecurity agency, calls FIDO/WebAuthn (the standard behind passkeys) "the only widely available phishing-resistant authentication" ([CISA: More than a Password](https://www.cisa.gov/MFA)).
+2. **Authenticator app.** An app such as Google Authenticator, Microsoft Authenticator or Duo Mobile shows a new 6-digit code every 30 seconds. It works without cell service.
+3. **Text message (SMS) codes.** Better than nothing, but the weakest option. Google's own help page warns that codes sent by text or call "can be vulnerable to phone number-based hacks," such as someone taking over your phone number ([Google](https://support.google.com/accounts/answer/185839)).
+
+**Our suggestion for beginners:** use an authenticator app or a passkey where you can. If text codes are the only thing you can set up today, set them up anyway, and upgrade later. As CISA puts it, any MFA is better than no MFA.
+
+## Step 2: Start with your email account
+
+Your email is the master key. Password resets for almost everything else go there, so secure it first.
+
+### Google (Gmail, YouTube, Google Drive)
+
+Google's current steps ([Turn on 2-Step Verification](https://support.google.com/accounts/answer/185839)):
+
+<ol class="steps">
+  <li>Open your <a href="https://myaccount.google.com/">Google Account</a>.</li>
+  <li>Select <strong>Security &amp; sign-in</strong>.</li>
+  <li>Under "How you sign in to Google," select <strong>Turn on 2-Step Verification</strong>.</li>
+  <li>Follow the on-screen steps. Google recommends its sign-in prompts (a "Yes, it's me" tap on your phone) or a passkey.</li>
+</ol>
+
+If you use a work or school Google account, your administrator may control this setting.
+
+### Microsoft (Outlook, Hotmail, Xbox, Windows)
+
+Microsoft's current steps ([How to use two-step verification](https://support.microsoft.com/en-us/account-billing/how-to-use-two-step-verification-with-your-microsoft-account-c7910146-672f-01e9-50a0-93b4585e7eb4)):
+
+<ol class="steps">
+  <li>Sign in to the Security page at <a href="https://account.microsoft.com/security">account.microsoft.com/security</a>.</li>
+  <li>Select <strong>Manage how I sign in</strong>.</li>
+  <li>Under "Additional security" and "Two-step verification," choose <strong>Turn on</strong>.</li>
+  <li>Follow the on-screen instructions.</li>
+</ol>
+
+Microsoft says it is phasing out text messages as a sign-in and recovery method for personal accounts, so the Microsoft Authenticator app or a passkey is the better pick here. Microsoft also recommends keeping at least three ways to verify on file, because if you lose your only one, getting back in can take 30 days.
+
+## Step 3: Check your Apple Account
+
+Apple says most Apple Accounts already use two-factor authentication, since it's the default for most accounts ([Apple Support](https://support.apple.com/en-us/102660)). To check, or turn it on:
+
+<ol class="steps">
+  <li>On an iPhone or iPad, open <strong>Settings</strong> (on a Mac, <strong>System Settings</strong>).</li>
+  <li>Choose <strong>[your name]</strong>, then <strong>Sign-In &amp; Security</strong>.</li>
+  <li>If two-factor authentication isn't on, turn it on and follow the onscreen instructions.</li>
+</ol>
+
+Make sure your trusted phone number is current too.
+
+## Step 4: Secure Instagram and Facebook
+
+Both now use Meta's Accounts Center, and Meta is gradually moving people to "Meta Account" settings, so your screen may use either name.
+
+<ol class="steps">
+  <li><strong>Instagram:</strong> click <strong>More</strong>, then <strong>Settings</strong>, then <strong>See more in Accounts Center</strong> → <strong>Password and security</strong> → <strong>Two-factor authentication</strong>. Pick your account and a method (<a href="https://help.instagram.com/566810106808145">Instagram Help</a>). Instagram recommends an authentication app, which you can only turn on from the Instagram phone app.</li>
+  <li><strong>Facebook:</strong> click your profile picture, then <strong>Settings and privacy</strong> → <strong>Settings</strong> → <strong>Accounts Center</strong> → <strong>Password and security</strong> → <strong>Two-factor authentication</strong>. Pick your account and a method (<a href="https://www.facebook.com/help/148233965247823">Facebook Help</a>).</li>
+</ol>
+
+## Step 5: Save your backup codes
+
+This step saves you if your phone is lost, broken or replaced.
+
+<ol class="steps">
+  <li><strong>Google:</strong> in <strong>Security &amp; sign-in</strong> → <strong>2-Step Verification</strong>, find "Backup codes" and get a set of 10 one-time codes. You can print or download them, and making a new set cancels the old one (<a href="https://support.google.com/accounts/answer/1187538">Google: backup codes</a>).</li>
+  <li><strong>Microsoft:</strong> on the <strong>Manage how I sign in</strong> page, find "Recovery code" and select <strong>Generate a new code</strong>. Print it, and don't store it on a device you sign in with (<a href="https://support.microsoft.com/en-us/accounts-billing/manage/how-to-get-a-microsoft-account-recovery-code">Microsoft: recovery code</a>).</li>
+  <li><strong>Facebook and Instagram:</strong> both offer backup or recovery login codes for when you can't use your phone. Find them in the same Two-factor authentication settings.</li>
+  <li><strong>Apple:</strong> Apple doesn't use backup codes. It offers an optional recovery key instead. Read <a href="https://support.apple.com/en-us/109345">Apple's guide</a> carefully first: if you set one up and then lose it, you can be locked out of your account permanently. For most people, keeping a trusted phone number and a second Apple device up to date is enough.</li>
+</ol>
+
+Keep codes somewhere you can reach without the phone you just lost. Paper in a safe place works. Don't keep them only in your email, since that's one of the accounts they protect.
+
+## Step 6: Test it
+
+Sign out of one account on a computer, then sign back in. Make sure the second step works before you need it in a hurry. When a site offers "Don't ask again on this device," only say yes on your own devices, never on a shared or public computer.
+
+## Common questions
+
+**Will I have to enter a code every time?** Usually not. Most services only ask on a new device or browser, or after you sign out completely.
+
+**What if I get a code I didn't ask for?** Don't share it with anyone, even someone claiming to be from the company. Google, for example, says it will never call you to ask for a code. An unexpected code can mean someone has your password, so change it.
+
+**What's next?** 2FA protects your accounts. An upcoming post covers protecting your connection, including what a VPN does and doesn't do.
