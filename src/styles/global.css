@@ -102,10 +102,15 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .hero-content .kicker { font-size: .85rem; margin-bottom: .6rem; }
 .hero-content .lead { margin-inline: auto; color: #c9cde6; text-shadow: 0 1px 12px rgba(11,13,23,.9); }
 .hero-ctas { justify-content: center; margin-top: .75rem; }
+.hero-ctas .btn { min-width: 15.5rem; }
+.btn-alt { background: var(--magenta); color: #1a0612; }
+.btn-alt:hover { color: #1a0612; background: #f9a8d4; box-shadow: 0 0 18px rgba(244,114,182,.45); }
+.hero-sub-links { margin: 1rem 0 0; font-size: .95rem; color: var(--muted); text-shadow: 0 1px 12px rgba(11,13,23,.9); }
 @media (max-width: 640px) {
   .hero-bg { min-height: 0; }
   .hero-bg .hero-art { width: 108vw; opacity: .3; }
   .hero-ctas { flex-direction: column; width: 100%; max-width: 420px; }
+  .hero-ctas .btn { min-width: 0; width: 100%; }
 }
 
 /* Grid + cards */
