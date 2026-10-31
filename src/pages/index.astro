@@ -70,7 +70,7 @@ const pillars = [
   <section class="alt" aria-labelledby="lab-h">
     <div class="container">
       <div class="section-head"><h2 id="lab-h">From the Lab</h2><a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home">All builds →</a></div>
-      <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, what broke and what I learned.</p>
+      <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, the results and lessons, and what I'd do differently.</p>
       <div class="grid grid-3">
         {publishedLabProjects.map((p) => (
           <Card href={url(`/lab/${p.slug}/`)} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
@@ -137,8 +137,8 @@ const pillars = [
   <section aria-labelledby="lip-h">
     <div class="narrow">
       <div class="callout">
-        <h2 id="lip-h" style="font-size:1.35rem">Learning in public</h2>
-        <p style="margin:0">I'm Michael Ream, and NeonKey is where I build, test and document as I go: homelab projects, AI automations and small-office IT setups. You'll see the wins and the mistakes. <a href={url('/about/')}>More about NeonKey →</a></p>
+        <h2 id="lip-h" style="font-size:1.35rem">Built and documented in the open</h2>
+        <p style="margin:0">I'm Michael Ream, and NeonKey is where I build, test and document as I go: homelab projects, AI automations and small-office IT setups. You'll see the results and lessons, including what I'd do differently. <a href={url('/about/')}>More about NeonKey →</a></p>
       </div>
     </div>
   </section>
