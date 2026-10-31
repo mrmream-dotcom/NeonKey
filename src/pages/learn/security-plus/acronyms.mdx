@@ -14,7 +14,7 @@ import StudyResources from '../../../components/learn/StudyResources.astro';
 {track.domains.map((d) => (
   <section>
     <h2>Domain {d.n}: {d.title}</h2>
-    <div class="table-wrap"><table>
+    <div class="table-wrap" tabindex="0" role="region" aria-label={`Domain ${d.n} acronyms (scrolls sideways on small screens)`}><table>
       <thead><tr><th>Acronym</th><th>Stands for</th><th>What it means</th></tr></thead>
       <tbody>
         {data.acronyms.filter((a) => a.domain === d.n).map((a) => (
