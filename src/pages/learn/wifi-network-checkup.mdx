@@ -1,6 +1,6 @@
 ---
 layout: ../../components/learn/LearnLayout.astro
-title: "Check your own Wi-Fi: a plain-English router checkup"
+title: "Check your own Wi-Fi: a 30-minute router checkup"
 description: A beginner walkthrough of the router settings that matter for a home or small business, including the admin password, firmware updates, Wi-Fi security (WPA3), a guest network, remote management and a before-and-after speed test.
 kicker: Learn · Networking · Security · Beginner
 back: { href: /learn/, label: Back to Learn }
@@ -11,6 +11,8 @@ export const img = (name) => siteUrl(`/images/learn/wifi-checkup/${name}.webp`);
 export const caption = 'Illustration: generic router settings screen, not from a real device.';
 
 <p class="lead">Most routers get set up once, on install day, and never opened again. This guide covers the few settings that matter and what good looks like. Menu names vary, but the ideas are the same.</p>
+
+<p class="callout">Prefer to work on paper? There's a <a href={siteUrl('/downloads/wifi-checkup-worksheet.pdf')} download="wifi-checkup-worksheet.pdf" data-umami-event="worksheet-download" data-umami-event-location="learn-wifi-network-checkup-intro">free printable checkup worksheet (PDF)</a> that follows the same steps, with boxes to tick as you go. You'll also find it in the <a href="#worksheet">download box at the end</a>.</p>
 
 ## What you'll need
 
@@ -51,7 +53,7 @@ If the firmware is years old and new versions have stopped, the router is past i
 
 The Wi-Fi name (SSID) is what shows up in everyone's network list. If it includes the router brand or model, change it, since that hints at which defaults to try. Skip your name or address too; boring is best.
 
-The Wi-Fi password decides who can join; it's separate from the admin password. A few random words make a strong passphrase that's easy to type. If past staff or neighbours have it, change it, but do it last, since every device must rejoin.
+The Wi-Fi password decides who can join; it's separate from the admin password. A few random words make a strong passphrase that's easy to type. If past staff or neighbors have it, change it, but do it last, since every device must rejoin.
 
 ## Security type: WPA3, WPA2 and the pairing button
 
@@ -91,7 +93,7 @@ Remote management (or remote access) lets someone open the admin page from outsi
 
 Most routers list connected devices, sometimes called "clients". Don't panic over odd names made of letters and numbers; just match each entry to something you own. Turning things off one at a time and watching what disappears works well.
 
-Block anything you can't account for, or change the Wi-Fi password. Renaming devices you recognise makes the next checkup quicker.
+Block anything you can't account for, or change the Wi-Fi password. Renaming devices you recognize makes the next checkup quicker.
 
 <figure class="tut-shot">
   <img src={img('connected-devices')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic router connected devices list with example names such as office laptop, front desk tablet, phone, printer, smart thermostat on the guest network, and one unknown device flagged to check." />
@@ -129,7 +131,7 @@ Photograph each settings page before you change it, so "what did I change?" is a
   <div>
     <span class="kicker">Free download · PDF</span>
     <h2 style="margin-top:.3rem">Your Wi-Fi &amp; Network Checkup</h2>
-    <p class="muted" style="margin:0">Free checklist: check your own home or business Wi-Fi in about 30 minutes. Every setting from this guide, in plain English, with space to note what you found.</p>
+    <p class="muted" style="margin:0">Free checklist: check your own home or business Wi-Fi in about 30 minutes. Every setting from this guide, explained simply, with space to note what you found.</p>
   </div>
   <a class="btn btn-primary" href={siteUrl('/downloads/wifi-checkup-worksheet.pdf')} download="wifi-checkup-worksheet.pdf" data-umami-event="worksheet-download" data-umami-event-location="learn-wifi-network-checkup">Download the free checklist</a>
 </div>
@@ -137,13 +139,13 @@ Photograph each settings page before you change it, so "what did I change?" is a
 <div class="nl-box" style="margin-top:1.25rem">
   <span class="kicker">Newsletter · Weekly</span>
   <h2 style="margin-top:.3rem">Get the free weekly email</h2>
-  <p class="muted">Unlock the Week: one tech story in plain English, a skill tip, gear picks and something to learn, once a week. No spam; unsubscribe anytime.</p>
+  <p class="muted">Unlock the Week: one tech story explained simply, a skill tip, gear picks and something to learn, once a week. No spam; unsubscribe anytime.</p>
   <NewsletterForm id="learn-wifi-nl" compact />
 </div>
 
 <article class="card" style="margin-top:2rem">
   <span class="kicker">Prefer a hand with it?</span>
   <h3>We can check it with you</h3>
-  <p>If you'd rather not dig through router menus yourself, NeonKey can walk through it with you remotely, over a screen share, and leave you a plain-English note of what changed.</p>
+  <p>If you'd rather not dig through router menus yourself, NeonKey can walk through it with you remotely, over a screen share, and leave you a short, jargon-free note of what changed.</p>
   <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
 </article>
