@@ -46,7 +46,7 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
 
   const bullets = [
     "One email a week, about a three-minute read.",
-    "One AI story worth knowing, with a plain-English takeaway.",
+    "One tech story worth knowing, with a plain-English takeaway.",
     "One skill tip you can try in a few minutes.",
     "Gear picks from NeonKey's reviews.",
     "A Learn spotlight, plus a tool or demo to try.",
