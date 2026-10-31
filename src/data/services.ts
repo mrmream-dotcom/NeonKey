@@ -52,7 +52,7 @@ export const remoteIt: Offer = {
   for: 'Get email, Wi-Fi, backups and passwords set up properly for a small office or solo business, fully remote',
   items: [
     'Business email on your own domain (Google Workspace or Microsoft 365)',
-    'Email authentication: SPF, DKIM and DMARC',
+    'Email security settings that stop scammers faking your address (SPF, DKIM, DMARC)',
     'Wi-Fi and router security walkthrough',
     'Backups, password manager rollout and device checklists',
   ],
@@ -61,22 +61,22 @@ export const remoteIt: Offer = {
   details: {
     who: "For small offices and solo pros, roughly 1 to 10 people, whose email, passwords and backups grew up by accident. It gets the basics set up properly, on accounts you own, without hiring an IT department.",
     included: [
-      'Business email on your own domain in Google Workspace or Microsoft 365: mailboxes, aliases (like hello@ or billing@) and shared calendars',
-      'SPF, DKIM and DMARC records published for your domain, with DMARC started in monitor mode',
-      'A guided video session on your router: firmware, admin and Wi-Fi passwords, WPA2/WPA3 and a guest network',
+      'Business email on your own domain in Google Workspace or Microsoft 365: mailboxes, extra addresses that land in the same inbox (aliases, like hello@ or billing@) and shared calendars',
+      'Email security settings published for your domain, so scammers can\'t easily fake your address (SPF, DKIM and DMARC records), with DMARC started in report-only mode (monitor mode)',
+      'A guided video session on your router: its built-in software (firmware) updates, admin and Wi-Fi passwords, modern Wi-Fi encryption (WPA2/WPA3) and a guest network',
       'A simple backup plan for the files that matter, with a test restore',
-      'A business password manager set up with shared vaults, plus two-factor sign-in on key accounts',
+      'A business password manager set up with shared password folders (vaults), plus a second login step, like a code on your phone (2FA), on key accounts',
       'Written checklists for setting up and retiring laptops and phones',
       'Plain-English notes of every change, and admin access that stays with you',
     ],
     steps: [
       { h: 'Scoping call', p: 'A short video call to list what you have today and pick what is in scope. You get a fixed quote before any work starts.' },
-      { h: 'Setup sessions', p: 'I do the work remotely by screen share and in the admin consoles you give me access to. Some steps, like DNS changes, can take a day or two to settle.' },
-      { h: 'Check it works', p: 'We send test emails, check the authentication records, try signing in with two-factor and do a test restore from backup.' },
+      { h: 'Setup sessions', p: 'I do the work remotely by screen share and in the admin settings pages (admin consoles) you give me access to. Some steps, like changes to your domain settings (DNS), can take a day or two to settle.' },
+      { h: 'Check it works', p: 'We send test emails, check the authentication records, try signing in with the second login step (2FA) and do a test restore from backup.' },
       { h: 'Walkthrough and handoff', p: 'A short walkthrough of what changed, the written notes and checklists, and a review that you hold every admin login.' },
     ],
     provide: [
-      'Admin access to your domain registrar or DNS host, and to Google Workspace or Microsoft 365 if you already use one',
+      'Admin access to the company where you bought your domain (registrar) or where its settings are managed (DNS host), and to Google Workspace or Microsoft 365 if you already use one',
       'A list of the people, mailboxes and devices to include',
       'Someone at the office who can join a video call and follow along on the router and devices',
     ],
@@ -98,7 +98,7 @@ export const remoteSupportPlan: Offer = {
   from: 99,
   unit: '/mo',
   outcome: "Get small IT changes and questions handled without hiring an IT department",
-  for: 'Optional add-on after setup: async help by email or ticket, with an agreed response window',
+  for: 'Optional add-on after setup: help by email or support ticket, answered in writing rather than live (async), with an agreed response window',
   items: [
     'A set number of small requests each month, agreed up front',
     'Email or ticket based, answered within an agreed business-day window',
@@ -111,7 +111,7 @@ export const remoteSupportPlan: Offer = {
     included: [
       'A set number of small requests each month, agreed up front',
       'Account adds and removes when people join or leave',
-      'Settings changes, for example a new alias, a shared folder or a password manager vault',
+      'Settings changes, for example a new alias, a shared folder or a shared password folder (vault)',
       'How-to questions answered in plain English',
       'A short note of what was changed for each request',
     ],
@@ -145,7 +145,7 @@ export const automationOffers: Offer[] = [
     for: 'Automate one repetitive task and get a quick remote check of your tech basics',
     items: [
       'One simple workflow automated, scoped together first, using tools you already use',
-      'A short remote checkup of the basics: passwords and two-factor sign-in, backups, Wi-Fi and router basics, device updates and security settings',
+      'A short remote checkup of the basics: passwords and a second login step, like a code on your phone (2FA), backups, Wi-Fi and router basics, device updates and security settings',
       'A plain-English written to-do list of the top fixes',
       'Short walkthrough video and notes, then a handoff so you own it',
     ],
@@ -189,10 +189,10 @@ export const automationOffers: Offer[] = [
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
-      'Routing rules, for example by service, location or source, to the right person, sheet or CRM',
+      'Routing rules, for example by service, location or source, to the right person, sheet or customer database (CRM)',
       'An instant confirmation to the person who reached out, if you want one',
       'Follow-up reminders for you, plus email templates for the first few replies',
-      'A simple tracking view, for example a Google Sheet or a CRM pipeline, showing every lead and its status',
+      'A simple tracking view, for example a Google Sheet or a sales pipeline in your customer database (CRM), showing every lead and its status',
       'Duplicate checks and an alert if a step fails',
       'A walkthrough video and notes covering how to change rules and templates yourself',
       ],
@@ -207,7 +207,7 @@ export const automationOffers: Offer[] = [
         'Admin access to the forms, inbox and any CRM involved',
         'The replies you send now, so templates match how you write',
       ],
-      tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form tools (for example Google Forms, Microsoft Forms, Jotform or Typeform), Slack or Teams for alerts, and CRMs with a standard integration or API, such as HubSpot. Built with mainstream automation tools (for example Zapier, Make or n8n) or Google Apps Script. Anything else is checked on the scoping call.',
+      tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form tools (for example Google Forms, Microsoft Forms, Jotform or Typeform), Slack or Teams for alerts, and customer databases (CRMs) such as HubSpot that can connect to other apps (a standard integration or API). Built with mainstream automation tools (for example Zapier, Make or n8n) or Google Apps Script, Google\'s built-in automation scripting. Anything else is checked on the scoping call.',
       turnaround: 'Usually 2 to 4 weeks from the scoping call, depending on how many sources and tools are involved. Your quote gives the plan.',
       priceFactors: [
         'How many intake sources and tools need connecting',

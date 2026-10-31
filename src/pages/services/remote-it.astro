@@ -4,15 +4,15 @@ import Base from '../../layouts/Base.astro';
 import OfferDetails from '../../components/OfferDetails.astro';
 import { remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
 const setup = [
-  { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, aliases like hello@ or billing@, shared calendars and a clean admin account that you own.' },
-  { h: 'Email authentication', p: 'Publish SPF, DKIM and DMARC records so your mail is more likely to land in inboxes and harder to spoof. Start DMARC in monitor mode, then tighten it once reports look clean.' },
-  { h: 'Wi-Fi & router security walkthrough', p: 'A guided video session on your own router: firmware updates, strong admin and Wi-Fi passwords, WPA2/WPA3, a separate guest network and turning off features you don\'t use.' },
-  { h: 'Backups', p: 'A simple 3-2-1 plan for the files that matter: what gets backed up, where, how often, and a test restore so you know it works.' },
-  { h: 'Password manager rollout', p: 'Pick a business password manager, set up shared vaults, turn on two-factor sign-in for key accounts and give everyone a short how-to.' },
+  { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, extra addresses like hello@ or billing@ that land in the same inbox (aliases), shared calendars and a clean admin account that you own.' },
+  { h: 'Email security (authentication)', p: 'Publish the email security settings that stop scammers faking your address (SPF, DKIM and DMARC records), so your mail is more likely to land in inboxes and harder to spoof. Start DMARC in report-only mode (monitor mode), then tighten it once reports look clean.' },
+  { h: 'Wi-Fi & router security walkthrough', p: 'A guided video session on your own router: router software (firmware) updates, strong admin and Wi-Fi passwords, modern Wi-Fi encryption (WPA2/WPA3), a separate guest network and turning off features you don\'t use.' },
+  { h: 'Backups', p: 'A simple 3-2-1 plan (three copies, on two kinds of storage, one kept off-site) for the files that matter: what gets backed up, where, how often, and a test restore so you know it works.' },
+  { h: 'Password manager rollout', p: 'Pick a business password manager, set up shared password folders (vaults), turn on a second login step, like a code on your phone (2FA), for key accounts and give everyone a short how-to.' },
   { h: 'Device setup checklists', p: 'A written checklist for new and departing laptops and phones: updates, disk encryption, screen lock, accounts in and out. Yours to reuse.' },
 ];
 ---
-<Base title={remoteIt.name} description="Remote small-office IT setup for small businesses and solo pros: business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups, password managers and device checklists. Optional monthly remote support.">
+<Base title={remoteIt.name} description="Remote small-office IT setup for small businesses and solo pros: business email, email security settings (SPF/DKIM/DMARC), Wi-Fi hardening, backups, password managers and device checklists. Optional monthly remote support.">
   <div class="container page-head">
     <span class="kicker">Services · Fully remote</span>
     <h1>{remoteIt.name}</h1>
@@ -96,7 +96,7 @@ const setup = [
           <ul>
             <li>Onsite visits or hardware installs</li>
             <li>Government systems or contracts</li>
-            <li>Regulated data handling or compliance work (for example HIPAA or PCI)</li>
+            <li>Regulated data handling or compliance work (for example health records under HIPAA or card payments under PCI)</li>
             <li>24/7, emergency or after-hours response</li>
             <li>Guarantees of security, uptime or deliverability</li>
           </ul>
