@@ -1,10 +1,10 @@
-// NeonKey Lab (draft): AI receipt & invoice sorter.
+// NeonKey Lab: AI receipt & invoice sorter (https://neonkey.tech/lab/receipt-sorter/).
 // POST /extract {type, data(base64), name?} -> structured fields read from one receipt or invoice image/PDF.
 // Privacy: the file goes to Google's Gemini API and the fields come back to the browser. The Worker never stores
 // or logs the file or the extracted fields. The visitor's ledger lives only in their own browser (localStorage).
 // Limits: per-IP burst + daily caps and a global daily cap, enforced by the Limiter Durable Object (same pattern
 // as workers/triage). File size and type are checked before anything reaches the AI.
-// Static files in ./preview (the noindex draft page) are served by Workers static assets before this code runs.
+// The page itself lives on neonkey.tech; any GET here other than /health and /robots.txt redirects there.
 
 import { DurableObject } from 'cloudflare:workers';
 
@@ -81,14 +81,14 @@ export default {
       new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Robots-Tag': 'noindex, nofollow', ...cors, ...extra } });
 
     // The preview page lives at /lab/receipt-sorter/ (static assets); send the bare URL there.
-    if (url.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) return Response.redirect(`${url.origin}/lab/receipt-sorter/`, 302);
+    if (url.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) return Response.redirect('https://neonkey.tech/lab/receipt-sorter/', 301);
     if (url.pathname === '/health') {
-      return reply(200, { ok: true, service: 'NeonKey receipt & invoice sorter (draft)', endpoint: 'POST /extract' });
+      return reply(200, { ok: true, service: 'NeonKey receipt & invoice sorter', endpoint: 'POST /extract' });
     }
     if (url.pathname === '/robots.txt') return new Response('User-agent: *\nDisallow: /\n', { headers: { 'Content-Type': 'text/plain' } });
     if (url.pathname !== '/extract') {
-      // The preview only hosts the draft page; site navigation links go to the real site.
-      if (request.method === 'GET' || request.method === 'HEAD') return Response.redirect(`https://neonkey.tech${url.pathname}${url.search}`, 302);
+      // The old workers.dev preview (and any other GET) goes to the live site.
+      if (request.method === 'GET' || request.method === 'HEAD') return Response.redirect(`https://neonkey.tech${url.pathname}${url.search}`, 301);
       return reply(404, { ok: false, error: 'not_found', message: 'Not found.' });
     }
 

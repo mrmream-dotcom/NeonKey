@@ -1,15 +1,14 @@
 ---
-// DRAFT Labs build: noindex, hidden from /lab/ (draft: true in src/data/lab.ts) and excluded from the sitemap
-// (DRAFT_PAGES in astro.config.mjs). Remove all three to publish. Worker source: workers/receipts/.
+// Lab tool: AI receipt & invoice sorter. Worker source: workers/receipts/.
 import { url, RECEIPT_API_URL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import Toc from '../../components/Toc.astro';
 const CATEGORIES = ['Office supplies', 'Software & subscriptions', 'Meals', 'Travel', 'Fuel', 'Equipment', 'Utilities', 'Advertising', 'Professional services', 'Sales / client payments', 'Other'];
 const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add an entry'], ['ledger', 'Your ledger'], ['privacy', 'Privacy'], ['how', 'How it works'], ['limits', 'Limitations'], ['why', 'Why custom?']];
 ---
-<Base title="AI receipt & invoice sorter" description="Snap a receipt or upload an invoice, check what the AI read, and keep a simple ledger in your browser that exports to a spreadsheet." noindex>
+<Base title="AI receipt & invoice sorter" description="Snap a receipt or upload an invoice, check what the AI read, and keep a simple ledger in your browser that exports to a spreadsheet.">
   <div class="container page-head">
-    <span class="kicker">Lab · AI · Automation · Draft</span>
+    <span class="kicker">Lab · AI · Automation</span>
     <h1>Receipt &amp; invoice <span class="glow-c">sorter.</span></h1>
     <p>Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
     <Toc sections={sections} />
