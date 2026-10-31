@@ -101,6 +101,10 @@ const pillars = [
         <article class="card"><span class="kicker">Starting at {usd(aiFaq.from)}</span><h3><a href={url('/services/#ai-faq')} data-umami-event="services-cta" data-umami-event-location="home-ai-faq">{aiFaq.name}</a></h3><p class="offer-outcome">{aiFaq.outcome}.</p><p>Answer common questions and collect leads consistently.</p></article>
       </div>
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
+        <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
+      </div>
       <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. More automation services are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>
