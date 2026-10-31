@@ -105,6 +105,31 @@ const pillars = [
     </div>
   </section>
 
+  <section aria-labelledby="who-h">
+    <div class="container">
+      <article class="card who-card">
+        <svg class="who-mark" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="who-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22d3ee" /><stop offset="0.55" stop-color="#a78bfa" /><stop offset="1" stop-color="#f472b6" />
+            </linearGradient>
+          </defs>
+          <g fill="none" stroke="url(#who-grad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="22" cy="32" r="11" />
+            <path d="M33 32h22M47 32v9M54 32v6" />
+          </g>
+          <circle cx="22" cy="32" r="3.5" fill="#f472b6" />
+        </svg>
+        <div>
+          <span class="kicker">Who does the work</span>
+          <h2 id="who-h" style="font-size:1.35rem;margin:.3rem 0 .5rem">Michael Ream</h2>
+          <p>NeonKey is run by me, Michael Ream, and I do the client work myself. I've spent years working hands-on in tech, setting up, maintaining and troubleshooting networks and communication systems. I hold a Computer Installation and Repair Technician certificate from the California Institute of Applied Technology and I'm studying Computer Information Systems.</p>
+          <p style="margin-bottom:0">For clients, that means small-office setups done properly: business email that's less likely to land in spam and harder for scammers to fake, Wi-Fi, backups and passwords locked down, and small automations you fully own. <a href={url('/about/')}>More about me →</a></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section aria-labelledby="lip-h">
     <div class="narrow">
       <div class="callout">
@@ -114,3 +139,10 @@ const pillars = [
     </div>
   </section>
 </Base>
+
+<style>
+  .who-card { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.5rem; align-items: start; }
+  .who-card p + p { margin-top: .75rem; }
+  .who-mark { flex-shrink: 0; filter: drop-shadow(0 0 12px rgba(167,139,250,.45)); }
+  @media (max-width: 640px) { .who-card { grid-template-columns: 1fr; } }
+</style>
