@@ -112,6 +112,18 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
       </ol>
     </div>
   </section>
+
+  <section aria-labelledby="faq-h">
+    <div class="container faq">
+      <h2 id="faq-h">FAQ</h2>
+      <details class="offer-details faq-item">
+        <summary>Why not just buy software?</summary>
+        <div class="offer-details-body">
+          <p>Sometimes you should. If an off-the-shelf app already does exactly what you need, use it, and I'm happy to help you set it up. A custom build makes sense when an app would make you change how you work. It fits the process you already have: your categories, your spreadsheet, your steps. It can also connect or replace subscriptions that overlap, and it plugs into the tools you already use. And you own it outright, so there are no surprise price hikes or features that disappear in an update. You control where your data goes. If you'd like, I can maintain it for you, or you can run it yourself.</p>
+        </div>
+      </details>
+    </div>
+  </section>
 </Base>
 
 <style>
@@ -119,4 +131,8 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
   .offer[id] { scroll-margin-top: 90px; }
   .support-card .offer-featured-grid { align-items: start; }
   .support-card .btn { margin-top: 0; }
+  .faq { max-width: 760px; }
+  .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
+  .faq-item > summary { color: var(--text); font-size: 1.05rem; }
+  .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }
 </style>
