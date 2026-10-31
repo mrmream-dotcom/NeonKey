@@ -16,6 +16,8 @@ confirm-reminder workers and shares nothing with them.
   `PER_IP_MINUTE=5`, `PER_IP_DAILY=20`, `GLOBAL_DAILY=100`.
 - Model: `PRIMARY_MODEL=gemini-3.5-flash`, `FALLBACK_MODEL=gemini-3.5-flash-lite` (free tier), structured output
   schema, server-side validation (`clean()`), sanity `checks()`. Blank rather than guessed values.
+  `discount` is a positive amount taken off (blank if none); `tip` is filled only if printed. The total
+  check accepts subtotal − discount + tax (+ tip, whether or not the tip is included in the printed total).
 - Never logs file content or extracted fields.
 
 ## Deploy

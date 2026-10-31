@@ -10,7 +10,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
   <div class="container page-head">
     <span class="kicker">Lab · AI · Automation</span>
     <h1>Receipt &amp; invoice <span class="glow-c">sorter.</span></h1>
-    <p>Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
+    <p>Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax, any discount or tip, and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
     <Toc sections={sections} />
   </div>
 
@@ -48,6 +48,8 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
             <div><label for="f-party" id="f-party-label">Paid to (vendor)</label><input id="f-party" name="party" type="text" maxlength="120" autocomplete="off" required /></div>
             <div><label for="f-amount">Total amount</label><input id="f-amount" name="amount" type="text" inputmode="decimal" placeholder="0.00" required /></div>
             <div><label for="f-tax">Tax <span class="muted">(optional)</span></label><input id="f-tax" name="tax" type="text" inputmode="decimal" placeholder="0.00" /></div>
+            <div><label for="f-discount">Discount <span class="muted">(optional, amount off)</span></label><input id="f-discount" name="discount" type="text" inputmode="decimal" placeholder="0.00" /></div>
+            <div><label for="f-tip">Tip <span class="muted">(optional)</span></label><input id="f-tip" name="tip" type="text" inputmode="decimal" placeholder="0.00" /></div>
             <div><label for="f-currency">Currency</label><input id="f-currency" name="currency" type="text" maxlength="3" placeholder="USD" autocapitalize="characters" /></div>
             <div><label for="f-category">Category</label><select id="f-category" name="category"><option value="">Choose…</option>{CATEGORIES.map((c) => <option value={c}>{c}</option>)}</select></div>
             <div><label for="f-method">Payment method <span class="muted">(optional)</span></label><input id="f-method" name="method" type="text" maxlength="60" placeholder="e.g. Visa ending 1234, cash" /></div>
@@ -106,8 +108,8 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     <ol>
       <li><strong>Photo or PDF:</strong> large photos are shrunk in your browser first so they upload faster on a phone.</li>
       <li><strong>Worker:</strong> a Cloudflare Worker checks the file type and size (5 MB max), where the request came from, and the rate limits before anything reaches the AI.</li>
-      <li><strong>AI:</strong> Gemini reads the document and fills in a fixed JSON schema: type, date, vendor, total, tax, currency, payment method, category, line items and a confidence note. It's told to leave a field blank rather than guess.</li>
-      <li><strong>Checks:</strong> the Worker validates every value (real dates, real numbers, known categories, no full card numbers) and flags things worth a second look, like a subtotal plus tax that doesn't match the total.</li>
+      <li><strong>AI:</strong> Gemini reads the document and fills in a fixed JSON schema: type, date, vendor, subtotal, discount, tax, tip, total, currency, payment method, category, line items and a confidence note. It's told to leave a field blank rather than guess.</li>
+      <li><strong>Checks:</strong> the Worker validates every value (real dates, real numbers, known categories, no full card numbers) and flags things worth a second look, like a subtotal, minus any discount, plus tax (and tip) that doesn't match the total.</li>
       <li><strong>You review:</strong> the fields land in an editable form. Nothing is saved until you press "Save to ledger".</li>
     </ol>
 
@@ -273,6 +275,8 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     F('party').value = r.vendor || '';
     F('amount').value = r.total != null ? r.total.toFixed(2) : '';
     F('tax').value = r.tax != null ? r.tax.toFixed(2) : '';
+    F('discount').value = r.discount != null ? r.discount.toFixed(2) : '';
+    F('tip').value = r.tip != null ? r.tip.toFixed(2) : '';
     if (r.currency) F('currency').value = r.currency;
     F('category').value = r.category || '';
     F('method').value = r.payment_method || '';
@@ -297,6 +301,8 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     const notes = [];
     if (r.confidence_note) notes.push(r.confidence_note);
     (data.checks || []).forEach((c) => notes.push(c));
+    if (r.tip != null && r.total != null && r.subtotal != null && Math.abs(r.subtotal - (r.discount || 0) + (r.tax || 0) - r.total) <= 0.02)
+      notes.push(`The tip (${r.tip.toFixed(2)}) is printed separately and isn't part of the printed total. If you paid it, add it to the total.`);
     if (isInvoice) notes.push('Invoice: choose Out if it is a bill you owe, or In if you sent it to a client.');
     if (notes.length) { const ul = el('ul'); notes.forEach((n) => ul.append(el('li', '', n))); card.append(ul); }
     else card.append(el('p', '', 'Everything read clearly. Still compare it with the original before saving.'));
@@ -316,6 +322,8 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     const st = $('rs-form-status');
     const amount = parseAmount(F('amount').value);
     const tax = F('tax').value.trim() ? parseAmount(F('tax').value) : null;
+    const optAmt = (n) => (F(n).value.trim() ? parseAmount(F(n).value) : null);
+    const discount = optAmt('discount'), tip = optAmt('tip');
     const date = F('date').value;
     const party = F('party').value.trim();
     const currency = F('currency').value.trim().toUpperCase();
@@ -323,10 +331,12 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     if (!party) return statusMsg(st, F('direction').value === 'in' ? 'Please enter who paid you.' : 'Please enter who you paid.', true);
     if (amount == null || amount <= 0) return statusMsg(st, 'Please enter the total as a number above zero, like 12.50.', true);
     if (F('tax').value.trim() && tax == null) return statusMsg(st, 'Tax should be a number, like 1.25, or left blank.', true);
+    if (F('discount').value.trim() && (discount == null || discount < 0)) return statusMsg(st, 'Discount should be the amount taken off as a positive number, like 5.00, or left blank.', true);
+    if (F('tip').value.trim() && (tip == null || tip < 0)) return statusMsg(st, 'Tip should be a number, like 3.00, or left blank.', true);
     if (currency && !/^[A-Z]{3}$/.test(currency)) return statusMsg(st, 'Currency should be a 3-letter code like USD or CAD, or left blank.', true);
     const prev = editingId ? entries.find((x) => x.id === editingId) : null;
     const entry = {
-      id: prev ? prev.id : uid(), date, party, amount, tax, currency: currency || 'USD',
+      id: prev ? prev.id : uid(), date, party, amount, tax, discount, tip, currency: currency || 'USD',
       direction: F('direction').value === 'in' ? 'in' : 'out', category: F('category').value || '',
       method: F('method').value.trim(), docType: F('docType').value, ref: F('ref').value.trim(), due: F('due').value || '',
       notes: F('notes').value.trim(),
@@ -442,7 +452,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
       list.forEach((x) => {
         const tr = el('tr');
         tr.append(el('td', 'rs-c-date', x.date));
-        const p = el('td', 'rs-c-party'); p.append(document.createTextNode(x.party)); const sub = [x.method, x.ref ? `#${x.ref}` : '', x.source === 'ai' ? 'AI-read' : ''].filter(Boolean).join(' · '); if (sub) p.append(el('span', 'rs-sub', sub)); tr.append(p);
+        const p = el('td', 'rs-c-party'); p.append(document.createTextNode(x.party)); const sub = [x.method, x.ref ? `#${x.ref}` : '', x.discount != null ? `discount ${x.discount.toFixed(2)}` : '', x.tip != null ? `tip ${x.tip.toFixed(2)}` : '', x.source === 'ai' ? 'AI-read' : ''].filter(Boolean).join(' · '); if (sub) p.append(el('span', 'rs-sub', sub)); tr.append(p);
         tr.append(el('td', 'rs-c-cat', x.category || '—'));
         const a = el('td', 'num rs-c-amt ' + (x.direction === 'in' ? 'rs-in' : 'rs-out'), (x.direction === 'in' ? '+' : '−') + fmt(x.amount, x.currency)); tr.append(a);
         const act = el('td', 'rs-act rs-c-act');
@@ -470,6 +480,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     resetForm(); editingId = id;
     form.querySelector(`input[name=direction][value=${x.direction}]`).checked = true;
     F('date').value = x.date; F('party').value = x.party; F('amount').value = x.amount.toFixed(2); F('tax').value = x.tax != null ? x.tax.toFixed(2) : '';
+    F('discount').value = x.discount != null ? x.discount.toFixed(2) : ''; F('tip').value = x.tip != null ? x.tip.toFixed(2) : '';
     F('currency').value = x.currency || ''; F('category').value = x.category || ''; F('method').value = x.method || ''; F('docType').value = x.docType || 'other';
     F('ref').value = x.ref || ''; F('due').value = x.due || ''; F('notes').value = x.notes || '';
     partyLabel(); $('rs-form-title').textContent = 'Edit entry'; $('rs-save').textContent = 'Save changes';
@@ -478,7 +489,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
   ['flt-month', 'flt-cat', 'flt-dir'].forEach((id) => $(id).addEventListener('change', render));
 
   // ---------- CSV ----------
-  const COLS = [['Date', 'date'], ['Direction', 'direction'], ['Payee/Payer', 'party'], ['Category', 'category'], ['Amount', 'amount'], ['Signed amount', null], ['Tax', 'tax'], ['Currency', 'currency'], ['Payment method', 'method'], ['Type', 'docType'], ['Reference', 'ref'], ['Due date', 'due'], ['Notes', 'notes'], ['Line items', null], ['Source', 'source'], ['ID', 'id']];
+  const COLS = [['Date', 'date'], ['Direction', 'direction'], ['Payee/Payer', 'party'], ['Category', 'category'], ['Amount', 'amount'], ['Signed amount', null], ['Tax', 'tax'], ['Discount', 'discount'], ['Tip', 'tip'], ['Currency', 'currency'], ['Payment method', 'method'], ['Type', 'docType'], ['Reference', 'ref'], ['Due date', 'due'], ['Notes', 'notes'], ['Line items', null], ['Source', 'source'], ['ID', 'id']];
   const safeText = (v) => { const s = String(v ?? ''); return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; }; // stop spreadsheet formula injection
   const q = (v) => { const s = String(v ?? ''); return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
   function toCsv(list) {
@@ -488,7 +499,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
         if (h === 'Signed amount') return (x.direction === 'in' ? x.amount : -x.amount).toFixed(2);
         if (h === 'Line items') return q(safeText((x.lineItems || []).map((li) => `${li.description}${li.amount != null ? ' ' + li.amount.toFixed(2) : ''}`).join('; ')));
         if (k === 'amount') return x.amount.toFixed(2);
-        if (k === 'tax') return x.tax != null ? x.tax.toFixed(2) : '';
+        if (k === 'tax' || k === 'discount' || k === 'tip') return x[k] != null ? x[k].toFixed(2) : '';
         if (k === 'direction') return x.direction === 'in' ? 'In' : 'Out';
         return q(safeText(x[k]));
       }).join(','));
@@ -524,7 +535,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     if (rows.length < 2) return statusMsg(st, 'That CSV has no rows to import.', true);
     const head = rows[0].map((h) => h.trim().toLowerCase());
     const col = (...names) => head.findIndex((h) => names.includes(h));
-    const ix = { date: col('date'), dir: col('direction', 'in/out', 'type (in/out)'), party: col('payee/payer', 'payee', 'payer', 'vendor', 'merchant', 'description'), cat: col('category'), amt: col('amount', 'total'), signed: col('signed amount'), tax: col('tax'), cur: col('currency'), method: col('payment method', 'method'), type: col('type'), ref: col('reference', 'invoice #', 'receipt #'), due: col('due date'), notes: col('notes'), id: col('id') };
+    const ix = { date: col('date'), dir: col('direction', 'in/out', 'type (in/out)'), party: col('payee/payer', 'payee', 'payer', 'vendor', 'merchant', 'description'), cat: col('category'), amt: col('amount', 'total'), signed: col('signed amount'), tax: col('tax'), disc: col('discount'), tip: col('tip', 'gratuity'), cur: col('currency'), method: col('payment method', 'method'), type: col('type'), ref: col('reference', 'invoice #', 'receipt #'), due: col('due date'), notes: col('notes'), id: col('id') };
     if (ix.date < 0 || (ix.amt < 0 && ix.signed < 0)) return statusMsg(st, 'The CSV needs at least a Date and an Amount column (an export from this page works).', true);
     const unq = (v) => String(v ?? '').replace(/^'(?=[=+\-@])/, '').trim();
     let added = 0, skipped = 0; const ids = new Set(entries.map((x) => x.id));
@@ -538,7 +549,9 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || amount == null || amount === 0 || (id && ids.has(id))) { skipped++; return; }
       const cat = g(ix.cat); const tax = parseAmount(g(ix.tax)); const cur = g(ix.cur).toUpperCase();
       const type = g(ix.type).toLowerCase();
-      entries.push({ id: id || uid(), date, party: g(ix.party).slice(0, 120) || '(no name)', amount, tax, currency: /^[A-Z]{3}$/.test(cur) ? cur : 'USD', direction, category: CATEGORIES.includes(cat) ? cat : '', method: g(ix.method).slice(0, 60), docType: ['receipt', 'invoice', 'payment', 'other'].includes(type) ? type : 'other', ref: g(ix.ref).slice(0, 60), due: /^\d{4}-\d{2}-\d{2}$/.test(g(ix.due)) ? g(ix.due) : '', notes: g(ix.notes).slice(0, 500), lineItems: [], source: 'import', createdAt: new Date().toISOString() });
+      const pos = (v) => { const n = parseAmount(v); return n == null || n === 0 ? null : Math.abs(n); };
+      const discount = pos(g(ix.disc)), tip = pos(g(ix.tip));
+      entries.push({ id: id || uid(), date, party: g(ix.party).slice(0, 120) || '(no name)', amount, tax, discount, tip, currency: /^[A-Z]{3}$/.test(cur) ? cur : 'USD', direction, category: CATEGORIES.includes(cat) ? cat : '', method: g(ix.method).slice(0, 60), docType: ['receipt', 'invoice', 'payment', 'other'].includes(type) ? type : 'other', ref: g(ix.ref).slice(0, 60), due: /^\d{4}-\d{2}-\d{2}$/.test(g(ix.due)) ? g(ix.due) : '', notes: g(ix.notes).slice(0, 500), lineItems: [], source: 'import', createdAt: new Date().toISOString() });
       if (id) ids.add(id); added++;
     });
     store(); render();
