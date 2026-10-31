@@ -1,0 +1,149 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Check your own Wi-Fi: a plain-English router checkup"
+description: A beginner walkthrough of the router settings that matter for a home or small business, including the admin password, firmware updates, Wi-Fi security (WPA3), a guest network, remote management and a before-and-after speed test.
+kicker: Learn · Networking · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+import NewsletterForm from '../../components/NewsletterForm.astro';
+export const img = (name) => siteUrl(`/images/learn/wifi-checkup/${name}.webp`);
+export const caption = 'Illustration: generic router settings screen, not from a real device.';
+
+<p class="lead">Most routers get set up once, on install day, and never opened again. This guide covers the few settings that matter and what good looks like. Menu names vary, but the ideas are the same.</p>
+
+## What you'll need
+
+- A laptop or phone connected to your Wi-Fi
+- Access to the router, so you can read the sticker on it
+- A password manager, or somewhere safe to note new passwords
+- About 30 minutes when a few minutes offline won't bother anyone
+
+## Why the router is worth a look
+
+The router is the front door to everything on your network, from laptops to cameras. Anyone who gets into it can see or redirect much of what passes through, and since routers rarely nag about updates, problems can sit quietly for years. The good news: most of the risk comes from a short list of settings, covered below in order.
+
+## Getting into the router's admin page
+
+Every router has a settings page, usually called the admin page. The sticker on the router normally lists its address (often 192.168.0.1 or 192.168.1.1) and a default login. Type that address into a browser while on the Wi-Fi, or scan the QR code if your router uses an app.
+
+If the sticker password still works, anyone walking past can get in, so changing it is the most important fix in this guide. Use something long and random, kept in a password manager.
+
+<figure class="tut-shot">
+  <img src={img('login')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic router admin sign-in page with username and password fields and a warning that the default password is still in use." />
+  <figcaption>{caption}</figcaption>
+</figure>
+
+If your internet provider supplied the router, some settings may be locked. Change what you can and ask them about the rest.
+
+## Firmware updates
+
+Firmware is the software that runs the router. Security fixes only reach you if updates get installed, so check the installed version, its release date, and whether automatic updates are available. If they are, turn them on.
+
+If the firmware is years old and new versions have stopped, the router is past its useful life, so budget for a replacement. Updates usually restart the router; don't unplug it mid-update.
+
+<figure class="tut-shot">
+  <img src={img('firmware')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic router firmware update screen showing the current version, a newer version available, an automatic updates toggle and an Update now button." />
+  <figcaption>{caption}</figcaption>
+</figure>
+
+## Your Wi-Fi name and password
+
+The Wi-Fi name (SSID) is what shows up in everyone's network list. If it includes the router brand or model, change it, since that hints at which defaults to try. Skip your name or address too; boring is best.
+
+The Wi-Fi password decides who can join; it's separate from the admin password. A few random words make a strong passphrase that's easy to type. If past staff or neighbours have it, change it, but do it last, since every device must rejoin.
+
+## Security type: WPA3, WPA2 and the pairing button
+
+The security type scrambles your Wi-Fi traffic so people nearby can't read it. You'll find it in the wireless settings:
+
+- **Wi-Fi Protected Access 3 (WPA3):** the current standard, and the best choice.
+- **WPA2:** older but still acceptable with a strong password.
+- **Mixed mode (WPA2/WPA3):** a practical pick when you have new laptops and an old printer.
+- **WEP or "Open" (no password):** barely protected. Change it straight away.
+
+The same screen often has push-button pairing (Wi-Fi Protected Setup, or WPS). It's convenient, but it has known weaknesses and anyone near the router can press the button, so turn it off.
+
+<figure class="tut-shot">
+  <img src={img('wireless-security')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of generic router wireless settings with a network name field, security set to WPA2/WPA3 Personal mixed mode, a hidden password and the WPS push-button pairing toggle turned off." />
+  <figcaption>{caption}</figcaption>
+</figure>
+
+## A guest network for visitors and smart gadgets
+
+A guest network is a second Wi-Fi network that gets internet access but can't see your main devices. It's the right home for:
+
+- Customers, visiting contractors and friends' phones
+- Smart gadgets like the thermostat, TV and smart plugs
+
+Smart gadgets are often the least looked-after devices, so if one is compromised, you'd rather it couldn't reach the laptop with the payroll on it. Make sure guest access to main-network devices is off. A gadget or two may need setting up again.
+
+<figure class="tut-shot">
+  <img src={img('guest-network')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic router guest network page with the guest network turned on, its own name and password, access to main network devices turned off, and remote management turned off." />
+  <figcaption>{caption}</figcaption>
+</figure>
+
+## Remote management: off unless you need it
+
+Remote management (or remote access) lets someone open the admin page from outside the building. Left on, automated attacks can try common passwords on it from anywhere. Unless an IT person actually uses it, switch it off, though if your provider manages the router, ask them first.
+
+## Who's actually connected
+
+Most routers list connected devices, sometimes called "clients". Don't panic over odd names made of letters and numbers; just match each entry to something you own. Turning things off one at a time and watching what disappears works well.
+
+Block anything you can't account for, or change the Wi-Fi password. Renaming devices you recognise makes the next checkup quicker.
+
+<figure class="tut-shot">
+  <img src={img('connected-devices')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic router connected devices list with example names such as office laptop, front desk tablet, phone, printer, smart thermostat on the guest network, and one unknown device flagged to check." />
+  <figcaption>{caption} Device names are examples.</figcaption>
+</figure>
+
+## Speed, before and after
+
+These changes aren't about speed, though some can help. Run a free speed test before and after, using the same device, spot and time of day. It reports three numbers:
+
+- **Download:** how fast things arrive
+- **Upload:** how fast you send, which matters for video calls
+- **Ping:** the delay before data starts moving
+
+Treat one test as a snapshot, not a verdict; small differences are usually noise. If the numbers are far below what you pay for, even near the router, ask your internet provider.
+
+<figure class="tut-shot">
+  <img src={img('speed-test')} width="1200" height="750" loading="lazy" decoding="async" alt="Illustration of a generic speed test screen with side-by-side before and after panels for download, upload and ping, showing placeholder dashes instead of numbers." />
+  <figcaption>{caption} Values are placeholders.</figcaption>
+</figure>
+
+## Before you close the settings page
+
+Photograph each settings page before you change it, so "what did I change?" is a quick look back. Save the new passwords in your password manager, and set a reminder to recheck in a few months. The habit is what keeps your network in good shape.
+
+## Common questions
+
+**Will changing these settings break anything?** Changing the Wi-Fi name, password or security type disconnects every device until it rejoins, so leave yourself time.
+
+**Do I need a new router?** Not usually. Replace it if the manufacturer has stopped releasing updates, or if it can't offer at least WPA2 with a strong password.
+
+**What if I can't log in at all?** Most routers have a reset button that restores factory settings. It wipes everything, so use it only when you're ready to set up again, or ask your provider first.
+
+<div class="nl-box lab-cta" id="worksheet" style="margin-top:2.5rem">
+  <div>
+    <span class="kicker">Free download · PDF</span>
+    <h2 style="margin-top:.3rem">Your Wi-Fi &amp; Network Checkup</h2>
+    <p class="muted" style="margin:0">Free checklist: check your own home or business Wi-Fi in about 30 minutes. Every setting from this guide, in plain English, with space to note what you found.</p>
+  </div>
+  <a class="btn btn-primary" href={siteUrl('/downloads/wifi-checkup-worksheet.pdf')} download="wifi-checkup-worksheet.pdf" data-umami-event="worksheet-download" data-umami-event-location="learn-wifi-network-checkup">Download the free checklist</a>
+</div>
+
+<div class="nl-box" style="margin-top:1.25rem">
+  <span class="kicker">Newsletter · Weekly</span>
+  <h2 style="margin-top:.3rem">Get the free weekly email</h2>
+  <p class="muted">Unlock the Week: one tech story in plain English, a skill tip, gear picks and something to learn, once a week. No spam; unsubscribe anytime.</p>
+  <NewsletterForm id="learn-wifi-nl" compact />
+</div>
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Prefer a hand with it?</span>
+  <h3>We can check it with you</h3>
+  <p>If you'd rather not dig through router menus yourself, NeonKey can walk through it with you remotely, over a screen share, and leave you a plain-English note of what changed.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
+</article>

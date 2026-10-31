@@ -393,3 +393,8 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .offer-details-open .od-h:first-child { margin-top: 0; }
 .od-grid { align-items: start; }
 .offer-featured-grid:has(details[open]) { align-items: start; }
+
+/* Screenshot-style illustrations in tutorials (e.g. /learn/wifi-network-checkup/) */
+.tut-shot { border: 1px solid var(--line); background: #0f1230; border-radius: 14px; padding: .75rem; margin: 1.5rem 0; }
+.tut-shot img { display: block; width: 100%; height: auto; border-radius: 9px; }
+.tut-shot figcaption { color: var(--muted); font-size: .88rem; margin-top: .6rem; }

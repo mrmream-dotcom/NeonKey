@@ -15,6 +15,9 @@ const BASE_PATH = ('/' + rawBase.replace(/^\/+|\/+$/g, '') + '/').replace(/\/+/g
 // Article category pages with no posts yet are noindex (see ArticleIndex.astro), so keep them out of the sitemap too.
 const EMPTY_ARTICLE_CATEGORIES = ARTICLE_CATEGORIES.filter((c) => !articles.some((a) => a.category === c));
 const emptyCategoryRe = EMPTY_ARTICLE_CATEGORIES.length ? new RegExp(`/articles/(${EMPTY_ARTICLE_CATEGORIES.join('|')})/?$`) : null;
+// Draft pages built for review that must stay out of the sitemap (they also set noindex and are hidden from lists).
+const DRAFT_PAGES = [];
+const isDraftPage = (page) => { const p = new URL(page).pathname.replace(/\/$/, ''); return DRAFT_PAGES.some((d) => p.endsWith(d)); };
 const MODE = process.env.PUBLIC_SITE_MODE === 'live' ? 'live' : 'demo';
 
 export default defineConfig({
@@ -25,7 +28,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'never' },
   vite: { build: { assetsInlineLimit: 0 } },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [mdx(), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) })],
+  integrations: [mdx(), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) && !isDraftPage(page) })],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);
