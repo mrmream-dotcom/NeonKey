@@ -1,11 +1,18 @@
 ---
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
-import Card from '../components/Card.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import FeaturedArticle from '../components/FeaturedArticle.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import LabCard from '../components/LabCard.astro';
+import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
 import { remoteIt, remoteSupportPlan, automationOffers, introPricing, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL } from '../config';
+const latestArticles = sortByDate(articlesIn());
+const leadStory = latestArticles.find((a) => a.date);
+const moreStories = latestArticles.filter((a) => a !== leadStory).slice(0, 3);
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
 const pillars = [
@@ -158,10 +165,11 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="pillars-h">
     <div class="container">
-      <div class="section-head"><h2 id="pillars-h">Four ways to unlock</h2><p>Pick the door that fits where you are today.</p></div>
+      <SectionHeading id="pillars-h" eyebrow="What NeonKey covers" title="Four ways to unlock" intro="Pick the door that fits where you are today." />
       <div class="grid grid-4">
-        {pillars.map((p) => (
-          <article class={`card pillar ${p.cls}`}>
+        {pillars.map((p, i) => (
+          <article class={`card pillar topline ${p.cls}`}>
+            <span class="num-eyebrow pillar-num">{String(i + 1).padStart(2, '0')}</span>
             <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={p.icon} /></div>
             <h3>{p.title}</h3>
             <p>{p.text}</p>
@@ -172,16 +180,27 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     </div>
   </section>
 
+  {leadStory && (
+  <section class="home-latest" aria-labelledby="latest-h">
+    <div class="container">
+      <SectionHeading id="latest-h" eyebrow="Articles" title="Latest from NeonKey" intro="News, explainers and reviews, newest first." link={{ href: '/articles/', label: 'All articles' }} />
+      <FeaturedArticle article={leadStory} eager={false} />
+      {moreStories.length > 0 && (
+        <ul class="article-grid">
+          {moreStories.map((a) => <ArticleCard article={a} />)}
+        </ul>
+      )}
+    </div>
+  </section>
+  )}
+
   {publishedLabProjects.length > 0 && (
   <section class="alt" aria-labelledby="lab-h">
     <div class="container">
-      <div class="section-head"><h2 id="lab-h">From the Lab</h2><a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home">All builds →</a></div>
-      <p class="muted" style="margin-top:-.75rem">Real builds, documented: what I built, why, the results and lessons, and what I'd do differently.</p>
-      <div class="grid grid-3">
-        {publishedLabProjects.map((p) => (
-          <Card href={url(`/lab/${p.slug}/`)} title={p.title} kicker={p.tags.join(' · ')}>{p.summary}</Card>
-        ))}
-      </div>
+      <SectionHeading id="lab-h" eyebrow="The Lab" title="From the Lab" intro="Real builds, documented: what I built, why, the results and lessons, and what I'd do differently." link={{ href: '/lab/', label: 'All builds', attrs: { 'data-umami-event': 'lab-cta', 'data-umami-event-location': 'home' } }} />
+      <ul class="article-grid">
+        {publishedLabProjects.map((p) => <LabCard project={p} as="li" />)}
+      </ul>
     </div>
   </section>
   )}
@@ -189,8 +208,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   <section aria-labelledby="nl-h">
     <div class="container">
       <p class="home-teaser" id="first-posts">Tutorials, Lab builds, reviews and articles: <strong>more posts are on the way.</strong> Get them in <strong>Unlock the Week</strong>, the free weekly email.</p>
-      <div class="nl-box">
-        <span class="kicker">Newsletter · Weekly</span>
+      <div class="nl-box topline">
+        <span class="kicker eyebrow">Newsletter · Weekly</span>
         <h2 id="nl-h">Unlock the Week</h2>
         <p class="muted">One tech story in everyday language, a skill tip, gear picks and something to learn, once a week. No spam; unsubscribe anytime.</p>
         <NewsletterForm id="home-nl" />
@@ -200,11 +219,11 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <div class="section-head"><h2 id="svc-h">Services for small businesses</h2><a href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services">View services →</a></div>
+      <SectionHeading id="svc-h" eyebrow="Unlock AI · Services" title="Services for small businesses" link={{ href: '/services/', label: 'View services', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-3">
-        <article class="card offer-featured"><span class="kicker">Featured · Starting at {usd(remoteIt.from)}</span><h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-featured">Remote Small-Office IT Setup</a></h3><p class="offer-outcome">{remoteIt.outcome}.</p><p>Business email, email security settings (SPF/DKIM/DMARC), Wi-Fi security, backups and password managers, fully remote.</p></article>
-        <article class="card"><span class="kicker">Starting at {usd(quickWin.from)}</span><h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win">{quickWin.name}</a></h3><p class="offer-outcome">{quickWin.outcome}.</p><p>One repetitive task automated, plus a quick check of your tech basics and a simple to-do list of the top fixes.</p></article>
-        <article class="card"><span class="kicker">Starting at {usd(aiFaq.from)}</span><h3><a href={url('/services/#ai-faq')} data-umami-event="services-cta" data-umami-event-location="home-ai-faq">{aiFaq.name}</a></h3><p class="offer-outcome">{aiFaq.outcome}.</p><p>Answer common questions and collect leads consistently.</p></article>
+        <article class="card offer-featured topline"><span class="kicker">Featured · Starting at {usd(remoteIt.from)}</span><h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-featured">Remote Small-Office IT Setup</a></h3><p class="offer-outcome">{remoteIt.outcome}.</p><p>Business email, email security settings (SPF/DKIM/DMARC), Wi-Fi security, backups and password managers, fully remote.</p></article>
+        <article class="card topline accent-magenta"><span class="kicker">Starting at {usd(quickWin.from)}</span><h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win">{quickWin.name}</a></h3><p class="offer-outcome">{quickWin.outcome}.</p><p>One repetitive task automated, plus a quick check of your tech basics and a simple to-do list of the top fixes.</p></article>
+        <article class="card topline accent-violet"><span class="kicker">Starting at {usd(aiFaq.from)}</span><h3><a href={url('/services/#ai-faq')} data-umami-event="services-cta" data-umami-event-location="home-ai-faq">{aiFaq.name}</a></h3><p class="offer-outcome">{aiFaq.outcome}.</p><p>Answer common questions and collect leads consistently.</p></article>
       </div>
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <div class="btn-row">
@@ -217,7 +236,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section aria-labelledby="who-h">
     <div class="container">
-      <article class="card who-card">
+      <article class="card who-card topline accent-violet">
         <svg class="who-mark" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
           <defs>
             <linearGradient id="who-grad" x1="0" y1="0" x2="1" y2="1">
@@ -231,7 +250,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           <circle cx="22" cy="32" r="3.5" fill="#f472b6" />
         </svg>
         <div>
-          <span class="kicker">Who does the work</span>
+          <span class="kicker eyebrow">Who does the work</span>
           <h2 id="who-h" style="font-size:1.35rem;margin:.3rem 0 .5rem">Michael Ream</h2>
           <p>NeonKey is run by me, Michael Ream, and I do the client work myself. I've spent years working hands-on in tech, setting up, maintaining and troubleshooting networks and communication systems. I hold a Computer Installation and Repair Technician certificate from the California Institute of Applied Technology and I'm studying Computer Information Systems.</p>
           <p style="margin-bottom:0">For clients, that means small-office setups done properly: business email that's less likely to land in spam and harder for scammers to fake, Wi-Fi, backups and passwords locked down, and small automations you fully own. <a href={url('/about/')}>More about me →</a></p>

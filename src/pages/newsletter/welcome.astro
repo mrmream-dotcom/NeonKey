@@ -1,15 +1,19 @@
 ---
 import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
 ---
 <Base title="You're in" description="Your Unlock the Week subscription is confirmed." noindex>
-  <div class="narrow page-head" style="text-align:center">
-    <span class="kicker">Unlock the Week</span>
-    <h1>You're in. Welcome to Unlock the Week.</h1>
-    <p>Your subscription is confirmed. Thanks for joining.</p>
-    <div class="panel" style="text-align:left;margin-top:1.5rem">
-      <h2 style="font-size:1.1rem;margin-top:0">What to expect</h2>
-      <ul>
+  <PageHeader width="narrow" align="center" eyebrow="Unlock the Week · Confirmed" crumbs={[{ href: '/', label: 'Home' }, { href: '/newsletter/', label: 'Newsletter' }, { label: 'Welcome' }]} class="status-head">
+    <span class="status-mark" slot="title-before"><Icon name="check" /></span>
+    <Fragment slot="title">You're in. Welcome to Unlock the Week.</Fragment>
+    <p class="lede">Your subscription is confirmed. Thanks for joining.</p>
+  </PageHeader>
+  <div class="narrow status-body">
+    <div class="panel topline">
+      <h2 class="panel-title">What to expect</h2>
+      <ul class="status-steps">
         <li><strong>One email a week</strong>, about a three-minute read.</li>
         <li><strong>One tech story</strong> with a clear, jargon-free takeaway.</li>
         <li><strong>One skill tip</strong> you can try in a few minutes.</li>
@@ -17,11 +21,11 @@ import Base from '../../layouts/Base.astro';
       </ul>
       <p style="margin-bottom:0">No spam, and you can unsubscribe anytime from the link at the bottom of any email.</p>
     </div>
-    <div class="panel" style="text-align:left;margin-top:1rem">
-      <h2 style="font-size:1.1rem;margin-top:0">One quick favor</h2>
+    <div class="panel topline accent-magenta">
+      <h2 class="panel-title">One quick favor</h2>
       <p style="margin-bottom:0">What would you most like to learn about: AI tools, home networking, automations, or something else? Email <a href={`mailto:${CONTACT_EMAIL}?subject=Unlock%20the%20Week%20topic%20idea`} data-umami-event="nl-welcome-reply">{CONTACT_EMAIL}</a> and let me know. I read every message.</p>
       <p class="muted" style="margin-top:.75rem;margin-bottom:0">Michael Ream, NeonKey</p>
     </div>
-    <p style="margin-top:1.5rem"><a class="btn btn-primary" href={url('/')}>Explore NeonKey</a></p>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Explore NeonKey</a></p>
   </div>
 </Base>

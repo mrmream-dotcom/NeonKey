@@ -1,12 +1,20 @@
 ---
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Icon from '../components/Icon.astro';
 ---
 <Base title="About" description="About NeonKey and Michael Ream: a tech hub for beginners and builders covering AI automation, homelab, honest reviews and a weekly email.">
-  <article class="narrow page-head prose">
-    <span class="kicker">About</span>
-    <h1>About NeonKey</h1>
-    <p class="lead">NeonKey is a tech brand about unlocking: making AI, gear, skills and the week's news easier to use, whatever your level.</p>
+  <PageHeader eyebrow="About" title="About NeonKey" crumbs={[{ href: '/', label: 'Home' }, { label: 'About' }]}>
+    <p class="lede">NeonKey is a tech brand about unlocking: making AI, gear, skills and the week's news easier to use, whatever your level.</p>
+    <Fragment slot="meta">
+      <li><span>Run by <strong>Michael Ream</strong></span></li>
+      <li><span>AI · Gear · Skills · News</span></li>
+      <li><span>Reviews are never paid placements</span></li>
+    </Fragment>
+  </PageHeader>
+  <div class="container split about-split">
+  <article class="prose about-body">
     <h2>Who's behind it</h2>
     <p>NeonKey is run by Michael Ream, who has spent years working hands-on in tech: setting up, maintaining and troubleshooting networks and communication systems, and keeping them running when it matters. He holds a certificate in Computer Installation and Repair Technician from the California Institute of Applied Technology and is now pursuing an Applied Bachelor's Degree in Cybersecurity there, earning an associate degree in Computer Information Systems along the way. That coursework rounds out his real-world experience with the wider picture of how businesses use and protect technology. He has also worked hands-on in Microsoft Azure, building virtual machines and virtual networks and organizing resources into clean, well-structured resource groups.</p>
     <p>Outside of that, he builds. Homelab projects, AI and automation workflows, and remote IT setups for small offices all get built and documented here in the open, so you can see how things actually work, not just the polished result.</p>
@@ -18,4 +26,28 @@ import Base from '../layouts/Base.astro';
     </ul>
     <p><a class="btn btn-primary" href={url('/newsletter/')}>Get Unlock the Week</a></p>
   </article>
+  <aside class="sticky-side" aria-label="At a glance">
+    <div class="panel topline accent-violet">
+      <div class="who-panel">
+        <span class="monogram" aria-hidden="true">MR</span>
+        <div>
+          <span class="kicker eyebrow">At a glance</span>
+          <p class="about-name">Michael Ream</p>
+          <p class="muted about-role">Runs NeonKey</p>
+        </div>
+      </div>
+      <dl class="fact-list about-facts">
+        <div><dt>Certificate</dt><dd>Computer Installation and Repair Technician, California Institute of Applied Technology</dd></div>
+        <div><dt>Now pursuing</dt><dd>Applied Bachelor's Degree in Cybersecurity</dd></div>
+        <div><dt>Along the way</dt><dd>Associate degree in Computer Information Systems</dd></div>
+        <div><dt>Hands-on</dt><dd>Microsoft Azure: virtual machines, virtual networks and resource groups</dd></div>
+        <div><dt>Builds</dt><dd>Homelab projects, AI and automation workflows, remote IT setups for small offices</dd></div>
+      </dl>
+    </div>
+    <div class="panel panel-head-only">
+      <div class="panel-head"><span class="icon-chip"><Icon name="scale" /></span><h2 class="panel-title">Honest by default</h2></div>
+      <p class="muted" style="margin:0">Sponsorships or free products are always disclosed. See the <a href={url('/disclosure/')}>disclosure policy</a>.</p>
+    </div>
+  </aside>
+  </div>
 </Base>

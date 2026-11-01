@@ -2,6 +2,12 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import OfferDetails from '../../components/OfferDetails.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Icon from '../../components/Icon.astro';
+import type { IconName } from '../../lib/ui';
+const setupIcons: IconName[] = ['mail', 'shield', 'wifi', 'doc', 'key', 'check'];
+const setupAccents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber', 'accent-cyan', 'accent-magenta'];
 import { remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
 const setup = [
   { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, extra addresses like hello@ or billing@ that land in the same inbox (aliases), shared calendars and a clean admin account that you own.' },
@@ -13,30 +19,38 @@ const setup = [
 ];
 ---
 <Base title={remoteIt.name} description="Remote small-office IT setup for small businesses and solo pros: business email, email security settings (SPF/DKIM/DMARC), Wi-Fi hardening, backups, password managers and device checklists. Optional monthly remote support.">
-  <div class="container page-head">
-    <span class="kicker">Services · Fully remote</span>
-    <h1>{remoteIt.name}</h1>
-    <p>For small businesses and solo professionals who want the basics done right without hiring an IT department. Everything happens remotely by video call, screen share and written notes, using your accounts so you keep full ownership.</p>
-    <div class="btn-row" style="margin-top:1rem">
+  <PageHeader eyebrow="Services · Fully remote" title={remoteIt.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Remote IT setup' }]}>
+    <p class="lede">For small businesses and solo professionals who want the basics done right without hiring an IT department. Everything happens remotely by video call, screen share and written notes, using your accounts so you keep full ownership.</p>
+    <div class="btn-row">
       <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="remote-it-hero">Ask about a setup</a>
       <a class="btn btn-ghost" href="#support-plan">Monthly support plan</a>
     </div>
-  </div>
+    <Fragment slot="meta">
+      <li><span>Starting at <strong>{usd(remoteIt.from)}</strong></span></li>
+      <li><span>Roughly 1–10 people</span></li>
+      <li><span>Video call, screen share, email</span></li>
+    </Fragment>
+  </PageHeader>
 
   <section style="padding-top:1rem" aria-labelledby="setup-h">
     <div class="container">
-      <div class="section-head"><h2 id="setup-h">What a setup can include</h2><p>Pick what you need; we scope it together first.</p></div>
+      <SectionHeading id="setup-h" eyebrow="Scope menu" title="What a setup can include" intro="Pick what you need; we scope it together first." />
       <div class="grid grid-3">
-        {setup.map((s) => <article class="card"><h3>{s.h}</h3><p>{s.p}</p></article>)}
+        {setup.map((s, i) => (
+          <article class={`card topline setup-card ${setupAccents[i]}`}>
+            <div class="setup-card-top"><span class="icon-chip"><Icon name={setupIcons[i]} /></span><span class="num-eyebrow">{String(i + 1).padStart(2, '0')}</span></div>
+            <h3>{s.h}</h3><p>{s.p}</p>
+          </article>
+        ))}
       </div>
       <div class="grid grid-2" style="margin-top:1.5rem">
-        <div class="panel">
+        <div class="panel topline">
           <span class="kicker">Setup pricing</span>
           <p class="price-inline">Starting at {usd(remoteIt.from)}</p>
           <p class="intro-tag">{introPricing.short}</p>
           <p class="muted" style="margin:0">The final price depends on how many people, accounts and items are in scope. You get a fixed quote after the scoping call.</p>
         </div>
-        <div class="panel">
+        <div class="panel topline accent-violet">
           <span class="kicker">You get</span>
           <ul class="muted" style="margin:.4rem 0 0;padding-left:1.1rem">
             <li>Clear notes on everything that was changed</li>
@@ -50,7 +64,7 @@ const setup = [
 
   <section aria-labelledby="how-h">
     <div class="container">
-      <div class="section-head"><h2 id="how-h">How a setup works</h2><p>Who it's for, the steps, what you provide and what affects the price.</p></div>
+      <SectionHeading id="how-h" eyebrow="Process" title="How a setup works" intro="Who it's for, the steps, what you provide and what affects the price." />
       <OfferDetails offer={remoteIt} mode="open" headingLevel="h3" showIncluded={false} />
     </div>
   </section>
@@ -59,12 +73,12 @@ const setup = [
     <div class="container">
       <div class="grid grid-2" style="align-items:start">
         <div>
-          <span class="kicker">Optional add-on</span>
-          <h2 id="plan-h">{remoteSupportPlan.name}</h2>
+          <span class="kicker eyebrow">Optional add-on</span>
+          <h2 id="plan-h" style="margin-top:.4rem">{remoteSupportPlan.name}</h2>
           <p class="muted">{remoteSupportPlan.for}.</p>
           <ul class="muted" style="padding-left:1.1rem">{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
         </div>
-        <div class="panel">
+        <div class="panel topline accent-magenta">
           <span class="kicker">Plan pricing</span>
           <p class="price-inline">Starting at {usd(remoteSupportPlan.from)}/mo</p>
           <p class="intro-tag">{introPricing.short}</p>
@@ -80,7 +94,7 @@ const setup = [
 
   <section aria-labelledby="scope-h">
     <div class="container">
-      <h2 id="scope-h">Scope and exclusions</h2>
+      <SectionHeading id="scope-h" eyebrow="Fine print" title="Scope and exclusions" />
       <div class="proscons">
         <div class="pros">
           <h3>In scope</h3>

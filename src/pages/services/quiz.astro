@@ -1,15 +1,19 @@
 ---
 import { url, QUIZ_API_URL } from '../../config';
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import { QUESTIONS } from '../../data/quiz';
 const total = QUESTIONS.length;
 ---
 <Base title="What service do I need? A 2-minute quiz" description="Answer eight quick questions and see which NeonKey service makes sense for you: remote small-office IT setup, a small automation, an FAQ assistant or lead routing. Free, instant, no email needed.">
-  <div class="narrow page-head">
-    <span class="kicker">Services · 2-minute quiz</span>
-    <h1>What service do I need?</h1>
-    <p>Not sure where to start? Answer {total} quick questions and I'll show you what I'd recommend right away, with no email needed. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
-  </div>
+  <PageHeader width="narrow" eyebrow="Services · 2-minute quiz" title="What service do I need?" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Quiz' }]}>
+    <p class="lede">Not sure where to start? Answer {total} quick questions and I'll show you what I'd recommend right away, with no email needed. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
+    <Fragment slot="meta">
+      <li><span><strong>{total}</strong> questions</span></li>
+      <li><span>About 2 minutes</span></li>
+      <li><span>No email needed</span></li>
+    </Fragment>
+  </PageHeader>
 
   <section style="padding-top:0" class="quiz-wrap" data-quiz data-api={QUIZ_API_URL} data-base={url('/')}>
     <div class="narrow">

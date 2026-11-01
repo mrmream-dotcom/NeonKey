@@ -2,14 +2,22 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import OfferDetails from '../../components/OfferDetails.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
 import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
+const offerCount = automationOffers.length + 2;
+const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber'];
 ---
 <Base title="Services" description="NeonKey services for small businesses: remote small-office IT setup, a monthly remote support plan, and practical AI automations. Scoped first, explained clearly.">
-  <div class="container page-head">
-    <span class="kicker">Services</span>
-    <h1>Practical IT and automation for small businesses</h1>
-    <p>Remote setup help and small automations, explained in simple terms. Every project starts with a short scoping call so we agree on what "done" looks like before any work begins.</p>
-  </div>
+  <PageHeader eyebrow="Services · Unlock AI" title="Practical IT and automation for small businesses" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
+    <p class="lede">Remote setup help and small automations, explained in simple terms. Every project starts with a short scoping call so we agree on what "done" looks like before any work begins.</p>
+    <Fragment slot="meta">
+      <li><span><strong>{offerCount}</strong> services</span></li>
+      <li><span>Fully remote</span></li>
+      <li><span>Scoped before work begins</span></li>
+      <li><span>You own every account</span></li>
+    </Fragment>
+  </PageHeader>
 
   <div class="container">
     <p class="intro-pricing" role="note"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
@@ -19,7 +27,7 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
     <div class="container">
       <div class="callout quiz-callout">
         <div>
-          <span class="kicker">Not sure where to start?</span>
+          <span class="kicker eyebrow">Not sure where to start?</span>
           <h2 id="quiz-h" style="font-size:1.3rem;margin:.3rem 0 .3rem">What service do I need? Take the 2-minute quiz</h2>
           <p class="muted" style="margin:0">Eight quick questions. You'll see what I'd recommend right away, with no email needed.</p>
         </div>
@@ -30,7 +38,8 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
 
   <section style="padding-top:1rem" aria-labelledby="featured-h">
     <div class="container">
-      <article class="card offer offer-featured">
+      <p class="section-label"><span class="pulse" aria-hidden="true"></span>Featured service</p>
+      <article class="card offer offer-featured topline">
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">Featured · Fully remote</span>
@@ -51,7 +60,7 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
         </div>
       </article>
 
-      <article class="card offer support-card" id="support-plan" style="margin-top:1.25rem">
+      <article class="card offer support-card topline accent-violet" id="support-plan" style="margin-top:1.25rem">
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">Optional add-on</span>
@@ -74,10 +83,10 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
 
   <section style="padding-top:0" aria-labelledby="auto-h">
     <div class="container">
-      <div class="section-head"><h2 id="auto-h">Unlock AI: automation services</h2><p>Start small with a Quick Win + Tech Checkup, or take repetitive work off your plate with a bigger build.</p></div>
+      <SectionHeading id="auto-h" eyebrow="Unlock AI" title="Unlock AI: automation services" count={`${automationOffers.length} services`} intro="Start small with a Quick Win + Tech Checkup, or take repetitive work off your plate with a bigger build." />
       <div class="grid grid-3">
-        {automationOffers.map((o) => (
-          <article class="card offer" id={o.slug}>
+        {automationOffers.map((o, i) => (
+          <article class={`card offer topline ${accents[i % accents.length]}`} id={o.slug}>
             <span class="kicker">{o.kicker ?? 'Automation'}</span>
             <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
             {o.outcome && <p class="offer-outcome">{o.outcome}.</p>}
@@ -95,17 +104,17 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
           </article>
         ))}
       </div>
-      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.75rem">
         <span>Curious how these get built? The Lab documents hands-on builds, with the results and lessons, including what I'd do differently.</span>
         <a class="btn btn-ghost btn-sm" href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="services">See the builds</a>
       </div>
       <p class="muted" style="margin-top:1.25rem;font-size:.95rem">Pricing shown is a starting point, not a quote. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
     </div>
   </section>
-  <section class="alt">
+  <section class="alt" aria-labelledby="how-h">
     <div class="container">
-      <h2>How it works</h2>
-      <ol class="steps">
+      <SectionHeading id="how-h" eyebrow="Process" title="How it works" />
+      <ol class="step-cards">
         <li><strong>Scope:</strong> a short call to pick one problem worth solving.</li>
         <li><strong>Build:</strong> I set it up remotely with the tools you already use where possible.</li>
         <li><strong>Hand off:</strong> you get notes, a walkthrough and full ownership of every account.</li>
@@ -115,7 +124,7 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
 
   <section aria-labelledby="faq-h">
     <div class="container faq">
-      <h2 id="faq-h">FAQ</h2>
+      <SectionHeading id="faq-h" eyebrow="Questions" title="FAQ" />
       <details class="offer-details faq-item">
         <summary>Why not just buy software?</summary>
         <div class="offer-details-body">
@@ -131,7 +140,8 @@ import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from
   .offer[id] { scroll-margin-top: 90px; }
   .support-card .offer-featured-grid { align-items: start; }
   .support-card .btn { margin-top: 0; }
-  .faq { max-width: 760px; }
+  .faq .faq-item { max-width: 860px; }
+  .step-cards > li strong:first-child { display: inline; font-size: inherit; }
   .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
   .faq-item > summary { color: var(--text); font-size: 1.05rem; }
   .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }

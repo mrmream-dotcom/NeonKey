@@ -1,25 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
+import LegalDoc from '../components/LegalDoc.astro';
 import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 ---
 <Base title="Privacy" description="How NeonKey handles your data: what is collected, cookieless Umami analytics, and your choices.">
-  <article class="narrow page-head prose">
-    <span class="kicker">Privacy</span>
-    <h1>Privacy policy</h1>
-    <p class="muted">Last updated October 30, 2026.</p>
+  <LegalDoc eyebrow="Privacy" title="Privacy policy" updated={{ iso: '2026-10-30', text: 'Last updated October 30, 2026.' }} sections={[{ id: 'analytics', label: 'Analytics' }, { id: 'advertising', label: 'Advertising' }, { id: 'newsletter', label: 'Newsletter' }, { id: 'contact', label: 'Contact' }, { id: 'ai-inquiry-triage-demo-lab', label: 'AI inquiry triage demo (Lab)' }, { id: 'service-quiz', label: 'Service quiz' }, { id: 'cookies', label: 'Cookies' }, { id: 'hosting', label: 'Hosting' }, { id: 'your-choices', label: 'Your choices' }]}>
 
-    <h2>Analytics</h2>
+    <h2 id="analytics">Analytics</h2>
     {UMAMI.websiteId ? (
       <p>NeonKey uses <a href="https://umami.is" data-umami-event="outbound-click" data-umami-event-item="umami-site">Umami</a> for privacy-friendly analytics. Umami doesn't use cookies, doesn't collect personal data and doesn't track you across sites. It records anonymous page views and a few button clicks (for example newsletter signups and service enquiries) so I can see what's useful. Blocking the script won't break anything on the site.</p>
     ) : (
       <p>This build doesn't load any analytics. If analytics are turned on, NeonKey will use Umami, a cookieless, privacy-friendly tool that records anonymous page views and button clicks only.</p>
     )}
 
-    <h2>Advertising</h2>
+    <h2 id="advertising">Advertising</h2>
     <p>NeonKey runs ads on Google and uses Google Ads conversion tracking (the Google tag) to see whether those ads lead to visits and enquiries. The tag is loaded from Google on every page and may set cookies or collect device and interaction data, such as the pages you view and whether you send a message through the contact form, to measure ad performance. See <a href="https://policies.google.com/technologies/partner-sites">how Google uses information from sites or apps that use its services</a>. Blocking the script won't break anything on the site.</p>
     <p>The same Google tag also runs Google Analytics, which measures visits and where they come from (for example search, ads or other sites) and may likewise use cookies and collect device and interaction data. The <a href="https://policies.google.com/technologies/partner-sites">same Google page</a> explains how Google uses this information.</p>
 
-    <h2>Newsletter</h2>
+    <h2 id="newsletter">Newsletter</h2>
     {NEWSLETTER.mode !== 'off' ? (
       <>
         <p>Unlock the Week is sent with <a href="https://kit.com/privacy" data-umami-event="outbound-click" data-umami-event-item="kit-privacy">Kit</a> (formerly ConvertKit), which processes subscriber data on NeonKey's behalf. When you subscribe, your email address goes straight to Kit. Kit stores it along with basic sign-up and delivery data, such as when and where you signed up and whether an issue was delivered, opened or clicked.</p>
@@ -33,26 +31,26 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
       <p>Newsletter signups aren't open yet, so no email addresses are collected. When they open, Unlock the Week will be sent with Kit (formerly ConvertKit), and this section will describe what Kit stores.</p>
     )}
 
-    <h2>Contact</h2>
+    <h2 id="contact">Contact</h2>
     <p>The contact form is delivered by <a href="https://web3forms.com/privacy">Web3Forms</a>, which passes your name, email, topic and message to {CONTACT_EMAIL}. Messages, whether sent through the form or by email, are kept only as long as needed to reply and are never sold.</p>
 
-    <h2>AI inquiry triage demo (Lab)</h2>
+    <h2 id="ai-inquiry-triage-demo-lab">AI inquiry triage demo (Lab)</h2>
     <p>The <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sends the text you type to a small NeonKey API running on Cloudflare Workers. The API forwards it to Google's <a href="https://ai.google.dev/gemini-api/terms">Gemini API</a> to generate the result, then returns the result to your browser. NeonKey doesn't store or log the message or the result.</p>
     <p>The demo uses Gemini's free tier. Under Google's terms, content sent on the free tier may be used by Google to improve its products, and human reviewers may read it. <strong>Please don't paste private, sensitive or personal information into the demo.</strong> Because of those terms, the demo isn't available in the UK, Switzerland or the EEA.</p>
     <p>To enforce rate limits (5 runs a minute and 30 a day per visitor, plus a daily total), the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, and a run count. The counters expire after 48 hours. Cloudflare, as the host, may also process standard request data such as your IP address; see <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</p>
 
-    <h2>Service quiz</h2>
+    <h2 id="service-quiz">Service quiz</h2>
     <p>The <a href={url('/services/quiz/')}>"What service do I need?" quiz</a> works out your result in your browser. Your answers aren't sent anywhere unless you ask for your plan by email.</p>
     <p>If you do, your email address, optional first name and quiz answers are sent to NeonKey through a small API on Cloudflare Workers to prepare your plan. The plan is emailed to you once through <a href="https://resend.com/legal/privacy-policy">Resend</a>, NeonKey's email delivery provider, and a copy with your email and answers is sent to NeonKey at {CONTACT_EMAIL} so I can prepare and follow up if you reply. That copy is kept only as long as needed and is never sold. You're only added to the newsletter if you tick the newsletter box; then Kit sends you a confirmation email first (see Newsletter above).</p>
     <p>To limit abuse, the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, a one-way hash of your email address (so the same address can't be sent more than one plan a day), and a daily total. These expire after about 24 hours, and your answers aren't stored there. To have your quiz data deleted, email {CONTACT_EMAIL}.</p>
 
-    <h2>Cookies</h2>
+    <h2 id="cookies">Cookies</h2>
     <p>NeonKey itself sets no cookies, but the Google tag (see Advertising above) may set cookies to measure ad performance. Links to other sites, such as retailers, lead to pages that may set their own cookies.</p>
 
-    <h2>Hosting</h2>
+    <h2 id="hosting">Hosting</h2>
     <p>The site is hosted on <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Pages</a>. Like any web host, GitHub may process standard request data such as your IP address to serve and secure the site.</p>
 
-    <h2>Your choices</h2>
+    <h2 id="your-choices">Your choices</h2>
     <p>To ask what data NeonKey holds about you, or to have it deleted, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
-  </article>
+  </LegalDoc>
 </Base>

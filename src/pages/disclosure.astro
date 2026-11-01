@@ -1,15 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+import LegalDoc from '../components/LegalDoc.astro';
 ---
 <Base title="Disclosure" description="How NeonKey handles sponsorships and free products, and why they never decide a verdict.">
-  <article class="narrow page-head prose">
-    <span class="kicker">Disclosure</span>
-    <h1>Sponsorship disclosure</h1>
+  <LegalDoc eyebrow="Disclosure" title="Sponsorship disclosure">
     <p>NeonKey reviews are independent. Nobody pays for a review, a verdict or a ranking.</p>
     <ul>
       <li>Sponsored content, if any, will be clearly labeled "Sponsored."</li>
       <li>Products sent for free will be disclosed in the review.</li>
     </ul>
     <p>This follows the spirit of the FTC's Endorsement Guides. See the FTC's guidance at <a data-umami-event="outbound-click" data-umami-event-item="ftc-endorsement-guides" href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">ftc.gov</a>.</p>
-  </article>
+  </LegalDoc>
 </Base>

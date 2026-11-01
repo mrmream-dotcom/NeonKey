@@ -1,13 +1,20 @@
 ---
 import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
 ---
 <Base title="Contact" description="Contact NeonKey about remote small-office IT setup, automation services, a tutorial, a review or the Unlock the Week newsletter.">
-  <div class="narrow page-head">
-    <span class="kicker">Contact</span>
-    <h1>Contact</h1>
-    <p>Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
-    <p class="muted" style="font-size:.95rem">Looking for IT help? See <a href={url('/services/remote-it/')}>Remote Small-Office IT Setup</a> for what's in and out of scope.</p>
+  <PageHeader eyebrow="Contact" title="Contact" crumbs={[{ href: '/', label: 'Home' }, { label: 'Contact' }]}>
+    <p class="lede">Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
+    <Fragment slot="meta">
+      <li><span>Replies by email</span></li>
+      <li><span>Services · Tutorials · Reviews · Newsletter</span></li>
+    </Fragment>
+  </PageHeader>
+  <div class="container split contact-split">
+    <div class="contact-form-col">
+      <p class="section-label"><span class="pulse" aria-hidden="true"></span>Send a message</p>
     <form class="panel" action="https://api.web3forms.com/submit" method="post">
       <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
       <input type="hidden" name="subject" value="New NeonKey contact form message" />
@@ -23,6 +30,17 @@ import Base from '../../layouts/Base.astro';
       <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
       <p class="form-note">Your message goes straight to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a> for how form messages are handled.</p>
     </form>
+    </div>
+    <aside class="sticky-side" aria-label="Before you write">
+      <div class="panel topline">
+        <div class="panel-head"><span class="icon-chip"><Icon name="wrench" /></span><h2 class="panel-title">IT help</h2></div>
+    <p class="muted" style="margin:0">Looking for IT help? See <a href={url('/services/remote-it/')}>Remote Small-Office IT Setup</a> for what's in and out of scope.</p>
+      </div>
+      <div class="panel topline accent-violet">
+        <div class="panel-head"><span class="icon-chip"><Icon name="chat" /></span><h2 class="panel-title">What happens next</h2></div>
+        <p class="muted" style="margin:0">Michael Ream reads every message and will reply by email.</p>
+      </div>
+    </aside>
   </div>
 </Base>
 

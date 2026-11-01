@@ -1,11 +1,13 @@
 ---
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Icon from '../components/Icon.astro';
 ---
 <Base title="Page not found" description="This page doesn't exist on NeonKey." noindex>
-  <div class="narrow page-head">
-    <h1>This door is locked.</h1>
-    <p>That page doesn't exist (yet), or it moved.</p>
-    <div class="btn-row"><a class="btn btn-primary" href={url('/')}>Go home</a><a class="btn btn-ghost" href={url('/lab/')}>See the Lab</a><a class="btn btn-ghost" href={url('/learn/')}>Go to Learn</a></div>
-  </div>
+  <PageHeader width="narrow" align="center" eyebrow="Error 404" title="This door is locked." class="status-head status-404">
+    <span class="status-mark accent-magenta" slot="title-before"><Icon name="key" /></span>
+    <p class="lede">That page doesn't exist (yet), or it moved.</p>
+    <div class="btn-row status-actions"><a class="btn btn-primary" href={url('/')}>Go home</a><a class="btn btn-ghost" href={url('/lab/')}>See the Lab</a><a class="btn btn-ghost" href={url('/learn/')}>Go to Learn</a></div>
+  </PageHeader>
 </Base>
