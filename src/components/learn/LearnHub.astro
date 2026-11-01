@@ -8,17 +8,22 @@
 // To add a study track or tutorial, add a card to the matching list below. `draft: true` hides a card everywhere
 // (the page itself should also set `noindex: true` and be listed in DRAFT_PAGES in astro.config.mjs).
 import { url } from '../../config';
+import PageHeader from '../PageHeader.astro';
+import SectionHeading from '../SectionHeading.astro';
+import StoryCard from '../StoryCard.astro';
+import { learnMinutes } from '../../lib/reading';
+import type { IconName, Accent } from '../../lib/ui';
 export type LearnView = 'study-tracks' | 'tutorials';
-interface Props { view?: LearnView }
-const { view } = Astro.props;
+interface Props { view?: LearnView; eyebrow?: string }
+const { view, eyebrow = view === 'tutorials' ? 'Unlock Skills · Tutorials' : view === 'study-tracks' ? 'Unlock Skills · Study tracks' : 'Unlock Skills' } = Astro.props;
 
 const studyTracks = [
-  { kicker: 'Track 1 · Security', title: 'CompTIA Security+ study guide', href: '/learn/security-plus/', text: 'Notes for all five exam domains, with key-term cards and a short self-check on each page.', cta: 'Open the guide' },
+  { kicker: 'Track 1 · Security', title: 'CompTIA Security+ study guide', href: '/learn/security-plus/', text: 'Notes for all five exam domains, with key-term cards and a short self-check on each page.', cta: 'Open the guide', icon: 'book', accent: 'violet', label: 'Security+ · 5 domains', tags: ['Security', 'Certification'] },
 ];
 const tutorials = [
-  { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial' },
-  { kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a 30-minute router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial' },
-].filter((c) => !c.draft);
+  { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial', icon: 'shield', accent: 'cyan', label: 'Two-factor', tags: ['Security', 'Beginner'] },
+  { kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a 30-minute router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial', icon: 'wifi', accent: 'magenta', label: 'Wi-Fi checkup', tags: ['Networking', 'Security', 'Beginner'] },
+].filter((c) => !(c as { draft?: boolean }).draft);
 
 const tabs: { href: string; label: string; key?: LearnView }[] = [
   { href: '/learn/', label: 'All' },
@@ -27,56 +32,62 @@ const tabs: { href: string; label: string; key?: LearnView }[] = [
 ];
 const showStudy = !view || view === 'study-tracks';
 const showTutorials = !view || view === 'tutorials';
+const counts: Record<string, number> = { all: studyTracks.length + tutorials.length, 'study-tracks': studyTracks.length, tutorials: tutorials.length };
+type LearnCard = (typeof studyTracks)[number] & { image?: string; alt?: string; width?: number; height?: number };
+const mins = (c: { href: string }) => learnMinutes(c.href);
+const cardMeta = (c: { href: string }, kind: string) => { const m = mins(c); return m ? `${kind} · ${m} min read` : kind; };
 ---
-<p class="lead">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
+<PageHeader eyebrow={eyebrow} title="Learn" crumbs={view ? [{ href: '/', label: 'Home' }, { href: '/learn/', label: 'Learn' }, { label: view === 'tutorials' ? 'Tutorials' : 'Study tracks' }] : [{ href: '/', label: 'Home' }, { label: 'Learn' }]}>
+  <p class="lede">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
+  <p>We're building this section around a few areas: <strong>security</strong>, <strong>networking</strong>, <strong>automation</strong>, and <strong>practical IT</strong>. Every guide explains the ideas in everyday language first, then gets specific.</p>
+  <Fragment slot="meta">
+    <li><span><strong>{studyTracks.length}</strong> study {studyTracks.length === 1 ? 'track' : 'tracks'}</span></li>
+    <li><span><strong>{tutorials.length}</strong> {tutorials.length === 1 ? 'tutorial' : 'tutorials'}</span></li>
+    <li><span>Free to read</span></li>
+  </Fragment>
+</PageHeader>
 
-<p>We're building this section around a few areas: <strong>security</strong>, <strong>networking</strong>, <strong>automation</strong>, and <strong>practical IT</strong>. Every guide explains the ideas in everyday language first, then gets specific.</p>
-
+<div class="container learn-body">
 <nav class="article-tabs learn-tabs" aria-label="Filter Learn by type">
   <ul>
     {tabs.map((t) => (
-      <li><a class={`article-tab${t.key === 'study-tracks' ? ' tab-study' : t.key === 'tutorials' ? ' tab-tutorials' : ' tab-all'}`} href={url(t.href)} aria-current={t.key === view ? 'page' : undefined} data-umami-event="learn-tab" data-umami-event-tab={t.label}>{t.label}</a></li>
+      <li><a class={`article-tab${t.key === 'study-tracks' ? ' tab-study' : t.key === 'tutorials' ? ' tab-tutorials' : ' tab-all'}`} href={url(t.href)} aria-current={t.key === view ? 'page' : undefined} data-umami-event="learn-tab" data-umami-event-tab={t.label}>{t.label} <span class="tab-count">{counts[t.key ?? 'all']}</span></a></li>
     ))}
   </ul>
 </nav>
 
 {showStudy && (
-  <section aria-labelledby="study-tracks">
-    <h2 id="study-tracks">Study tracks</h2>
-    <div class="grid grid-2">
-      {studyTracks.map((c) => (
-        <article class="card">
-          <span class="kicker">{c.kicker}</span>
-          <h3><a href={url(c.href)}>{c.title}</a></h3>
-          <p>{c.text}</p>
-          <p style="margin-top:.8rem"><a class="lab-read" href={url(c.href)}>{c.cta} →</a></p>
-        </article>
+  <section class="learn-group" aria-labelledby="study-tracks">
+    <SectionHeading id="study-tracks" eyebrow="Structured" title="Study tracks" count={`${studyTracks.length} ${studyTracks.length === 1 ? 'track' : 'tracks'}`} intro="Multi-page guides that follow an exam or skill from start to finish." />
+    <ul class="article-grid cols-2">
+      {(studyTracks as LearnCard[]).map((c) => (
+        <StoryCard href={c.href} title={c.title} description={c.text} image={c.image} alt={c.alt} width={c.width} height={c.height}
+          thumbLabel={c.label} icon={c.icon as IconName} accent={c.accent as Accent}
+          badges={[{ label: c.kicker, tone: 'violet' }]} meta="Study track" cta={c.cta} />
       ))}
-    </div>
+    </ul>
   </section>
 )}
 
 {showTutorials && (
-  <section aria-labelledby="tutorials">
-    <h2 id="tutorials">Tutorials</h2>
-    <div class="grid grid-2">
-      {tutorials.map((c) => (
-        <article class="card">
-          <span class="kicker">{c.kicker}</span>
-          <h3><a href={url(c.href)}>{c.title}</a></h3>
-          <p>{c.text}</p>
-          <p style="margin-top:.8rem"><a class="lab-read" href={url(c.href)}>{c.cta} →</a></p>
-        </article>
+  <section class="learn-group" aria-labelledby="tutorials">
+    <SectionHeading id="tutorials" eyebrow="Hands-on" title="Tutorials" count={`${tutorials.length} ${tutorials.length === 1 ? 'tutorial' : 'tutorials'}`} intro="Single-sitting walkthroughs you can follow on your own devices." />
+    <ul class="article-grid">
+      {(tutorials as LearnCard[]).map((c) => (
+        <StoryCard href={c.href} title={c.title} description={c.text} image={c.image} alt={c.alt} width={c.width} height={c.height}
+          thumbLabel={c.label} icon={c.icon as IconName} accent={c.accent as Accent}
+          badges={[{ label: c.kicker, tone: 'cyan' }]} meta={cardMeta(c, 'Tutorial')} cta={c.cta} />
       ))}
-    </div>
-    <p class="muted" style="margin-top:1.2rem">More tutorials are on the way. <a href={url('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
+    </ul>
+    <p class="muted learn-more">More tutorials are on the way. <a href={url('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
   </section>
 )}
+</div>
 
 <style>
-  .learn-tabs { margin-top: 1.5rem; }
-  /* Override the site-wide section padding so the sections sit close under the tabs. */
-  section { padding: 0; }
-  section h2 { margin-top: 1.25rem; }
-  section + section { margin-top: 2rem; }
+  .learn-body { padding-bottom: 3.5rem; }
+  .learn-tabs { margin-top: .25rem; }
+  .learn-group { padding: 0; margin-top: 1.5rem; }
+  .learn-group + .learn-group { margin-top: 2.75rem; }
+  .learn-more { margin-top: 1.2rem; }
 </style>

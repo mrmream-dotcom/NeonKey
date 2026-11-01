@@ -1,15 +1,38 @@
 ---
 // Layout for Learn MDX pages: a normal NeonKey page (Base + .narrow.prose), not an app shell.
+// Header: breadcrumb, eyebrow (frontmatter kicker), title, and a byline row with topic tags and reading time.
 import Base from '../../layouts/Base.astro';
+import Icon from '../Icon.astro';
 import { url } from '../../config';
+import { learnMinutes } from '../../lib/reading';
+import type { IconName } from '../../lib/ui';
 const { frontmatter } = Astro.props;
 // `noindex: true` in frontmatter keeps a draft page out of search engines (pair it with DRAFT_PAGES in astro.config.mjs).
 const { title, description, kicker = 'Learn', back, noindex = false } = frontmatter;
+const parts: string[] = String(kicker).split('·').map((x: string) => x.trim()).filter((x: string) => x && x !== 'Learn');
+const crumbs: { href?: string; label: string }[] = [{ href: '/', label: 'Home' }, { href: '/learn/', label: 'Learn' }];
+if (back && back.href !== '/learn/') crumbs.push({ href: back.href, label: back.href.includes('security-plus') ? 'Security+ guide' : back.label.replace(/^Back to (the )?/, '') });
+crumbs.push({ label: title });
+const isTrack = Astro.url.pathname.includes('/security-plus/');
+const icon: IconName = isTrack ? 'book' : /network|wi-?fi/i.test(String(kicker)) ? 'wifi' : 'shield';
+const mins = learnMinutes(Astro.url.pathname);
+const kind = isTrack ? 'Study guide' : 'Tutorial';
 ---
 <Base title={title} description={description} noindex={noindex}>
-  <article class="narrow page-head prose">
-    <span class="kicker">{kicker}</span>
-    <h1>{title}</h1>
+  <article class="narrow page-head prose guide-page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        {crumbs.map((c, i) => <li>{c.href && i < crumbs.length - 1 ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>)}
+      </ol>
+    </nav>
+    <span class="kicker eyebrow">{kicker}</span>
+    <h1 class="guide-title">{title}</h1>
+    <div class="guide-byline">
+      <span class="icon-chip"><Icon name={icon} /></span>
+      <span class="cat-badge tone-violet">{kind}</span>
+      {parts.map((t) => <span class="tag">{t}</span>)}
+      {mins && mins >= 3 && <span class="muted"><span class="meta-sep" aria-hidden="true">·</span> {mins} min read</span>}
+    </div>
     <slot />
     {back && <p><a href={url(back.href)}>← {back.label}</a></p>}
   </article>

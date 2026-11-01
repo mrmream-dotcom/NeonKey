@@ -92,7 +92,7 @@ Kit docs: [Form embedding basics](https://help.kit.com/en/articles/4009572-form-
 | Route | Page |
 |---|---|
 | `/` | Home: hero, four Unlock pillars, tutorials, From the Lab strip, featured review, newsletter, services teaser |
-| `/learn/` | Learn hub (`src/pages/learn/index.mdx`): tracks + "Tutorials — coming soon"; drafts in `src/_drafts/learn/` |
+| `/learn/` | Learn hub (`src/pages/learn/index.astro` + `LearnHub.astro`): tracks + "Tutorials — coming soon"; drafts in `src/_drafts/learn/` |
 | `/learn/security-plus/` | Security+ study guide: intro, 5 domain pages, acronyms (MDX in `src/pages/learn/security-plus/`, components in `src/components/learn/`, data in `src/data/security-plus/`). To swap in an affiliate link, set `officialLink.affiliateUrl` + `isAffiliate: true` in `track.json`. Re-check price/exam-version notes (SY0-801 launches ~Nov 17, 2026) and bump `lastReviewed`. |
 | `/lab/` | Lab portfolio with tag filters for published projects (empty state for now; 3 sample case studies are drafts in `src/_drafts/lab/`) |
 | `/reviews/` | Reviews index (empty state; sample review is a draft in `src/_drafts/reviews/`) |
