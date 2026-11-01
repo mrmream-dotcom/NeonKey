@@ -5,7 +5,7 @@ export interface Offer {
   name: string;
   from: number;
   for: string;
-  /** Plain-English business outcome, shown first on the home and services cards. */
+  /** Business outcome in everyday words, shown first on the home and services cards. */
   outcome?: string;
   items: string[];
   href?: string;
@@ -17,7 +17,7 @@ export interface Offer {
   upsell?: { text: string; linkText: string; href: string };
   /** Optional link to a working demo of this kind of build. */
   demo?: { label: string; href: string };
-  /** Longer plain-English explanation, shown in "See details" and on detail pages. */
+  /** Longer jargon-free explanation, shown in "See details" and on detail pages. */
   details?: OfferDetails;
 }
 
@@ -30,7 +30,7 @@ export interface OfferDetails {
   /** Rough range with "usually" wording. Not a promise; omit when it doesn't apply. */
   turnaround?: string;
   priceFactors: string[];
-  /** Extra plain-English note (running costs, limits). */
+  /** Extra note in simple terms (running costs, limits). */
   note?: string;
 }
 
@@ -67,7 +67,7 @@ export const remoteIt: Offer = {
       'A simple backup plan for the files that matter, with a test restore',
       'A business password manager set up with shared password folders (vaults), plus a second login step, like a code on your phone (2FA), on key accounts',
       'Written checklists for setting up and retiring laptops and phones',
-      'Plain-English notes of every change, and admin access that stays with you',
+      'Clear notes on every change, and admin access that stays with you',
     ],
     steps: [
       { h: 'Scoping call', p: 'A short video call to list what you have today and pick what is in scope. You get a fixed quote before any work starts.' },
@@ -112,7 +112,7 @@ export const remoteSupportPlan: Offer = {
       'A set number of small requests each month, agreed up front',
       'Account adds and removes when people join or leave',
       'Settings changes, for example a new alias, a shared folder or a shared password folder (vault)',
-      'How-to questions answered in plain English',
+      'How-to questions answered without the jargon',
       'A short note of what was changed for each request',
     ],
     steps: [
@@ -146,7 +146,7 @@ export const automationOffers: Offer[] = [
     items: [
       'One simple workflow automated, scoped together first, using tools you already use',
       'A short remote checkup of the basics: passwords and a second login step, like a code on your phone (2FA), backups, Wi-Fi and router basics, device updates and security settings',
-      'A plain-English written to-do list of the top fixes',
+      'A jargon-free written to-do list of the top fixes',
       'Short walkthrough video and notes, then a handoff so you own it',
     ],
     demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' },
@@ -161,7 +161,7 @@ export const automationOffers: Offer[] = [
       'A clear handoff to a person when the assistant is unsure or the question is outside your FAQ',
       'Rules for what it should never answer (for example exact quotes or medical or legal advice)',
       'A testing round with real example questions, then a review and tuning session',
-      'Plain-English notes on how to update the content yourself',
+      'Step-by-step notes on how to update the content yourself',
       ],
       steps: [
         { h: 'Scoping call', p: 'We go through the questions you get most, where they come in, and what should always go to a person. You get a fixed quote before work starts.' },

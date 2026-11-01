@@ -310,7 +310,7 @@ function buildPlanBase(p: Plan): PlanView {
       intro: `You told me ${pain}. The fixes your answers point to are the basics this setup covers: email, passwords, Wi-Fi and backups, done remotely by video call and screen share, on accounts you own.`,
       items: { title: p.healthCheck ? 'Start with a quick health check' : 'Based on your answers, start with', list },
       price: `Starting at ${usd(remoteIt.from)}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
-      youGet: 'What you get either way: plain-English notes of every change, admin access that stays with you, and a short recorded walkthrough where it helps.',
+      youGet: 'What you get either way: clear notes on every change, admin access that stays with you, and a short recorded walkthrough where it helps.',
       footnote: "Handle regulated data (for example HIPAA or PCI), or need someone onsite? That\'s outside this setup. Mention it and I\'ll say so up front and point you somewhere better.",
       links: [
         { label: 'Ask about a setup', href: contact('remote-it'), primary: true },
@@ -507,7 +507,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.scope = { title: p.healthCheck ? 'A quick health check of' : 'Based on your answers, your setup would cover', list: list.map((i) => i.name) };
     v.steps = list.map((i) => ({ title: i.name, what: i.covers, why: i.reason.startsWith('a quick check') ? "Your answers didn't flag this directly. It's one of the basics worth a quick check." : cap(i.reason) + '.', ready: i.ready }));
     v.orderNote = "Why this order: email and its authentication come first because most other accounts sign in or reset through your email. Passwords and two-factor sign-in come next because they protect every other account. The network, backups and device checklists build on top of that.";
-    v.nextSteps = [...SCOPING, "The work is done remotely by video call and screen share, on accounts you own, with plain-English notes of every change."];
+    v.nextSteps = [...SCOPING, "The work is done remotely by video call and screen share, on accounts you own, with jargon-free notes on every change."];
   } else if (p.type === 'Q') {
     const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
     const focusName = p.wf === 'copy' ? 'Automating copy-and-paste between apps' : p.wf === 'reminders' ? 'Automating repeat emails and reminders' : 'Automating the one task you repeat most';
@@ -517,7 +517,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.steps = [
       { title: 'Write down the task', what: 'A good first candidate: ' + v.focus!.text.charAt(0).toLowerCase() + v.focus!.text.slice(1), why, ready: r.slice(0, 2).concat(r.slice(3)) },
       { title: 'Scope it together', what: 'We pick the single workflow on a short call and agree what it will and won\'t do before anything is built. Keeping it to one task keeps it small and low-risk.', why: 'One workflow, scoped together first, is how every Quick Win starts.', ready: [r[2]] },
-      { title: 'Quick tech checkup', what: 'A short remote look at your basics: passwords and two-factor sign-in, backups, Wi-Fi and router basics, device updates and security settings. You get a plain-English written to-do list of the top fixes.', why: 'So you know which fixes matter most, whether you do them yourself or have them done for you.' },
+      { title: 'Quick tech checkup', what: 'A short remote look at your basics: passwords and two-factor sign-in, backups, Wi-Fi and router basics, device updates and security settings. You get a short written to-do list of the top fixes, in simple terms.', why: 'So you know which fixes matter most, whether you do them yourself or have them done for you.' },
       { title: 'Build it on tools you already use', what: 'The automation connects the apps you already use, so your day-to-day routine barely changes.', why: toolsWhy ? cap(toolsWhy) + ', so the build starts there.' : 'The build uses whatever you already work in.' },
       { title: 'Walkthrough and handoff', what: 'A short walkthrough video and notes, then a handoff so you own it.', why: 'So you can run and adjust it without me.' },
     ];
