@@ -130,6 +130,7 @@ Internal links must use `url('/path/')` from `src/config.ts` so they respect `BA
   # then push dist/ (plus CNAME + .nojekyll) to the gh-pages branch
   ```
   `.github/workflows/pages.yml` (manual-only, copy in `docs/pages.yml.example`) builds the same live build once **Settings → Pages → Source** is set to **GitHub Actions**. GitHub Pages ignores `_headers`/`_redirects`.
+- **IndexNow (Bing, Yandex and others):** after each deploy, once the live site shows the new build, run `npm run indexnow` (it submits every URL in `dist/sitemap-*.xml`). Use `node scripts/indexnow.mjs /articles/new-post/` to submit just the changed URLs, `--live` to read the live sitemap instead of `dist/`, and `--dry-run` to preview. The key is public by design and lives in `public/<key>.txt`, which serves at `https://neonkey.tech/<key>.txt`. Keep that file (don't rename or delete it). A `200` or `202` response means success.
 - **Launch plan:** move DNS to Cloudflare and deploy on Cloudflare Pages in live mode, so headers, redirects and Email Routing work. See LAUNCH.md, step 1.
 
 
