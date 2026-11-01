@@ -2,35 +2,50 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import EmptyState from '../../components/EmptyState.astro';
-import CategoryBadge from '../../components/CategoryBadge.astro';
-import { articlesIn } from '../../data/articles';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import FeaturedArticle from '../../components/FeaturedArticle.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { articlesIn, sortByDate, dateParts } from '../../data/articles';
 // Published reviews are articles with category 'reviews' in src/data/articles.ts (pages in src/pages/articles/).
 // Unpublished drafts live in src/_drafts/reviews/ (see LAUNCH.md "Hidden drafts").
-const reviews = articlesIn('reviews');
+// Layout matches the Articles index: newest review featured, the rest as image-led cards.
+const reviews = sortByDate(articlesIn('reviews'));
+const featured = reviews.find((a) => a.date) ?? reviews[0];
+const rest = reviews.filter((a) => a !== featured);
+const latest = featured?.date ? dateParts(featured.date) : undefined;
 ---
 <Base title="Reviews" description="NeonKey reviews: honest takes on gear and software, with pros, cons and a plain verdict.">
-  <div class="container page-head">
-    <span class="kicker">Unlock Deals</span>
-    <h1>Reviews</h1>
+  <PageHeader eyebrow="Unlock Deals · Reviews" title="Reviews" class="articles-head">
     <p>Who a product is for, what's good, what isn't, and a plain verdict. Reviews are never paid placements. <a href={url('/disclosure/')}>Read the disclosure</a>.</p>
-  </div>
+    {reviews.length > 0 && (
+      <Fragment slot="meta">
+        <li><span><strong>{reviews.length}</strong> {reviews.length === 1 ? 'review' : 'reviews'}</span></li>
+        {latest && featured && <li><span>Latest: <time datetime={featured.date}>{latest.long}</time></span></li>}
+        <li><span>No paid placements</span></li>
+      </Fragment>
+    )}
+  </PageHeader>
   <div class="container">
     {reviews.length === 0 ? (
       <EmptyState what="reviews" location="reviews-empty" />
     ) : (
-      <ul class="article-list">
-        {reviews.map((a) => (
-          <li class="article-card">
-            <div class="article-card-tags">
-              <CategoryBadge category={a.category} />
-              {a.topic && <span class="tag">{a.topic}</span>}
-            </div>
-            <h2><a href={url(a.href)}>{a.title}</a></h2>
-            <p>{a.description}</p>
-            <span class="article-cta" aria-hidden="true">Read review <span class="arrow">→</span></span>
-          </li>
-        ))}
-      </ul>
+      <div class="articles-body">
+        {featured && (
+          <section class="article-featured" aria-labelledby="featured-heading">
+            <h2 id="featured-heading" class="section-label"><span class="pulse" aria-hidden="true"></span>Latest review</h2>
+            <FeaturedArticle article={featured} />
+          </section>
+        )}
+        {rest.length > 0 && (
+          <section class="article-month" aria-labelledby="more-reviews">
+            <SectionHeading id="more-reviews" eyebrow="Archive" title="More reviews" count={`${rest.length} ${rest.length === 1 ? 'review' : 'reviews'}`} link={{ href: '/articles/reviews/', label: 'Reviews in Articles' }} />
+            <ul class="article-grid">
+              {rest.map((a) => <ArticleCard article={a} />)}
+            </ul>
+          </section>
+        )}
+      </div>
     )}
   </div>
 </Base>

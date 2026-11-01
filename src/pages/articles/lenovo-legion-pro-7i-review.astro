@@ -2,11 +2,12 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('lenovo-legion-pro-7i-review');
 ---
 <Base title={article.title} description={article.description} type="article" image="/images/articles/lenovo-legion-pro-7i-review/hero.jpg">
-  <article class="narrow page-head prose">
+  <article class="narrow page-head prose article-page">
     <span class="kicker">Reviews · Laptops</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
@@ -93,4 +94,5 @@ const article = getArticle('lenovo-legion-pro-7i-review');
 <p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Lenovo_legion_(laptop)_%26_Lenovo_400_Wireless_(Mouse)_IMG_6309ab.jpg">Atudu</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>, resized.</p>
 <p><a href={url('/reviews/')}>← Back to Reviews</a> · <a href={url('/articles/')}>All Articles</a></p>
   </article>
+  <MoreArticles current={article.slug} />
 </Base>

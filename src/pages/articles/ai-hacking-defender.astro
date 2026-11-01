@@ -2,11 +2,12 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('ai-hacking-defender');
 ---
 <Base title={article.title} description={article.description} type="article" image="/images/articles/ai-hacking-defender/hero.jpg">
-  <article class="narrow page-head prose">
+  <article class="narrow page-head prose article-page">
     <span class="kicker">Articles · Security</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
@@ -47,4 +48,5 @@ const article = getArticle('ai-hacking-defender');
 <p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:BalticServers_data_center.jpg">BalticServers.com</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>, resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
+  <MoreArticles current={article.slug} />
 </Base>

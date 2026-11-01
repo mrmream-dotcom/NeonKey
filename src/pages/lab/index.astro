@@ -2,19 +2,28 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import EmptyState from '../../components/EmptyState.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import LabCard from '../../components/LabCard.astro';
 import { publishedLabProjects as projects, labTags } from '../../data/lab';
 // Only published projects are listed. Drafts (draft: true in src/data/lab.ts, pages in src/_drafts/lab/) stay hidden.
 ---
 <Base title="Lab" description="The NeonKey Lab: real builds, documented. What I built, why, what broke and what I learned.">
-  <div class="container page-head">
-    <span class="kicker">The Lab · Hands-on builds</span>
-    <h1>Real builds, <span class="glow-c">documented.</span></h1>
-    <p>What I built, why, what broke, and what I learned. The Lab is my project portfolio: homelab, automation, networking, security and AI builds written up as honest case studies, mistakes included.</p>
-  </div>
+  <PageHeader eyebrow="The Lab · Hands-on builds" crumbs={[{ href: '/', label: 'Home' }, { label: 'Lab' }]}>
+    <Fragment slot="title">Real builds, <span class="glow-c">documented.</span></Fragment>
+    <p class="lede">What I built, why, what broke, and what I learned. The Lab is my project portfolio: homelab, automation, networking, security and AI builds written up as honest case studies, mistakes included.</p>
+    {projects.length > 0 && (
+      <Fragment slot="meta">
+        <li><span><strong>{projects.length}</strong> published {projects.length === 1 ? 'build' : 'builds'}</span></li>
+        <li><span>Working demos you can try</span></li>
+        <li><span>Limitations written up</span></li>
+      </Fragment>
+    )}
+  </PageHeader>
 
-  <section style="padding-top:.5rem" aria-labelledby="lab-grid-h">
+  <section class="ed-section" aria-labelledby="lab-grid-h">
     <div class="container">
-      <h2 id="lab-grid-h" class="sr-only">Projects</h2>
+      <SectionHeading id="lab-grid-h" eyebrow="Portfolio" title="Projects" count={`${projects.length} ${projects.length === 1 ? 'build' : 'builds'}`} intro="Filter by topic. Every card opens the full write-up." />
       {projects.length === 0 ? (
         <EmptyState what="Lab builds" location="lab-empty" />
       ) : (<>
@@ -24,18 +33,8 @@ import { publishedLabProjects as projects, labTags } from '../../data/lab';
           <button type="button" class="filter-chip" data-filter={t} aria-pressed="false" data-umami-event="lab-filter" data-umami-event-tag={t}>{t}</button>
         ))}
       </div>
-      <div class="grid grid-3 lab-grid">
-        {projects.map((p) => (
-          <article class="card lab-card" data-tags={p.tags.join(',')}>
-            <div class="card-top">
-              <span class="kicker">{p.level}</span>
-            </div>
-            <h3><a href={url(`/lab/${p.slug}/`)}>{p.title}</a></h3>
-            <p>{p.summary}</p>
-            <p class="lab-tags">{p.tags.map((t) => <span class="tag">{t}</span>)}</p>
-            <a class="lab-read" href={url(`/lab/${p.slug}/`)}>Read the build →</a>
-          </article>
-        ))}
+      <div class="article-grid lab-grid">
+        {projects.map((p) => <LabCard project={p} filterable />)}
       </div>
       <p class="filter-empty muted" hidden>No builds with that tag yet.</p>
       </>)}
@@ -44,16 +43,16 @@ import { publishedLabProjects as projects, labTags } from '../../data/lab';
 
   <section class="alt" aria-labelledby="lab-how-h">
     <div class="container">
-      <h2 id="lab-how-h">How every build is written up</h2>
-      <div class="coming">
-        <span class="chip">Overview</span><span class="chip">Goal</span><span class="chip">Stack &amp; tools</span><span class="chip">Build steps</span><span class="chip">What broke &amp; the fix</span><span class="chip">What I learned</span><span class="chip">Related service</span>
-      </div>
+      <SectionHeading id="lab-how-h" eyebrow="Format" title="How every build is written up" />
+      <ol class="step-cards lab-format">
+        <li><strong>Overview</strong></li><li><strong>Goal</strong></li><li><strong>Stack &amp; tools</strong></li><li><strong>Build steps</strong></li><li><strong>What broke &amp; the fix</strong></li><li><strong>What I learned</strong></li><li><strong>Related service</strong></li>
+      </ol>
     </div>
   </section>
 
   <section aria-labelledby="lab-cta-h">
     <div class="container">
-      <div class="nl-box lab-cta">
+      <div class="nl-box lab-cta topline">
         <div>
           <span class="kicker">Unlock AI</span>
           <h2 id="lab-cta-h">Want something like this for your business?</h2>

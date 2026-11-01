@@ -3,16 +3,23 @@
 import { url, RECEIPT_API_URL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import Toc from '../../components/Toc.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects as allLab } from '../../data/lab';
+const labProject = allLab.find((p) => p.slug === 'receipt-sorter')!;
 const CATEGORIES = ['Office supplies', 'Software & subscriptions', 'Meals', 'Travel', 'Fuel', 'Equipment', 'Utilities', 'Advertising', 'Professional services', 'Sales / client payments', 'Other'];
 const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add an entry'], ['ledger', 'Your ledger'], ['privacy', 'Privacy'], ['how', 'How it works'], ['limits', 'Limitations'], ['why', 'Why custom?']];
 ---
 <Base title="AI receipt & invoice sorter" description="Snap a receipt or upload an invoice, check what the AI read, and keep a simple ledger in your browser that exports to a spreadsheet.">
-  <div class="container page-head">
-    <span class="kicker">Lab · AI · Automation</span>
-    <h1>Receipt &amp; invoice <span class="glow-c">sorter.</span></h1>
-    <p>Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax, any discount or tip, and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
-    <Toc sections={sections} />
-  </div>
+  <PageHeader eyebrow="Lab · AI · Automation" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: labProject.title }]}>
+    <Fragment slot="title">Receipt &amp; invoice <span class="glow-c">sorter.</span></Fragment>
+    <p class="lede">Take a photo of a receipt or upload an invoice. An AI reads the date, vendor, total, tax, any discount or tip, and a category into a form you can check and fix. You can also add payments by hand. Everything you save goes into a simple ledger in this browser that you can export to a spreadsheet.</p>
+    <Fragment slot="meta">
+      <li><span>Level: <strong>{labProject.level}</strong></span></li>
+      <li><span>{labProject.tags.join(' · ')}</span></li>
+      {labProject.flag && <li><span>{labProject.flag} on this page</span></li>}
+    </Fragment>
+    <div slot="after" class="lab-head-toc"><Toc sections={sections} /></div>
+  </PageHeader>
 
   <section id="scan" style="padding-top:0" aria-labelledby="scan-h">
     <div class="container">

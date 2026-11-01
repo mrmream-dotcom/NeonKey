@@ -2,6 +2,9 @@
 import { url, TRIAGE_API_URL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import Toc from '../../components/Toc.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects as allLab } from '../../data/lab';
+const labProject = allLab.find((p) => p.slug === 'ai-inquiry-triage')!;
 import { labProjects } from '../../data/lab';
 import { triageSamples } from '../../data/triage-samples';
 import examplesRaw from '../../data/triage-examples.json';
@@ -16,12 +19,16 @@ const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { yea
 const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['examples', 'Real results'], ['build', 'Build notes'], ['related', 'Related']];
 ---
 <Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a human to review. Plus how it's built and what it costs.">
-  <div class="container page-head">
-    <span class="kicker">Lab · AI · Automation · Live demo</span>
-    <h1>AI inquiry triage, <span class="glow-c">working demo.</span></h1>
-    <p>Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of one-workflow build in the <a href={url('/services/#quick-win')}>Quick Win + Tech Checkup</a>, running for real.</p>
-    <Toc sections={sections} />
-  </div>
+  <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: labProject.title }]}>
+    <Fragment slot="title">AI inquiry triage, <span class="glow-c">working demo.</span></Fragment>
+    <p class="lede">Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of one-workflow build in the <a href={url('/services/#quick-win')}>Quick Win + Tech Checkup</a>, running for real.</p>
+    <Fragment slot="meta">
+      <li><span>Level: <strong>{labProject.level}</strong></span></li>
+      <li><span>{labProject.tags.join(' · ')}</span></li>
+      {labProject.flag && <li><span>{labProject.flag} on this page</span></li>}
+    </Fragment>
+    <div slot="after" class="lab-head-toc"><Toc sections={sections} /></div>
+  </PageHeader>
 
   <section id="demo" style="padding-top:0" aria-labelledby="demo-h">
     <div class="container">

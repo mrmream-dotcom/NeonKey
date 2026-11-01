@@ -2,11 +2,12 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('why-outsource-automations');
 ---
 <Base title={article.title} description={article.description} type="article" image="/images/articles/why-outsource-automations/hero.jpg">
-  <article class="narrow page-head prose">
+  <article class="narrow page-head prose article-page">
     <span class="kicker">Articles · Automation</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
@@ -79,4 +80,5 @@ const article = getArticle('why-outsource-automations');
 <p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Statistics_on_a_laptop_(Unsplash).jpg">Carlos Muza</a> via Wikimedia Commons (originally Unsplash), <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>, cropped and resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
+  <MoreArticles current={article.slug} />
 </Base>

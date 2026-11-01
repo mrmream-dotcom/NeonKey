@@ -2,11 +2,12 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('what-is-neonkey');
 ---
 <Base title={article.title} description={article.description} type="article" image="/images/articles/what-is-neonkey/hero.jpg">
-  <article class="narrow page-head prose">
+  <article class="narrow page-head prose article-page">
     <span class="kicker">Articles · About</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
@@ -49,4 +50,5 @@ const article = getArticle('what-is-neonkey');
 <p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Backlit_laptop_keyboard_(Unsplash).jpg">Markus Petritz</a> via Wikimedia Commons (originally Unsplash), <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>, resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
+  <MoreArticles current={article.slug} />
 </Base>
