@@ -482,3 +482,32 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 :is(.featured-card, .grid-card) h3 a:focus-visible { outline: none; }
 :is(.featured-card, .grid-card):has(a:focus-visible) { outline: 3px solid var(--cyan); outline-offset: 3px; }
 .grid-card:hover { transform: translateY(-2px); }
+
+/* ---------- UX polish (Nov 2026) ---------- */
+
+/* Balanced headlines: titles split evenly across lines instead of leaving one lonely word at the end. */
+h1, h2, h3, h4 { text-wrap: balance; }
+
+/* Tabular numbers: prices and dates use equal-width digits so they line up and don't jiggle. */
+.price, .price-inline, .date-badge, .offer-details { font-variant-numeric: tabular-nums; }
+
+/* Smooth page-to-page fades (cross-document view transitions). Pure CSS: every navigation is still a normal
+   full page load, so analytics and page scripts behave exactly as before. Browsers without support just navigate. */
+@view-transition { navigation: auto; }
+.site-header { view-transition-name: site-header; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
+/* Safe-area insets: with viewport-fit=cover, keep content clear of phone notches, rounded corners and the home bar. */
+body { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.site-footer { padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px)); }
+
+/* Bigger tap targets on touch screens (aim for ~44px), without changing how anything looks. */
+@media (max-width: 820px) {
+  .site-nav a:not(.btn) { display: flex; align-items: center; min-height: 44px; }
+  .nav-cta { min-height: 44px; }
+}
+@media (pointer: coarse) {
+  .footer-links a, .crumbs a, a.tag { position: relative; }
+  .footer-links a::after, .crumbs a::after, a.tag::after { content: ''; position: absolute; inset: -10px -8px; }
+}
