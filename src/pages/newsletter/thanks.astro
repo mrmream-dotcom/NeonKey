@@ -17,4 +17,6 @@ import Base from '../../layouts/Base.astro';
     </div>
     <p style="margin-top:1.5rem"><a class="btn btn-primary" href={url('/')} data-umami-event="nl-thanks-home">Back to NeonKey</a></p>
   </div>
+  <!-- Google Ads "Submit lead form" conversion (newsletter signup). External file: no inline scripts. -->
+  <script is:inline src={url('/js/conv-newsletter.js')}></script>
 </Base>
