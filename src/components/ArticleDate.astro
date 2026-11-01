@@ -1,0 +1,12 @@
+---
+// Calendar-style date badge (month / day / year) for article cards. Renders a real <time> element.
+import { dateParts } from '../data/articles';
+interface Props { date: string; size?: 'lg' | 'md' }
+const { date, size = 'md' } = Astro.props;
+const p = dateParts(date);
+---
+<time class={`date-badge date-badge-${size}`} datetime={date} title={`${p.weekday}, ${p.long}`}>
+  <span class="date-badge-month">{p.month}</span>
+  <span class="date-badge-day">{p.day}</span>
+  <span class="date-badge-year">{p.year}</span>
+</time>

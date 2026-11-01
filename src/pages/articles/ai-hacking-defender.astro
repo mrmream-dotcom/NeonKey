@@ -5,11 +5,12 @@ import ArticleMeta from '../../components/ArticleMeta.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('ai-hacking-defender');
 ---
-<Base title={article.title} description={article.description} type="article">
+<Base title={article.title} description={article.description} type="article" image="/images/articles/ai-hacking-defender/hero.jpg">
   <article class="narrow page-head prose">
     <span class="kicker">Articles · Security</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/ai-hacking-defender/hero.jpg')} alt="Rows of server racks glowing with blue lights in a dim data center." width="1400" height="933" decoding="async" /></figure>
 <p class="lead">If you've read anything about AI and cybersecurity lately, it has probably made you nervous. That's fair, but it's only half the story.</p>
 <h2>The fear has a basis</h2>
 <p>Attackers are using AI to move faster. In its <a data-umami-event="outbound-click" data-umami-event-item="paloaltonetworks.com" href="https://www.paloaltonetworks.com/resources/research/unit-42-incident-response-report">2026 Global Incident Response Report</a>, Palo Alto Networks' Unit 42 team says that in a controlled simulation last year, it used AI to go from first break-in to stolen data in about 25 minutes. That was a test, not a real attack. Still, the report says real incidents are speeding up too. In 2025, the fastest quarter of the intrusions it investigated reached data theft in roughly 72 minutes, down from nearly five hours the year before.</p>
@@ -43,6 +44,7 @@ const article = getArticle('ai-hacking-defender');
 <li>AvalonX, "AI Startup AvalonX Emerges From Stealth With $10 Million in Funding From Ridown Capital," Presswire, Oct. 28, 2026: <a data-umami-event="outbound-click" data-umami-event-item="presswire.com" href="https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/">https://presswire.com/release/ai-startup-avalonx-emerges-from-stealth-with-10-million-in-funding-from-ridown-capital/</a></li>
 <li>Cyware, "Cyware Launches New 'Last Mile' Agents to Help Smaller Organizations Act on the Threat Intelligence They Already Receive," PR Newswire, Oct. 22, 2026: <a data-umami-event="outbound-click" data-umami-event-item="prnewswire.com" href="https://www.prnewswire.com/news-releases/cyware-launches-new-last-mile-agents-to-help-smaller-organizations-act-on-the-threat-intelligence-they-already-receive-302915585.html">https://www.prnewswire.com/news-releases/cyware-launches-new-last-mile-agents-to-help-smaller-organizations-act-on-the-threat-intelligence-they-already-receive-302915585.html</a></li>
 </ul>
+<p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:BalticServers_data_center.jpg">BalticServers.com</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>, resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
 </Base>

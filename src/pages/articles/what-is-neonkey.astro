@@ -5,11 +5,12 @@ import ArticleMeta from '../../components/ArticleMeta.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('what-is-neonkey');
 ---
-<Base title={article.title} description={article.description} type="article">
+<Base title={article.title} description={article.description} type="article" image="/images/articles/what-is-neonkey/hero.jpg">
   <article class="narrow page-head prose">
     <span class="kicker">Articles · About</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/what-is-neonkey/hero.jpg')} alt="Close-up of a backlit laptop keyboard glowing in a dark room." width="1400" height="933" decoding="async" /></figure>
 <p class="lead">NeonKey is brand new. This post is a simple introduction: what NeonKey is, who it's for, what you'll find here and where we hope it goes.</p>
 <p>The <a href={url('/about/')}>About page</a> covers the short version. This is the longer one, kept general on purpose, because a lot of the details are still taking shape.</p>
 <h2>What NeonKey is</h2>
@@ -33,7 +34,7 @@ const article = getArticle('what-is-neonkey');
 <h3>Reviews and articles</h3>
 <p><a href={url('/reviews/')}>Reviews</a> are honest takes on gear and software: who something suits, what's good, what isn't and a plain verdict. Reviews are never paid placements, and any sponsorship or free product is always disclosed. <a href={url('/articles/')}>Articles</a> cover explainers, news and practical advice.</p>
 <h3>Unlock the Week</h3>
-<p><a href={url('/newsletter/')}>Unlock the Week</a> is NeonKey's weekly email. It covers tech news in general, not just AI, explained in plain English, along with a skill tip, gear picks and something to learn. One email a week, free, and you can unsubscribe anytime.</p>
+<p><a href={url('/newsletter/')}>Unlock the Week</a> is NeonKey's weekly email. It covers tech news in general, not just AI, explained in everyday language, along with a skill tip, gear picks and something to learn. One email a week, free, and you can unsubscribe anytime.</p>
 <h2>The vision</h2>
 <p>The big idea is simple: tech should feel approachable, and the advice around it should be honest.</p>
 <p>A lot of tech content is either too technical to follow or too focused on selling you something. NeonKey aims for the middle: clear explanations, real tradeoffs and no hype. That means no guarantees, no made-up numbers and no pretending a tool is perfect when it isn't.</p>
@@ -45,6 +46,7 @@ const article = getArticle('what-is-neonkey');
 <p>Because NeonKey is so new, feedback matters a lot right now, and we're open to any and all of it. Something confusing? A topic you'd like covered? A page that didn't work the way you expected? An idea for a tutorial or a review? We want to hear it.</p>
 <p>You can reach us through the <a href={url('/contact/')}>contact page</a>, or subscribe to <a href={url('/newsletter/')}>Unlock the Week</a> and hit reply on any issue. Every reply gets read.</p>
 <p>Thanks for being here early.</p>
+<p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Backlit_laptop_keyboard_(Unsplash).jpg">Markus Petritz</a> via Wikimedia Commons (originally Unsplash), <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>, resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
 </Base>

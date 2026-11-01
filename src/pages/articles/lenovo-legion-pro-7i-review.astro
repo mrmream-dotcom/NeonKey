@@ -5,11 +5,12 @@ import ArticleMeta from '../../components/ArticleMeta.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('lenovo-legion-pro-7i-review');
 ---
-<Base title={article.title} description={article.description} type="article">
+<Base title={article.title} description={article.description} type="article" image="/images/articles/lenovo-legion-pro-7i-review/hero.jpg">
   <article class="narrow page-head prose">
     <span class="kicker">Reviews · Laptops</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/lenovo-legion-pro-7i-review/hero.jpg')} alt="A closed dark gray Lenovo Legion gaming laptop next to its power adapter and a wireless mouse on a blue surface." width="1400" height="933" decoding="async" /></figure>
 <div class="disclosure" role="note"><strong>Disclosure:</strong> I bought this laptop with my own money. Lenovo didn't sponsor this review, provide the laptop, or see this post before it went up.</div>
 <p class="lead">For my first review, I wanted to cover something I actually use to do my work. That's the Lenovo Legion Pro 7i Gen 10, and I've had it for about six months.</p>
 <p>Yes, it's a gaming laptop. But it has other strengths too. I use it for virtualization, for keeping a lot of applications open at the same time, and for driving two external monitors at my desk. It's handled all of that well. It also has real drawbacks, and I'll cover those too.</p>
@@ -89,6 +90,7 @@ const article = getArticle('lenovo-legion-pro-7i-review');
 <li><a data-umami-event="outbound-click" data-umami-event-item="tomsguide.com" href="https://www.tomsguide.com/computing/gaming-laptops/lenovo-legion-pro-7i-review">Tom's Guide</a></li>
 <li><a data-umami-event="outbound-click" data-umami-event-item="laptopmedia.com" href="https://laptopmedia.com/review/lenovo-legion-pro-7i-gen-10-16-intel-review-the-fastest-gaming-laptop-weve-ever-tested/">LaptopMedia</a></li>
 </ul>
+<p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Lenovo_legion_(laptop)_%26_Lenovo_400_Wireless_(Mouse)_IMG_6309ab.jpg">Atudu</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>, resized.</p>
 <p><a href={url('/reviews/')}>← Back to Reviews</a> · <a href={url('/articles/')}>All Articles</a></p>
   </article>
 </Base>

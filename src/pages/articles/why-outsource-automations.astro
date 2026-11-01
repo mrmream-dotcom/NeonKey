@@ -5,11 +5,12 @@ import ArticleMeta from '../../components/ArticleMeta.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('why-outsource-automations');
 ---
-<Base title={article.title} description={article.description} type="article">
+<Base title={article.title} description={article.description} type="article" image="/images/articles/why-outsource-automations/hero.jpg">
   <article class="narrow page-head prose">
     <span class="kicker">Articles · Automation</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/why-outsource-automations/hero.jpg')} alt="A laptop on a glass table showing a business dashboard with charts and statistics." width="1400" height="933" decoding="async" /></figure>
 <p class="lead">Let's get this out of the way first: you can absolutely build your own automations.</p>
 <p>Tools like <a data-umami-event="outbound-click" data-umami-event-item="zapier.com" href="https://zapier.com">Zapier</a>, <a data-umami-event="outbound-click" data-umami-event-item="make.com" href="https://www.make.com">Make</a> and <a data-umami-event="outbound-click" data-umami-event-item="n8n.io" href="https://n8n.io">n8n</a> let you connect apps without writing much (or any) code. Plenty of the apps you already use now have AI features and simple workflows built in. Sorting incoming inquiries, copying form submissions into a spreadsheet, sending appointment reminders, nudging a client about an unpaid invoice: all of that is within reach for someone willing to sit down and figure it out.</p>
 <p>Lots of people do exactly that, and it works. If you're curious, we'd genuinely encourage you to try. Learning how automations work is useful even if you never build a big one, because it changes how you look at the repetitive parts of your week.</p>
@@ -75,6 +76,7 @@ const article = getArticle('why-outsource-automations');
 <p>DIY automation is real, doable and worth learning, whatever your level. Getting help is also a perfectly reasonable choice, for the same reason people hire an accountant even though tax software exists. It comes down to time, stakes and what you'd rather be doing.</p>
 <p>If you want to see what a small automation can look like in practice, our <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sorts a customer message, flags urgency and drafts a reply for a person to review.</p>
 <p>And if you ever decide you'd like a hand, NeonKey <a href={url('/services/')}>offers this kind of help</a>. Either way, we hope this helps you decide.</p>
+<p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Statistics_on_a_laptop_(Unsplash).jpg">Carlos Muza</a> via Wikimedia Commons (originally Unsplash), <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>, cropped and resized.</p>
     <p><a href={url('/articles/')}>← Back to Articles</a></p>
   </article>
 </Base>

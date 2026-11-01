@@ -5,11 +5,12 @@ import ArticleMeta from '../../components/ArticleMeta.astro';
 import { getArticle } from '../../data/articles';
 const article = getArticle('budget-work-laptops');
 ---
-<Base title={article.title} description={article.description} type="article">
+<Base title={article.title} description={article.description} type="article" image="/images/articles/budget-work-laptops/hero.jpg">
   <article class="narrow page-head prose">
     <span class="kicker">Reviews · Laptops</span>
     <h1>{article.title}</h1>
     <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/budget-work-laptops/hero.jpg')} alt="Three Lenovo ThinkPad laptops of different sizes set up side by side on an office desk." width="1400" height="933" decoding="async" /></figure>
 <p class="lead">If you read my <a href={url('/articles/lenovo-legion-pro-7i-review/')}>Lenovo Legion Pro 7i review</a>, here are a few smaller-tier options. That laptop works well for what I do, but most people don't need an RTX 5080 for email, documents, browsers and video calls.</p>
 <p>This post is for people who want something secure, fast and reliable for everyday basic work without paying gaming-laptop money.</p>
 <p>One thing to be clear about: I haven't used these four machines myself. My picks are based on manufacturer specs and retailer listings, not hands-on testing. Prices are as of Oct 30, 2026, and they change often, so check the current price before you buy.</p>
@@ -72,6 +73,7 @@ const article = getArticle('budget-work-laptops');
 <li><a data-umami-event="outbound-click" data-umami-event-item="bestbuy.com" href="https://www.bestbuy.com/product/hp-probook-4-g1i-14-fhd-ai-notebook-intel-core-ultra-5-225u-with-16gb-memory-512gb-ssd-windows-11-pro-silver/J3GWT6QTZH/sku/13146468">HP ProBook 4 G1i 14" at Best Buy</a></li>
 <li><a href={url('/articles/lenovo-legion-pro-7i-review/')}>My Lenovo Legion Pro 7i Gen 10 review</a></li>
 </ul>
+<p class="fine-print"><strong>Image credit:</strong> Top photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/wiki/File:Lenovo_Thinkpad_-_Three_different_sizes.jpg">Robert from Zoetermeer, Netherlands</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>, cropped and resized.</p>
 <p><a href={url('/reviews/')}>← Back to Reviews</a> · <a href={url('/articles/')}>All Articles</a></p>
   </article>
 </Base>
