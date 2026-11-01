@@ -5,9 +5,8 @@
 // Dates, reading times and images all come from src/data/articles.ts and the article pages themselves.
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
-import CategoryBadge from './CategoryBadge.astro';
-import ArticleDate from './ArticleDate.astro';
-import ArticleThumb from './ArticleThumb.astro';
+import FeaturedArticle from './FeaturedArticle.astro';
+import ArticleCard from './ArticleCard.astro';
 import { articlesIn, sortByDate, dateParts, CATEGORY_LABELS, type Article, type ArticleCategory } from '../data/articles';
 interface Props { category?: ArticleCategory }
 const { category } = Astro.props;
@@ -37,16 +36,6 @@ const intro = category === 'news'
 const empty = list.length === 0;
 const emptyText = category ? `${CATEGORY_LABELS[category]} posts are coming soon.` : 'Articles are coming soon.';
 
-// Reading time, estimated at build time from each article page's own text (~230 words per minute).
-const sources = import.meta.glob('../pages/articles/*.astro', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
-function readingMinutes(a: Article): number | undefined {
-  const src = sources[`../pages/articles/${a.slug}.astro`];
-  if (!src) return undefined;
-  const body = src.replace(/^---[\s\S]*?---/, '').replace(/<[^>]+>/g, ' ').replace(/\{[^{}]*\}/g, ' ');
-  const words = body.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
-  return Math.max(1, Math.ceil(words / 230));
-}
-const cta = (a: Article) => (a.category === 'reviews' ? 'Read review' : 'Read article');
 
 // Featured: the newest dated article. Everything else is grouped by month, newest first; undated posts come last.
 const featured = list.find((a) => a.date);
@@ -59,7 +48,6 @@ for (const a of rest) {
   g.items.push(a);
 }
 const latest = featured?.date ? dateParts(featured.date) : undefined;
-const featuredMinutes = featured && readingMinutes(featured);
 ---
 <Base title={title} description={description} noindex={empty}>
   <div class="container page-head articles-head">
@@ -94,25 +82,7 @@ const featuredMinutes = featured && readingMinutes(featured);
         {featured && (
           <section class="article-featured" aria-labelledby="featured-heading">
             <h2 id="featured-heading" class="section-label"><span class="pulse" aria-hidden="true"></span>Latest</h2>
-            <article class="featured-card">
-              <ArticleThumb article={featured} eager />
-              <div class="featured-body">
-                <div class="article-dateline">
-                  <ArticleDate date={featured.date!} size="lg" />
-                  <div class="dateline-text">
-                    <span class="dateline-weekday">{dateParts(featured.date!).weekday}</span>
-                    <span class="dateline-meta">By {featured.author ?? 'NeonKey'}{featuredMinutes ? ` · ${featuredMinutes} min read` : ''}</span>
-                  </div>
-                </div>
-                <div class="article-card-tags">
-                  <CategoryBadge category={featured.category} />
-                  {featured.topic && <span class="tag">{featured.topic}</span>}
-                </div>
-                <h3><a href={url(featured.href)}>{featured.title}</a></h3>
-                <p>{featured.description}</p>
-                <span class="article-cta" aria-hidden="true">{cta(featured)} <span class="arrow">→</span></span>
-              </div>
-            </article>
+            <FeaturedArticle article={featured} />
           </section>
         )}
         {groups.map((g) => (
@@ -122,28 +92,7 @@ const featuredMinutes = featured && readingMinutes(featured);
               <span class="month-count">{g.items.length} {g.items.length === 1 ? 'post' : 'posts'}</span>
             </h2>
             <ul class="article-grid">
-              {g.items.map((a) => {
-                const mins = readingMinutes(a);
-                return (
-                  <li class="grid-card">
-                    <ArticleThumb article={a}>
-                      {a.date && <ArticleDate date={a.date} />}
-                    </ArticleThumb>
-                    <div class="grid-card-body">
-                      <div class="article-card-tags">
-                        <CategoryBadge category={a.category} />
-                        {a.topic && <span class="tag">{a.topic}</span>}
-                      </div>
-                      <h3><a href={url(a.href)}>{a.title}</a></h3>
-                      <p>{a.description}</p>
-                      <div class="grid-card-foot">
-                        <span class="grid-card-meta">{mins ? `${mins} min read` : ''}</span>
-                        <span class="article-cta" aria-hidden="true">{cta(a)} <span class="arrow">→</span></span>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
+              {g.items.map((a) => <ArticleCard article={a} />)}
             </ul>
           </section>
         ))}

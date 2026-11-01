@@ -1,0 +1,44 @@
+---
+// Image-led grid card (the Articles index card, generalized). The title link stretches over the whole card.
+// Thumb: a real image or a branded fallback (see MediaThumb). Pass `date` only when there is a real date.
+// Extra attributes (data-*, id) are passed through to the outer element, so filters and anchors keep working.
+import { url } from '../config';
+import MediaThumb from './MediaThumb.astro';
+import ArticleDate from './ArticleDate.astro';
+import type { Badge, IconName, Accent } from '../lib/ui';
+interface Props {
+  href: string; title: string; description?: string;
+  image?: string; alt?: string; width?: number; height?: number;
+  thumbLabel?: string; icon?: IconName; accent?: Accent; thumbClass?: string;
+  date?: string; badges?: Badge[]; tags?: string[]; meta?: string; cta?: string;
+  as?: 'li' | 'article' | 'div'; heading?: 'h2' | 'h3'; external?: boolean;
+  linkAttrs?: Record<string, string>; class?: string; [key: string]: any;
+}
+const {
+  href, title, description, image, alt, width, height, thumbLabel, icon, accent, thumbClass,
+  date, badges = [], tags = [], meta, cta = 'Read more', as: Tag = 'li', heading: H = 'h3', external = false,
+  linkAttrs = {}, class: cls, ...rest
+} = Astro.props;
+const link = external || /^https?:/.test(href) ? href : url(href);
+---
+<Tag class:list={['grid-card', cls]} {...rest}>
+  <MediaThumb class={thumbClass} image={image} alt={alt} width={width} height={height} label={thumbLabel} icon={icon} accent={accent}>
+    {date && <ArticleDate date={date} />}
+    <slot name="thumb" />
+  </MediaThumb>
+  <div class="grid-card-body">
+    {(badges.length > 0 || tags.length > 0) && (
+      <div class="article-card-tags">
+        {badges.map((b) => <span class:list={['cat-badge', b.class, b.tone && `tone-${b.tone}`]}>{b.label}</span>)}
+        {tags.map((t) => <span class="tag">{t}</span>)}
+      </div>
+    )}
+    <H><a href={link} {...linkAttrs}>{title}</a></H>
+    {description && <p>{description}</p>}
+    <slot />
+    <div class="grid-card-foot">
+      <span class="grid-card-meta">{meta ?? ''}</span>
+      <span class="article-cta" aria-hidden="true">{cta} <span class="arrow">→</span></span>
+    </div>
+  </div>
+</Tag>

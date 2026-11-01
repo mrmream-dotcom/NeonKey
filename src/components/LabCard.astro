@@ -1,0 +1,14 @@
+---
+// Lab project card: branded image-led card with level, tags and a "Live demo"-style flag.
+// Keeps the .lab-card class and data-tags attribute the Lab filter script relies on.
+import StoryCard from './StoryCard.astro';
+import type { LabProject } from '../data/lab';
+interface Props { project: LabProject; as?: 'li' | 'article' | 'div'; filterable?: boolean }
+const { project: p, as = 'article', filterable = false } = Astro.props;
+const extra = filterable ? { 'data-tags': p.tags.join(',') } : {};
+---
+<StoryCard as={as} class:list={[filterable && 'lab-card']} {...extra} href={`/lab/${p.slug}/`} title={p.title} description={p.summary}
+  thumbLabel={`Lab · ${p.tags.join(' + ')}`} icon={p.icon ?? 'flask'} accent={p.accent ?? 'violet'}
+  badges={[{ label: p.level, tone: 'violet' }]} tags={p.tags} meta={p.service ? `Related: ${p.service.label}` : ''} cta="Read the build">
+  {p.flag && <span slot="thumb" class="thumb-flag">{p.flag}</span>}
+</StoryCard>

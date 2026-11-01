@@ -327,14 +327,14 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .article-card:has(a:focus-visible) { outline: 3px solid var(--cyan); outline-offset: 3px; }
 
 /* Inline links in body text (articles, Lab, Learn, About, Privacy...): cyan + visible underline. Not nav, buttons, tags or the TOC. */
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab) {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab, .crumbs a, .sec-link, .grid-card a, .featured-card a, .doc-toc a) {
   color: var(--cyan); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
   text-decoration-color: rgba(34,211,238,.5); transition: text-decoration-color .15s, color .15s;
 }
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab):hover {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab, .crumbs a, .sec-link, .grid-card a, .featured-card a, .doc-toc a):hover {
   color: #67e8f9; text-decoration-color: currentColor; text-decoration-thickness: 2px;
 }
-:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab):focus-visible {
+:is(.prose, .page-head) :is(p, li, dd, td, blockquote, figcaption) a:not(.btn, .tag, .toc-dd-panel a, .card a, .article-tab, .crumbs a, .sec-link, .grid-card a, .featured-card a, .doc-toc a):focus-visible {
   outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 3px; text-decoration-color: currentColor;
 }
 

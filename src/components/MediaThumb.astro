@@ -1,0 +1,25 @@
+---
+// General image-led card thumbnail: a real image when there is one, otherwise a branded NeonKey fallback
+// (pure CSS + inline SVG, no extra requests). The fallback is decorative, so it's hidden from screen readers.
+// ArticleThumb wraps this for articles; Learn, Lab and other cards use it directly.
+import { url } from '../config';
+import Icon from './Icon.astro';
+import type { IconName, Accent } from '../lib/ui';
+interface Props {
+  image?: string; alt?: string; width?: number; height?: number;
+  label?: string; icon?: IconName; accent?: Accent; eager?: boolean; class?: string;
+}
+const { image, alt = '', width, height, label, icon = 'key', accent, eager = false, class: cls } = Astro.props;
+---
+<div class:list={['article-thumb', cls, accent && `accent-${accent}`]}>
+  {image ? (
+    <img src={url(image)} alt={alt} width={width} height={height}
+      loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : undefined} />
+  ) : (
+    <div class="thumb-fallback" aria-hidden="true">
+      <Icon name={icon} size={64} class="thumb-key" />
+      {label && <span class="thumb-label">{label}</span>}
+    </div>
+  )}
+  <slot />
+</div>

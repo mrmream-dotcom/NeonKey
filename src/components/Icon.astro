@@ -1,0 +1,28 @@
+---
+// Small line-icon set for cards, fallbacks and headers. Decorative: always aria-hidden.
+import type { IconName } from '../lib/ui';
+interface Props { name: IconName; size?: number; class?: string }
+const { name, size = 24, class: cls } = Astro.props;
+---
+<svg class:list={['icon', cls]} viewBox="0 0 64 64" width={size} height={size} aria-hidden="true" focusable="false">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    {name === 'key' && <><circle cx="22" cy="32" r="11" /><path d="M33 32h22M47 32v9M54 32v6" /></>}
+    {name === 'book' && <><path d="M10 14h16a6 6 0 0 1 6 6v32a5 5 0 0 0-5-5H10z" /><path d="M54 14H38a6 6 0 0 0-6 6v32a5 5 0 0 1 5-5h17z" /></>}
+    {name === 'shield' && <><path d="M32 8l20 7v15c0 13-8.5 22-20 26-11.5-4-20-13-20-26V15z" /><path d="M23 32l6 6 12-13" /></>}
+    {name === 'wifi' && <><path d="M8 25a34 34 0 0 1 48 0M16 33a22 22 0 0 1 32 0M24 41a10 10 0 0 1 16 0" /><circle cx="32" cy="49" r="2" /></>}
+    {name === 'flask' && <><path d="M25 8h14M27 8v17L12 50a4 4 0 0 0 3.5 6h33a4 4 0 0 0 3.5-6L37 25V8" /><path d="M19 40h26" /></>}
+    {name === 'spark' && <><path d="M32 8l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" /><path d="M50 44l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" /></>}
+    {name === 'mail' && <><rect x="8" y="14" width="48" height="36" rx="5" /><path d="M10 18l22 17 22-17" /></>}
+    {name === 'check' && <><circle cx="32" cy="32" r="22" /><path d="M22 33l7 7 14-15" /></>}
+    {name === 'chat' && <><path d="M10 14h44v28H30l-12 10V42h-8z" /><path d="M20 25h24M20 32h16" /></>}
+    {name === 'doc' && <><path d="M16 8h22l12 12v36H16z" /><path d="M38 8v12h12M24 32h18M24 40h18M24 48h12" /></>}
+    {name === 'bolt' && <path d="M36 6L14 36h16l-4 22 24-32H34z" />}
+    {name === 'clock' && <><circle cx="32" cy="32" r="22" /><path d="M32 18v15l10 6" /></>}
+    {name === 'user' && <><circle cx="32" cy="22" r="10" /><path d="M12 56c2-11 10-17 20-17s18 6 20 17" /></>}
+    {name === 'scale' && <><path d="M32 8v48M18 56h28M12 18h40" /><path d="M12 18L5 34a8 8 0 0 0 14 0zM52 18l-7 16a8 8 0 0 0 14 0z" /></>}
+    {name === 'receipt' && <><path d="M14 6h36v52l-6-4-6 4-6-4-6 4-6-4-6 4z" /><path d="M22 20h20M22 29h20M22 38h12" /></>}
+    {name === 'compass' && <><circle cx="32" cy="32" r="24" /><path d="M41 23l-5 13-13 5 5-13z" /></>}
+    {name === 'wrench' && <path d="M40 8a14 14 0 0 0-13 19L9 45a6 6 0 0 0 9 9l18-18a14 14 0 0 0 19-13l-8 8-8-2-2-8z" />}
+  </g>
+  {name === 'key' && <circle cx="22" cy="32" r="3.5" fill="currentColor" />}
+</svg>

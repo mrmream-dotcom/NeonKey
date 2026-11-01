@@ -1,0 +1,35 @@
+---
+// Featured story card: big image, calendar date badge, dateline, tags, title, summary.
+// Used by the Articles index, the Reviews page and the home page.
+import { url } from '../config';
+import CategoryBadge from './CategoryBadge.astro';
+import ArticleDate from './ArticleDate.astro';
+import ArticleThumb from './ArticleThumb.astro';
+import { dateParts, type Article } from '../data/articles';
+import { articleMinutes } from '../lib/reading';
+interface Props { article: Article; heading?: 'h2' | 'h3'; eager?: boolean }
+const { article: f, heading: H = 'h3', eager = true } = Astro.props;
+const mins = articleMinutes(f.slug);
+const cta = f.category === 'reviews' ? 'Read review' : 'Read article';
+---
+<article class="featured-card">
+  <ArticleThumb article={f} eager={eager} />
+  <div class="featured-body">
+    {f.date && (
+      <div class="article-dateline">
+        <ArticleDate date={f.date} size="lg" />
+        <div class="dateline-text">
+          <span class="dateline-weekday">{dateParts(f.date).weekday}</span>
+          <span class="dateline-meta">By {f.author ?? 'NeonKey'}{mins ? ` · ${mins} min read` : ''}</span>
+        </div>
+      </div>
+    )}
+    <div class="article-card-tags">
+      <CategoryBadge category={f.category} />
+      {f.topic && <span class="tag">{f.topic}</span>}
+    </div>
+    <H><a href={url(f.href)}>{f.title}</a></H>
+    <p>{f.description}</p>
+    <span class="article-cta" aria-hidden="true">{cta} <span class="arrow">→</span></span>
+  </div>
+</article>

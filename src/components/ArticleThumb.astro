@@ -1,26 +1,10 @@
 ---
-// Card / featured thumbnail: the article's hero image when it has one, otherwise a branded NeonKey fallback
-// (pure CSS + inline SVG, no extra requests). The fallback is decorative, so it's hidden from screen readers.
-import { url } from '../config';
+// Article card / featured thumbnail: the article's hero image when it has one, otherwise a branded fallback.
+// Thin wrapper around the general MediaThumb component.
+import MediaThumb from './MediaThumb.astro';
 import { CATEGORY_LABELS, type Article } from '../data/articles';
 interface Props { article: Article; eager?: boolean; sizes?: string }
 const { article: a, eager = false } = Astro.props;
 ---
-<div class={`article-thumb thumb-${a.category}`}>
-  {a.image ? (
-    <img src={url(a.image)} alt={a.imageAlt} width={a.imageWidth} height={a.imageHeight}
-      loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : undefined} />
-  ) : (
-    <div class="thumb-fallback" aria-hidden="true">
-      <svg class="thumb-key" viewBox="0 0 64 64" width="64" height="64">
-        <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="22" cy="32" r="11" />
-          <path d="M33 32h22M47 32v9M54 32v6" />
-        </g>
-        <circle cx="22" cy="32" r="3.5" fill="currentColor" />
-      </svg>
-      <span class="thumb-label">{a.topic ?? CATEGORY_LABELS[a.category]}</span>
-    </div>
-  )}
-  <slot />
-</div>
+<MediaThumb class={`thumb-${a.category}`} image={a.image} alt={a.imageAlt} width={a.imageWidth} height={a.imageHeight}
+  label={a.topic ?? CATEGORY_LABELS[a.category]} eager={eager}><slot /></MediaThumb>

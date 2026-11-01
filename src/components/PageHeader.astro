@@ -1,0 +1,36 @@
+---
+// Official page header used across the site: breadcrumb, small uppercase eyebrow, strong h1, lede and a meta line.
+// Title can be a plain string prop or the "title" slot (for highlighted words). Default slot = extra intro content.
+// Meta items are plain facts about the page (counts, formats, real dates). Never put invented stats here.
+import { url } from '../config';
+import type { Crumb } from '../lib/ui';
+interface Props {
+  eyebrow?: string; title?: string; lede?: string; meta?: string[]; crumbs?: Crumb[];
+  width?: 'container' | 'narrow'; align?: 'left' | 'center'; class?: string; id?: string;
+}
+const { eyebrow, title, lede, meta = [], crumbs, width = 'container', align = 'left', class: cls, id } = Astro.props;
+const hasTitleSlot = Astro.slots.has('title');
+---
+<header class:list={[width, 'page-head', 'page-header', align === 'center' && 'center', cls]} id={id}>
+  {crumbs && crumbs.length > 0 && (
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        {crumbs.map((c, i) => (
+          <li>{c.href && i < crumbs.length - 1 ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>
+        ))}
+      </ol>
+    </nav>
+  )}
+  <slot name="title-before" />
+  {eyebrow && <span class="kicker eyebrow">{eyebrow}</span>}
+  <h1>{hasTitleSlot ? <slot name="title" /> : title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+  <slot />
+  {(meta.length > 0 || Astro.slots.has('meta')) && (
+    <ul class="meta-line">
+      {meta.map((m) => <li>{m}</li>)}
+      <slot name="meta" />
+    </ul>
+  )}
+  <slot name="after" />
+</header>

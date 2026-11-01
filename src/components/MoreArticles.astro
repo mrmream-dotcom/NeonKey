@@ -1,0 +1,19 @@
+---
+// "Keep reading" strip at the end of an article: up to three other published articles, newest first.
+import ArticleCard from './ArticleCard.astro';
+import SectionHeading from './SectionHeading.astro';
+import { articlesIn, sortByDate } from '../data/articles';
+interface Props { current: string }
+const { current } = Astro.props;
+const more = sortByDate(articlesIn()).filter((a) => a.slug !== current).slice(0, 3);
+---
+{more.length > 0 && (
+  <section class="more-articles" aria-labelledby="keep-reading">
+    <div class="container">
+      <SectionHeading id="keep-reading" eyebrow="Articles" title="Keep reading" link={{ href: '/articles/', label: 'All articles' }} />
+      <ul class="article-grid">
+        {more.map((a) => <ArticleCard article={a} />)}
+      </ul>
+    </div>
+  </section>
+)}

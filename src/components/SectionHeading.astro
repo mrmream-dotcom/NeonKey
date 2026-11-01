@@ -1,0 +1,19 @@
+---
+// Section header: eyebrow, h2 with an optional count chip, an optional one-line intro and an optional "see all" link.
+// A thin gradient rule underneath matches the Articles month headings.
+import { url } from '../config';
+interface Props {
+  id: string; title: string; eyebrow?: string; count?: string; intro?: string;
+  link?: { href: string; label: string; attrs?: Record<string, string> }; level?: 'h2' | 'h3'; class?: string;
+}
+const { id, title, eyebrow, count, intro, link, level: H = 'h2', class: cls } = Astro.props;
+---
+<div class:list={['sec-head', cls]}>
+  <div class="sec-head-text">
+    {eyebrow && <span class="kicker eyebrow">{eyebrow}</span>}
+    <H id={id} class="sec-title"><span>{title}</span>{count && <span class="month-count">{count}</span>}</H>
+    {intro && <p>{intro}</p>}
+    <slot />
+  </div>
+  {link && <a class="sec-link" href={url(link.href)} {...(link.attrs ?? {})}>{link.label} <span aria-hidden="true">→</span></a>}
+</div>

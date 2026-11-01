@@ -10,6 +10,11 @@ export interface LabProject {
   tags: string[];
   level: string;
   service?: { label: string; href: string };
+  /** Card artwork: icon + accent for the branded thumbnail (no screenshots yet). */
+  icon?: 'spark' | 'receipt' | 'flask' | 'wifi' | 'shield' | 'bolt';
+  accent?: 'cyan' | 'magenta' | 'violet' | 'amber';
+  /** Short flag shown on the card image, e.g. when the page has a working tool. */
+  flag?: string;
   /** Hidden until it's a real, documented build. */
   draft?: boolean;
 }
@@ -24,6 +29,7 @@ export const labProjects: LabProject[] = [
     tags: ['AI', 'Automation'],
     level: 'Beginner → Intermediate',
     service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
+    icon: 'spark', accent: 'cyan', flag: 'Live demo',
   },
   {
     slug: 'receipt-sorter',
@@ -32,6 +38,7 @@ export const labProjects: LabProject[] = [
     tags: ['AI', 'Automation'],
     level: 'Beginner',
     service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
+    icon: 'receipt', accent: 'magenta', flag: 'Try it',
   },
   {
     draft: true,

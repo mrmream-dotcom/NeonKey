@@ -1,0 +1,14 @@
+---
+// Article grid card (Articles index, Reviews, home "Latest", "Keep reading").
+import StoryCard from './StoryCard.astro';
+import { CATEGORY_LABELS, type Article } from '../data/articles';
+import { articleMinutes } from '../lib/reading';
+interface Props { article: Article; heading?: 'h2' | 'h3'; as?: 'li' | 'article' | 'div' }
+const { article: a, heading = 'h3', as = 'li' } = Astro.props;
+const mins = articleMinutes(a.slug);
+---
+<StoryCard as={as} heading={heading} href={a.href} title={a.title} description={a.description}
+  image={a.image} alt={a.imageAlt} width={a.imageWidth} height={a.imageHeight}
+  thumbLabel={a.topic ?? CATEGORY_LABELS[a.category]} thumbClass={`thumb-${a.category}`} date={a.date}
+  badges={[{ label: CATEGORY_LABELS[a.category], class: `cat-${a.category}` }]} tags={a.topic ? [a.topic] : []}
+  meta={mins ? `${mins} min read` : ''} cta={a.category === 'reviews' ? 'Read review' : 'Read article'} />

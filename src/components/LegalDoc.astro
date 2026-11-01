@@ -1,0 +1,25 @@
+---
+// Policy/legal page shell: official header (crumbs, eyebrow, title, last-updated date badge) and, when the
+// document has sections, a sticky numbered table of contents beside a single document panel.
+// Wording lives in the page; this only frames it. Section ids must match the h2 ids in the page.
+import PageHeader from './PageHeader.astro';
+import ArticleDate from './ArticleDate.astro';
+interface Props { eyebrow: string; title: string; updated?: { iso: string; text: string }; sections?: { id: string; label: string }[] }
+const { eyebrow, title, updated, sections = [] } = Astro.props;
+const hasToc = sections.length > 0;
+---
+<PageHeader eyebrow={eyebrow} title={title} crumbs={[{ href: '/', label: 'Home' }, { label: title }]} class="legal-head">
+  {updated && (
+    <div class="legal-updated"><ArticleDate date={updated.iso} /><p class="muted">{updated.text}</p></div>
+  )}
+  {hasToc && <Fragment slot="meta"><li><span><strong>{sections.length}</strong> sections</span></li></Fragment>}
+</PageHeader>
+<div class:list={['container', hasToc ? 'doc-layout' : 'doc-single']}>
+  {hasToc && (
+    <nav class="doc-toc" aria-label="On this page">
+      <h2>On this page</h2>
+      <ol>{sections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ol>
+    </nav>
+  )}
+  <article class="doc-body prose"><slot /></article>
+</div>
