@@ -7,7 +7,7 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
 ## Core Content
 
 - [Unlock AI](https://neonkey.tech/services/)  
-  Practical AI automations, remote small-office IT setup, plain-English instructions, and handoff for small businesses.
+  Practical AI automations, remote small-office IT setup, clear instructions, and handoff for small businesses.
 
 - [Unlock Deals](https://neonkey.tech/reviews/)  
   Honest gear and software reviews, pros and cons, straightforward verdicts to help make informed purchasing decisions.
@@ -16,7 +16,7 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
   Beginner-friendly tech learning guides, including free resources like a CompTIA Security+ study guide, with plain-language explanations.
 
 - [Unlock the Week](https://neonkey.tech/newsletter/)  
-  Weekly email featuring a tech story explained in plain English, useful skill tips, gear recommendations, and learning resources.
+  Weekly email featuring a tech story explained in simple terms, useful skill tips, gear recommendations, and learning resources.
 
 - [From the Lab](https://neonkey.tech/lab/)  
   Documented hands-on builds, projects, and experiments, with insights into what was built, why, results, and lessons learned.
@@ -25,10 +25,10 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
   Live demo of AI sorting customer inquiries, flagging urgency, extracting key info, and drafting responses.
 
 - [Articles](https://neonkey.tech/articles/)  
-  Plain-English explainers, honest takes, and practical advice on automation, AI, and small-office tech.
+  Clear explainers, honest takes, and practical advice on automation, AI, and small-office tech.
 
 - [What Is NeonKey?](https://neonkey.tech/articles/what-is-neonkey/)  
-  A plain-English introduction to NeonKey: what it covers and the idea behind it.
+  A short introduction to NeonKey: what it covers and the idea behind it.
 
 ## Resources & Guides
 
