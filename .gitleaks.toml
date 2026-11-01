@@ -1,0 +1,24 @@
+# Gitleaks config: auto-loaded by the Security workflow (gitleaks git .) from the repo root.
+# Keeps every default rule; only adds narrow, reviewed false-positive exceptions.
+title = "NeonKey gitleaks config"
+
+[extend]
+useDefault = true
+
+# False positive: the receipt sorter's localStorage key NAME (a plain, versioned
+# string, not a credential) trips generic-api-key because the variable is called KEY.
+# Scoped to that one rule, that exact value, AND only the receipt-sorter source page
+# and its built output on gh-pages. The same string anywhere else, or any other value
+# in these files, is still reported. (Rule-level allowlist: extends the default
+# generic-api-key rule; all other default rules are unchanged.)
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Receipt sorter localStorage key name (not a secret)"
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^neonkey-receipt-sorter-v1$''']
+paths = [
+  '''^src/pages/lab/receipt-sorter\.astro$''',
+  '''^lab/receipt-sorter/index\.html$''',
+]
