@@ -49,6 +49,6 @@ after the limiter and validation run).
 
 ## Example answers on the Lab page
 
-`src/data/office-ai-examples.json` holds real responses captured by running the four sample questions
-through the deployed page with Playwright and recording the Worker's JSON. Re-capture them rather than
+`src/data/office-ai-examples.json` holds real responses captured by sending the four sample questions
+to the deployed Worker (Origin https://neonkey.tech) and recording its JSON as-is (first capture Nov 2, 2026). Re-capture them rather than
 editing them by hand. Shape: `[{ sampleId, label, question, capturedAt, model, ms, tokens, result }]`.
