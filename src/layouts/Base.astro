@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import '../styles/editorial.css';
 import Logo from '../components/Logo.astro';
-import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, absoluteUrl } from '../config';
+import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, absoluteUrl , INSTAGRAM_URL } from '../config';
 interface Props {
   title: string;
   description?: string;
@@ -108,6 +108,7 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
             <li><a href={url('/terms/')}>Terms</a></li>
             <li><a href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="footer">Contact</a></li>
             <li><a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="footer-email">{CONTACT_EMAIL}</a></li>
+            <li><a href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="footer">Instagram</a></li>
           </ul>
         </nav>
         <p class="footer-fine">&copy; {new Date().getFullYear()} NeonKey. Reviews are never paid placements; see the <a href={url('/disclosure/')}>disclosure</a>.</p>

@@ -1,5 +1,5 @@
 ---
-import { url, CONTACT_EMAIL } from '../../config';
+import { url, CONTACT_EMAIL , INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
@@ -38,7 +38,11 @@ import Icon from '../../components/Icon.astro';
       </div>
       <div class="panel topline accent-violet">
         <div class="panel-head"><span class="icon-chip"><Icon name="chat" /></span><h2 class="panel-title">What happens next</h2></div>
-        <p class="muted" style="margin:0">Michael Ream reads every message and will reply by email.</p>
+        <p class="muted" style="margin:0">Michael Ream reads every message and will reply by email. We aim to reply within 1 business day. Remote, anywhere in the US.</p>
+      </div>
+      <div class="panel topline accent-magenta">
+        <div class="panel-head"><span class="icon-chip"><Icon name="chat" /></span><h2 class="panel-title">Follow along</h2></div>
+        <p class="muted" style="margin:0">Quick tech tips, Lab builds and The Fix videos on Instagram: <a href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="contact">{INSTAGRAM_HANDLE}</a>. You can message us there too.</p>
       </div>
     </aside>
   </div>
