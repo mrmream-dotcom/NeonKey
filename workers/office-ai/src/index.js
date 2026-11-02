@@ -175,14 +175,23 @@ async function callGemini(key, model, userText) {
 // Normalize so that only real wording differences matter: case, curly quotes, dashes, whitespace,
 // and leading/trailing punctuation are ignored.
 export function norm(s) {
-  return String(s || '')
+  return trimEdges(String(s || '')
     .toLowerCase()
     .replace(/[‘’‛]/g, "'")
     .replace(/[“”‟]/g, '"')
     .replace(/[–—]/g, '-')
     .replace(/\s+/g, ' ')
-    .replace(/^[\s"'.,;:…-]+|[\s"'.,;:…-]+$/g, '')
-    .trim();
+    .slice(0, 4000));
+}
+
+// Strip leading/trailing spaces and punctuation with a linear scan (a trailing-anchored regex here
+// can backtrack badly on long runs of whitespace).
+const EDGE = new Set([' ', '"', "'", '.', ',', ';', ':', '…', '-']);
+function trimEdges(t) {
+  let a = 0, b = t.length;
+  while (a < b && EDGE.has(t[a])) a++;
+  while (b > a && EDGE.has(t[b - 1])) b--;
+  return t.slice(a, b);
 }
 
 const SECTIONS = library.docs.flatMap((d) => d.sections.map((s) => ({ doc_id: d.id, doc_title: d.title, section: s.heading, text: norm(s.text) })));
