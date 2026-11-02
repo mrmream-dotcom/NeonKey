@@ -1,0 +1,325 @@
+---
+import { url, OFFICE_AI_API_URL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import Toc from '../../components/Toc.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects } from '../../data/lab';
+import library from '../../data/office-ai-docs.json';
+import examplesRaw from '../../data/office-ai-examples.json';
+// office-ai-examples.json is captured by actually running the deployed demo (see workers/office-ai/README.md).
+// It is never hand-written. If it's empty, the "Real example answers" section says so instead of showing anything.
+interface Source { doc_id: string; doc_title: string; section: string; quote: string }
+interface Example { sampleId: string; label: string; question: string; capturedAt: string; model: string; ms: number; tokens: number | null; result: { found: string; answer: string; sources: Source[]; dropped_sources: number; unverified: boolean; ask_next: string; confidence: string } }
+const examples = examplesRaw as Example[];
+const project = labProjects.find((p) => p.slug === 'office-ai')!;
+const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Durable Objects (rate-limit counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output', 'Quote checker (plain JavaScript)'];
+const foundLabel: Record<string, string> = { yes: 'Answered from the docs', partly: 'Partly answered', no: 'Not in the docs' };
+const foundTone: Record<string, string> = { yes: 'cat', partly: 'medium', no: 'high' };
+const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles' });
+const docChars = library.docs.reduce((n, d) => n + d.sections.reduce((m, s) => m + s.text.length, 0), 0);
+const docSize = (Math.round(docChars / 100) * 100).toLocaleString('en-US');
+const sections: [string, string][] = [['demo', 'Try it'], ['docs', 'The documents'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['trust', 'Checking its work'], ['anythingllm', 'Where AnythingLLM fits'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['examples', 'Real answers'], ['build', 'Build notes'], ['related', 'Related']];
+---
+<Base title={project.title} description="A working Office AI demo: ask a question and an AI answers only from a small business's own documents, quotes the exact lines it used, and says when the answer isn't there. Plus how it's built, what it costs and its limits.">
+  <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: project.title }]}>
+    <Fragment slot="title">Office AI, <span class="glow-c">ask your own documents.</span></Fragment>
+    <p class="lede">Every small business has the same few questions on repeat: "What do we charge on a Sunday?" "How do I book time off?" "What do I tell a customer who smells gas?" The answers are in a handbook or a price sheet somewhere. This demo lets you ask a made-up plumbing company's documents in everyday words. The AI answers only from those documents, shows the exact lines it used, and says so when the answer isn't there. It's the core of our <a href={url('/services/#ai-faq')}>AI Intake &amp; FAQ Assistant</a>, running for real.</p>
+    <Fragment slot="meta">
+      <li><span>Level: <strong>{project.level}</strong></span></li>
+      <li><span>{project.tags.join(' · ')}</span></li>
+      <li><span>{project.flag} on this page</span></li>
+    </Fragment>
+    <div slot="after" class="lab-head-toc"><Toc sections={sections} /></div>
+  </PageHeader>
+
+  <section id="demo" style="padding-top:0" aria-labelledby="demo-h">
+    <div class="container">
+      <h2 id="demo-h" class="sr-only">Try the demo</h2>
+      <div class="triage-wrap">
+        <form class="panel triage-form" id="oa-form" novalidate>
+          <p class="oa-biz"><span class="kicker">Pretend you work at</span><strong>{library.business}</strong><span class="muted">A made-up 8-person plumbing company with 4 short documents.</span></p>
+          <label for="oa-q">Your question</label>
+          <p class="muted" style="margin:.1rem 0 .3rem;font-size:.9rem">Pick a sample, or ask your own:</p>
+          <div class="triage-samples" role="group" aria-label="Sample questions">
+            {library.samples.map((s) => (
+              <button type="button" class="sample-btn" data-sample={s.id} aria-pressed="false" data-umami-event="officeai-sample" data-umami-event-sample={s.id}>{s.label}</button>
+            ))}
+          </div>
+          <textarea id="oa-q" name="question" maxlength="400" rows="4" placeholder="e.g. Do seniors get a discount on parts?" aria-describedby="oa-note oa-count"></textarea>
+          <div class="triage-meta-row">
+            <span class="char-count" id="oa-count" aria-live="polite">0 / 400</span>
+            <button class="btn btn-primary" type="submit" id="oa-run" data-umami-event="officeai-run">Ask the documents</button>
+          </div>
+          <p class="triage-status" id="oa-status" role="status" aria-live="polite"></p>
+          <p class="form-note" id="oa-note" style="margin-top:.8rem">{library.business} is fictional: the people, prices, phone numbers and policies are made up for this demo. What you type is sent to Google's Gemini API to generate the answer. NeonKey doesn't store it. Please don't type private or personal information; on the free tier Google may use what's submitted to improve its products, and its reviewers may read it. Limit: 5 questions a minute and 30 a day per visitor. See <a href={url('/privacy/')}>privacy</a>.</p>
+        </form>
+
+        <div id="oa-output" aria-live="polite">
+          <div class="triage-empty">
+            <p style="margin:0 0 .3rem;font-weight:700;color:var(--text)">The answer appears here</p>
+            <p style="margin:0">A short answer, whether the documents covered it, and the exact lines it came from. Tap a source to see it in the document below.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="docs" class="oa-docs-section" aria-labelledby="docs-h">
+    <div class="container">
+      <h2 id="docs-h" class="oa-docs-h">The documents it can see</h2>
+      <p class="muted oa-docs-intro">This is everything the AI knows about {library.business}: four short documents, about {docSize} characters in all. If it isn't written here, the AI should say it doesn't know.</p>
+      <div class="oa-docs">
+        {library.docs.map((d) => (
+          <details class="panel oa-doc" id={`doc-${d.id}`}>
+            <summary><span class="oa-doc-title">{d.title}</span><span class="oa-doc-meta">{d.sections.length} sections · updated {fmtDate(d.updated + 'T12:00:00Z')}</span></summary>
+            {d.sections.map((s, i) => (
+              <div class="oa-sec" id={`doc-${d.id}-${i}`} data-doc={d.id} data-section={s.heading}>
+                <h3>{s.heading}</h3>
+                <p>{s.text}</p>
+              </div>
+            ))}
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <article class="narrow prose lab-case" style="padding-bottom:3rem">
+    <h2 id="what">What it does</h2>
+    <p>One question goes in. One checked answer comes out:</p>
+    <ul>
+      <li><strong>An answer in everyday words,</strong> 1 to 4 sentences, with prices, times and names exactly as the documents state them.</li>
+      <li><strong>A coverage label:</strong> answered from the docs, partly answered, or not in the docs. "Not in the docs" is a feature, not a failure. It's the AI admitting it doesn't know instead of making something up.</li>
+      <li><strong>Sources:</strong> up to three word-for-word quotes, each with the document and section it came from. Tap one and the page opens that document and highlights the section, so you can check it yourself in two seconds.</li>
+      <li><strong>Who to ask next</strong> when the documents only partly cover it, for example "Check with Kelly in the office."</li>
+      <li><strong>A confidence level,</strong> which the checker lowers automatically if any quote fails the check (more on that below).</li>
+    </ul>
+
+    <h2 id="why">Why a small business would want it</h2>
+    <ul>
+      <li><strong>The owner stops being the help desk.</strong> In a small team, the same five questions land on one person all day. Most of them are already answered in a document nobody opens.</li>
+      <li><strong>Faster, more consistent answers.</strong> A new hire gets the same answer about after-hours rates as a ten-year veteran, straight from the price sheet, not from memory.</li>
+      <li><strong>Safety answers are always on hand.</strong> "Customer smells gas" should get the same correct script every time, at 7 PM on a Friday too.</li>
+      <li><strong>It shows you what's missing.</strong> Every "not in the docs" answer is a gap in your documents. That's a to-do list for your handbook.</li>
+    </ul>
+    <p>It won't replace a manager's judgment. It gets people to the right line in the right document, fast, and it's honest when that line doesn't exist.</p>
+
+    <h2 id="how">How it works</h2>
+    <ol>
+      <li><strong>Question:</strong> this page sends your question (max 400 characters) to a small API.</li>
+      <li><strong>Worker:</strong> a Cloudflare Worker checks where the request came from (only neonkey.tech is allowed), applies the rate limits, and rejects anything empty or too long.</li>
+      <li><strong>Documents + question to the AI:</strong> the Worker sends all four documents plus your question to Google's Gemini model, with strict instructions: answer only from the documents, quote them word for word, and say "not in the docs" rather than guess. A JSON schema fixes the shape of the answer, and your question is treated as data, so instructions hidden in it are ignored.</li>
+      <li><strong>Quote check:</strong> before anything comes back, the Worker checks every quote against the real document text (next section).</li>
+      <li><strong>Answer:</strong> you see the answer, the coverage label and only the quotes that passed. Nothing is saved.</li>
+    </ol>
+    <p><strong>Why send all the documents every time?</strong> Because they're small: about {docSize} characters fits easily in one request. Bigger collections (a 200-page manual, years of policies) don't fit, so real tools first search the documents for the most relevant passages and send only those. That search step is called retrieval, and it's what tools like AnythingLLM do for you (see below).</p>
+    <h3>Stack &amp; tools</h3>
+    <ul class="stack-list">{stack.map((s) => <li><span class="tag">{s}</span></li>)}</ul>
+
+    <h2 id="trust">Checking its work: the quote checker</h2>
+    <p>The biggest risk with a document assistant is a confident answer that cites something the document never said. So the AI doesn't get the last word:</p>
+    <ul>
+      <li><strong>Every quote is matched against the real text.</strong> The checker ignores only capital letters, curly quotes, dashes and extra spaces. Any other difference and the quote is dropped.</li>
+      <li><strong>Very short quotes don't count.</strong> A quote under 12 characters can't prove anything, so it's dropped too.</li>
+      <li><strong>Dropped quotes lower the confidence.</strong> If any quote fails, the answer is marked low confidence and the page says how many were removed.</li>
+      <li><strong>No checked quote, no trust.</strong> If the AI says the documents answer the question but none of its quotes pass, the answer gets a clear "Unverified, check the documents yourself" warning.</li>
+    </ul>
+    <p>In testing, I fed the checker a made-up quote ("Sunday calls are free of charge for loyal customers") next to two real ones. It kept the two real quotes, dropped the fake one and lowered the confidence. A fake "we offer financing" quote on its own was marked unverified. The checker is plain code, not AI, so it behaves the same way every time.</p>
+    <p class="muted" style="font-size:.95rem">What it can't catch: an answer whose quotes are real but whose summary still gets something wrong. That's why the sources are on screen and one tap away.</p>
+
+    <h2 id="anythingllm">Where AnythingLLM fits</h2>
+    <p>This demo is a small build of my own so that it can run safely on a public web page. For a real business with real documents, I'd usually start with <a href="https://github.com/Mintplex-Labs/anything-llm">AnythingLLM</a>, a free, open-source app from Mintplex Labs (MIT license) built for exactly this job:</p>
+    <ul>
+      <li><strong>Drop in your files:</strong> PDFs, Word documents, text files and more go into a "workspace," and it handles the retrieval step for bigger collections.</li>
+      <li><strong>Runs where you choose:</strong> there's a desktop app for Mac, Windows and Linux, and a Docker version for a small server, which adds multiple user accounts.</li>
+      <li><strong>Pick your AI:</strong> it can use a cloud model like Gemini or OpenAI on a paid tier, or a model running on your own computer, so the documents never leave the office.</li>
+      <li><strong>Answers show their sources,</strong> like this demo does.</li>
+    </ul>
+    <p>Which setup fits depends on how sensitive the documents are, how many people need it and what computer it would run on. We work that out on the scoping call. To be clear about where this Lab stands: the live demo above is the custom build, and I haven't published a hands-on AnythingLLM test yet. That's the next entry for this build, using the same four Birchline documents so the results can be compared side by side.</p>
+
+    <h2 id="cost">What it costs to run</h2>
+    <p>For this demo, nothing so far. Each piece runs on a free tier, and each has limits:</p>
+    <ul>
+      <li><strong>Cloudflare Workers, free plan:</strong> 100,000 requests a day. The rate-limit counters live in a small Durable Object that's also included on the free plan. The 150-questions-a-day cap mainly protects the AI quota.</li>
+      <li><strong>Google Gemini API, free tier:</strong> Google sets per-model request limits on the free tier and changes them from time to time. The trade-off is data use: on the free tier Google may use what's submitted to improve its products, and human reviewers may read it. Google's terms also don't allow free-tier apps for users in the UK, Switzerland or the EEA, so the demo is switched off there.</li>
+      {examples.length > 0 && (
+        <li><strong>Size of a question:</strong> the example runs below used about {Math.min(...examples.map((e) => e.tokens || 0))}–{Math.max(...examples.map((e) => e.tokens || 0))} tokens each (instructions + all four documents + question + answer), as reported by the API.</li>
+      )}
+    </ul>
+    <p>For a real business, I'd use a <strong>paid</strong> AI tier, where Google says prompts and responses aren't used to improve its products, or a local model through AnythingLLM. Paid tiers bill per token at <a href="https://ai.google.dev/gemini-api/docs/pricing">Google's current rates</a>; for a small team asking short questions the bill is usually small, but it depends on volume and document size, so I'd estimate it with you during scoping. I won't promise you a number here.</p>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li><strong>It's only as good as the documents.</strong> Out-of-date prices in the price sheet mean out-of-date answers. Someone has to own the documents.</li>
+      <li><strong>The AI can still misread.</strong> The quote checker proves a quote is real, not that the answer read it correctly. Treat answers as a fast pointer to the source, and check anything that matters.</li>
+      <li><strong>It's not for customers as-is.</strong> This demo answers staff questions. A customer-facing assistant needs extra rules about what it must never say (exact quotes, guarantees, medical or legal advice) and a handoff to a person. That's what the full AI Intake &amp; FAQ Assistant setup adds.</li>
+      <li><strong>Four small documents only.</strong> A larger set needs a retrieval step, which brings its own tuning (and its own ways to miss the right passage).</li>
+      <li><strong>Free tiers can run out or slow down.</strong> If the main model is busy, the Worker retries on a lighter model. If both are unavailable, you get a friendly error instead of an answer.</li>
+      <li><strong>Rate limits are per connection, not per person.</strong> People on the same office network, mobile carrier or VPN share one limit. The daily total cap is the backstop.</li>
+    </ul>
+
+    <h2 id="examples">Real example answers</h2>
+    {examples.length === 0 ? (
+      <p class="muted">Example answers will be added here after the demo has been run on the sample questions. They'll be copied from the live demo as-is, never written by hand.</p>
+    ) : (<>
+      <p>These are the answers the deployed demo returned for the sample questions on {fmtDate(examples[0].capturedAt)}. They're copied as-is, not edited. Ask a sample yourself and the wording will differ a little between runs.</p>
+      <div class="triage-examples">
+        {examples.map((ex) => (
+          <div class="triage-example">
+            <h3 style="margin-bottom:.2rem">Sample: {ex.label}</h3>
+            <p class="sample-text">{ex.question}</p>
+            <div class="triage-card">
+              <div class="triage-badges">
+                <span class={`badge badge-${foundTone[ex.result.found] || 'medium'}`}>{foundLabel[ex.result.found] || ex.result.found}</span>
+                <span class="badge badge-conf">Confidence: {ex.result.confidence}</span>
+              </div>
+              <h3>Answer</h3><p>{ex.result.answer}</p>
+              {ex.result.sources.length > 0 && (<>
+                <h3>Sources</h3>
+                <ul class="oa-sources">{ex.result.sources.map((s) => <li><blockquote>“{s.quote}”</blockquote><span class="oa-src-ref">{s.doc_title} · {s.section}</span></li>)}</ul>
+              </>)}
+              {ex.result.ask_next && (<><h3>Ask next</h3><p class="triage-next">{ex.result.ask_next}</p></>)}
+              <div class="triage-foot"><span>Model: {ex.model} · {(ex.ms / 1000).toFixed(1)}s{ex.tokens ? ` · ${ex.tokens} tokens` : ''}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>)}
+
+    <h2 id="build">Build notes: decisions and what I changed</h2>
+    <ul>
+      <li><strong>Reused what already worked.</strong> The Worker uses the same origin check, region block and Durable Object rate limiter as the <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a>. That limiter replaced an earlier one that let bursts through, so there was no reason to rebuild it.</li>
+      <li><strong>No retrieval step, on purpose.</strong> With four short documents, sending everything is simpler and can't miss a passage. The page shows the documents in full so you can see exactly what the AI had.</li>
+      <li><strong>Quotes, not just section names.</strong> Having the AI name the section it used would be simpler, but a section name can't be checked; an exact quote can. So the AI must quote, and code checks the quote.</li>
+      <li><strong>The checker fixes mislabeled sources.</strong> If a quote is real but the AI names the wrong section, the checker finds the section the quote actually comes from and shows that one instead.</li>
+      <li><strong>A question it can't answer is part of the samples.</strong> "Do we let staff work from home?" is deliberately not covered, so every visitor can see the assistant say no instead of inventing a remote-work policy.</li>
+      <li><strong>Made-up business, real-looking documents.</strong> Birchline Plumbing &amp; Heating, its prices and "Kelly in the office" are fictional, with 555-01xx phone numbers that are reserved for fiction. The gas-smell steps follow standard public safety advice (leave, no switches, call from outside).</li>
+    </ul>
+    <p class="muted" style="font-size:.95rem">The Worker source lives in the site's repository under <code>workers/office-ai/</code>, with no secrets in it. The API key is stored as an encrypted Worker secret.</p>
+
+    <h2 id="related">Related</h2>
+    <div class="lab-related">
+      <div class="panel">
+        <span class="kicker">Related service</span>
+        <h3 style="margin-top:.4rem">AI Intake &amp; FAQ Assistant</h3>
+        <p class="muted">Want this on your own handbook, price sheet or FAQ, for your staff or your website? Each setup starts with a short scoping call about which documents to use, where it should run and what should always go to a person. Keep it current with the Monthly Remote Support Plan.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-sm" href={url('/services/#ai-faq')} data-umami-event="services-cta" data-umami-event-location="lab-office-ai">See this service</a>
+          <a class="btn btn-ghost btn-sm" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="lab-office-ai">Ask about this</a>
+        </div>
+      </div>
+    </div>
+    <h3>More from the Lab</h3>
+    <ul>{labProjects.filter((p) => !p.draft && p.slug !== 'office-ai').map((o) => <li><a href={url(`/lab/${o.slug}/`)}>{o.title}</a></li>)}</ul>
+    <p><a href={url('/lab/')}>← Back to the Lab</a></p>
+  </article>
+</Base>
+
+<script is:inline define:vars={{ apiUrl: OFFICE_AI_API_URL, samples: library.samples, foundLabel, foundTone }}>
+  const form = document.getElementById('oa-form');
+  const ta = document.getElementById('oa-q');
+  const count = document.getElementById('oa-count');
+  const status = document.getElementById('oa-status');
+  const out = document.getElementById('oa-output');
+  const runBtn = document.getElementById('oa-run');
+  const MAX = 400;
+
+  const updateCount = () => {
+    const n = ta.value.length;
+    count.textContent = `${n} / ${MAX}`;
+    count.classList.toggle('over', n > MAX * 0.9);
+  };
+  ta.addEventListener('input', () => {
+    updateCount();
+    document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  });
+  document.querySelectorAll('.sample-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const s = samples.find((x) => x.id === btn.dataset.sample);
+      if (!s) return;
+      ta.value = s.question;
+      updateCount();
+      document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      ta.focus();
+    });
+  });
+  updateCount();
+
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+
+  // Open the document and highlight the section a source came from.
+  function showSource(docId, section) {
+    const doc = document.getElementById(`doc-${docId}`);
+    if (!doc) return;
+    doc.open = true;
+    const sec = [...doc.querySelectorAll('.oa-sec')].find((s) => s.dataset.section === section);
+    const target = sec || doc;
+    document.querySelectorAll('.oa-sec.hit').forEach((s) => s.classList.remove('hit'));
+    if (sec) sec.classList.add('hit');
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function renderResult(data) {
+    const r = data.result;
+    const card = el('div', 'triage-card');
+    const badges = el('div', 'triage-badges');
+    badges.append(el('span', `badge badge-${foundTone[r.found] || 'medium'}`, foundLabel[r.found] || r.found), el('span', 'badge badge-conf', `Confidence: ${r.confidence}`));
+    card.append(badges);
+    if (r.unverified) card.append(el('p', 'oa-warn', 'Unverified: the AI said the documents cover this, but none of its quotes matched the real text. Check the documents yourself.'));
+    card.append(el('h3', '', 'Answer'), el('p', '', r.answer));
+    if (r.sources && r.sources.length) {
+      card.append(el('h3', '', 'Sources (checked word for word)'));
+      const ul = el('ul', 'oa-sources');
+      r.sources.forEach((s) => {
+        const li = el('li');
+        li.append(el('blockquote', '', `“${s.quote}”`));
+        const b = el('button', 'oa-src-ref oa-src-btn', `${s.doc_title} · ${s.section} ↓`);
+        b.type = 'button';
+        b.addEventListener('click', () => showSource(s.doc_id, s.section));
+        li.append(b);
+        ul.append(li);
+      });
+      card.append(ul);
+    }
+    if (r.dropped_sources > 0) card.append(el('p', 'triage-reason', `${r.dropped_sources} quote${r.dropped_sources === 1 ? '' : 's'} removed because ${r.dropped_sources === 1 ? 'it' : 'they'} didn't match the documents.`));
+    if (r.ask_next) card.append(el('h3', '', 'Ask next'), el('p', 'triage-next', r.ask_next));
+    const foot = el('div', 'triage-foot');
+    foot.append(el('span', '', `Model: ${data.model}${data.fallback ? ' (fallback)' : ''} · ${(data.ms / 1000).toFixed(1)}s`));
+    card.append(foot);
+    out.replaceChildren(card);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const question = ta.value.trim();
+    status.className = 'triage-status';
+    if (question.length < 5) { status.classList.add('error'); status.textContent = 'Please type a question, or pick a sample.'; return; }
+    if (question.length > MAX) { status.classList.add('error'); status.textContent = `Please keep it under ${MAX} characters.`; return; }
+    runBtn.disabled = true;
+    runBtn.textContent = 'Reading the documents…';
+    status.textContent = 'Asking the AI. This usually takes a few seconds…';
+    try {
+      const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) });
+      let data = null;
+      try { data = await res.json(); } catch {}
+      if (!res.ok || !data || !data.ok) {
+        status.classList.add('error');
+        status.textContent = (data && data.message) || `Something went wrong (HTTP ${res.status}). Please try again in a minute.`;
+        return;
+      }
+      status.textContent = 'Done. Tap a source to check it in the document.';
+      renderResult(data);
+    } catch (err) {
+      status.classList.add('error');
+      status.textContent = "Couldn't reach the demo API. Check your connection, or try again in a minute.";
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = 'Ask the documents';
+    }
+  });
+</script>

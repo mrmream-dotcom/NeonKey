@@ -16,7 +16,7 @@ export interface Offer {
   /** Optional upsell line pointing to a bigger service. */
   upsell?: { text: string; linkText: string; href: string };
   /** Optional link to a working demo of this kind of build. */
-  demo?: { label: string; href: string };
+  demo?: { label: string; href: string; example?: string };
   /** Longer jargon-free explanation, shown in "See details" and on detail pages. */
   details?: OfferDetails;
 }
@@ -149,10 +149,10 @@ export const automationOffers: Offer[] = [
       'A jargon-free written to-do list of the top fixes',
       'Short walkthrough video and notes, then a handoff so you own it',
     ],
-    demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' },
+    demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/', example: 'AI inquiry triage' },
     upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
   },
-  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], details: {
+  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
       who: "For businesses that answer the same questions every day (hours, prices, booking, what's included) and lose track of new inquiries. The assistant answers from your own FAQ content and collects the details of anyone who wants more.",
       included: [
       'An assistant set up on your own FAQ, policies and service info, written or cleaned up together',
