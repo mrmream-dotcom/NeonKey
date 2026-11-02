@@ -1,5 +1,5 @@
 ---
-import { url, CONTACT_EMAIL } from '../../config';
+import { url, CONTACT_EMAIL, INSTAGRAM_URL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
@@ -19,7 +19,7 @@ import Icon from '../../components/Icon.astro';
         <li>Still nothing? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll sort it out.</li>
       </ul>
     </div>
-    <p class="status-actions"><a class="btn btn-primary" href={url('/')} data-umami-event="nl-thanks-home">Back to NeonKey</a></p>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/')} data-umami-event="nl-thanks-home">Back to NeonKey</a> <a class="btn btn-ghost" href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="nl-thanks">Follow us on Instagram</a></p>
   </div>
   <!-- Google Ads "Submit lead form" conversion (newsletter signup). External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-newsletter.js')}></script>

@@ -74,6 +74,10 @@ export const NEWSLETTER = {
 };
 
 // Public contact address. Placeholder until the domain and a business inbox exist (see LAUNCH.md).
+/** NeonKey's Instagram profile, linked in the footer, contact, about and newsletter pages. */
+export const INSTAGRAM_URL = 'https://www.instagram.com/neonkey.tech/';
+export const INSTAGRAM_HANDLE = '@neonkey.tech';
+
 export const CONTACT_EMAIL = (import.meta.env.PUBLIC_CONTACT_EMAIL || 'hello@neonkey.tech').trim();
 
 // Lab demo: AI inquiry triage. Cloudflare Worker endpoint (source in workers/triage/). Public URL, not a secret.

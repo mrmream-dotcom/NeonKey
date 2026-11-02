@@ -1,5 +1,5 @@
 ---
-import { url } from '../config';
+import { url, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../config';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Icon from '../components/Icon.astro';
@@ -24,7 +24,7 @@ import Icon from '../components/Icon.astro';
       <li><strong>Beginner-friendly:</strong> plain language first, details for those who want them.</li>
       <li><strong>No hype:</strong> no guarantees and no made-up numbers.</li>
     </ul>
-    <p><a class="btn btn-primary" href={url('/newsletter/')}>Get Unlock the Week</a></p>
+    <p class="btn-row"><a class="btn btn-primary" href={url('/newsletter/')}>Get Unlock the Week</a> <a class="btn btn-ghost" href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="about">Follow {INSTAGRAM_HANDLE}</a></p>
   </article>
   <aside class="sticky-side" aria-label="At a glance">
     <div class="panel topline accent-violet">
