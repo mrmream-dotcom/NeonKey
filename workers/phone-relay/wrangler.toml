@@ -1,0 +1,16 @@
+# NeonKey phone-agent message relay: ElevenLabs agent webhook tool -> this Worker -> Resend -> hello@.
+# Secrets (set in the Cloudflare dashboard or with `wrangler secret put`, never committed):
+#   RESEND_API_KEY, RELAY_TOKEN
+name = "neonkey-phone-relay"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+TO_ADDRESS = "hello@neonkey.tech"
+BCC_ADDRESS = "mr.mream@gmail.com"
+
+[observability]
+enabled = false
