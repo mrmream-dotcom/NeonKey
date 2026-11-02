@@ -6,9 +6,9 @@ Scratch voice: free local Kokoro (af_heart). Final voice: Michael's pick (not Ro
 
 ---
 ## 1. Hook
-Ever said, "I'm just not a tech person"?
+Tech feels locked?
 
-Good. This channel is for you.
+We hand you the key.
 
 ## 2. Who we are
 Neon Key makes practical tech help for small businesses and everyday people. Short, clear, and no talking down.
