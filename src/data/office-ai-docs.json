@@ -1,0 +1,116 @@
+{
+  "business": "Birchline Plumbing & Heating",
+  "note": "A made-up business. Every name, price, phone number and policy here is fictional and exists only for the NeonKey Office AI demo. 555-01xx numbers are reserved for fiction.",
+  "docs": [
+    {
+      "id": "handbook",
+      "title": "Staff handbook (excerpt)",
+      "updated": "2026-09-15",
+      "sections": [
+        {
+          "heading": "Office hours",
+          "text": "The office is open Monday to Friday, 7:30 AM to 5:00 PM. Phones forward to the on-call technician outside those hours. The office is closed on New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving Day and Christmas Day."
+        },
+        {
+          "heading": "Requesting time off",
+          "text": "Request paid time off in the scheduling app under Me > Time Off at least two weeks ahead. Requests for the week of Thanksgiving or the last two weeks of December need four weeks' notice. Kelly in the office approves requests in the order they come in. Full-time staff earn 10 days of paid time off per year, rising to 15 days after three years."
+        },
+        {
+          "heading": "Calling in sick",
+          "text": "If you are sick, call or text the office line at 555-0147 before 7:00 AM so jobs can be moved. Do not just message a coworker. More than two sick days in a row needs a quick note to Kelly when you are back."
+        },
+        {
+          "heading": "Company vans",
+          "text": "Company vans are for work use only, plus the drive between home and the first and last job of the day. No passengers who are not employees. Log fuel purchases with the fuel card and keep the receipt in the van folder. Report any damage or warning light to Kelly the same day."
+        },
+        {
+          "heading": "Safety basics",
+          "text": "Wear eye protection when cutting pipe or using a torch. Every van carries a first aid kit and a fire extinguisher; check both on the first Monday of each month. Report every injury, even a small one, to Kelly the same day."
+        }
+      ]
+    },
+    {
+      "id": "pricing",
+      "title": "Service and pricing sheet",
+      "updated": "2026-10-01",
+      "sections": [
+        {
+          "heading": "Standard rates",
+          "text": "Service call (first 30 minutes, includes diagnosis): $95. Labor after the first 30 minutes: $120 per hour, billed in 15-minute steps. Parts are billed at the price on the parts list."
+        },
+        {
+          "heading": "After-hours and holidays",
+          "text": "After-hours service call (weekdays after 5:00 PM, Saturdays and Sundays): $185, and labor is $180 per hour. Holiday service call (the six holidays the office is closed): $250, and labor is $200 per hour."
+        },
+        {
+          "heading": "Common jobs (quote ranges)",
+          "text": "Tank water heater replacement, 40 or 50 gallon: $1,450 to $2,100 installed, depending on fuel type and venting. Tankless water heater: quote only after a site visit. Toilet replacement with a standard toilet: $380 to $520 installed. Drain cleaning, single fixture: $150 to $250. Always say these are ranges and the final price comes from the technician on site."
+        },
+        {
+          "heading": "Payment",
+          "text": "Payment is due when the job is finished. We take cards, checks and bank transfer. No cash over $500. Jobs over $3,000 need a 30% deposit when the job is booked. We do not offer financing."
+        },
+        {
+          "heading": "Discounts",
+          "text": "Customers aged 65 and over get 10% off labor. The discount does not apply to parts or to after-hours and holiday rates. Do not offer any other discount without Kelly's OK."
+        }
+      ]
+    },
+    {
+      "id": "howto",
+      "title": "Office how-tos",
+      "updated": "2026-10-20",
+      "sections": [
+        {
+          "heading": "Booking a job",
+          "text": "Open the scheduling app, choose New Job, and fill in the customer's name, address, phone number and a short description of the problem. Ask if there are pets, a gate code or parking limits and add them to the notes. Choose the first open slot that fits the job length: 1 hour for a service call, 4 hours for a water heater replacement. The app texts the customer a confirmation automatically."
+        },
+        {
+          "heading": "Emergency calls",
+          "text": "Burst pipes, no water to the whole house, sewage backing up and no heat when it is below freezing outside count as emergencies. Book them in the next open slot today, even if that means moving a routine job, and tell the customer the after-hours rate if it is after 5:00 PM. Tell the customer where their main water shutoff valve usually is: near the water heater, in the basement or crawl space, or by the street."
+        },
+        {
+          "heading": "Gas smell",
+          "text": "If a customer says they smell gas, tell them to leave the building right away, not to flip any light switches or use anything that could make a spark, and to call the gas utility's emergency line or 911 from outside. Do not book a regular appointment first. Once the gas utility says the home is safe, we can book a visit."
+        },
+        {
+          "heading": "On-call rotation",
+          "text": "One technician is on call each week from Friday 5:00 PM to the next Friday 5:00 PM. The rotation is posted in the scheduling app under Team > On Call. To swap a week, both technicians agree and tell Kelly by Wednesday."
+        },
+        {
+          "heading": "Leaving a job",
+          "text": "Before leaving, run the water, check for leaks, take a photo of the finished work and upload it to the job in the app. Collect payment and mark the job Complete. If the customer is not home, leave the invoice in the app and text them that it was sent."
+        }
+      ]
+    },
+    {
+      "id": "warranty",
+      "title": "Warranty and refund policy",
+      "updated": "2026-08-01",
+      "sections": [
+        {
+          "heading": "Labor warranty",
+          "text": "Our labor is covered for 1 year from the job date. If the same problem comes back because of our work, we fix it at no charge for labor."
+        },
+        {
+          "heading": "Parts and equipment",
+          "text": "Parts and equipment carry the manufacturer's warranty. Water heaters usually come with a 6 to 12 year tank warranty from the maker; check the model's paperwork. We register new water heaters with the maker for the customer."
+        },
+        {
+          "heading": "Refunds",
+          "text": "Service call fees are not refundable, because the visit and diagnosis already happened. If a customer is unhappy with a repair, book a free return visit within 30 days first. Any refund needs Kelly's approval."
+        },
+        {
+          "heading": "What the warranty does not cover",
+          "text": "Damage from freezing, misuse, or work done by someone else after our visit. Parts the customer supplied themselves are not covered."
+        }
+      ]
+    }
+  ],
+  "samples": [
+    { "id": "sunday", "label": "Sunday call rate", "question": "A customer wants someone out this Sunday afternoon for a leaking pipe. What do we charge?" },
+    { "id": "gas", "label": "Customer smells gas", "question": "Someone just called and said they smell gas in their kitchen. What do I tell them?" },
+    { "id": "pto", "label": "Time off at Christmas", "question": "How do I ask for the week before Christmas off?" },
+    { "id": "notcovered", "label": "Not in the docs", "question": "Do we let staff work from home on Fridays?" }
+  ]
+}

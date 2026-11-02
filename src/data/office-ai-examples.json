@@ -1,0 +1,107 @@
+[
+  {
+    "sampleId": "sunday",
+    "label": "Sunday call rate",
+    "question": "A customer wants someone out this Sunday afternoon for a leaking pipe. What do we charge?",
+    "capturedAt": "2026-11-02T04:17:28.433Z",
+    "model": "gemini-3.6-flash",
+    "ms": 1629,
+    "tokens": 1895,
+    "result": {
+      "found": "yes",
+      "answer": "For a Sunday service call, the after-hours rate applies. The initial service call fee is $185, and labor after the first 30 minutes is $180 per hour.",
+      "sources": [
+        {
+          "doc_id": "pricing",
+          "doc_title": "Service and pricing sheet",
+          "section": "After-hours and holidays",
+          "quote": "After-hours service call (weekdays after 5:00 PM, Saturdays and Sundays): $185, and labor is $180 per hour."
+        }
+      ],
+      "dropped_sources": 0,
+      "unverified": false,
+      "ask_next": "",
+      "confidence": "high"
+    }
+  },
+  {
+    "sampleId": "gas",
+    "label": "Customer smells gas",
+    "question": "Someone just called and said they smell gas in their kitchen. What do I tell them?",
+    "capturedAt": "2026-11-02T04:17:45.488Z",
+    "model": "gemini-3.6-flash",
+    "ms": 1513,
+    "tokens": 1974,
+    "result": {
+      "found": "yes",
+      "answer": "If a customer smells gas, tell them to leave the building immediately, avoid flipping any light switches or using anything that could create a spark, and call 911 or the gas utility's emergency line from outside. Do not book a regular appointment until the gas utility confirms the home is safe.",
+      "sources": [
+        {
+          "doc_id": "howto",
+          "doc_title": "Office how-tos",
+          "section": "Gas smell",
+          "quote": "If a customer says they smell gas, tell them to leave the building right away, not to flip any light switches or use anything that could make a spark, and to call the gas utility's emergency line or 911 from outside."
+        },
+        {
+          "doc_id": "howto",
+          "doc_title": "Office how-tos",
+          "section": "Gas smell",
+          "quote": "Once the gas utility says the home is safe, we can book a visit."
+        }
+      ],
+      "dropped_sources": 0,
+      "unverified": false,
+      "ask_next": "",
+      "confidence": "high"
+    }
+  },
+  {
+    "sampleId": "pto",
+    "label": "Time off at Christmas",
+    "question": "How do I ask for the week before Christmas off?",
+    "capturedAt": "2026-11-02T04:18:02.976Z",
+    "model": "gemini-3.6-flash",
+    "ms": 1888,
+    "tokens": 1970,
+    "result": {
+      "found": "partly",
+      "answer": "To request time off, submit your request in the scheduling app under Me > Time Off. However, while the handbook specifies that requests for the last two weeks of December require four weeks' notice, it does not detail a separate rule for the week before Christmas specifically. Kelly in the office approves time off requests in the order they are received.",
+      "sources": [
+        {
+          "doc_id": "handbook",
+          "doc_title": "Staff handbook (excerpt)",
+          "section": "Requesting time off",
+          "quote": "Request paid time off in the scheduling app under Me > Time Off at least two weeks ahead."
+        },
+        {
+          "doc_id": "handbook",
+          "doc_title": "Staff handbook (excerpt)",
+          "section": "Requesting time off",
+          "quote": "Requests for the week of Thanksgiving or the last two weeks of December need four weeks' notice."
+        }
+      ],
+      "dropped_sources": 0,
+      "unverified": false,
+      "ask_next": "Check with Kelly in the office to confirm the notice required for the week before Christmas.",
+      "confidence": "high"
+    }
+  },
+  {
+    "sampleId": "notcovered",
+    "label": "Not in the docs",
+    "question": "Do we let staff work from home on Fridays?",
+    "capturedAt": "2026-11-02T04:18:19.507Z",
+    "model": "gemini-3.6-flash",
+    "ms": 971,
+    "tokens": 1806,
+    "result": {
+      "found": "no",
+      "answer": "The documents do not mention whether staff are allowed to work from home on Fridays.",
+      "sources": [],
+      "dropped_sources": 0,
+      "unverified": false,
+      "ask_next": "Check with Kelly in the office to ask about work-from-home options.",
+      "confidence": "high"
+    }
+  }
+]

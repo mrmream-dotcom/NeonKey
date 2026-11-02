@@ -95,7 +95,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
             <OfferDetails offer={o} />
             {o.demo && (
-              <p class="offer-demo"><a href={url(o.demo.href)} data-umami-event="demo-click" data-umami-event-offer={o.name} data-umami-event-location="services">{o.demo.label} →</a><span class="muted"> Example: AI inquiry triage</span></p>
+              <p class="offer-demo"><a href={url(o.demo.href)} data-umami-event="demo-click" data-umami-event-offer={o.name} data-umami-event-location="services">{o.demo.label} →</a>{o.demo.example && <span class="muted"> Example: {o.demo.example}</span>}</p>
             )}
             {o.upsell && (
               <p class="offer-upsell">{o.upsell.text} <a href={url(o.upsell.href)} data-umami-event="services-cta" data-umami-event-offer={o.name} data-umami-event-location="services-upsell">{o.upsell.linkText}</a></p>

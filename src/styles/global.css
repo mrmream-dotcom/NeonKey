@@ -310,6 +310,28 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .triage-examples { display: grid; gap: 1.25rem; }
 .triage-example .sample-text { font-size: .92rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: .8rem; margin: .4rem 0 .9rem; }
 
+/* Lab demo: Office AI */
+.oa-biz { display: grid; gap: .15rem; margin: 0 0 1rem; padding: .75rem .9rem; border: 1px solid rgba(167,139,250,.45); border-radius: 12px; background: rgba(167,139,250,.07); }
+.oa-biz .muted { font-size: .88rem; }
+.oa-sources { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.oa-sources blockquote { margin: 0; padding: .55rem .85rem; border-left: 3px solid var(--violet); background: rgba(167,139,250,.08); border-radius: 0 10px 10px 0; font-size: .95rem; color: var(--text); }
+.oa-src-ref { display: inline-block; margin-top: .3rem; font-size: .82rem; color: var(--muted); }
+.oa-src-btn { background: none; border: 0; padding: .25rem 0; font: inherit; font-size: .84rem; color: var(--cyan); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 32px; }
+.oa-warn { margin-top: .7rem !important; color: #fde68a; border-left: 3px solid #fbbf24; background: rgba(251,191,36,.08); padding: .6rem .8rem; border-radius: 0 10px 10px 0; font-size: .92rem; }
+.oa-docs-section { padding-top: 1.5rem; }
+.oa-docs-h { font-size: 1.4rem; margin: 0 0 .3rem; }
+.oa-docs-intro { margin: 0 0 1rem; max-width: 70ch; }
+.oa-docs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+@media (max-width: 760px) { .oa-docs { grid-template-columns: 1fr; } }
+.oa-doc summary { cursor: pointer; display: flex; flex-direction: column; gap: .15rem; list-style-position: outside; }
+.oa-doc-title { font-weight: 700; color: var(--text); }
+.oa-doc-meta { font-size: .82rem; color: var(--muted); }
+.oa-doc[open] summary { margin-bottom: .6rem; }
+.oa-sec { padding: .55rem .7rem; border-radius: 10px; border: 1px solid transparent; transition: background .3s, border-color .3s; }
+.oa-sec h3 { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--violet); margin: 0 0 .25rem; }
+.oa-sec p { margin: 0; font-size: .93rem; line-height: 1.55; }
+.oa-sec.hit { background: rgba(34,211,238,.09); border-color: rgba(34,211,238,.55); }
+
 /* Articles listing: titles read as links, whole card is clickable (stretched link) */
 .article-list { list-style: none; margin: 0 0 3rem; padding: 0; display: grid; gap: 1rem; }
 .article-card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem 1.15rem; transition: border-color .18s, box-shadow .18s, transform .18s; }

@@ -32,6 +32,15 @@ export const labProjects: LabProject[] = [
     icon: 'spark', accent: 'cyan', flag: 'Live demo',
   },
   {
+    slug: 'office-ai',
+    title: 'Office AI: ask your own documents',
+    summary: 'Ask a question and an AI answers only from a business\'s own handbook, price sheet and how-tos, quotes the exact lines it used, and says so when the answer isn\'t in the documents. Live demo plus the full write-up.',
+    tags: ['AI', 'Automation'],
+    level: 'Beginner → Intermediate',
+    service: { label: 'AI Intake & FAQ Assistant', href: '/services/#ai-faq' },
+    icon: 'spark', accent: 'violet', flag: 'Live demo',
+  },
+  {
     slug: 'receipt-sorter',
     title: 'AI receipt & invoice sorter',
     summary: 'Snap a receipt or upload an invoice and an AI reads the date, vendor, total, tax and category into a form you check. Add payments by hand too, then export a simple ledger to a spreadsheet.',

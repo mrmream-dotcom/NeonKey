@@ -80,6 +80,10 @@ export const CONTACT_EMAIL = (import.meta.env.PUBLIC_CONTACT_EMAIL || 'hello@neo
 //   PUBLIC_TRIAGE_API_URL = override, e.g. http://localhost:8787/triage when running `wrangler dev`.
 export const TRIAGE_API_URL = (import.meta.env.PUBLIC_TRIAGE_API_URL || 'https://neonkey-triage.mr-mream.workers.dev/triage').trim();
 
+// Lab demo: Office AI (ask a made-up business's documents). Cloudflare Worker endpoint (source in workers/office-ai/). Public URL, not a secret.
+//   PUBLIC_OFFICE_AI_API_URL = override, e.g. http://localhost:8787/ask when running `wrangler dev`.
+export const OFFICE_AI_API_URL = (import.meta.env.PUBLIC_OFFICE_AI_API_URL || 'https://neonkey-office-ai.mr-mream.workers.dev/ask').trim();
+
 // Service quiz: plan-email Worker endpoint (source in workers/quiz/). Public URL, not a secret.
 //   PUBLIC_QUIZ_API_URL = override, e.g. http://localhost:8787/plan when running `wrangler dev`.
 export const QUIZ_API_URL = (import.meta.env.PUBLIC_QUIZ_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/plan').trim();

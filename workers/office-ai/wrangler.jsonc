@@ -1,0 +1,27 @@
+// Cloudflare Worker for the NeonKey Lab "Office AI" demo.
+// No secrets in this file. The Gemini key is a Worker secret:  printf %s "$GEMINI_API_KEY" | npx wrangler secret put GEMINI_API_KEY
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neonkey-office-ai",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  // Same strict limiter as the triage demo: a small SQLite-backed Durable Object (free plan).
+  // Visitor objects are named by a SHA-256 hash of IP + UTC date (raw IPs are never stored) and
+  // delete themselves 48 hours after last use. Questions are never written anywhere.
+  "durable_objects": {
+    "bindings": [{ "name": "LIMITER", "class_name": "Limiter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Limiter"] }],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://neonkey.tech,https://www.neonkey.tech",
+    "ALLOW_LOCALHOST": "false",
+    "PRIMARY_MODEL": "gemini-3.5-flash",
+    "FALLBACK_MODEL": "gemini-3.5-flash-lite",
+    "MAX_CHARS": "400",
+    "PER_IP_MINUTE": "5",
+    "PER_IP_DAILY": "30",
+    "GLOBAL_DAILY": "150"
+  }
+}
