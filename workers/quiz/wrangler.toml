@@ -13,7 +13,9 @@ preview_urls = false
 
 [vars]
 ALLOWED_ORIGINS = "https://neonkey.tech,https://www.neonkey.tech"
-FROM_ADDRESS = "NeonKey <hello@neonkey.tech>"
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+# Every email to a visitor is BCC'd here (Resend has no account-level BCC).
+BCC_ADDRESS = "mr.mream@gmail.com"
 REPLY_TO = "hello@neonkey.tech"
 LEAD_TO = "hello@neonkey.tech"
 IP_DAILY_LIMIT = "5"

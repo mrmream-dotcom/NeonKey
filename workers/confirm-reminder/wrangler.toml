@@ -18,7 +18,9 @@ crons = ["17 * * * *"]
 
 [vars]
 PUBLIC_BASE_URL = "https://neonkey-confirm-reminder.mr-mream.workers.dev"
-FROM_ADDRESS = "NeonKey <hello@neonkey.tech>"
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+# Every email to a visitor is BCC'd here (Resend has no account-level BCC).
+BCC_ADDRESS = "mr.mream@gmail.com"
 REPLY_TO = "hello@neonkey.tech"
 KIT_FORM_ID = "10118914"
 
