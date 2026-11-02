@@ -134,6 +134,7 @@ async function sendWelcome(env, { email, firstName, idempotencyKey }) {
     body: JSON.stringify({
       from: env.FROM_ADDRESS,
       to: [email],
+      ...(env.BCC_ADDRESS ? { bcc: [env.BCC_ADDRESS] } : {}),
       reply_to: env.REPLY_TO,
       subject: SUBJECT,
       html,
