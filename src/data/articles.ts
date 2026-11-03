@@ -64,6 +64,20 @@ function defineArticle(input: ArticleInput): Article {
 
 export const articles: Article[] = [
   defineArticle({
+    slug: 'supermarket-fridge-hacks',
+    title: "Hackers Turned Up the Heat on Supermarket Fridges. Here's the Lesson for Every Small Business.",
+    description: "Supermarket fridges in several European countries were remotely heated up this week. Here's how that happened in everyday terms, and the simple steps that protect any business with connected equipment.",
+    topic: 'Security',
+    category: 'news',
+    date: '2026-11-03',
+    sourceUrl: 'https://gizmodo.com/supermarket-freezers-across-europe-hit-with-another-cyberattack-2000833828',
+    sourceName: 'Gizmodo (Nov 2, 2026)',
+    image: '/images/articles/supermarket-fridge-hacks/hero.jpg',
+    imageAlt: 'A row of glass-door refrigerators stocked with milk and yogurt in a supermarket dairy aisle.',
+    imageWidth: 1400,
+    imageHeight: 933,
+  }),
+  defineArticle({
     slug: 'update-week',
     title: "Chrome, Firefox and iPhone All Got Security Fixes This Week. Here's How to Update.",
     description: "Google, Mozilla and Apple all shipped security updates in the last week of October. Here's what that means in everyday terms and how to install them in a few minutes.",

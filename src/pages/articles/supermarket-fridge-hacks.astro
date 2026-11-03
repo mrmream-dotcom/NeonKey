@@ -1,0 +1,54 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
+import { getArticle } from '../../data/articles';
+const article = getArticle('supermarket-fridge-hacks');
+---
+<Base title={article.title} description={article.description} type="article" image="/images/articles/supermarket-fridge-hacks/hero.jpg">
+  <article class="narrow page-head prose article-page">
+    <span class="kicker">Articles · Security</span>
+    <h1>{article.title}</h1>
+    <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/supermarket-fridge-hacks/hero.jpg')} alt="A row of glass-door refrigerators stocked with milk and yogurt in a supermarket dairy aisle." width="1400" height="933" decoding="async" /></figure>
+<p class="lead">On Monday, supermarkets in several European countries found their fridges and freezers warming up on their own. Nobody unplugged them. Hackers reached the systems that control them over the internet. It sounds like a movie plot, but the lesson behind it is simple, and it applies to any business with equipment that's "online."</p>
+<h2>What happened</h2>
+<p>On November 2, refrigeration systems at supermarkets in Belgium, Ireland, Sweden, Luxembourg and Estonia suddenly rose in temperature, <a data-umami-event="outbound-click" data-umami-event-item="newsweek.com" href="https://www.newsweek.com/european-countries-hit-by-supermarket-freezer-cyberattacks-12649185">Newsweek reported</a>. Some units were pushed as high as 50°C (122°F), according to <a data-umami-event="outbound-click" data-umami-event-item="gizmodo.com" href="https://gizmodo.com/supermarket-freezers-across-europe-hit-with-another-cyberattack-2000833828">Gizmodo</a>, which cited the BBC and listed reports from more countries as the day went on.</p>
+<p>Gizmodo, citing the BBC, said about 40 Delhaize supermarkets were hit. Newsweek reported 13 SuperValu stores affected in Ireland and freezers at Ica and Coop shops in Sweden. Stores pulled chilled and frozen food and threw out what had warmed up. An official at Belgium's national cybersecurity center said it's not known who was behind it, and that the culprit may never be known.</p>
+<h2>This wasn't the first time</h2>
+<p>Three weeks earlier, on the night of October 11, the same kind of thing happened at hundreds of supermarkets in France. Attackers remotely switched refrigerators into their built-in defrost mode, <a data-umami-event="outbound-click" data-umami-event-item="bleepingcomputer.com" href="https://www.bleepingcomputer.com/news/security/cyberattack-shuts-down-refrigerators-at-french-supermarkets/">BleepingComputer reported</a>, which made them heat up. <a data-umami-event="outbound-click" data-umami-event-item="aljazeera.com" href="https://www.aljazeera.com/news/2026/10/13/unprecedented-cyberattack-hits-french-supermarkets-causing-food-losses">Al Jazeera reported</a> that food was spoiled and several stores had fires, and the head of the Intermarché chain estimated losses in the "tens of millions of euros nationwide in a single day."</p>
+<p>The French attacks were linked to refrigeration controllers from Danfoss, a Danish company. Danfoss said the affected systems "were running outdated firmware" and that it had long advised customers to keep them updated and replace older equipment. Early reports say some of the units hit on Monday were also Danfoss equipment, but that hasn't been confirmed.</p>
+<h2>How can someone hack a fridge?</h2>
+<p>A big supermarket doesn't run each fridge by hand. It uses a <strong>controller</strong>, a small computer that watches temperatures and runs the whole cold aisle. Many of these controllers have a web page for settings, often called an <strong>admin panel</strong>, so a maintenance company can check on them from anywhere.</p>
+<p>That convenience is the weak spot. If the admin panel can be reached from the open internet, anyone in the world can find it and try to get in. Back in August, the security firm Claroty <a data-umami-event="outbound-click" data-umami-event-item="claroty.com" href="https://claroty.com/team82/research/freeze-the-controller-defrost-the-food-uncovering-vulnerabilities-in-danfoss-refrigeration-controllers">published research</a> on one popular Danfoss controller. It found flaws that could let an attacker skip the login entirely, plus "thousands of publicly accessible management interfaces" online. Danfoss had already released a fix, firmware version R4.3.1. The problem is that many systems were never updated. After the French attack, one researcher counted 2,752 Danfoss systems still exposed online, 1,590 of them in France, according to BleepingComputer.</p>
+<p>In everyday terms, the lock had already been fixed, and plenty of doors were still using the old lock.</p>
+<h2>Why this matters if you don't run a supermarket</h2>
+<p>Your business probably has more "smart" equipment than you think: a thermostat, security cameras, a door lock, a printer, the point-of-sale terminal, the Wi-Fi router itself. Each one is a small computer. Each one can have an admin panel, a default password and software that needs updating. Attackers use search tools that scan the whole internet for exactly these devices, so being a small business doesn't make you invisible.</p>
+<p>One security expert put the bigger idea well. Patrick Lamplmair, CTO of the security company Tributech, told Gizmodo: "A freezer should never accept an instruction to heat to 50°C, no matter who sends it." Good equipment should have limits built in, and you can ask your vendors whether theirs does.</p>
+<h2>What you can do this week</h2>
+<ul>
+<li><strong>Make a quick list of everything that connects.</strong> Walk around and write down any device that's on Wi-Fi or plugged into your network. You can't protect what you don't know you have.</li>
+<li><strong>Change default passwords.</strong> If a device still uses the password it came with (or "admin"), change it to a long, unique one and store it in a password manager.</li>
+<li><strong>Turn on updates.</strong> Check each device's settings or app for a firmware or software update, and switch on automatic updates where you can. The supermarket attacks hit systems that hadn't been updated.</li>
+<li><strong>Keep admin panels off the open internet.</strong> If a vendor needs remote access, ask them to use a secure option like a VPN or their own remote-access service instead of an open web page. Also look in your router for "port forwarding" rules you don't recognize, since those can expose devices.</li>
+<li><strong>Ask your service companies who can get in.</strong> Find out which outside companies can reach your equipment remotely, how they log in, and whether that access is still needed.</li>
+<li><strong>Have a plan B.</strong> For anything critical, like coolers in a restaurant, have a simple backup, such as a separate temperature alarm that texts you, so you find out about a problem before it costs you.</li>
+</ul>
+<p>Our free <a href={url('/learn/wifi-network-checkup/')}>Wi-Fi network checkup</a> walks through the router side of this step by step. If you'd rather have someone check your setup with you, that's what our <a href={url('/services/remote-it/')}>remote IT help</a> is for.</p>
+<h2>The bottom line</h2>
+<p>Connected equipment saves time and money, and it isn't going away. It just needs the same basic care as your laptop: strong passwords, regular updates and no doors left open to the internet that don't need to be. Most of these attacks worked because of fixes that already existed but were never installed.</p>
+<p>If you'd like a short, friendly roundup like this each week, <a href={url('/newsletter/')}>Unlock the Week</a> is NeonKey's newsletter.</p>
+<h2>Sources</h2>
+<ul>
+<li>Gizmodo, "Supermarket Freezers Across Europe Hit With Another Cyberattack," Matt Novak, updated Nov. 2, 2026: <a data-umami-event="outbound-click" data-umami-event-item="gizmodo.com" href="https://gizmodo.com/supermarket-freezers-across-europe-hit-with-another-cyberattack-2000833828">https://gizmodo.com/supermarket-freezers-across-europe-hit-with-another-cyberattack-2000833828</a></li>
+<li>Newsweek, "European countries hit by supermarket freezer cyberattacks," Brendan Cole, Nov. 2026: <a data-umami-event="outbound-click" data-umami-event-item="newsweek.com" href="https://www.newsweek.com/european-countries-hit-by-supermarket-freezer-cyberattacks-12649185">https://www.newsweek.com/european-countries-hit-by-supermarket-freezer-cyberattacks-12649185</a></li>
+<li>BleepingComputer, "Cyberattack shuts down refrigerators at French supermarkets," Sergiu Gatlan, Oct. 12, 2026: <a data-umami-event="outbound-click" data-umami-event-item="bleepingcomputer.com" href="https://www.bleepingcomputer.com/news/security/cyberattack-shuts-down-refrigerators-at-french-supermarkets/">https://www.bleepingcomputer.com/news/security/cyberattack-shuts-down-refrigerators-at-french-supermarkets/</a></li>
+<li>Al Jazeera, "Hundreds of supermarkets in France hit by 'unprecedented' cyberattack," Oct. 13, 2026: <a data-umami-event="outbound-click" data-umami-event-item="aljazeera.com" href="https://www.aljazeera.com/news/2026/10/13/unprecedented-cyberattack-hits-french-supermarkets-causing-food-losses">https://www.aljazeera.com/news/2026/10/13/unprecedented-cyberattack-hits-french-supermarkets-causing-food-losses</a></li>
+<li>Claroty Team82, "Freeze the Controller, Defrost the Food: Uncovering Vulnerabilities in Danfoss Refrigeration Controllers," Aug. 9, 2026: <a data-umami-event="outbound-click" data-umami-event-item="claroty.com" href="https://claroty.com/team82/research/freeze-the-controller-defrost-the-food-uncovering-vulnerabilities-in-danfoss-refrigeration-controllers">https://claroty.com/team82/research/freeze-the-controller-defrost-the-food-uncovering-vulnerabilities-in-danfoss-refrigeration-controllers</a></li>
+</ul>
+<p class="fine-print"><strong>Image credit:</strong> Photo by <a data-umami-event="outbound-click" data-umami-event-item="commons.wikimedia.org" href="https://commons.wikimedia.org/w/index.php?curid=63120169">Wolfmann</a> via Wikimedia Commons, <a data-umami-event="outbound-click" data-umami-event-item="creativecommons.org" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>, cropped and resized.</p>
+    <p><a href={url('/articles/')}>← Back to Articles</a></p>
+  </article>
+  <MoreArticles current={article.slug} />
+</Base>
