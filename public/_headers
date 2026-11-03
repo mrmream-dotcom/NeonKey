@@ -1,4 +1,4 @@
-# Cloudflare Pages response headers. Ignored by GitHub Pages and `astro preview`.
+# Cloudflare Pages response headers. Ignored by GitHub Pages and `astro preview` (the CSP line is reused, see below).
 # Docs: https://developers.cloudflare.com/pages/configuration/headers/
 # CSP allows: Umami Cloud (script from cloud.umami.is; it POSTs to https://gateway.umami.is/api/send, verified in the live script Oct 2026) and Kit newsletter forms.
 # Kit domains (checked Oct 2026 by loading a live Kit JS embed in Chrome):
@@ -6,13 +6,18 @@
 #   connect: Kit's script POSTs to https://app.convertkit.com/forms/<id>/visit and submits to the form action on https://app.kit.com
 #   form-action: our own form posts to https://app.kit.com/forms/<FORM_ID>/subscriptions (older embeds use app.convertkit.com)
 #   img: images in Kit form templates come from https://embed.filekitcdn.com
-# connect: the Lab triage demo (/lab/ai-inquiry-triage/) POSTs to the Cloudflare Worker at https://neonkey-triage.mr-mream.workers.dev
+# connect: the Lab demos POST to their Cloudflare Workers (neonkey-triage, neonkey-office-ai, neonkey-receipts) and the
+#   services quiz POSTs to neonkey-quiz, all on https://<name>.mr-mream.workers.dev
+# GitHub Pages ignores this file, so integrations/csp-meta.mjs copies this policy into a <meta> tag on every built page
+#   (minus frame-ancestors, which meta cannot carry) and adds sha256 hashes for each page's inline scripts.
 # Google tag (Google Ads AW-18547389944, loaded in Base.astro + /js/gtag-init.js): script from www.googletagmanager.com (and www.google.com);
-#   conversion pings/pixels go to www.google.com, googleads.g.doubleclick.net, www.googleadservices.com, *.google-analytics.com
+#   conversion pings/pixels go to www.google.com, googleads.g.doubleclick.net, ad.doubleclick.net, www.googleadservices.com, *.google-analytics.com;
+#   the Ads remarketing tag loads a script from googleads.g.doubleclick.net (seen in Chrome Nov 2026) and Google's CSP guide
+#   lists td.doubleclick.net + www.googletagmanager.com as frame-src for Ads
 #   GA4 (G-425106TVS2, same loader) sends hits to *.google-analytics.com and *.analytics.google.com (connect-src)
 # If you turn on reCAPTCHA in the Kit form settings you'd also need www.google.com / www.gstatic.com; keep it off or add them.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com https://www.googletagmanager.com https://www.google.com; connect-src 'self' https://neonkey-triage.mr-mream.workers.dev https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com; font-src 'self'; frame-src 'none'; form-action 'self' https://api.web3forms.com https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cloud.umami.is https://*.kit.com https://f.convertkit.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com; connect-src 'self' https://neonkey-triage.mr-mream.workers.dev https://neonkey-office-ai.mr-mream.workers.dev https://neonkey-receipts.mr-mream.workers.dev https://neonkey-quiz.mr-mream.workers.dev https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev https://app.kit.com https://app.convertkit.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://embed.filekitcdn.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com; font-src 'self'; frame-src https://td.doubleclick.net https://www.googletagmanager.com; form-action 'self' https://api.web3forms.com https://app.kit.com https://app.convertkit.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
