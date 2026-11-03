@@ -221,14 +221,16 @@ export const automationOffers: Offer[] = [
 
 /**
  * All-inclusive package: AI Intake & FAQ + Lead-Routing + email lockdown + 3 months of the Support Plan.
- * Founding-client rate. `separately` is what the same parts cost booked one by one at founding rates
- * ($499 + $799 + $49 email lockdown + 3 x $99 support = $1,644), so the saving shown is real.
+ * Founding-client rate $999 (Michael, Nov 3 2026). `separately` is what the same parts cost booked one by one at
+ * founding rates ($499 + $799 + $49 email lockdown + 3 x $99 support = $1,644); `value` is the rounded-down
+ * "$1,600+ value" shown on the card, so the value claim stays true.
  */
-export const frontOfficePackage: Offer & { separately: number; parts: { name: string; value: string }[] } = {
+export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
   kicker: 'All-inclusive package',
-  from: 1499,
+  from: 999,
+  value: 1600,
   separately: 1644,
   outcome: "Answer customer questions, catch every new lead, follow up on time and lock down your business email, set up together as one system with three months of support",
   for: 'The all-in-one option for small businesses that want their front office handled in one project instead of four',

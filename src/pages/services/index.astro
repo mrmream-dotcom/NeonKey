@@ -50,11 +50,12 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <OfferDetails offer={fop} />
           </div>
           <div class="offer-featured-side">
+            <p class="fop-value">{usd(fop.value)}+ value · <s>{usd(fop.separately)}</s></p>
             <p class="price">{usd(fop.from)}<small>Founding-client rate · scoped first</small></p>
             <ul class="fop-parts" aria-label="What's bundled">
               {fop.parts.map((p) => <li><span>{p.name}</span> <span class="muted">{p.value}</span></li>)}
             </ul>
-            <p class="muted" style="font-size:.95rem">Booked separately at founding rates, the same parts come to {usd(fop.separately)}.</p>
+            <p class="muted" style="font-size:.95rem">Over {usd(fop.value)} in value: booked separately at founding rates, the same parts come to {usd(fop.separately)}.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Ask about the package</a>
               <a class="btn btn-ghost" href="#auto-h" data-umami-event="services-cta" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See the parts</a>
@@ -181,6 +182,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
   .fop-parts { list-style: none; padding: 0; margin: 0 0 .9rem; display: grid; gap: .45rem; font-size: .95rem; }
   .fop-parts li { display: flex; flex-direction: column; border-left: 3px solid var(--line); padding-left: .6rem; }
   .fop-parts .muted { font-size: .85rem; }
+  .fop-value { margin: 0 0 -.4rem; color: var(--muted); font-weight: 600; }
   .support-card .btn { margin-top: 0; }
   .faq .faq-item { max-width: 860px; }
   .step-cards > li strong:first-child { display: inline; font-size: inherit; }

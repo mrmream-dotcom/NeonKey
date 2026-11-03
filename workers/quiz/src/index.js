@@ -1,6 +1,6 @@
 // NeonKey service quiz: plan email Worker.
 //   POST /plan  { email, first_name?, answers, newsletter, website }  (website = honeypot)
-//   POST /kit   { email, first_name?, newsletter, website }           free Starter IT Kit download link
+//   POST /kit   { email, first_name?, business?, size?, need?, newsletter, website }  free Starter IT Kit download link
 // Recomputes the plan server-side from the shared logic in src/data/quiz.ts, emails it
 // to the visitor through Resend, sends a lead copy to hello@neonkey.tech, and (only if
 // the visitor ticked the box) starts Kit's double opt-in for Unlock the Week.
@@ -8,6 +8,12 @@ import { validateAnswers, computePlan, buildPlan, answerSummary } from "../../..
 import { renderPlanEmail, renderLeadEmail, renderKitEmail, renderKitLeadEmail, cleanFirstName } from "./email.js";
 
 const KIT_FORM_ID = "10118914";
+// Optional free-kit lead fields: whitelisted values only (the form uses these exact keys).
+const KIT_SIZES = { solo: "Just me", small: "2 to 10 people", medium: "11 to 25 people", larger: "More than 25", home: "Home or personal use" };
+const KIT_NEEDS = {
+  email: "Email and spam", passwords: "Passwords and logins", backups: "Backups", devices: "Wi-Fi, computers and devices",
+  leads: "Customer inquiries and follow-up", ai: "Using AI at work", unsure: "Not sure yet",
+};
 const DAY = 86400;
 
 export default {
@@ -115,6 +121,9 @@ async function handleKit(request, env, body, reply) {
   if (!email) return reply(400, { ok: false, message: "Please enter a valid email address." });
   const firstName = cleanFirstName(typeof body.first_name === "string" ? body.first_name.slice(0, 60) : "");
   const newsletter = body.newsletter === true;
+  const business = cleanText(body.business, 80);
+  const size = KIT_SIZES[body.size] ? body.size : "";
+  const need = KIT_NEEDS[body.need] ? body.need : "";
   const kitUrl = String(env.KIT_DOWNLOAD_URL || "");
   if (!/^https:\/\/neonkey\.tech\//.test(kitUrl)) return reply(500, { ok: false, message: "The kit isn't available right now. Please email hello@neonkey.tech." });
 
@@ -129,7 +138,7 @@ async function handleKit(request, env, body, reply) {
   if (Number(ipN || 0) >= Number(env.IP_DAILY_LIMIT || 5)) return reply(429, { ok: false, message: "Too many requests today. Please try again tomorrow, or email hello@neonkey.tech." });
   if (Number(gN || 0) >= Number(env.KIT_GLOBAL_DAILY_LIMIT || 200)) return reply(429, { ok: false, message: "The kit email is busy right now. Please try again tomorrow, or email hello@neonkey.tech." });
 
-  const mail = renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress: env.MAILING_ADDRESS });
+  const mail = renderKitEmail({ firstName, newsletter, kitUrl, need, mailingAddress: env.MAILING_ADDRESS });
   const sent = await resendSend(env, {
     from: env.FROM_ADDRESS,
     to: [email],
@@ -151,12 +160,12 @@ async function handleKit(request, env, body, reply) {
     env.QUIZ_RL.put(gKey, String(Number(gN || 0) + 1), { expirationTtl: DAY + 3600 }),
   ]);
 
-  const lead = renderKitLeadEmail({ email, firstName, newsletter });
+  const lead = renderKitLeadEmail({ email, firstName, newsletter, business, size: KIT_SIZES[size] || "", need: KIT_NEEDS[need] || "", needKey: need });
   const leadRes = await resendSend(env, {
     from: env.FROM_ADDRESS,
     to: [env.LEAD_TO],
     reply_to: email,
-    subject: `Free IT Kit download: ${email}`,
+    subject: `Free IT Kit lead: ${business || email}${KIT_NEEDS[need] ? ` (${KIT_NEEDS[need]})` : ""}`,
     html: lead.html,
     text: lead.text,
     tags: [{ name: "kind", value: "free_it_kit_lead" }],
@@ -200,6 +209,12 @@ async function kitSubscribe(env, email, firstName, referrer = "https://neonkey.t
   } catch {
     return false;
   }
+}
+
+// Free text: strip control chars and angle brackets, collapse spaces, cap length.
+function cleanText(v, max) {
+  if (typeof v !== "string") return "";
+  return v.replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
 }
 
 function normalizeEmail(e) {

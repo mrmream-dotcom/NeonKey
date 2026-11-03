@@ -228,8 +228,18 @@ export function renderLeadEmail(v, { email, firstName, newsletter, summary, plan
   return { html, text: T.join("\n") };
 }
 
+/** Free Starter IT Kit: one tailored tip per "biggest headache" answer (keys match KIT_NEEDS in index.js). */
+const KIT_TIPS = {
+  email: { tip: "Since email is your biggest headache: start with the Accounts tab row for your email provider, and turn on the second login step (2FA) there first. Password resets for everything else go to that inbox.", href: "/services/remote-it/", link: "How we set up business email properly" },
+  passwords: { tip: "Since passwords are your biggest headache: fill in the 'Where the password lives' column first. Anything amber is a password to move into a password manager this week.", href: "/learn/", link: "Free guides on passwords and 2FA" },
+  backups: { tip: "Since backups are your biggest headache: do item 3 on the Monthly Checkup today, then try restoring one file. A backup you've never restored is a guess.", href: "/services/remote-it/", link: "How we set up tested backups" },
+  devices: { tip: "Since devices are your biggest headache: start with item 1 and 2 on the Monthly Checkup (updates and router firmware). They close the most common gaps.", href: "/services/remote-it/", link: "Our remote Wi-Fi and device setup" },
+  leads: { tip: "Since customer inquiries are your biggest headache: list every place inquiries arrive (forms, inboxes, booking tools) on the Accounts tab. That list is the first step to making sure none slip through.", href: "/services/#front-office-package", link: "See the Front Office Package" },
+  ai: { tip: "Since AI at work is on your mind: add every AI tool your team uses to the Accounts tab, with who owns it. Knowing what's in use is the first step to using it safely.", href: "/lab/", link: "See working AI demos in the Lab" },
+};
+
 /** Free Starter IT Kit: the download email to the visitor. */
-export function renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress }) {
+export function renderKitEmail({ firstName, newsletter, kitUrl, need, mailingAddress }) {
   const name = cleanFirstName(firstName);
   const greeting = name ? `Hi ${name},` : "Hi there,";
   const e = escapeHtml;
@@ -239,15 +249,13 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress }
     "Look for red cells: those accounts have no second login step (2FA). Start with email, bank and domain.",
     "Once a month, spend 10 minutes on the Monthly Checkup tab.",
   ];
+  const t = KIT_TIPS[need];
   const H = [
     `<p style="${p}">${e(greeting)}</p>`,
     `<p style="${p}">Here's your free Starter IT Kit. It's one spreadsheet with a list for every account your business uses, a quick count of the risky ones, and a 10-minute monthly checkup. It works in Excel and Google Sheets.</p>`,
     button("Download the kit (.xlsx)", kitUrl),
     `<p style="${h2}">Get the most out of it</p>`,
     numbered(steps.map(e)),
-    `<p style="${p}">Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.</p>`,
-    `<p style="${p}">If the list shows more red than you'd like, we can work through it with you remotely. <a href="${SITE}/services/" style="color:${C.accent};">See what NeonKey does</a>. And for simple, free guides, there's <a href="${SITE}/learn/" style="color:${C.accent};">Learn</a>.</p>`,
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Reply and tell us: what's the one tech thing at work that bugs you most?</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">A line is plenty. We read every reply.</p></td></tr></table>`,
   ];
   const T = [
     greeting, "",
@@ -255,11 +263,22 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress }
     `Download the kit (.xlsx): ${kitUrl}`, "",
     "GET THE MOST OUT OF IT",
     ...steps.map((s, i) => `${i + 1}. ${s}`), "",
+  ];
+  if (t) {
+    H.push(box(`<p style="margin:0 0 4px 0;font-family:${FONT};font-size:13px;letter-spacing:1px;text-transform:uppercase;color:${C.accent};font-weight:600;">Where to start for you</p><p style="margin:0 0 8px 0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.text};">${e(t.tip)}</p><p style="margin:0;font-family:${FONT};font-size:15px;line-height:1.6;"><a href="${e(abs(t.href))}" style="color:${C.accent};font-weight:600;">${e(t.link)}</a></p>`));
+    T.push("WHERE TO START FOR YOU", t.tip, `${t.link}: ${abs(t.href)}`, "");
+  }
+  H.push(
+    `<p style="${p}">Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.</p>`,
+    `<p style="${p}">If the list shows more red than you'd like, we can work through it with you remotely. <a href="${SITE}/services/" style="color:${C.accent};">See what NeonKey does</a>. And for simple, free guides, there's <a href="${SITE}/learn/" style="color:${C.accent};">Learn</a>.</p>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Reply and tell us: what's the one tech thing at work that bugs you most?</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">A line is plenty. We read every reply.</p></td></tr></table>`,
+  );
+  T.push(
     "Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.", "",
     `If the list shows more red than you'd like, we can work through it with you remotely: ${SITE}/services/`,
     `Free guides: ${SITE}/learn/`, "",
     "Reply and tell us: what's the one tech thing at work that bugs you most? A line is plenty. We read every reply.", "",
-  ];
+  );
   const footer = [
     "The kit is a template to help you stay organized. It doesn't change any settings for you.",
     `You're getting this because you asked for the free kit on neonkey.tech. This is a one-time email${newsletter ? ", and you also asked for Unlock the Week: Kit will send a separate email to confirm that" : ""}. <a href="https://neonkey.tech/privacy/" style="color:${C.muted};text-decoration:underline;">Privacy</a>`,
@@ -270,20 +289,36 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress }
   return { subject, html, text: T.join("\n") };
 }
 
+/** Which NeonKey offer fits a kit lead's answer, for the internal copy only. */
+const KIT_FIT = {
+  email: "Remote Small-Office IT Setup or the $49 Email Lockdown",
+  passwords: "Remote Small-Office IT Setup (password manager + 2FA)",
+  backups: "Remote Small-Office IT Setup (backups)",
+  devices: "Remote Small-Office IT Setup or a Quick Win + Tech Checkup",
+  leads: "Front Office Package or Lead-Routing",
+  ai: "AI Intake & FAQ Assistant or the Front Office Package",
+  unsure: "Quick Win + Tech Checkup",
+};
+
 /** Internal lead copy for a free kit download. */
-export function renderKitLeadEmail({ email, firstName, newsletter }) {
+export function renderKitLeadEmail({ email, firstName, newsletter, business, size, need, needKey }) {
   const e = escapeHtml;
   const name = cleanFirstName(firstName);
   const rows = [
     ["Email", email],
     ["First name", name || "(not given)"],
+    ["Business", business || "(not given)"],
+    ["Size", size || "(not given)"],
+    ["Biggest tech headache", need || "(not given)"],
+    ["Likely fit", KIT_FIT[needKey] || "(ask them)"],
     ["Newsletter opt-in", newsletter ? "yes (Kit double opt-in requested)" : "no"],
   ];
   const H = [
-    `<p style="${p}">Someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to this email to reach them directly.</p>`,
+    `<p style="${p}">New lead: someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to this email to reach them directly.</p>`,
     box(rows.map(([k, val]) => `<p style="margin:0 0 6px 0;font-family:${FONT};font-size:15px;line-height:1.5;color:${C.text};"><strong>${e(k)}:</strong> ${e(val)}</p>`).join("")),
+    `<p style="${small}">Suggested follow-up in 2 to 3 days: ask how the kit went and whether the red cells need a hand.</p>`,
   ];
-  const T = ["Someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to reach them directly.", "", ...rows.map(([k, val]) => `${k}: ${val}`)];
-  const html = shell({ title: "Free IT Kit download", preheader: `Free IT Kit download: ${email}`, kicker: "Free kit lead", heading: "Starter IT Kit download", body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker (/kit). Disclosed on neonkey.tech/privacy/ (Free IT kit)."] });
+  const T = ["New lead: someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to reach them directly.", "", ...rows.map(([k, val]) => `${k}: ${val}`), "", "Suggested follow-up in 2 to 3 days: ask how the kit went and whether the red cells need a hand."];
+  const html = shell({ title: "Free IT Kit lead", preheader: `Free IT Kit lead: ${business || email}`, kicker: "Free kit lead", heading: business || "Starter IT Kit download", body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker (/kit). Disclosed on neonkey.tech/privacy/ (Free IT kit)."] });
   return { html, text: T.join("\n") };
 }
