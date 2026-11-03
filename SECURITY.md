@@ -27,9 +27,10 @@ Do not include real personal data belonging to other people in a report.
 In scope:
 
 - The website at https://neonkey.tech/ (including `www.neonkey.tech`).
-- The Cloudflare Workers that back it: the AI inquiry triage demo
-  (`neonkey-triage`) and the newsletter welcome email worker
-  (`neonkey-welcome`).
+- The Cloudflare Workers that back it: the Lab demos (`neonkey-triage`,
+  `neonkey-office-ai`, `neonkey-receipts`), the services quiz
+  (`neonkey-quiz`) and the newsletter email workers (`neonkey-welcome`,
+  `neonkey-confirm-reminder`).
 - The source code and configuration in this repository.
 
 Out of scope:

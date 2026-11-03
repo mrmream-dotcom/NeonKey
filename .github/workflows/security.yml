@@ -1,4 +1,4 @@
-# Security checks: dependency audit (site + both Workers) and a full-history secret scan.
+# Security checks: dependency audit (site + every Worker) and a full-history secret scan.
 # Read-only; never runs on gh-pages.
 name: Security
 
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: [".", "workers/triage", "workers/welcome"]
+        dir: [".", "workers/triage", "workers/welcome", "workers/office-ai", "workers/receipts", "workers/quiz", "workers/confirm-reminder"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
