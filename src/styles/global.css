@@ -533,3 +533,10 @@ body { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-are
   .footer-links a, .crumbs a, a.tag { position: relative; }
   .footer-links a::after, .crumbs a::after, a.tag::after { content: ''; position: absolute; inset: -10px -8px; }
 }
+
+/* Social icons: small and quiet until hovered */
+.social-links { list-style: none; display: flex; gap: .35rem; padding: 0; margin: 0; flex-wrap: wrap; }
+.social-links a { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 999px; color: var(--muted); border: 1px solid transparent; transition: color .15s, border-color .15s, background-color .15s; }
+.social-links a:hover, .social-links a:focus-visible { color: var(--cyan); border-color: var(--line); background: rgba(34, 211, 238, .06); }
+.footer-brand .social-links { margin: .6rem 0 0 -.45rem; }
+.panel .social-links, .prose .social-links { margin-left: -.45rem; }
