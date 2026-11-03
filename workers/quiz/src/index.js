@@ -1,10 +1,11 @@
 // NeonKey service quiz: plan email Worker.
 //   POST /plan  { email, first_name?, answers, newsletter, website }  (website = honeypot)
+//   POST /kit   { email, first_name?, newsletter, website }           free Starter IT Kit download link
 // Recomputes the plan server-side from the shared logic in src/data/quiz.ts, emails it
 // to the visitor through Resend, sends a lead copy to hello@neonkey.tech, and (only if
 // the visitor ticked the box) starts Kit's double opt-in for Unlock the Week.
 import { validateAnswers, computePlan, buildPlan, answerSummary } from "../../../src/data/quiz.ts";
-import { renderPlanEmail, renderLeadEmail, cleanFirstName } from "./email.js";
+import { renderPlanEmail, renderLeadEmail, renderKitEmail, renderKitLeadEmail, cleanFirstName } from "./email.js";
 
 const KIT_FORM_ID = "10118914";
 const DAY = 86400;
@@ -26,7 +27,7 @@ export default {
       return new Response(body === null ? null : JSON.stringify(body), { status, headers: h });
     };
 
-    if (url.pathname !== "/plan") return reply(404, { ok: false, message: "Not found." });
+    if (url.pathname !== "/plan" && url.pathname !== "/kit") return reply(404, { ok: false, message: "Not found." });
     if (request.method === "OPTIONS") return reply(okOrigin ? 204 : 403, null);
     if (request.method !== "POST") return reply(405, { ok: false, message: "Method not allowed." });
     if (!okOrigin) return reply(403, { ok: false, message: "Forbidden." });
@@ -40,6 +41,8 @@ export default {
 
     // Honeypot: pretend success, send nothing.
     if (typeof body.website === "string" && body.website.trim() !== "") return reply(200, { ok: true });
+
+    if (url.pathname === "/kit") return handleKit(request, env, body, reply);
 
     const email = normalizeEmail(body.email);
     if (!email) return reply(400, { ok: false, message: "Please enter a valid email address." });
@@ -105,6 +108,66 @@ export default {
   },
 };
 
+// Free Starter IT Kit: email the download link, send a lead copy, optional newsletter opt-in.
+// Separate rate-limit keys from /plan (prefix "kit:") so asking for both works.
+async function handleKit(request, env, body, reply) {
+  const email = normalizeEmail(body.email);
+  if (!email) return reply(400, { ok: false, message: "Please enter a valid email address." });
+  const firstName = cleanFirstName(typeof body.first_name === "string" ? body.first_name.slice(0, 60) : "");
+  const newsletter = body.newsletter === true;
+  const kitUrl = String(env.KIT_DOWNLOAD_URL || "");
+  if (!/^https:\/\/neonkey\.tech\//.test(kitUrl)) return reply(500, { ok: false, message: "The kit isn't available right now. Please email hello@neonkey.tech." });
+
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const today = new Date().toISOString().slice(0, 10);
+  const salt = env.RL_SALT || "nk";
+  const ipKey = `kit:ip:${today}:${(await sha256Hex(`${salt}|${ip}`)).slice(0, 32)}`;
+  const emKey = `kit:em:${(await sha256Hex(`${salt}|${email}`)).slice(0, 32)}`;
+  const gKey = `kit:global:${today}`;
+  const [ipN, emSeen, gN] = await Promise.all([env.QUIZ_RL.get(ipKey), env.QUIZ_RL.get(emKey), env.QUIZ_RL.get(gKey)]);
+  if (emSeen) return reply(429, { ok: false, message: "We already sent the kit to that address in the last day. Check your inbox (and spam), or email hello@neonkey.tech." });
+  if (Number(ipN || 0) >= Number(env.IP_DAILY_LIMIT || 5)) return reply(429, { ok: false, message: "Too many requests today. Please try again tomorrow, or email hello@neonkey.tech." });
+  if (Number(gN || 0) >= Number(env.KIT_GLOBAL_DAILY_LIMIT || 200)) return reply(429, { ok: false, message: "The kit email is busy right now. Please try again tomorrow, or email hello@neonkey.tech." });
+
+  const mail = renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress: env.MAILING_ADDRESS });
+  const sent = await resendSend(env, {
+    from: env.FROM_ADDRESS,
+    to: [email],
+    ...(env.BCC_ADDRESS ? { bcc: [env.BCC_ADDRESS] } : {}),
+    reply_to: env.REPLY_TO,
+    subject: mail.subject,
+    html: mail.html,
+    text: mail.text,
+    tags: [{ name: "kind", value: "free_it_kit" }],
+  });
+  if (!sent.ok) {
+    console.log("kit: resend send failed", sent.status);
+    return reply(502, { ok: false, message: "We couldn't send the email just now. Please try again in a minute, or email hello@neonkey.tech." });
+  }
+
+  await Promise.all([
+    env.QUIZ_RL.put(ipKey, String(Number(ipN || 0) + 1), { expirationTtl: DAY + 3600 }),
+    env.QUIZ_RL.put(emKey, "1", { expirationTtl: DAY }),
+    env.QUIZ_RL.put(gKey, String(Number(gN || 0) + 1), { expirationTtl: DAY + 3600 }),
+  ]);
+
+  const lead = renderKitLeadEmail({ email, firstName, newsletter });
+  const leadRes = await resendSend(env, {
+    from: env.FROM_ADDRESS,
+    to: [env.LEAD_TO],
+    reply_to: email,
+    subject: `Free IT Kit download: ${email}`,
+    html: lead.html,
+    text: lead.text,
+    tags: [{ name: "kind", value: "free_it_kit_lead" }],
+  });
+  if (!leadRes.ok) console.log("kit: resend lead copy failed", leadRes.status);
+
+  let nl = "skipped";
+  if (newsletter) nl = (await kitSubscribe(env, email, firstName, "https://neonkey.tech/free-it-kit/")) ? "ok" : "failed";
+  return reply(200, { ok: true, newsletter: nl });
+}
+
 async function resendSend(env, payload) {
   try {
     const r = await fetch("https://api.resend.com/emails", {
@@ -121,7 +184,7 @@ async function resendSend(env, payload) {
 
 // Kit v4: create (or find) the subscriber as inactive, then add to the newsletter form.
 // That sends Kit's double opt-in confirmation; the welcome Worker handles activation.
-async function kitSubscribe(env, email, firstName) {
+async function kitSubscribe(env, email, firstName, referrer = "https://neonkey.tech/services/quiz/") {
   const h = { "X-Kit-Api-Key": env.KIT_API_KEY, "Content-Type": "application/json", Accept: "application/json" };
   try {
     const s = { email_address: email, state: "inactive" };
@@ -130,7 +193,7 @@ async function kitSubscribe(env, email, firstName) {
     if (!a.ok) { console.log("quiz: kit create failed", a.status); return false; }
     const b = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
       method: "POST", headers: h,
-      body: JSON.stringify({ email_address: email, referrer: "https://neonkey.tech/services/quiz/" }),
+      body: JSON.stringify({ email_address: email, referrer }),
     });
     if (!b.ok) { console.log("quiz: kit form add failed", b.status); return false; }
     return true;

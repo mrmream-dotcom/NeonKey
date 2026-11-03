@@ -227,3 +227,63 @@ export function renderLeadEmail(v, { email, firstName, newsletter, summary, plan
   const html = shell({ title: "Quiz plan request", preheader: `Quiz plan request: ${v.resultName}`, kicker: "Service quiz lead", heading: v.resultName, body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker. Disclosed on neonkey.tech/privacy/ (Service quiz)."] });
   return { html, text: T.join("\n") };
 }
+
+/** Free Starter IT Kit: the download email to the visitor. */
+export function renderKitEmail({ firstName, newsletter, kitUrl, mailingAddress }) {
+  const name = cleanFirstName(firstName);
+  const greeting = name ? `Hi ${name},` : "Hi there,";
+  const e = escapeHtml;
+  const subject = "🔑 Your free NeonKey Starter IT Kit";
+  const steps = [
+    "Open the Accounts tab and list every service your business signs into (email, bank, domain, software, social).",
+    "Look for red cells: those accounts have no second login step (2FA). Start with email, bank and domain.",
+    "Once a month, spend 10 minutes on the Monthly Checkup tab.",
+  ];
+  const H = [
+    `<p style="${p}">${e(greeting)}</p>`,
+    `<p style="${p}">Here's your free Starter IT Kit. It's one spreadsheet with a list for every account your business uses, a quick count of the risky ones, and a 10-minute monthly checkup. It works in Excel and Google Sheets.</p>`,
+    button("Download the kit (.xlsx)", kitUrl),
+    `<p style="${h2}">Get the most out of it</p>`,
+    numbered(steps.map(e)),
+    `<p style="${p}">Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.</p>`,
+    `<p style="${p}">If the list shows more red than you'd like, we can work through it with you remotely. <a href="${SITE}/services/" style="color:${C.accent};">See what NeonKey does</a>. And for simple, free guides, there's <a href="${SITE}/learn/" style="color:${C.accent};">Learn</a>.</p>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Reply and tell us: what's the one tech thing at work that bugs you most?</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">A line is plenty. We read every reply.</p></td></tr></table>`,
+  ];
+  const T = [
+    greeting, "",
+    "Here's your free Starter IT Kit. It's one spreadsheet with a list for every account your business uses, a quick count of the risky ones, and a 10-minute monthly checkup. It works in Excel and Google Sheets.", "",
+    `Download the kit (.xlsx): ${kitUrl}`, "",
+    "GET THE MOST OUT OF IT",
+    ...steps.map((s, i) => `${i + 1}. ${s}`), "",
+    "Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.", "",
+    `If the list shows more red than you'd like, we can work through it with you remotely: ${SITE}/services/`,
+    `Free guides: ${SITE}/learn/`, "",
+    "Reply and tell us: what's the one tech thing at work that bugs you most? A line is plenty. We read every reply.", "",
+  ];
+  const footer = [
+    "The kit is a template to help you stay organized. It doesn't change any settings for you.",
+    `You're getting this because you asked for the free kit on neonkey.tech. This is a one-time email${newsletter ? ", and you also asked for Unlock the Week: Kit will send a separate email to confirm that" : ""}. <a href="https://neonkey.tech/privacy/" style="color:${C.muted};text-decoration:underline;">Privacy</a>`,
+  ];
+  T.push("--", footer[0], footer[1].replace(/ <a .*$/, " Privacy: https://neonkey.tech/privacy/"));
+  if (mailingAddress) T.push("", `NeonKey · ${mailingAddress}`);
+  const html = shell({ title: subject, preheader: "Your accounts list and 10-minute monthly checkup, ready to download.", kicker: "Free from NeonKey", heading: "Your Starter IT Kit is ready", body: H.join("\n"), footer, address: mailingAddress });
+  return { subject, html, text: T.join("\n") };
+}
+
+/** Internal lead copy for a free kit download. */
+export function renderKitLeadEmail({ email, firstName, newsletter }) {
+  const e = escapeHtml;
+  const name = cleanFirstName(firstName);
+  const rows = [
+    ["Email", email],
+    ["First name", name || "(not given)"],
+    ["Newsletter opt-in", newsletter ? "yes (Kit double opt-in requested)" : "no"],
+  ];
+  const H = [
+    `<p style="${p}">Someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to this email to reach them directly.</p>`,
+    box(rows.map(([k, val]) => `<p style="margin:0 0 6px 0;font-family:${FONT};font-size:15px;line-height:1.5;color:${C.text};"><strong>${e(k)}:</strong> ${e(val)}</p>`).join("")),
+  ];
+  const T = ["Someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to reach them directly.", "", ...rows.map(([k, val]) => `${k}: ${val}`)];
+  const html = shell({ title: "Free IT Kit download", preheader: `Free IT Kit download: ${email}`, kicker: "Free kit lead", heading: "Starter IT Kit download", body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker (/kit). Disclosed on neonkey.tech/privacy/ (Free IT kit)."] });
+  return { html, text: T.join("\n") };
+}

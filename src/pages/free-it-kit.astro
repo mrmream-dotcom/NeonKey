@@ -1,0 +1,126 @@
+---
+// Free Starter IT Kit: email-gated lead magnet. The form POSTs to the quiz Worker's /kit route
+// (workers/quiz/), which emails the download link once, sends a lead copy to hello@ and, only if
+// the box is ticked, starts Kit's double opt-in for Unlock the Week. No new CSP hosts needed.
+import { url, FREE_KIT_API_URL } from '../config';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+---
+<Base title="Free Starter IT Kit for small businesses" description="Free from NeonKey: a simple spreadsheet to list every account your business uses, spot the risky ones and run a 10-minute monthly tech checkup. Works in Excel and Google Sheets.">
+  <PageHeader eyebrow="Free · Starter IT Kit" title="The free NeonKey Starter IT Kit" crumbs={[{ href: '/', label: 'Home' }, { label: 'Free IT Kit' }]}>
+    <p class="lede">One simple spreadsheet to get your business tech in order: list every account you sign into, see which ones need a second login step, and run a 10-minute checkup once a month. No tech background needed.</p>
+    <Fragment slot="meta">
+      <li><span>Free</span></li>
+      <li><span>Excel and Google Sheets</span></li>
+      <li><span>Sent to your inbox</span></li>
+    </Fragment>
+    <div class="nl-box topline kit-box" slot="after" data-kit data-api={FREE_KIT_API_URL}>
+      <h2 style="font-size:1.4rem">Get the kit</h2>
+      <p class="muted" style="margin-top:.2rem">Enter your email and we'll send the download link straight away.</p>
+      <form data-kit-form novalidate>
+        <div class="field"><label for="fk-name">First name <span class="muted">(optional)</span></label><input id="fk-name" name="first_name" autocomplete="given-name" maxlength="40" /></div>
+        <div class="field"><label for="fk-email">Email</label><input id="fk-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" aria-describedby="fk-consent" /></div>
+        <div class="kit-hp" aria-hidden="true"><label for="fk-website">Website</label><input id="fk-website" name="website" tabindex="-1" autocomplete="off" /></div>
+        <label class="kit-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, NeonKey's free weekly email (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
+        <button type="submit" class="btn btn-primary" data-send data-umami-event="free-kit-submit">Email me the kit</button>
+        <p class="form-note kit-status" data-status aria-live="polite"></p>
+        <p class="form-note" id="fk-consent">We email the link to you once, and a copy comes to NeonKey so we can help if you reply. You're only added to the newsletter if you tick the box. See the <a href={url('/privacy/#free-it-kit')}>privacy policy</a>.</p>
+      </form>
+      <noscript><p class="form-note">This form needs JavaScript. Email <a href="mailto:hello@neonkey.tech?subject=Free%20Starter%20IT%20Kit">hello@neonkey.tech</a> and we'll send the kit.</p></noscript>
+    </div>
+  </PageHeader>
+
+  <section style="padding-top:1rem" aria-labelledby="inside-h">
+    <div class="container">
+      <SectionHeading id="inside-h" eyebrow="What's inside" title="Three tabs, about 20 minutes to fill in" />
+      <div class="grid grid-3">
+        <div class="card topline accent-cyan"><h3>Start here</h3><p>A short guide in everyday words, plus five quick wins you can do this week, like turning on a second login step for your business email.</p></div>
+        <div class="card topline accent-magenta"><h3>Accounts &amp; logins</h3><p>One list of every service your business signs into: who owns it, whether a second login step (2FA) is on and where the password is kept. Risky ones turn red or amber, and a quick count adds them up.</p></div>
+        <div class="card topline accent-violet"><h3>Monthly checkup</h3><p>Ten checks that take about 10 minutes a month: updates, backups, old accounts, unused subscriptions. Mark each Done, Skipped or Problem, all year.</p></div>
+      </div>
+      <figure class="kit-shot">
+        <img src={url('/images/free-kit/accounts.png')} width="1555" height="330" loading="lazy" alt="The Accounts & Logins tab: example rows for business email, domain name, bank and accounting app, with the 'No' 2FA cells in red, a risky password location in amber, and a quick count on the right." />
+        <figcaption class="muted">The Accounts tab with its example rows. No passwords go in the file, just where each one is stored.</figcaption>
+      </figure>
+      <figure class="kit-shot">
+        <img src={url('/images/free-kit/checkup.png')} width="1560" height="490" loading="lazy" alt="The Monthly 10-Minute Checkup tab: ten checks down the side and a column for each month of the year." />
+        <figcaption class="muted">The Monthly Checkup tab.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="next-h">
+    <div class="container">
+      <SectionHeading id="next-h" eyebrow="After the kit" title="Where to go next" />
+      <div class="grid grid-3">
+        <div class="card"><h3>Learn it yourself</h3><p>Free guides that explain the basics step by step, from passwords to backups.</p><a href={url('/learn/')} data-umami-event="free-kit-next" data-umami-event-to="learn">Browse Learn →</a></div>
+        <div class="card"><h3>Stay in the loop</h3><p>Unlock the Week: one tech story explained simply and one tip you can try, every week.</p><a href={url('/newsletter/')} data-umami-event="free-kit-next" data-umami-event-to="newsletter">See the newsletter →</a></div>
+        <div class="card"><h3>Want a hand?</h3><p>If your list shows more red than you'd like, NeonKey can fix it with you remotely.</p><a href={url('/services/')} data-umami-event="free-kit-next" data-umami-event-to="services">See services →</a></div>
+      </div>
+      <p class="muted" style="margin-top:1.25rem;font-size:.92rem">The kit is a template to help you stay organized. It doesn't change any settings for you. Free to use inside your own business or home; please don't resell it.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kit-box form { margin-top: .8rem; }
+  .kit-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .kit-check { display: flex; gap: .6rem; align-items: flex-start; font-weight: 500; font-size: .93rem; margin: 0 0 1rem; cursor: pointer; }
+  .kit-check input { width: auto; flex: 0 0 auto; margin: .25rem 0 0; accent-color: var(--cyan); padding: 0; box-shadow: none; }
+  .kit-status:empty { display: none; }
+  .kit-status.ok { color: #6ee7b7; }
+  .kit-status.err { color: #fda4af; }
+  .kit-shot { margin: 1.5rem 0 0; }
+  .kit-shot img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+  .kit-shot figcaption { font-size: .9rem; margin-top: .5rem; }
+  .card h3 { margin-top: 0; }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-kit]');
+  const form = root?.querySelector<HTMLFormElement>('[data-kit-form]');
+  if (root && form) {
+    const API = root.dataset.api || '';
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const btn = form.querySelector<HTMLButtonElement>('[data-send]')!;
+    const emailInput = form.querySelector<HTMLInputElement>('#fk-email')!;
+    const track = (name: string, data?: Record<string, string>) => { try { (window as any).umami?.track(name, data); } catch { /* analytics optional */ } };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const email = String(fd.get('email') || '').trim();
+      if (!email || !emailInput.checkValidity()) {
+        status.className = 'form-note kit-status err';
+        status.textContent = 'Please enter a valid email address.';
+        emailInput.focus();
+        return;
+      }
+      const newsletter = fd.get('newsletter') === '1';
+      btn.disabled = true;
+      status.className = 'form-note kit-status';
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), newsletter, website: String(fd.get('website') || '') }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.ok) {
+          track('free-kit-sent', { newsletter: String(newsletter) });
+          status.className = 'form-note kit-status ok';
+          status.textContent = 'Sent! Check your inbox (and spam, just in case) for an email from NeonKey with your download link.' + (newsletter ? (out.newsletter === 'ok' ? ' Kit will send a separate email to confirm Unlock the Week.' : " The newsletter signup didn't go through, but you can sign up anytime on the Newsletter page.") : '');
+          form.querySelectorAll('input').forEach((x) => (x.disabled = true));
+          return;
+        }
+        status.className = 'form-note kit-status err';
+        status.textContent = out.message || "That didn't go through. Try again, or email hello@neonkey.tech.";
+      } catch {
+        status.className = 'form-note kit-status err';
+        status.textContent = "That didn't go through. Try again, or email hello@neonkey.tech.";
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

@@ -25,7 +25,7 @@ import Icon from '../../components/Icon.astro';
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
       <div class="field"><label for="c-topic">Topic</label>
-        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>Something else</option></select>
+        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Front Office Package (all-inclusive)</option><option>Tutorials or reviews</option><option>Newsletter</option><option>Something else</option></select>
       </div>
       <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required></textarea></div>
       <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
@@ -54,6 +54,7 @@ import Icon from '../../components/Icon.astro';
   // Preselect the topic from ?topic= (links on Services and the quiz). Whitelisted values only;
   // when coming from the quiz, also suggest a starter message if the box is still empty.
   const TOPICS: Record<string, [string, string]> = {
+    'front-office-package': ['Front Office Package (all-inclusive)', 'the Front Office Package'],
     'remote-it': ['Remote small-office IT setup', 'the Remote Small-Office IT Setup'],
     'support-plan': ['Monthly remote support plan', 'the Monthly Remote Support Plan'],
     'quick-win': ['Automation services', 'a Quick Win + Tech Checkup'],

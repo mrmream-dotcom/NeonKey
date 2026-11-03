@@ -6,6 +6,7 @@
 #   connect: Kit's script POSTs to https://app.convertkit.com/forms/<id>/visit and submits to the form action on https://app.kit.com
 #   form-action: our own form posts to https://app.kit.com/forms/<FORM_ID>/subscriptions (older embeds use app.convertkit.com)
 #   img: images in Kit form templates come from https://embed.filekitcdn.com
+# connect: the free IT kit form (/free-it-kit/) POSTs to neonkey-quiz too (route /kit), so it needs no new host.
 # connect: the Lab demos POST to their Cloudflare Workers (neonkey-triage, neonkey-office-ai, neonkey-receipts) and the
 #   services quiz POSTs to neonkey-quiz, all on https://<name>.mr-mream.workers.dev
 # GitHub Pages ignores this file, so integrations/csp-meta.mjs copies this policy into a <meta> tag on every built page
