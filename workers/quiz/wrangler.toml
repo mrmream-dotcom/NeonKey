@@ -1,4 +1,4 @@
-# NeonKey service quiz: plan email Worker.
+# NeonKey service quiz: plan email Worker. Also serves POST /kit (free Starter IT Kit download email).
 # neonkey.tech/services/quiz/ -> POST /plan -> Resend (plan to visitor + lead copy to LEAD_TO),
 # plus Kit double opt-in only when the visitor ticks the newsletter box.
 # Plan logic is shared with the site: ../../src/data/quiz.ts (bundled by wrangler/esbuild).
@@ -20,6 +20,9 @@ REPLY_TO = "hello@neonkey.tech"
 LEAD_TO = "hello@neonkey.tech"
 IP_DAILY_LIMIT = "5"
 GLOBAL_DAILY_LIMIT = "100"
+# Free Starter IT Kit (POST /kit): the emailed download link, and its own daily cap.
+KIT_DOWNLOAD_URL = "https://neonkey.tech/downloads/cffeda4dca/NeonKey-Starter-IT-Kit.xlsx"
+KIT_GLOBAL_DAILY_LIMIT = "200"
 
 # Short-lived rate-limit counters (hashed IP / hashed email / daily total). No answers stored.
 [[kv_namespaces]]
