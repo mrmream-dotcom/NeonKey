@@ -39,7 +39,7 @@ export function policyFromHeaders(text) {
     .filter((d) => !META_UNSUPPORTED.has(d.split(/\s+/)[0].toLowerCase()));
 }
 
-const NON_JS_TYPE = /\stype\s*=\s*["']?(application\/(ld\+)?json|text\/plain|importmap)/i;
+const NON_JS_TYPE = /\stype\s*=\s*["']?(application\/(ld\+)?json|text\/plain)/i;
 
 export function inlineScriptHashes(html) {
   const hashes = new Set();
