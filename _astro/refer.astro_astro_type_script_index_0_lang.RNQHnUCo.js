@@ -1,0 +1,1 @@
+var e=(new URLSearchParams(location.search).get(`code`)||``).replace(/[^A-Za-z0-9-]/g,``).slice(0,40);if(e){let t=document.getElementById(`ref-cta`);t&&(t.href+=`&ref=${encodeURIComponent(e)}`);let n=document.getElementById(`ref-note`);n&&(n.textContent=`You were referred with code ${e}. Get in touch below and $50 comes off your first job.`,n.hidden=!1)}
