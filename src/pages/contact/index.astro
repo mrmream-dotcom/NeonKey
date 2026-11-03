@@ -25,8 +25,9 @@ import Icon from '../../components/Icon.astro';
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
       <div class="field"><label for="c-topic">Topic</label>
-        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>Something else</option></select>
+        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>I was referred by a client</option><option>Something else</option></select>
       </div>
+      <div class="field"><label for="c-ref">Referred by <span class="muted">(optional)</span></label><input id="c-ref" name="referred_by" maxlength="80" placeholder="Name or code, like NK-SMITH" /></div>
       <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required></textarea></div>
       <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
       <p class="form-note">Your message goes straight to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a> for how form messages are handled.</p>
@@ -59,6 +60,7 @@ import Icon from '../../components/Icon.astro';
     'quick-win': ['Automation services', 'a Quick Win + Tech Checkup'],
     'ai-faq': ['Automation services', 'an AI Intake & FAQ Assistant'],
     'lead-routing': ['Automation services', 'a Lead-Routing & Follow-Up System'],
+    'referral': ['I was referred by a client', ''],
   };
   const qp = new URLSearchParams(location.search);
   const t = TOPICS[qp.get('topic') || ''];
@@ -67,6 +69,16 @@ import Icon from '../../components/Icon.astro';
   if (t && sel) {
     const opt = Array.from(sel.options).find((o) => o.text === t[0]);
     if (opt) sel.value = opt.value;
+  }
+  // Referral links (/refer/?code=NK-SMITH or /contact/?ref=NK-SMITH) prefill "Referred by".
+  const ref = (qp.get('ref') || qp.get('code') || '').replace(/[^A-Za-z0-9 .'-]/g, '').slice(0, 80);
+  const refInput = document.getElementById('c-ref') as HTMLInputElement | null;
+  if (ref && refInput && !refInput.value) {
+    refInput.value = ref;
+    if (!t && sel) {
+      const opt = Array.from(sel.options).find((o) => o.text === 'I was referred by a client');
+      if (opt) sel.value = opt.value;
+    }
   }
   if (qp.get('from') === 'quiz' && msg && !msg.value) {
     msg.value = t
