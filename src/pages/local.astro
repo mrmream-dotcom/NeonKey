@@ -1,0 +1,91 @@
+---
+import { url } from '../config';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import type { IconName } from '../lib/ui';
+
+const PHONE = '(302) 408-0624';
+const PHONE_HREF = 'tel:+13024080624';
+const checks: { h: string; p: string; icon: IconName; accent: string }[] = [
+  { h: 'Wi-Fi and router', p: 'Speed check, strong admin and Wi-Fi passwords, router updates and a separate guest network.', icon: 'wifi', accent: 'accent-cyan' },
+  { h: 'Backups', p: 'Confirm your important files are actually being backed up, and test that a file can be restored.', icon: 'doc', accent: 'accent-magenta' },
+  { h: 'Passwords and 2-step sign-in', p: 'Turn on a second login step for email, banking and your key accounts, and tidy up shared passwords.', icon: 'key', accent: 'accent-violet' },
+  { h: 'Email security', p: 'Check and fix the records (SPF, DKIM, DMARC) that make it harder for scammers to fake email from your business.', icon: 'shield', accent: 'accent-amber' },
+  { h: 'Printers and slow computers', p: 'Updates, cleanup and the small fixes that eat everyone\'s time.', icon: 'wrench', accent: 'accent-cyan' },
+  { h: 'A one-page report', p: 'What we checked, what we fixed, and a short list of what to do next, in order of importance.', icon: 'check', accent: 'accent-magenta' },
+];
+---
+<Base title="Office Tech Tune-Up in Fairbanks and North Pole" description="On-site Office Tech Tune-Up for small offices in Fairbanks and North Pole, Alaska: Wi-Fi, backups, passwords, email security and printers in one visit, with a written report. $249 founding rate.">
+  <PageHeader eyebrow="Local · Fairbanks and North Pole" title="Office Tech Tune-Up" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Office Tech Tune-Up' }]}>
+    <p class="lede">Your office tech, checked and fixed in one visit. On-site help for small offices in Fairbanks and North Pole, with evening and Saturday times available.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={PHONE_HREF} data-umami-event="contact-click" data-umami-event-location="local-hero-call">Call or text {PHONE}</a>
+      <a class="btn btn-ghost" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-location="local-hero-form">Book by message</a>
+    </div>
+    <Fragment slot="meta">
+      <li><span><strong>$249</strong> founding rate</span></li>
+      <li><span>About 2 to 3 hours on site</span></li>
+      <li><span>Offices up to about 10 devices</span></li>
+    </Fragment>
+  </PageHeader>
+
+  <section style="padding-top:1rem" aria-labelledby="checks-h">
+    <div class="container">
+      <SectionHeading id="checks-h" eyebrow="What we check" title="Six things, one visit" intro="We go through each one with you and fix what we can on the spot." />
+      <div class="grid grid-3">
+        {checks.map((c, i) => (
+          <article class={`card topline setup-card ${c.accent}`}>
+            <div class="setup-card-top"><span class="icon-chip"><Icon name={c.icon} /></span><span class="num-eyebrow">{String(i + 1).padStart(2, '0')}</span></div>
+            <h3>{c.h}</h3><p>{c.p}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="price-h">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:start">
+        <div class="panel topline">
+          <span class="kicker">Pricing</span>
+          <h2 id="price-h" class="price-inline" style="margin:.3rem 0">$249</h2>
+          <p class="intro-tag">Founding rate for our first local clients</p>
+          <p class="muted" style="margin:0">Covers one on-site visit of about 2 to 3 hours for an office with up to about 10 devices. Bigger offices or extra work get a quote first, before anything is done. You pay when the visit is finished.</p>
+        </div>
+        <div class="panel topline accent-violet">
+          <span class="kicker">Free 10-minute tech check</span>
+          <p class="muted">Not sure you need a full tune-up? Tell us what's bugging you, and we'll tell you honestly whether it's worth fixing. No obligation.</p>
+          <a class="btn btn-primary" href={PHONE_HREF} data-umami-event="contact-click" data-umami-event-location="local-free-check">Call or text {PHONE}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="scope-h">
+    <div class="container">
+      <SectionHeading id="scope-h" eyebrow="Fine print" title="What's in and out" />
+      <div class="proscons">
+        <div class="pros">
+          <h3>In scope</h3>
+          <ul>
+            <li>Small offices, shops and studios in Fairbanks and North Pole</li>
+            <li>Everyday tech: Wi-Fi, computers, printers, email and accounts you already use</li>
+            <li>Evening and Saturday appointments</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h3>Not included</h3>
+          <ul>
+            <li>Running new network cable or electrical work</li>
+            <li>Regulated compliance work (for example HIPAA or PCI audits)</li>
+            <li>Emergency or 24/7 response</li>
+            <li>Guarantees of security or uptime</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.95rem">Outside Fairbanks and North Pole? Our <a href={url('/services/remote-it/')}>remote small-office IT setup</a> covers most of the same ground by video call.</p>
+    </div>
+  </section>
+</Base>
