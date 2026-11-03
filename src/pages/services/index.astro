@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import OfferDetails from '../../components/OfferDetails.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
+import { automationOffers, automationMenu, remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
 const offerCount = automationOffers.length + 2;
 const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber'];
 ---
@@ -111,7 +111,27 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
       <p class="muted" style="margin-top:1.25rem;font-size:.95rem">Pricing shown is a starting point, not a quote. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
     </div>
   </section>
-  <section class="alt" aria-labelledby="how-h">
+  <section class="alt" aria-labelledby="menu-h" id="automation-menu">
+    <div class="container">
+      <SectionHeading id="menu-h" eyebrow="Ideas" title="What can we automate?" intro="Everyday jobs small businesses hand off to an automation, grouped by the work they save. Pick the one that eats the most of your week and we'll scope it with you. If a simple app already does it, we'll tell you." />
+      <div class="grid grid-3 menu-grid">
+        {automationMenu.map((g, i) => (
+          <article class={`card topline ${accents[i % accents.length]}`} id={`menu-${g.id}`}>
+            <h3 style="font-size:1.12rem;margin:0 0 .6rem">{g.title}</h3>
+            <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
+            <p class="muted menu-fits">Usually part of: <a href={g.fits === 'support-plan' ? '#support-plan' : `#${g.fits}`} data-umami-event="menu-click" data-umami-event-group={g.id}>{g.fitsLabel}</a></p>
+          </article>
+        ))}
+      </div>
+      <div class="btn-row" style="margin-top:1.5rem">
+        <a class="btn btn-primary" href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu">Tell us which one</a>
+        <a class="btn btn-ghost" href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="automation-menu">See real builds in the Lab</a>
+      </div>
+      <p class="muted" style="margin-top:1rem;font-size:.95rem">Examples, not a promise of results. What fits depends on your tools and how you work today.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="how-h">
     <div class="container">
       <SectionHeading id="how-h" eyebrow="Process" title="How it works" />
       <ol class="step-cards">
@@ -122,7 +142,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
     </div>
   </section>
 
-  <section aria-labelledby="faq-h">
+  <section class="alt" aria-labelledby="faq-h">
     <div class="container faq">
       <SectionHeading id="faq-h" eyebrow="Questions" title="FAQ" />
       <details class="offer-details faq-item">
@@ -151,4 +171,9 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
   .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
   .faq-item > summary { color: var(--text); font-size: 1.05rem; }
   .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }
+  .menu-list { margin: 0 0 .9rem; padding-left: 1.1rem; }
+  .menu-list li { margin-bottom: .45rem; }
+  .menu-fits { font-size: .92rem; margin: auto 0 0; }
+  .menu-grid .card { display: flex; flex-direction: column; }
+  .card[id^="menu-"] { scroll-margin-top: 90px; }
 </style>
