@@ -268,13 +268,23 @@ async function connectFacebook(env, secret, summary) {
   const base = { host: FB_HOST, token: userToken };
   const fields = "id,name,access_token,instagram_business_account{id,username}";
   let page = null;
+  const diag = {};
+  try {
+    const perms = await graph(base, `/me/permissions`);
+    diag.granted = (perms.data || []).filter((p) => p.status === "granted").map((p) => p.permission);
+  } catch (err) {
+    diag.permissionsError = errText(err);
+  }
   try {
     const pages = await graph(base, `/me/accounts?fields=${fields}&limit=50`);
+    diag.pages = (pages.data || []).map((p) => ({ name: p.name, instagram: p.instagram_business_account?.username || null }));
     const list = (pages.data || []).filter((p) => p.instagram_business_account);
     page = list.find((p) => p.instagram_business_account.username === "neonkey.tech") || list[0] || null;
-  } catch {
+  } catch (err) {
     // Not a user token. It may already be a Page token.
+    diag.pagesError = errText(err);
   }
+  summary.diag = diag;
   if (!page) {
     try {
       const me = await graph(base, `/me?fields=id,name,instagram_business_account{id,username}`);
