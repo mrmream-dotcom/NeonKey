@@ -1,0 +1,55 @@
+---
+import { url, CONTACT_EMAIL } from '../config';
+import Base from '../layouts/Base.astro';
+import LegalDoc from '../components/LegalDoc.astro';
+const sections = [
+  { id: 'how', label: 'How it works' },
+  { id: 'rewards', label: 'The rewards' },
+  { id: 'terms', label: 'The fine print' },
+];
+---
+<Base title="Refer a business" description="Know a small business that needs IT help? Refer them to NeonKey. You get a $100 credit and they get $50 off their first job.">
+  <LegalDoc eyebrow="Referrals" title="Refer a business" updated={{ iso: '2026-11-03', text: 'Program terms last updated November 3, 2026.' }} sections={sections}>
+    <p>Small businesses trust other small businesses. If NeonKey helped you, and you know someone who is fighting their email, Wi-Fi, passwords or front-office busywork, send them our way. When they become a client, you both get something.</p>
+
+    <h2 id="how">How it works</h2>
+    <ol>
+      <li><strong>Get your code.</strong> Every client gets a personal referral code (like <code>NK-SMITH</code>) and link after their job. Lost it? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</li>
+      <li><strong>Share it.</strong> Send your link to a business owner you know, or just tell them to put your name or code in the "Referred by" box on our <a href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="refer">contact form</a>.</li>
+      <li><strong>They become a client.</strong> Once they pay for their first job, your credit is added and we email you to say thanks.</li>
+    </ol>
+    <p id="ref-note" class="callout" hidden></p>
+    <p><a id="ref-cta" class="btn btn-primary" href={url('/contact/?topic=referral')} data-umami-event="contact-click" data-umami-event-location="refer-cta">I was referred, get in touch</a></p>
+
+    <h2 id="rewards">The rewards</h2>
+    <ul>
+      <li><strong>You get a $100 credit</strong> toward any future NeonKey invoice, or one free month of the Support Plan, your choice.</li>
+      <li><strong>They get $50 off</strong> their first job.</li>
+      <li><strong>No limit.</strong> Refer five businesses that become clients, earn five credits.</li>
+    </ul>
+
+    <h2 id="terms">The fine print</h2>
+    <ul>
+      <li>A referral counts when a new business (not an existing or past NeonKey client) names you or uses your code before or at their first booking, and then pays for their first job.</li>
+      <li>Rewards are service credits, not cash. They have no cash value, can't be transferred and can't be combined into a refund.</li>
+      <li>Credits expire 12 months after they're issued. A credit can bring an invoice down to $0 but not below; any leftover stays on your account until it expires.</li>
+      <li>The $50 new-client discount applies once, to the first job, and can't be combined with other discounts.</li>
+      <li>If two people refer the same business, the first one named gets the credit.</li>
+      <li>If you share your link publicly (a post, a review, a group), please mention that you get a reward if they sign up. That's what honest referrals look like, and it follows the spirit of the FTC's <a data-umami-event="outbound-click" data-umami-event-item="ftc-endorsement-guides" href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">Endorsement Guides</a>.</li>
+      <li>No spam, please. Don't send your link to people you don't know or buy ads on it.</li>
+      <li>We may change or end the program at any time. Credits already earned are honored until they expire.</li>
+    </ul>
+    <p class="muted">Questions? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </LegalDoc>
+</Base>
+
+<script>
+  // A shared link like /refer/?code=NK-SMITH carries the code into the contact form's "Referred by" box.
+  const code = (new URLSearchParams(location.search).get('code') || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40);
+  if (code) {
+    const cta = document.getElementById('ref-cta') as HTMLAnchorElement | null;
+    if (cta) cta.href += `&ref=${encodeURIComponent(code)}`;
+    const note = document.getElementById('ref-note');
+    if (note) { note.textContent = `You were referred with code ${code}. Get in touch below and $50 comes off your first job.`; note.hidden = false; }
+  }
+</script>
