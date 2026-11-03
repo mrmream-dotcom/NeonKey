@@ -77,6 +77,16 @@ export const NEWSLETTER = {
 /** NeonKey's Instagram profile, linked in the footer, contact, about and newsletter pages. */
 export const INSTAGRAM_URL = 'https://www.instagram.com/neonkey.tech/';
 export const INSTAGRAM_HANDLE = '@neonkey.tech';
+/** NeonKey's YouTube channel (@neonkeytech, channel UC2gXzGMAxduzLGPnzKBWrvQ). */
+export const YOUTUBE_URL = 'https://www.youtube.com/@neonkeytech';
+/** NeonKey's Facebook Page (page ID 1442761765583481, the one connected in Metricool). Swap for a vanity URL if one is set. */
+export const FACEBOOK_URL = 'https://www.facebook.com/1442761765583481';
+/** All social profiles, in display order. Used by the SocialLinks icons and the Organization schema (sameAs). */
+export const SOCIALS = [
+  { id: 'instagram', label: 'Instagram', url: INSTAGRAM_URL },
+  { id: 'youtube', label: 'YouTube', url: YOUTUBE_URL },
+  { id: 'facebook', label: 'Facebook', url: FACEBOOK_URL },
+] as const;
 
 export const CONTACT_EMAIL = (import.meta.env.PUBLIC_CONTACT_EMAIL || 'hello@neonkey.tech').trim();
 
