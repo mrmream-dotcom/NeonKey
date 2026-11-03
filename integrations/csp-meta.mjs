@@ -43,7 +43,7 @@ const NON_JS_TYPE = /\stype\s*=\s*["']?(application\/(ld\+)?json|text\/plain|imp
 
 export function inlineScriptHashes(html) {
   const hashes = new Set();
-  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
     const [, attrs, body] = m;
     if (/\ssrc\s*=/i.test(attrs) || NON_JS_TYPE.test(attrs) || body.length === 0) continue;
     hashes.add(`'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
