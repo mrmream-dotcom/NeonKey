@@ -1,0 +1,78 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Your email was in a data breach. Now what?"
+description: How to check for free whether your email appeared in a data breach, and the steps to take if it did. Change reused passwords, turn on two-step login, review signed-in devices, deny login requests you didn't start, watch for follow-up scams and freeze your credit.
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">Data breaches are common, and finding your email in one doesn't mean anyone is in your accounts. It means some details about you are out there, so it's time to close the doors those details could open. Most of this takes under an hour.</p>
+
+## Step 1: Check, for free
+
+Go to [haveibeenpwned.com](https://haveibeenpwned.com/), a free service run by security researcher Troy Hunt, and type your email address. It lists the known breaches your address appeared in and what kind of data leaked in each one: passwords, phone numbers, home addresses and so on.
+
+Check every email address you use, including old ones that still forward to you.
+
+## Step 2: Change that password, and anywhere you reused it
+
+If a breach included passwords, change your password on that site. Then change it **everywhere else you used the same one**. Criminals routinely try leaked email and password pairs on other sites (it's called credential stuffing), so a reused password is the bigger risk.
+
+Make each new password long, random and unique. A password manager does that for you. Our <a href={siteUrl('/learn/passwords-and-passkeys/')}>passwords and passkeys guide</a> explains how.
+
+## Step 3: Turn on two-step login
+
+Two-step login (2FA) means a stolen password alone isn't enough to sign in. Start with your email account, since it can reset almost every other password, then your bank and social accounts. Our <a href={siteUrl('/learn/two-factor-authentication/')}>2FA guide</a> has step-by-step instructions for Google, Apple, Microsoft, Instagram and Facebook.
+
+## Step 4: See who's signed in
+
+Most big accounts show every device currently signed in. It takes about a minute to check:
+
+- **Google:** your Google Account → **Security** → **Your devices**.
+- **Apple:** on an iPhone, **Settings** → **[your name]**, then scroll down to see your devices.
+- **Microsoft, Facebook, Instagram:** look for "devices" or "where you're logged in" in the security settings.
+
+Don't recognize one? Sign it out, then change that account's password.
+
+## Step 5: Deny login requests you didn't start
+
+If your phone suddenly asks "Is this you trying to sign in?" and it isn't, **tap Deny**. Assume someone has your password and change it right away. Never approve a request just to make the alerts stop; that's exactly what the person sending them is hoping for.
+
+The same goes for codes. Your bank, your carrier and tech support won't ask you to read back a code they just texted you. Anyone who does is trying to get into your account.
+
+## Step 6: Watch for follow-up scams
+
+Breached details often get used to make scams more convincing. Expect emails, texts or calls that mention the breach, use your real name, or claim to be from the company that was hacked. Don't click links in those messages. Go to the company's site or app yourself instead. Our <a href={siteUrl('/learn/spot-a-scam/')}>scam-spotting guide</a> covers the common tells.
+
+## Step 7: Freeze your credit (if ID numbers leaked)
+
+If a breach included your Social Security number or other ID details, consider a **credit freeze**. It's free at all three nationwide credit bureaus (Equifax, Experian and TransUnion), it blocks most new accounts from being opened in your name, and you can lift it anytime you need to apply for credit. You have to place it with each bureau separately.
+
+If you think your identity was actually misused, [IdentityTheft.gov](https://www.identitytheft.gov/), run by the FTC, gives you a personal recovery plan.
+
+## Quick recap
+
+<ol class="steps">
+  <li>Check every email address at haveibeenpwned.com.</li>
+  <li>Change the breached password and every reuse of it.</li>
+  <li>Turn on two-step login, starting with email.</li>
+  <li>Sign out devices you don't recognize.</li>
+  <li>Deny login requests you didn't start, and never share a code.</li>
+  <li>Expect follow-up scams that mention the breach.</li>
+  <li>Freeze your credit if ID numbers were exposed.</li>
+</ol>
+
+## Sources
+
+- [Have I Been Pwned](https://haveibeenpwned.com/)
+- FTC: [What to know about credit freezes and fraud alerts](https://consumer.ftc.gov/articles/what-know-about-credit-freezes-and-fraud-alerts)
+- FTC: [IdentityTheft.gov](https://www.identitytheft.gov/)
+- Google Account Help and Apple Support pages on reviewing signed-in devices
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Prefer a hand with it?</span>
+  <h3>We can work through it with you</h3>
+  <p>If a breach hit your business email or several accounts at once, NeonKey can go through the list with you remotely: new passwords, two-step login, signed-in devices and a short note of what changed.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
+</article>

@@ -1,0 +1,72 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Everyday tech cheat sheet: shortcuts, myths and tech words"
+description: A one-page beginner cheat sheet. Windows and Mac keyboard shortcuts you'll use every day, five common tech myths busted (incognito, Mac malware, the padlock, 90-day passwords, café Wi-Fi), and tech words like cookie, cache, VPN and firmware in one line each.
+kicker: Learn · Practical IT · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">A page to bookmark: the keyboard shortcuts worth knowing, the tech myths worth unlearning, and the words people throw around, each explained in a sentence.</p>
+
+## Shortcuts you'll use every day
+
+| What it does | Windows | Mac |
+| --- | --- | --- |
+| Screenshot part of the screen | Windows key + Shift + S | Command + Shift + 4 |
+| Lock your computer | Windows key + L | Control + Command + Q |
+| Reopen a closed browser tab | Ctrl + Shift + T | Command + Shift + T |
+| Search your computer | Windows key, then type | Command + Space |
+| Emoji panel | Windows key + . (period) | Control + Command + Space |
+| Clipboard history | Windows key + V | (no built-in equivalent) |
+| Close a frozen app | Ctrl + Shift + Esc (Task Manager) | Command + Option + Esc (Force Quit) |
+
+A few notes:
+
+- **Reopen a tab** works in Chrome, Edge and Firefox. Press it again to bring back older tabs.
+- **Clipboard history** on Windows asks to turn itself on the first time. Then click any recent copy to paste it, and pin the ones you reuse.
+- **Share Wi-Fi without saying the password:** on Android, open Wi-Fi settings, tap your network, then Share to show a QR code. On iPhone, when a contact's Apple device tries to join your network, tap Share Password on your unlocked iPhone.
+
+## 5 tech myths, busted
+
+### "Incognito mode hides me."
+
+It mostly stops your own device from saving your browsing history. Your internet provider, your school or work network, and sites you sign in to can still see your activity ([Google Chrome Help](https://support.google.com/chrome/answer/95464)).
+
+### "Macs can't get malware."
+
+Less common, not impossible. Macs have built-in protections, but malware and scams that target Mac users exist. Keep it updated and be careful what you install.
+
+### "The padlock means the site is safe."
+
+The padlock means your connection to the site is encrypted. It doesn't tell you who's running the site, and scam sites can have one too. Check that the web address is spelled exactly right. More in our <a href={siteUrl('/learn/spot-a-scam/')}>scam-spotting guide</a>.
+
+### "Change your passwords every 90 days."
+
+NIST, the US standards agency, says services shouldn't force scheduled password changes. Change a password when there's a reason, like a breach ([NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html)). A long, unique password can stay put. More in our <a href={siteUrl('/learn/passwords-and-passkeys/')}>passwords guide</a>.
+
+### "Café Wi-Fi is either totally fine or totally dangerous."
+
+Neither. Most websites and apps encrypt your connection now, which helps a lot. The remaining risks are look-alike networks and sites that don't encrypt. For banking and shopping, your phone's own hotspot is the simpler choice. More in our <a href={siteUrl('/learn/phone-security-checkup/')}>phone security checkup</a>.
+
+## Tech words, in one line each
+
+- **2FA (two-factor authentication):** a second step when you sign in, like a code or your fingerprint, so a stolen password isn't enough. See our <a href={siteUrl('/learn/two-factor-authentication/')}>2FA guide</a>.
+- **ACR (automatic content recognition):** a smart TV feature that recognizes what's on screen, often used for recommendations and ads.
+- **Cache:** copies your device keeps so things load faster. Clearing it can fix a page that looks broken.
+- **Cookie:** a small file a website saves in your browser to remember things, like your login or your cart.
+- **Credential stuffing:** trying email and password pairs leaked from one site on lots of other sites.
+- **Firmware:** the built-in software that runs a device, like a router or a printer. It needs updates too. See our <a href={siteUrl('/learn/wifi-network-checkup/')}>router checkup</a>.
+- **Passkey:** a way to sign in with your face, fingerprint or device PIN instead of a password. It only works on the real site.
+- **Password manager:** an app that creates, stores and fills in a unique password for every account.
+- **Phishing:** a message built to trick you into clicking a link, opening a file, or handing over a password, code or payment.
+- **SIM swap:** when a scammer gets your phone number moved to their phone, so your calls and text codes go to them.
+- **VPN (virtual private network):** a private tunnel for your internet traffic. It hides your traffic from the local network, not your identity from the sites you sign in to.
+
+## Sources
+
+- Google Chrome Help: [Browse in Incognito mode](https://support.google.com/chrome/answer/95464)
+- NIST: [SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html)
+- FTC: [Are public Wi-Fi networks safe? What you need to know](https://consumer.ftc.gov/articles/are-public-wi-fi-networks-safe-what-you-need-know)
+
+<p class="muted" style="margin-top:2rem">Want one tip like this every week? <a href={siteUrl('/newsletter/')}>Get Unlock the Week</a>, our free weekly email.</p>

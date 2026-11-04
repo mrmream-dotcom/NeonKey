@@ -12,6 +12,7 @@ import PageHeader from '../PageHeader.astro';
 import SectionHeading from '../SectionHeading.astro';
 import StoryCard from '../StoryCard.astro';
 import { learnMinutes } from '../../lib/reading';
+import { isLearnPathLive } from '../../lib/schedule.mjs';
 import type { IconName, Accent } from '../../lib/ui';
 export type LearnView = 'study-tracks' | 'tutorials';
 interface Props { view?: LearnView; eyebrow?: string }
@@ -20,16 +21,37 @@ const { view, eyebrow = view === 'tutorials' ? 'Unlock Skills · Tutorials' : vi
 const studyTracks = [
   { kicker: 'Track 1 · Security', title: 'CompTIA Security+ study guide', href: '/learn/security-plus/', text: 'Notes for all five exam domains, with key-term cards and a short self-check on each page.', cta: 'Open the guide', icon: 'book', accent: 'violet', label: 'Security+ · 5 domains', tags: ['Security', 'Certification'] },
 ];
+// Tutorials are grouped by topic on the hub (see `topics` below). Within a topic, list the most useful guide first.
 const tutorials = [
-  { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial', icon: 'shield', accent: 'cyan', label: 'Two-factor', tags: ['Security', 'Beginner'] },
-  { kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a 30-minute router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial', icon: 'wifi', accent: 'magenta', label: 'Wi-Fi checkup', tags: ['Networking', 'Security', 'Beginner'] },
-  { kicker: 'Practical IT · Intermediate', title: 'Set up a virtual machine for any ISO', href: '/learn/virtual-machine-setup/', text: 'Why a VM is worth having, then a step-by-step build that works in VirtualBox, VMware, Hyper-V, UTM or KVM: sizing, network modes, guest tools and snapshots.', cta: 'Read the tutorial', icon: 'wrench', accent: 'amber', label: 'Virtual machine', tags: ['Practical IT', 'Intermediate'] },
-].filter((c) => !(c as { draft?: boolean }).draft);
+  // Accounts and passwords
+  { topic: 'accounts', kicker: 'Security · Beginner', title: 'Passwords and passkeys: what actually keeps your accounts safe', href: '/learn/passwords-and-passkeys/', text: 'Why reused passwords are the real risk, what makes one strong, how a password manager works, why 90-day changes are out, and how to turn on a passkey.', cta: 'Read the guide', icon: 'key', accent: 'cyan', label: 'Passwords', tags: ['Security', 'Beginner'] },
+  { topic: 'accounts', kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial', icon: 'shield', accent: 'violet', label: 'Two-factor', tags: ['Security', 'Beginner'] },
+  { topic: 'accounts', kicker: 'Security · Beginner', title: 'Your email was in a data breach. Now what?', href: '/learn/data-breach-what-to-do/', text: 'The free breach check, then seven steps: reused passwords, two-step login, signed-in devices, login requests you didn\'t start, follow-up scams and a credit freeze.', cta: 'Read the guide', icon: 'check', accent: 'magenta', label: 'Data breach', tags: ['Security', 'Beginner'] },
+  // Scams, phones and family
+  { topic: 'safety', kicker: 'Security · Beginner', title: 'How to spot a scam: texts, calls, pop-ups and fake deals', href: '/learn/spot-a-scam/', text: 'The three tells, checking links, gift card demands, fake virus warnings, QR stickers, fake delivery texts and orders, fake shops and AI voice calls.', cta: 'Read the guide', icon: 'shield', accent: 'magenta', label: 'Scams', tags: ['Security', 'Beginner'] },
+  { topic: 'safety', kicker: 'Security · Beginner', title: 'The 15-minute phone security checkup', href: '/learn/phone-security-checkup/', text: 'Updates, auto-lock, Find My, a carrier PIN against SIM swaps, public Wi-Fi habits, a new phone\'s first five steps and wiping an old one.', cta: 'Read the guide', icon: 'bolt', accent: 'cyan', label: 'Phone checkup', tags: ['Security', 'Beginner'] },
+  { topic: 'safety', kicker: 'Security · Beginner', title: 'The Family Tech Checkup: 8 fixes for one holiday visit', href: '/learn/family-tech-checkup/', text: 'For the family tech person: updates, backups, email, passwords, a code word, the router, easier settings and planning for the hard day. Plus kids\' tablets and smart TVs.', cta: 'Read the guide', icon: 'user', accent: 'amber', label: 'Family checkup', tags: ['Security', 'Beginner'] },
+  // Small business and your network
+  { topic: 'business', kicker: 'Security · Practical IT · Beginner', title: 'Small-business email checkup: 5 settings, your domain, and holiday hours', href: '/learn/small-business-email-checkup/', text: 'Two-step login, forwarding rules, admin access, SPF, DKIM and DMARC, connected apps, your own domain, auto-renew, booking links and holiday hours.', cta: 'Read the guide', icon: 'mail', accent: 'cyan', label: 'Email checkup', tags: ['Security', 'Small business'] },
+  { topic: 'business', kicker: 'Security · Practical IT · Beginner', title: 'Hiring IT help? Don\'t hand over your password', href: '/learn/working-with-it-help/', text: 'Four things to give a helper instead of your password, five red flags in small-business tech help, and what good help looks like.', cta: 'Read the guide', icon: 'scale', accent: 'violet', label: 'IT help', tags: ['Security', 'Small business'] },
+  { topic: 'business', kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a 30-minute router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial', icon: 'wifi', accent: 'magenta', label: 'Wi-Fi checkup', tags: ['Networking', 'Security', 'Beginner'] },
+  // AI and everyday skills
+  { topic: 'skills', kicker: 'Automation · Beginner', title: 'Using AI chat safely, and getting better answers', href: '/learn/using-ai-safely/', text: 'What never to paste in, getting help without sharing the file, turning off training on your chats, checking confident answers, and three prompt habits.', cta: 'Read the guide', icon: 'spark', accent: 'violet', label: 'AI safely', tags: ['AI', 'Beginner'] },
+  { topic: 'skills', kicker: 'Practical IT · Beginner', title: 'Everyday tech cheat sheet: shortcuts, myths and tech words', href: '/learn/everyday-tech-cheat-sheet/', text: 'Windows and Mac shortcuts, five tech myths busted, and words like cookie, cache, VPN and firmware in one line each.', cta: 'Open the cheat sheet', icon: 'compass', accent: 'amber', label: 'Cheat sheet', tags: ['Practical IT', 'Beginner'] },
+  { topic: 'skills', kicker: 'Practical IT · Intermediate', title: 'Set up a virtual machine for any ISO', href: '/learn/virtual-machine-setup/', text: 'Why a VM is worth having, then a step-by-step build that works in VirtualBox, VMware, Hyper-V, UTM or KVM: sizing, network modes, guest tools and snapshots.', cta: 'Read the tutorial', icon: 'wrench', accent: 'amber', label: 'Virtual machine', tags: ['Practical IT', 'Intermediate'] },
+].filter((c) => !(c as { draft?: boolean }).draft && isLearnPathLive(c.href));
 
 const tabs: { href: string; label: string; key?: LearnView }[] = [
   { href: '/learn/', label: 'All' },
   { href: '/learn/study-tracks/', label: 'Study tracks', key: 'study-tracks' },
   { href: '/learn/tutorials/', label: 'Tutorials', key: 'tutorials' },
+];
+// Topic groups for the Tutorials section, in display order. Each tutorial's `topic` must match a key here.
+const topics: { key: string; title: string; intro: string }[] = [
+  { key: 'accounts', title: 'Accounts and passwords', intro: 'Lock down the logins everything else depends on.' },
+  { key: 'safety', title: 'Scams, phones and family', intro: 'Spot the tells, secure your phone, and help the people you love do the same.' },
+  { key: 'business', title: 'Small business and your network', intro: 'Email, your domain, your Wi-Fi, and working safely with outside help.' },
+  { key: 'skills', title: 'AI and everyday skills', intro: 'Careful AI habits, handy shortcuts and hands-on projects.' },
 ];
 const showStudy = !view || view === 'study-tracks';
 const showTutorials = !view || view === 'tutorials';
@@ -39,7 +61,7 @@ const mins = (c: { href: string }) => learnMinutes(c.href);
 const cardMeta = (c: { href: string }, kind: string) => { const m = mins(c); return m ? `${kind} · ${m} min read` : kind; };
 ---
 <PageHeader eyebrow={eyebrow} title="Learn" crumbs={view ? [{ href: '/', label: 'Home' }, { href: '/learn/', label: 'Learn' }, { label: view === 'tutorials' ? 'Tutorials' : 'Study tracks' }] : [{ href: '/', label: 'Home' }, { label: 'Learn' }]}>
-  <p class="lede">Plain-language guides for learning tech skills, whatever your level. Start with a study track, or come back for hands-on tutorials as they're published.</p>
+  <p class="lede">Plain-language guides for learning tech skills, whatever your level. Start with a beginner guide on staying safe online, or dig into a full study track.</p>
   <p>We're building this section around a few areas: <strong>security</strong>, <strong>networking</strong>, <strong>automation</strong>, and <strong>practical IT</strong>. Every guide explains the ideas in everyday language first, then gets specific.</p>
   <Fragment slot="meta">
     <li><span><strong>{studyTracks.length}</strong> study {studyTracks.length === 1 ? 'track' : 'tracks'}</span></li>
@@ -57,6 +79,35 @@ const cardMeta = (c: { href: string }, kind: string) => { const m = mins(c); ret
   </ul>
 </nav>
 
+{showTutorials && (
+  <section class="learn-group" aria-labelledby="tutorials">
+    <SectionHeading id="tutorials" eyebrow="Hands-on" title="Guides and tutorials" count={`${tutorials.length} ${tutorials.length === 1 ? 'guide' : 'guides'}`} intro="Single-sitting walkthroughs you can follow on your own devices, grouped by topic." />
+    <nav class="topic-jump" aria-label="Jump to a topic">
+      <ul>
+        {topics.filter((t) => tutorials.some((c) => c.topic === t.key)).map((t) => (
+          <li><a href={`#topic-${t.key}`} data-umami-event="learn-topic" data-umami-event-topic={t.title}>{t.title}</a></li>
+        ))}
+      </ul>
+    </nav>
+    {topics.map((t) => {
+      const items = (tutorials as LearnCard[]).filter((c) => (c as { topic?: string }).topic === t.key);
+      return items.length > 0 && (
+        <div class="topic-group">
+          <SectionHeading id={`topic-${t.key}`} level="h3" title={t.title} count={`${items.length}`} intro={t.intro} />
+          <ul class="article-grid">
+            {items.map((c) => (
+              <StoryCard href={c.href} title={c.title} description={c.text} image={c.image} alt={c.alt} width={c.width} height={c.height}
+                thumbLabel={c.label} icon={c.icon as IconName} accent={c.accent as Accent}
+                badges={[{ label: c.kicker, tone: 'cyan' }]} meta={cardMeta(c, 'Guide')} cta={c.cta} />
+            ))}
+          </ul>
+        </div>
+      );
+    })}
+    <p class="muted learn-more">More guides are on the way. <a href={url('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
+  </section>
+)}
+
 {showStudy && (
   <section class="learn-group" aria-labelledby="study-tracks">
     <SectionHeading id="study-tracks" eyebrow="Structured" title="Study tracks" count={`${studyTracks.length} ${studyTracks.length === 1 ? 'track' : 'tracks'}`} intro="Multi-page guides that follow an exam or skill from start to finish." />
@@ -70,19 +121,7 @@ const cardMeta = (c: { href: string }, kind: string) => { const m = mins(c); ret
   </section>
 )}
 
-{showTutorials && (
-  <section class="learn-group" aria-labelledby="tutorials">
-    <SectionHeading id="tutorials" eyebrow="Hands-on" title="Tutorials" count={`${tutorials.length} ${tutorials.length === 1 ? 'tutorial' : 'tutorials'}`} intro="Single-sitting walkthroughs you can follow on your own devices." />
-    <ul class="article-grid">
-      {(tutorials as LearnCard[]).map((c) => (
-        <StoryCard href={c.href} title={c.title} description={c.text} image={c.image} alt={c.alt} width={c.width} height={c.height}
-          thumbLabel={c.label} icon={c.icon as IconName} accent={c.accent as Accent}
-          badges={[{ label: c.kicker, tone: 'cyan' }]} meta={cardMeta(c, 'Tutorial')} cta={c.cta} />
-      ))}
-    </ul>
-    <p class="muted learn-more">More tutorials are on the way. <a href={url('/newsletter/')}>Get the newsletter</a> to hear when they go live.</p>
-  </section>
-)}
+
 </div>
 
 <style>
@@ -91,4 +130,9 @@ const cardMeta = (c: { href: string }, kind: string) => { const m = mins(c); ret
   .learn-group { padding: 0; margin-top: 1.5rem; }
   .learn-group + .learn-group { margin-top: 2.75rem; }
   .learn-more { margin-top: 1.2rem; }
+  .topic-jump ul { list-style: none; padding: 0; margin: .9rem 0 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+  .topic-jump a { display: inline-block; padding: .35rem .8rem; border: 1px solid var(--line, rgba(255,255,255,.15)); border-radius: 999px; font-size: .9rem; text-decoration: none; }
+  .topic-jump a:hover, .topic-jump a:focus-visible { border-color: var(--cyan, #22d3ee); }
+  .topic-group { margin-top: 2rem; scroll-margin-top: 5rem; }
+  .topic-group :global(h3) { scroll-margin-top: 5rem; }
 </style>

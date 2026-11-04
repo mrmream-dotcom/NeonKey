@@ -1,0 +1,12 @@
+{
+  "_note": "Go-live dates (YYYY-MM-DD, Alaska time) for Learn guides timed to the social calendar: each goes live the day before its first related post. Before its date a guide is left out of the build: no page, no hub card, no sitemap entry, and links to it from other pages render as plain text. A scheduled rebuild and deploy on each date publishes it. Remove an entry once it is live for good.",
+  "everyday-tech-cheat-sheet": "2026-11-03",
+  "passwords-and-passkeys": "2026-11-03",
+  "data-breach-what-to-do": "2026-11-03",
+  "using-ai-safely": "2026-11-04",
+  "phone-security-checkup": "2026-11-04",
+  "spot-a-scam": "2026-11-05",
+  "working-with-it-help": "2026-11-06",
+  "small-business-email-checkup": "2026-11-10",
+  "family-tech-checkup": "2026-11-15"
+}
