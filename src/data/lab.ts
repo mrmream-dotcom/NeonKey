@@ -32,6 +32,15 @@ export const labProjects: LabProject[] = [
     icon: 'spark', accent: 'cyan', flag: 'Live demo',
   },
   {
+    slug: 'review-reply',
+    title: 'Review reply helper: a working demo',
+    summary: 'Paste a customer review and an AI reads the mood, flags anything risky, tells you how fast to respond and drafts a public reply for you to edit. Live demo plus the full write-up.',
+    tags: ['AI', 'Automation'],
+    level: 'Beginner',
+    service: { label: 'Quick Win + Tech Checkup', href: '/services/#automation-menu' },
+    icon: 'spark', accent: 'magenta', flag: 'Live demo',
+  },
+  {
     slug: 'office-ai',
     title: 'Office AI: ask your own documents',
     summary: 'Ask a question and an AI answers only from a business\'s own handbook, price sheet and how-tos, quotes the exact lines it used, and says so when the answer isn\'t in the documents. Live demo plus the full write-up.',

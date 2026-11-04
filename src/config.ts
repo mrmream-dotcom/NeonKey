@@ -109,3 +109,6 @@ export const FREE_KIT_API_URL = (import.meta.env.PUBLIC_FREE_KIT_API_URL || 'htt
 // Lab (draft): AI receipt & invoice sorter. Cloudflare Worker endpoint (source in workers/receipts/). Public URL, not a secret.
 //   PUBLIC_RECEIPT_API_URL = override, e.g. http://localhost:8787/extract when running `wrangler dev`.
 export const RECEIPT_API_URL = (import.meta.env.PUBLIC_RECEIPT_API_URL || 'https://neonkey-receipts.mr-mream.workers.dev/extract').trim();
+
+// Review reply demo (/lab/review-reply/) runs on the same Worker as the triage demo, at /review.
+export const REVIEW_API_URL = (import.meta.env.PUBLIC_REVIEW_API_URL || TRIAGE_API_URL.replace(/\/triage$/, '/review')).trim();
