@@ -113,6 +113,7 @@ export function renderPlanEmail(v, { firstName, newsletter, mailingAddress }) {
   H.push(`<p style="${p}">${e(greeting)}</p>`);
   H.push(`<p style="${p}">Thanks for taking the NeonKey service quiz. ${e(v.intro)}</p>`);
   T.push(greeting, "", `Thanks for taking the NeonKey service quiz. ${v.intro}`, "");
+  if (v.why) { H.push(`<p style="${p}"><strong>Why this:</strong> ${e(v.why)}</p>`); T.push(`Why this: ${v.why}`, ""); }
 
   if (v.price) {
     H.push(`<p style="${p}"><strong>What it costs:</strong> ${e(v.price)}</p>`);
@@ -169,6 +170,14 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
 <p style="margin:0;font-family:${FONT};font-size:15px;line-height:1.6;color:${C.text};">${e(v.secondary.text)} <a href="${e(abs(v.secondary.href))}" style="color:${C.accent};">Learn more</a></p>`));
     T.push(`ALSO WORTH A LOOK: ${v.secondary.name} (${v.secondary.price})`, v.secondary.text, abs(v.secondary.href), "");
   }
+  if (v.localPick) {
+    H.push(box(`<p style="${h2}">On-site option: ${e(v.localPick.name)} (${e(v.localPick.price)})</p><p style="${p}">${e(v.localPick.text)} <a href="${e(abs(v.localPick.href))}" style="color:${C.cyan};">See the tune-up</a></p>`));
+    T.push(`ON-SITE OPTION: ${v.localPick.name} (${v.localPick.price})`, v.localPick.text, abs(v.localPick.href), "");
+  }
+  if (v.packagePick) {
+    H.push(box(`<p style="${h2}">Start-Up Deal: ${e(v.packagePick.name)} (${e(v.packagePick.price)})</p><p style="${p}">${e(v.packagePick.text)} <a href="${e(abs(v.packagePick.href))}" style="color:${C.cyan};">See the package</a></p>`));
+    T.push(`START-UP DEAL: ${v.packagePick.name} (${v.packagePick.price})`, v.packagePick.text, abs(v.packagePick.href), "");
+  }
   if (v.tip) { H.push(`<p style="${p}">${e(v.tip)}</p>`); T.push(v.tip, ""); }
 
   if (v.nextSteps && v.nextSteps.length) {
@@ -179,6 +188,11 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
   const cta = v.links.find((l) => l.primary) || v.links[0];
   H.push(button(cta.label, cta.href));
   T.push(`${cta.label}: ${abs(cta.href)}`, "");
+  if (v.allOptions && v.allOptions.length) {
+    H.push(`<p style="${h2}">Every option, and how it fits your answers</p>`);
+    H.push(`<ul style="margin:0 0 16px 0;padding-left:20px;">` + v.allOptions.map((o) => `<li style="${p}"><a href="${e(abs(o.href))}" style="color:${C.cyan};font-weight:700;">${e(o.name)}</a> (${e(o.price)})${o.mark === 'recommended' ? ' <strong>· Recommended</strong>' : o.mark === 'also' ? ' · Also fits' : ''}<br>${e(o.line)}</li>`).join('') + `</ul>`);
+    T.push("EVERY OPTION, AND HOW IT FITS YOUR ANSWERS", ...v.allOptions.map((o) => `- ${o.name} (${o.price})${o.mark === 'recommended' ? ' [Recommended]' : o.mark === 'also' ? ' [Also fits]' : ''}: ${o.line}`), "");
+  }
   if (v.footnote) { H.push(`<p style="${small}">${e(v.footnote)}</p>`); T.push(v.footnote, ""); }
   // Reply call-to-action: replies help engagement and inbox placement on a new domain.
   const ask = "Reply with which step you want to start with, or anything I missed about your setup.";

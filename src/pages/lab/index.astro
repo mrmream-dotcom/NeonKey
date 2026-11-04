@@ -7,6 +7,8 @@ import SectionHeading from '../../components/SectionHeading.astro';
 import LabCard from '../../components/LabCard.astro';
 import { publishedLabProjects as projects, labTags } from '../../data/lab';
 // Only published projects are listed. Drafts (draft: true in src/data/lab.ts, pages in src/_drafts/lab/) stay hidden.
+// Filter chips only appear for tags that have at least one published build, so no chip leads to an empty grid.
+const tags = labTags.filter((t) => projects.some((p) => p.tags.includes(t)));
 ---
 <Base title="Lab" description="The NeonKey Lab: real builds, documented. What I built, why, what broke and what I learned.">
   <PageHeader eyebrow="The Lab · Hands-on builds" crumbs={[{ href: '/', label: 'Home' }, { label: 'Lab' }]}>
@@ -29,7 +31,7 @@ import { publishedLabProjects as projects, labTags } from '../../data/lab';
       ) : (<>
       <div class="lab-filters" role="group" aria-label="Filter projects by tag">
         <button type="button" class="filter-chip" data-filter="all" aria-pressed="true" data-umami-event="lab-filter" data-umami-event-tag="All">All</button>
-        {labTags.map((t) => (
+        {tags.map((t) => (
           <button type="button" class="filter-chip" data-filter={t} aria-pressed="false" data-umami-event="lab-filter" data-umami-event-tag={t}>{t}</button>
         ))}
       </div>

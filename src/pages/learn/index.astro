@@ -3,7 +3,10 @@
 // /learn/, /learn/study-tracks/ and /learn/tutorials/ stay in sync. (Was index.mdx; same URL, same text.)
 import Base from '../../layouts/Base.astro';
 import LearnHub from '../../components/learn/LearnHub.astro';
+import Bridge from '../../components/Bridge.astro';
+
 ---
 <Base title="Learn" description="Learn tech skills on NeonKey. Plain-language study guides and hands-on tutorials on security, networking, automation and more.">
   <LearnHub />
+  <Bridge location="learn" text="Rather have it done than learn it? The same checks in these guides (email records, 2-step sign-in, backups, Wi-Fi) are what we set up for small offices. New guides land in the weekly email first." links={[{ href: '/services/', label: 'See services', event: 'services-cta' }, { href: '/free-it-kit/', label: 'Free Starter IT Kit', event: 'free-kit-cta' }, { href: '/newsletter/', label: 'Weekly email', event: 'newsletter-cta' }]} />
 </Base>

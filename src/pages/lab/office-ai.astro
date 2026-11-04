@@ -141,7 +141,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['docs', 'The document
     <p>For this demo, nothing so far. Each piece runs on a free tier, and each has limits:</p>
     <ul>
       <li><strong>Cloudflare Workers, free plan:</strong> 100,000 requests a day. The rate-limit counters live in a small Durable Object that's also included on the free plan. The 150-questions-a-day cap mainly protects the AI quota.</li>
-      <li><strong>Google Gemini API, free tier:</strong> Google sets per-model request limits on the free tier and changes them from time to time. The trade-off is data use: on the free tier Google may use what's submitted to improve its products, and human reviewers may read it. Google's terms also don't allow free-tier apps for users in the UK, Switzerland or the EEA, so the demo is switched off there.</li>
+      <li><strong>Google Gemini API, free tier:</strong> Google sets per-model request limits on the free tier and changes them from time to time. The trade-off is data use: on the free tier Google may use what's submitted to improve its products, and human reviewers may read it. Google's terms also don't allow free-tier apps for users in the UK, Switzerland or the EEA, so the demo is switched off there. Client builds are different: they run on a paid API account in the client's own name, under the paid tier's data terms, not on this free sandbox.</li>
       {examples.length > 0 && (
         <li><strong>Size of a question:</strong> the example runs below used about {Math.min(...examples.map((e) => e.tokens || 0))}–{Math.max(...examples.map((e) => e.tokens || 0))} tokens each (instructions + all four documents + question + answer), as reported by the API.</li>
       )}

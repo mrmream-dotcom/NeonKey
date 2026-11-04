@@ -2,7 +2,7 @@
 // Shared by the page (src/pages/services/quiz.astro, runs in the browser) and the plan-email
 // Worker (workers/quiz/), so the on-screen result and the email always match.
 // Names and prices come from ./services.ts only. Never add per-item prices or estimates here.
-import { remoteIt, remoteSupportPlan, automationOffers, introPricing, usd, type Offer } from './services';
+import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, introPricing, usd, type Offer } from './services';
 
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
@@ -25,7 +25,7 @@ export const PRICE_DISCLAIMER = `Pricing is a starting point, not a quote. ${int
 
 export interface QuizOption { v: string; label: string; exclusive?: boolean }
 export interface QuizQuestion { id: QId; text: string; hint?: string; multi?: boolean; options: QuizOption[] }
-export type QId = 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8';
+export type QId = 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8' | 'q9';
 
 export const QUESTIONS: QuizQuestion[] = [
   { id: 'q1', text: "Who\'s this for?", options: [
@@ -83,9 +83,15 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'D', label: 'A mix, or something else (Apple, Dropbox, etc.)' },
     { v: 'E', label: 'Not sure' },
   ] },
+  { id: 'q9', text: 'Where is your office (or where do you work from)?', hint: 'On-site visits are available in Fairbanks and North Pole, Alaska. Everything else is done remotely.', options: [
+    { v: 'A', label: 'Fairbanks or North Pole, Alaska' },
+    { v: 'B', label: 'Somewhere else in Alaska' },
+    { v: 'C', label: 'Somewhere else in the US' },
+    { v: 'D', label: 'Outside the US, or it doesn\'t apply' },
+  ] },
 ];
 
-export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string };
+export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; q9: string };
 
 /** Strict whitelist check. Returns normalized answers or null. Used by the Worker on every request. */
 export function validateAnswers(raw: unknown): Answers | null {
@@ -127,6 +133,10 @@ export interface Plan {
   wf: 'copy' | 'reminders' | null;
   team: boolean;
   personal: boolean;
+  /** Office in Fairbanks or North Pole: the on-site tune-up is an option. */
+  local: boolean;
+  /** Both the FAQ assistant and lead routing came up: the Front Office Package fits. */
+  packageFit: boolean;
   answers: Answers;
 }
 
@@ -176,7 +186,10 @@ export function computePlan(a: Answers): Plan {
   const support = rShown ? (a.q7 === 'A' ? 'yes' : a.q7 === 'C' ? 'soft' : null) : null;
   const basicsTip = (type === 'Q' || type === 'F' || type === 'L') && items.has('R-EMAIL') && secondary !== 'R';
 
-  return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, answers: a };
+  const local = a.q9 === 'A' && !personal;
+  const packageFit = !personal && !tooBig && ((type === 'F' && s.L >= 2) || (type === 'L' && s.F >= 2));
+
+  return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, local, packageFit, answers: a };
 }
 
 // ---------------------------------------------------------------- plan copy
@@ -209,6 +222,14 @@ export interface PlanView {
   links: Link[];
   subject: string;
   preheader: string;
+  /** One sentence tying the answers to the recommendation (shown on screen and in the email). */
+  why?: string;
+  /** Office in Fairbanks or North Pole: the on-site tune-up, shown next to the recommendation. */
+  localPick?: { name: string; price: string; text: string; href: string };
+  /** Both the FAQ assistant and lead routing came up: the Front Office Package. */
+  packagePick?: { name: string; price: string; text: string; href: string };
+  /** Every service with a one-line fit note, so the result never hides an option. */
+  allOptions?: { name: string; price: string; line: string; href: string; mark: 'recommended' | 'also' | null }[];
   /** On-screen initial scope: short price line and item names only. */
   startPrice?: string;
   scope?: { title: string; list: string[] };
@@ -280,9 +301,10 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
   const o = SERVICES[k];
   const names = p.items.map((c) => itemView(c, p).name);
   const text = k === 'R'
-    ? `Your answers flagged ${names.length} ${names.length === 1 ? 'basic' : 'basics'} to tighten up: ${names.join(', ')}. Ask about them on the same call.`
-    : k === 'Q' ? (p.wf === 'copy' ? 'Copying information between apps by hand could be a quick win to automate.' : p.wf === 'reminders' ? 'Sending the same emails or reminders by hand could be a quick win to automate.' : 'A repetitive task came up too.')
-    : k === 'F' ? 'Repeat questions came up too.' : 'Missed inquiries came up too.';
+    ? `Your answers flagged ${names.length} ${names.length === 1 ? 'basic' : 'basics'} to tighten up: ${names.join(', ')}. The setup covers them remotely, on accounts you own. Ask about them on the same call.`
+    : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. A ${quickWin.name} automates that one workflow and includes a short checkup of your basics.` : p.wf === 'reminders' ? `You said you send the same emails or reminders by hand. A ${quickWin.name} sends them for you on schedule and includes a short checkup of your basics.` : `You said a repetitive task eats your week. A ${quickWin.name} automates one workflow, scoped with you first.`)
+    : k === 'F' ? `You said people ask the same questions. The ${aiFaq.name} answers them from your own FAQ and captures the details of new inquiries.`
+    : `You said inquiries slip through or follow-up is slow. The ${leadRouting.name} puts every lead in one flow with reminders so each one gets a reply.`;
   return { name: o.name, price: `Starting at ${usd(o.from)}`, text, href: SERVICE_HREF[k] };
 }
 
@@ -291,7 +313,72 @@ const BASICS_TIP = `Tip: a business email on your own domain makes any automatio
 export function buildPlan(p: Plan): PlanView {
   const v = buildPlanBase(p);
   addDetail(v, p);
+  addPicks(v, p);
   return v;
+}
+
+const Q3_WHY: Record<string, string> = {
+  A: 'your email and accounts are a mess',
+  B: 'security is what worries you most',
+  C: 'you lose hours to the same repetitive task every week',
+  D: 'you answer the same customer questions again and again',
+  E: 'new inquiries slip through the cracks or follow-up is slow',
+  F: 'nothing is urgent and you are curious what is possible',
+};
+const SIZE: Record<string, string> = { A: 'just you', B: 'a team of 2–5', C: 'a team of 6–10', D: 'a team of 11 or more', E: 'no team setup needed' };
+
+// The parts of the result that make sure every option is visible: why this pick, the on-site option for
+// Fairbanks and North Pole, the package when two automation needs overlap, and a one-line fit note per service.
+function addPicks(v: PlanView, p: Plan) {
+  const a = p.answers;
+  const pick = p.type;
+  const why = Q3_WHY[a.q3] ?? 'of what you told me';
+  v.why = p.type === 'LEARN'
+    ? 'Recommended because you said this is for personal use or to learn, and the paid services are built for businesses.'
+    : p.type === 'TALK'
+      ? `Recommended because you said ${SIZE[a.q2]}, which is bigger than the usual scope, so a short call is the honest next step.`
+      : p.type === 'LEARN-BIZ'
+        ? 'Recommended because none of your answers flagged a pressing problem, so a small first step or the free guides fit best.'
+        : `Recommended because you said ${why}, for ${SIZE[a.q2] ?? 'your business'}.`;
+
+  if (p.local) {
+    const t = officeTuneUp;
+    v.localPick = {
+      name: t.name, price: `${usd(t.from)}, one visit`, href: t.href!,
+      text: pick === 'R'
+        ? `You are in Fairbanks or North Pole, so the same basics (Wi-Fi, backups, 2-step sign-in, email security, printers) can be checked and fixed in person in one visit instead of remotely. Pick whichever you prefer; the scoping call is the same.`
+        : `You are in Fairbanks or North Pole, so an on-site visit is an option too: Wi-Fi, backups, 2-step sign-in, email security and printers checked and fixed in person, with a one-page report.`,
+    };
+  }
+  if (p.packageFit) {
+    const f = frontOfficePackage;
+    v.packagePick = {
+      name: f.name, price: `${usd(f.from)}, ${usd(f.value)}+ value`, href: f.href!,
+      text: `Both repeat questions and missed inquiries came up in your answers. The ${f.name} (the Start-Up Deal) bundles the ${aiFaq.name}, the ${leadRouting.name}, an email security lockdown and three months of the ${remoteSupportPlan.name} as one connected system.`,
+    };
+  }
+
+  const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? 'recommended' : k === p.secondary ? 'also' : null);
+  const fit = (k: ServiceKey | 'S' | 'T' | 'P'): string => {
+    switch (k) {
+      case 'R': return p.items.length ? `Covers the basics your answers flagged: ${p.items.map((c) => itemView(c, p).name).join(', ')}.` : 'Email on your own domain, email security, passwords, Wi-Fi and backups, set up remotely on accounts you own.';
+      case 'S': return a.q7 === 'A' ? 'You said you would like someone to email for small changes; this is that, after a setup.' : 'Optional after a setup: small changes and how-to questions by email, a set number each month.';
+      case 'Q': return p.wf === 'copy' ? 'Fits: you copy information between apps by hand.' : p.wf === 'reminders' ? 'Fits: you send the same emails or reminders by hand.' : 'One repetitive task automated, plus a short checkup of your basics. The lightest first step.';
+      case 'F': return a.q6 === 'A' || a.q3 === 'D' ? 'Fits: people ask you the same questions (hours, prices, how to book).' : 'For businesses that answer the same customer questions every day. Did not come up in your answers.';
+      case 'L': return a.q6 === 'B' || a.q3 === 'E' ? 'Fits: inquiries arrive in several places and some get missed.' : 'For businesses losing leads between inboxes. Did not come up in your answers.';
+      case 'T': return p.local ? 'Fits: you are in Fairbanks or North Pole, so the basics can be checked and fixed in person.' : 'On-site only, in Fairbanks and North Pole, Alaska. Not available where you are; the remote setup covers the same ground.';
+      case 'P': return p.packageFit ? 'Fits: both repeat questions and missed inquiries came up. All four parts as one system.' : 'The FAQ assistant, lead routing, email lockdown and three months of support as one project. Best when two or more of those apply.';
+    }
+  };
+  v.allOptions = [
+    { name: officeTuneUp.name, price: usd(officeTuneUp.from), line: fit('T'), href: officeTuneUp.href!, mark: p.local && pick === 'R' ? 'also' : null },
+    { name: remoteIt.name, price: `from ${usd(remoteIt.from)}`, line: fit('R'), href: '/services/remote-it/', mark: mark('R') },
+    { name: remoteSupportPlan.name, price: `from ${usd(remoteSupportPlan.from)}/mo`, line: fit('S'), href: remoteSupportPlan.href!, mark: p.support === 'yes' ? 'also' : null },
+    { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },
+    { name: aiFaq.name, price: `from ${usd(aiFaq.from)}`, line: fit('F'), href: '/services/#ai-faq', mark: mark('F') },
+    { name: leadRouting.name, price: `from ${usd(leadRouting.from)}`, line: fit('L'), href: '/services/#lead-routing', mark: mark('L') },
+    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit ? 'also' : null },
+  ];
 }
 
 function buildPlanBase(p: Plan): PlanView {
@@ -443,7 +530,7 @@ function buildPlanBase(p: Plan): PlanView {
   if (p.type === 'LEARN-BIZ') {
     return {
       ...base, resultName: 'Nothing urgent (free guides, or a small first step)', kicker, heading: 'Good news: nothing urgent jumped out',
-      intro: `Your basics sound covered and no single task stands out. If you\'d like a small first step, a ${quickWin.name} is the lightest way to start: one task automated, plus a check of your basics. Otherwise, the free guides and weekly email will keep you sharp.`,
+      intro: `None of your answers flagged a pressing problem: your email, passwords and backups sound covered and no repetitive task stood out. If you want a small first step anyway, a ${quickWin.name} (starting at ${usd(quickWin.from)}) automates one task and checks your basics. Otherwise, the free guides and weekly email are the right next stop, and every service is listed below so you can see what else exists.`,
       price: `${quickWin.name}: ${priceLine(quickWin)} ${PRICE_DISCLAIMER}`,
       freeLinks,
       links: [

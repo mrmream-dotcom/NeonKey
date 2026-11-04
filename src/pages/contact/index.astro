@@ -2,6 +2,8 @@
 import { url, CONTACT_EMAIL , INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../../config';
 import SocialLinks from '../../components/SocialLinks.astro';
 import Base from '../../layouts/Base.astro';
+import Bridge from '../../components/Bridge.astro';
+
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
 ---
@@ -49,6 +51,7 @@ import Icon from '../../components/Icon.astro';
       </div>
     </aside>
   </div>
+  <Bridge location="contact" text="Not sure what to ask for yet? The services page lists every option with starting prices, and the quiz narrows it down in two minutes." links={[{ href: '/services/', label: 'Services and prices', event: 'services-cta' }, { href: '/services/quiz/', label: 'Take the 2-minute quiz', event: 'quiz-cta' }, { href: '/local/', label: 'Fairbanks on-site' }]} />
 </Base>
 
 <script>

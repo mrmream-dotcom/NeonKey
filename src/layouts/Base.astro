@@ -20,15 +20,14 @@ const baseNoSlash = import.meta.env.BASE_URL.replace(/\/$/, '');
 const relPath = (Astro.url.pathname.startsWith(baseNoSlash) ? Astro.url.pathname.slice(baseNoSlash.length) : Astro.url.pathname) || '/';
 const path = relPath.replace(/\/$/, '') || '/';
 const nav = [
-  { href: '/learn/', label: 'Learn' },
+  { href: '/services/', label: 'Services' },
   { href: '/lab/', label: 'Lab' },
-  { href: '/reviews/', label: 'Reviews' },
+  { href: '/learn/', label: 'Learn' },
   { href: '/articles/', label: 'Articles' },
   { href: '/newsletter/', label: 'Newsletter' },
-  { href: '/services/', label: 'Services' },
 ];
 const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
-const fullTitle = title === 'Home' ? 'NeonKey: Unlock AI Automation, IT Setup & Tech Skills' : `${title} | NeonKey`;
+const fullTitle = title === 'Home' ? 'NeonKey: Office IT Setup and AI Automation for Small Businesses' : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 const ogImage = absoluteUrl(image, Astro.site);
@@ -88,7 +87,7 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
               <li><a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
             ))}
           </ul>
-          <a href={url('/newsletter/')} class="btn btn-primary btn-sm nav-cta" data-umami-event="newsletter-cta" data-umami-event-location="header">Newsletter</a>
+          <a href={url('/contact/')} class="btn btn-primary btn-sm nav-cta" data-umami-event="contact-click" data-umami-event-location="header">Get a quote</a>
         </nav>
       </div>
     </header>
@@ -100,11 +99,14 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
         <div class="footer-brand">
           <Logo size={30} />
           <p>Unlock tech, whatever your level.</p>
+          <p class="footer-area">Office IT and AI automation for small businesses. On-site in Fairbanks and North Pole, Alaska. Remote across the US.</p>
           <SocialLinks location="footer" />
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
             <li><a href={url('/about/')}>About</a></li>
+            <li><a href={url('/local/')}>Fairbanks on-site</a></li>
+            <li><a href={url('/reviews/')}>Reviews</a></li>
             <li><a href={url('/refer/')}>Refer a business</a></li>
             <li><a href={url('/disclosure/')}>Disclosure</a></li>
             <li><a href={url('/privacy/')}>Privacy</a></li>

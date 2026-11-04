@@ -11,6 +11,8 @@ export interface Offer {
   href?: string;
   featured?: boolean;
   unit?: string;
+  /** Standard (post-founding) starting price. Founding-client rates (`from`) apply to the first 10 clients. */
+  standard?: number;
   /** Optional card label (defaults to the section's). */
   kicker?: string;
   /** Optional upsell line pointing to a bigger service. */
@@ -96,6 +98,7 @@ export const remoteSupportPlan: Offer = {
   slug: 'remote-support-plan',
   name: 'Monthly Remote Support Plan',
   from: 99,
+  standard: 129,
   unit: '/mo',
   outcome: "Get small IT changes and questions handled without hiring an IT department",
   for: 'Optional add-on after setup: help by email or support ticket, answered in writing rather than live (async), with an agreed response window',
@@ -152,7 +155,7 @@ export const automationOffers: Offer[] = [
     demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/', example: 'AI inquiry triage' },
     upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
   },
-  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
+  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, standard: 699, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
       who: "For businesses that answer the same questions every day (hours, prices, booking, what's included) and lose track of new inquiries. The assistant answers from your own FAQ content and collects the details of anyone who wants more.",
       included: [
       'An assistant set up on your own FAQ, policies and service info, written or cleaned up together',
@@ -185,7 +188,7 @@ export const automationOffers: Offer[] = [
       ],
       note: 'AI usage and any tool subscriptions are billed to you directly by those providers. AI answers can be wrong, so the assistant is set up to hand off to a person, and you should review it regularly.',
     }, },
-  { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
+  { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
@@ -219,26 +222,40 @@ export const automationOffers: Offer[] = [
     }, },
 ];
 
+/** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
+export const officeTuneUp: Offer = {
+  slug: 'tune-up',
+  name: 'Office Tech Tune-Up',
+  kicker: 'On-site · Fairbanks and North Pole',
+  from: 249,
+  outcome: 'Your office tech, checked and fixed in one visit',
+  for: 'For small offices, shops and studios in Fairbanks and North Pole, Alaska, that want the basics checked and fixed in person',
+  items: ['Wi-Fi and router: passwords, updates, guest network', 'Backups confirmed and a restore tested', '2-step sign-in on email and key accounts', 'Email security records (SPF, DKIM, DMARC) fixed', 'Printers and slow computers sorted out', 'A one-page report of what was fixed and what is next'],
+  href: '/local/',
+  details: { who: 'Small offices with up to about 10 devices in Fairbanks or North Pole. Evening and Saturday times.', included: [], steps: [], timeline: 'One visit of about 2 to 3 hours', ready: [], priceFactors: ['Number of devices', 'Extra work found on the day, quoted before it is done'] },
+};
+
 /**
  * All-inclusive package: AI Intake & FAQ + Lead-Routing + email lockdown + 3 months of the Support Plan.
  * Founding-client rate $999 (Michael, Nov 3 2026). `separately` is what the same parts cost booked one by one at
- * founding rates ($499 + $799 + $49 email lockdown + 3 x $99 support = $1,644); `value` is the rounded-down
- * "$1,600+ value" shown on the card, so the value claim stays true.
+ * STANDARD rates (Michael set them Nov 3 2026: $699 + $999 + $79 email lockdown + 3 x $129 support = $2,164);
+ * `value` is the rounded-down "$2,000+ value" shown crossed out on the card, so the value claim stays true.
+ * Shown as the "Start-Up Deal".
  */
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
-  kicker: 'All-inclusive package',
+  kicker: 'Start-Up Deal · All-inclusive',
   from: 999,
-  value: 1600,
-  separately: 1644,
+  value: 2000,
+  separately: 2164,
   outcome: "Answer customer questions, catch every new lead, follow up on time and lock down your business email, set up together as one system with three months of support",
   for: 'The all-in-one option for small businesses that want their front office handled in one project instead of four',
   parts: [
-    { name: 'AI Intake & FAQ Assistant', value: 'normally from $499' },
-    { name: 'Lead-Routing & Follow-Up System', value: 'normally from $799' },
-    { name: 'Email lockdown (SPF, DKIM and DMARC checked and fixed)', value: 'normally $49' },
-    { name: '3 months of the Monthly Remote Support Plan', value: 'normally $99/mo' },
+    { name: 'AI Intake & FAQ Assistant', value: 'standard rate from $699' },
+    { name: 'Lead-Routing & Follow-Up System', value: 'standard rate from $999' },
+    { name: 'Email lockdown (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $79' },
+    { name: '3 months of the Monthly Remote Support Plan', value: 'standard rate $129/mo' },
   ],
   items: [
     'An AI assistant that answers your common questions from your own FAQ and captures new inquiries',

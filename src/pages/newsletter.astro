@@ -1,6 +1,8 @@
 ---
 import { url, NEWSLETTER } from '../config';
 import Base from '../layouts/Base.astro';
+import Bridge from '../components/Bridge.astro';
+
 import NewsletterForm from '../components/NewsletterForm.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -50,8 +52,9 @@ import Icon from '../components/Icon.astro';
           <li><strong>Try it:</strong> a tool or demo you can use right away, like the services quiz or a Lab demo.</li>
           <li><strong>Hit reply:</strong> tell us what tech problem to cover next. Every reply gets read.</li>
         </ol>
-        <p class="muted" style="margin:.6rem 0 0;font-size:.92rem">This shows the layout only. No issues have been sent yet{NEWSLETTER.mode === 'off' ? ' and signups open soon' : ''}.</p>
+        <p class="muted" style="margin:.6rem 0 0;font-size:.92rem">This shows the issue layout{NEWSLETTER.mode === 'off' ? '; signups open soon' : ''}.</p>
       </article>
     </div>
   </section>
+  <Bridge location="newsletter" text="Every issue pulls from the rest of NeonKey: a Lab demo you can try, a Learn guide, and the services behind them." links={[{ href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/learn/', label: 'Browse Learn' }, { href: '/services/', label: 'See services', event: 'services-cta' }]} />
 </Base>
