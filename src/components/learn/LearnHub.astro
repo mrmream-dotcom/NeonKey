@@ -23,6 +23,7 @@ const studyTracks = [
 const tutorials = [
   { kicker: 'Security · Beginner', title: 'Why 2FA matters and how to turn it on', href: '/learn/two-factor-authentication/', text: 'Step-by-step for Google, Apple, Microsoft, Instagram and Facebook, which second step to pick, and how to save backup codes.', cta: 'Read the tutorial', icon: 'shield', accent: 'cyan', label: 'Two-factor', tags: ['Security', 'Beginner'] },
   { kicker: 'Networking · Security · Beginner', title: 'Check your own Wi-Fi: a 30-minute router checkup', href: '/learn/wifi-network-checkup/', text: 'What the settings in your router actually do: the admin password, updates, Wi-Fi security, a guest network, remote management and a before-and-after speed test.', cta: 'Read the tutorial', icon: 'wifi', accent: 'magenta', label: 'Wi-Fi checkup', tags: ['Networking', 'Security', 'Beginner'] },
+  { kicker: 'Practical IT · Intermediate', title: 'Set up a virtual machine for any ISO', href: '/learn/virtual-machine-setup/', text: 'Why a VM is worth having, then a step-by-step build that works in VirtualBox, VMware, Hyper-V, UTM or KVM: sizing, network modes, guest tools and snapshots.', cta: 'Read the tutorial', icon: 'wrench', accent: 'amber', label: 'Virtual machine', tags: ['Practical IT', 'Intermediate'] },
 ].filter((c) => !(c as { draft?: boolean }).draft);
 
 const tabs: { href: string; label: string; key?: LearnView }[] = [

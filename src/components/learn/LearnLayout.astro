@@ -14,7 +14,7 @@ const crumbs: { href?: string; label: string }[] = [{ href: '/', label: 'Home' }
 if (back && back.href !== '/learn/') crumbs.push({ href: back.href, label: back.href.includes('security-plus') ? 'Security+ guide' : back.label.replace(/^Back to (the )?/, '') });
 crumbs.push({ label: title });
 const isTrack = Astro.url.pathname.includes('/security-plus/');
-const icon: IconName = isTrack ? 'book' : /network|wi-?fi/i.test(String(kicker)) ? 'wifi' : 'shield';
+const icon: IconName = isTrack ? 'book' : /network|wi-?fi/i.test(String(kicker)) ? 'wifi' : /practical it/i.test(String(kicker)) ? 'wrench' : 'shield';
 const mins = learnMinutes(Astro.url.pathname);
 const kind = isTrack ? 'Study guide' : 'Tutorial';
 ---

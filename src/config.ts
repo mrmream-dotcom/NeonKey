@@ -102,6 +102,10 @@ export const OFFICE_AI_API_URL = (import.meta.env.PUBLIC_OFFICE_AI_API_URL || 'h
 //   PUBLIC_QUIZ_API_URL = override, e.g. http://localhost:8787/plan when running `wrangler dev`.
 export const QUIZ_API_URL = (import.meta.env.PUBLIC_QUIZ_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/plan').trim();
 
+// Free Starter IT Kit: same Worker as the quiz (workers/quiz/, route POST /kit) emails the download link.
+//   PUBLIC_FREE_KIT_API_URL = override, e.g. http://localhost:8787/kit when running `wrangler dev`.
+export const FREE_KIT_API_URL = (import.meta.env.PUBLIC_FREE_KIT_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/kit').trim();
+
 // Lab (draft): AI receipt & invoice sorter. Cloudflare Worker endpoint (source in workers/receipts/). Public URL, not a secret.
 //   PUBLIC_RECEIPT_API_URL = override, e.g. http://localhost:8787/extract when running `wrangler dev`.
 export const RECEIPT_API_URL = (import.meta.env.PUBLIC_RECEIPT_API_URL || 'https://neonkey-receipts.mr-mream.workers.dev/extract').trim();

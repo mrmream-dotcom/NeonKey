@@ -220,6 +220,69 @@ export const automationOffers: Offer[] = [
 ];
 
 /**
+ * All-inclusive package: AI Intake & FAQ + Lead-Routing + email lockdown + 3 months of the Support Plan.
+ * Founding-client rate $999 (Michael, Nov 3 2026). `separately` is what the same parts cost booked one by one at
+ * founding rates ($499 + $799 + $49 email lockdown + 3 x $99 support = $1,644); `value` is the rounded-down
+ * "$1,600+ value" shown on the card, so the value claim stays true.
+ */
+export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
+  slug: 'front-office-package',
+  name: 'Front Office Package',
+  kicker: 'All-inclusive package',
+  from: 999,
+  value: 1600,
+  separately: 1644,
+  outcome: "Answer customer questions, catch every new lead, follow up on time and lock down your business email, set up together as one system with three months of support",
+  for: 'The all-in-one option for small businesses that want their front office handled in one project instead of four',
+  parts: [
+    { name: 'AI Intake & FAQ Assistant', value: 'normally from $499' },
+    { name: 'Lead-Routing & Follow-Up System', value: 'normally from $799' },
+    { name: 'Email lockdown (SPF, DKIM and DMARC checked and fixed)', value: 'normally $49' },
+    { name: '3 months of the Monthly Remote Support Plan', value: 'normally $99/mo' },
+  ],
+  items: [
+    'An AI assistant that answers your common questions from your own FAQ and captures new inquiries',
+    'Every new lead sent to the right person or sheet, with follow-up reminders and reply templates',
+    'Your email security settings checked and fixed, so scammers have a harder time faking your address',
+    'Three months of the Monthly Remote Support Plan, so small changes and questions are covered while it beds in',
+  ],
+  href: '/services/#front-office-package',
+  featured: true,
+  details: {
+    who: "For small businesses that get regular customer questions and new inquiries from more than one place, and want the whole front office handled in one go: answering, capturing, routing, following up and keeping email secure. It's the same work as booking the pieces separately, planned as one connected system.",
+    included: [
+      'AI Intake & FAQ Assistant: set up on your own FAQ, policies and service info, on your website, email or both, with a clear handoff to a person',
+      'Lead-Routing & Follow-Up System: intake from your forms, inbox or booking tool, routing rules, follow-up reminders, reply templates and a simple tracking view',
+      'The assistant and the lead routing connected, so inquiries the assistant captures go straight into your lead tracking',
+      'Email lockdown: your domain\'s email security records (SPF, DKIM and DMARC) checked and fixed, with DMARC started in report-only mode (monitor mode)',
+      'Three months of the Monthly Remote Support Plan, starting at go-live: small changes, tuning and how-to questions by email or ticket',
+      'One walkthrough video and written notes covering the whole system, and admin access that stays with you',
+    ],
+    steps: [
+      { h: 'Scoping call', p: 'We map where questions and leads come from, who handles what and what should always go to a person. You get a fixed quote before work starts.' },
+      { h: 'Email lockdown first', p: 'I check and fix your email security records early, because domain changes can take a day or two to settle.' },
+      { h: 'Build and connect', p: 'I set up the assistant and the lead routing, connect them, and test with real example questions and leads. You review before anything goes live.' },
+      { h: 'Go live, then three months of support', p: 'We check the first real conversations and leads together, then the support plan covers tuning and small changes for three months. After that, keep the plan or cancel; it\'s up to you.' },
+    ],
+    provide: [
+      'Your current FAQ, price list, policies or common replies (rough notes are fine)',
+      'A list of where leads come from today, and who handles what',
+      'Admin access to your website editor, inbox, forms and the company that manages your domain settings (DNS)',
+      'An AI provider account in your name, which I can help you set up',
+    ],
+    tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form and booking tools, websites where you can add a custom code snippet, and mainstream automation tools (for example Zapier, Make or n8n). AI models from mainstream providers on a paid tier. Anything else is checked on the scoping call.',
+    turnaround: 'Usually 3 to 5 weeks from the scoping call, depending on how ready your FAQ content is and how many lead sources are involved. Your quote gives the plan.',
+    priceFactors: [
+      'How much FAQ content there is and how organized it is',
+      'How many lead sources and tools need connecting',
+      'Connecting a customer database (CRM), or cleaning up existing lead data',
+      'Extra domains, languages or rounds of testing',
+    ],
+    note: 'AI usage, automation tools and other software subscriptions are billed to you directly by those providers and are not part of this price. AI answers can be wrong, so the assistant hands off to a person when unsure. After the three included months, the support plan continues at its normal rate only if you choose to keep it.',
+  },
+};
+
+/**
  * "What can we automate?" menu on /services/#automation-menu.
  * Everyday jobs a small business can hand to an automation, grouped by the work they save,
  * each pointing to the service it usually fits inside. Examples, not a fixed catalog:

@@ -18,6 +18,16 @@ their plan by email.
 6. Only if `newsletter` is true: creates the Kit subscriber as inactive and adds them to
    form 10118914, which triggers Kit's double opt-in. The welcome Worker handles the rest.
 
+## Free Starter IT Kit: `POST /kit`
+
+Used by https://neonkey.tech/free-it-kit/. JSON `{ email, first_name?, newsletter, website }`.
+Same origin lock, honeypot, email check and Resend sender as `/plan`. Emails the download link
+(`KIT_DOWNLOAD_URL` in `wrangler.toml`, a file in `public/downloads/`) once per address per day,
+sends a lead copy to `LEAD_TO`, and starts Kit's double opt-in only if `newsletter` is true.
+Rate-limit keys are prefixed `kit:` so they don't collide with plan requests; daily cap is
+`KIT_GLOBAL_DAILY_LIMIT`. The spreadsheet is built by `build_free_kit.py` (project files,
+products/it-kit/). If you rebuild it, keep the same path or update `KIT_DOWNLOAD_URL`.
+
 ## Deploy
 
 ```sh
