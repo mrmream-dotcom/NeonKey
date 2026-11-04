@@ -1,0 +1,18 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+// Where Stripe Checkout and Payment Links send customers after paying (workers/payments/scripts/).
+// No conversion tag here on purpose: payment links come from invoices and emails, not ads.
+---
+<Base title="Payment received" description="Thanks for your payment to NeonKey." noindex>
+  <PageHeader width="narrow" align="center" eyebrow="Payment · Thank you" crumbs={[{ href: '/', label: 'Home' }, { label: 'Payment received' }]} class="status-head">
+    <span class="status-mark" slot="title-before"><Icon name="check" /></span>
+    <Fragment slot="title">Thanks, your payment went through.</Fragment>
+    <p class="lede">Stripe emails your receipt. We'll be in touch by email to schedule the work. Questions in the meantime? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </PageHeader>
+  <div class="narrow status-body">
+    <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/learn/')}>Browse Learn</a></p>
+  </div>
+</Base>
