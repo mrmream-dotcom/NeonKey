@@ -1,7 +1,8 @@
 # neonkey-payments
 
-Stripe for NeonKey: a webhook Worker plus three small local scripts. **Test mode only** until Michael
-says go live (LLC, business license and his explicit OK first). Shares nothing with the other workers.
+Stripe for NeonKey: a webhook Worker plus three small local scripts. **Live since Nov 4 2026**
+(products and pay links are in the live account). Scripts still default to test keys and need `--live`
+for a live key. Shares nothing with the other workers.
 
 ## How NeonKey takes money
 
@@ -92,7 +93,7 @@ Dashboard settings to turn on (test and live):
 
 `npm test` runs the webhook tests with fake secrets and no network.
 
-## Going live (only after Michael's explicit OK)
+## Going live (done Nov 4 2026; kept as a checklist)
 
 1. Account activated with the LLC's details and EIN, bank account added, 2FA with an authenticator app or passkey.
 2. Create a **live** restricted key and a live webhook endpoint (same events), set the live signing secret.

@@ -1,5 +1,5 @@
 # NeonKey payments Worker: Stripe webhook -> notice email to hello@neonkey.tech (BCC Michael).
-# Test mode only until Michael says go live (LLC, license and his explicit OK first).
+# LIVE since Nov 4 2026 (Michael chose "Live now, with guardrails" and said "merge and deploy").
 # Secrets (set with `wrangler secret put`, never committed, never pasted in chat):
 #   STRIPE_WEBHOOK_SECRET  whsec_... from the webhook endpoint in the Stripe Dashboard
 #   RESEND_API_KEY
@@ -15,8 +15,8 @@ FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
 NOTIFY_TO = "hello@neonkey.tech"
 # Every email this Worker sends is BCC'd here (Resend has no account-level BCC).
 BCC_ADDRESS = "mr.mream@gmail.com"
-# Live-mode events are ignored until this is "true". Flip it only with Michael's OK.
-ALLOW_LIVE = "false"
+# Live-mode events are ignored unless this is "true". Michael approved live on Nov 4 2026.
+ALLOW_LIVE = "true"
 
 [observability]
 enabled = false

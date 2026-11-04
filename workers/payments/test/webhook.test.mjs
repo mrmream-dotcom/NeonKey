@@ -88,3 +88,27 @@ test("other paths 404, GET webhook 405", async () => {
   assert.equal((await worker.fetch(new Request("https://w.example/"), env)).status, 404);
   assert.equal((await worker.fetch(new Request("https://w.example/webhook"), env)).status, 405);
 });
+
+test("live events are processed (no [TEST] tag) when ALLOW_LIVE is on", async () => {
+  sent = [];
+  const r = await worker.fetch(signed(ev("invoice.paid", { id: "in_9", amount_paid: 9900, currency: "usd", customer_email: "c@example.com" }, { livemode: true })), { ...env, ALLOW_LIVE: "true" });
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0].body.subject, /^Invoice paid/);
+  assert.match(sent[0].body.html, /dashboard\.stripe\.com\/invoices\/in_9/);
+});
+
+test("replayed (old) signatures are rejected", async () => {
+  sent = [];
+  const payload = JSON.stringify(ev("invoice.paid", { amount_paid: 100 }));
+  const header = Stripe.webhooks.generateTestHeaderString({ payload, secret: SECRET, timestamp: Math.floor(Date.now() / 1000) - 3600 });
+  const r = await worker.fetch(new Request("https://w.example/webhook", { method: "POST", headers: { "Stripe-Signature": header }, body: payload }), env);
+  assert.equal(r.status, 400);
+  assert.equal(sent.length, 0);
+});
+
+test("HTML in Stripe fields is escaped in the notice", async () => {
+  sent = [];
+  await worker.fetch(signed(ev("invoice.paid", { id: "in_x", amount_paid: 100, currency: "usd", customer_name: "<img src=x onerror=alert(1)>" })), env);
+  assert.doesNotMatch(sent[0].body.html, /<img/);
+});
