@@ -1,4 +1,6 @@
 ---
+import OfferTitle from '../components/OfferTitle.astro';
+import OfferNameLabel from '../components/OfferNameLabel.astro';
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -8,7 +10,7 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, officeTuneUp, introPricing, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -154,8 +156,10 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     </div>
     <div class="container hero-content">
       <span class="kicker">Unlock tech, whatever your level</span>
-      <h1>Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></h1>
-      <p class="lead">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. On-site in Fairbanks and North Pole, Alaska. Remote anywhere in the US.</p>
+      <h1 data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></h1>
+      <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. On-site in Fairbanks and North Pole, Alaska. Remote anywhere in the US.</p>
+      <h1 data-ab="hero:b">Catch every lead. <span class="glow">Answer every customer.</span><br /> <span class="glow-m">Keep the office running.</span></h1>
+      <p class="lead" data-ab="hero:b">Lead follow-up, AI intake and office IT for small businesses, set up on accounts you own, with a written quote before any work. On-site in Fairbanks and North Pole, Alaska. Remote anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a free quote</a>
         <a class="btn btn-alt" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
@@ -171,7 +175,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <div class="grid grid-3 home-offers">
         <article class="card topline accent-cyan">
           <span class="kicker">On-site · Fairbanks and North Pole · $249</span>
-          <h3><a href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="home-local">Office Tech Tune-Up</a></h3>
+          <h3><a href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="home-local"><OfferTitle offer={officeTuneUp} /></a></h3>
+          <OfferNameLabel offer={officeTuneUp} />
           <p class="offer-outcome">We come to your office and check and fix the basics in one visit.</p>
           <p class="home-offer-sub">One visit covers:</p>
           <ul class="home-offer-list">
@@ -186,7 +191,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         </article>
         <article class="card offer-featured topline">
           <span class="kicker">AI and automation · Starting at {usd(quickWin.from)}</span>
-          <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win">{quickWin.name}</a></h3>
+          <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win"><OfferTitle offer={quickWin} /></a></h3>
+          <OfferNameLabel offer={quickWin} />
           <p class="offer-outcome">We take one boring, repeat task off your plate and set it up to run on its own.</p>
           <p class="home-offer-sub">Some examples of what we can automate:</p>
           <ul class="home-offer-list">
@@ -201,7 +207,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         </article>
         <article class="card topline accent-magenta">
           <span class="kicker">Remote · Anywhere in the US · Starting at {usd(remoteIt.from)}</span>
-          <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it">Remote Small-Office IT Setup</a></h3>
+          <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it"><OfferTitle offer={remoteIt} /></a></h3>
+          <OfferNameLabel offer={remoteIt} />
           <p class="offer-outcome">We get your office tech set up properly, all done remotely.</p>
           <p class="home-offer-sub">What that covers:</p>
           <ul class="home-offer-list">
@@ -218,7 +225,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <article class="card topline accent-magenta fop-strip" id="front-office">
         <div>
           <span class="kicker">Start-Up Deal · All-inclusive</span>
-          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package">{fop.name}</a></h3>
+          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
+          <OfferNameLabel offer={fop} />
           <p class="muted" style="margin:0">{fop.for}. AI intake and FAQ assistant, lead routing and follow-up, email lockdown and three months of the support plan, in one project.</p>
         </div>
         <div class="fop-strip-side">
