@@ -195,11 +195,12 @@ label { font-weight: 600; display: block; margin-bottom: .35rem; }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 2.5rem 0; margin-top: 2rem; background: #090b14; }
-.footer-inner { display: grid; grid-template-columns: 1fr auto; gap: 1rem 2rem; align-items: center; }
+.footer-inner { display: grid; grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr); gap: 1rem 2rem; align-items: center; }
 .footer-brand { min-width: min(100%, 18rem); max-width: 26rem; }
 .footer-brand p { color: var(--muted); margin: .4rem 0 0; }
 .footer-brand .footer-area { font-size: .9rem; }
-.footer-links { list-style: none; display: flex; gap: 1.25rem; padding: 0; margin: 0; flex-wrap: wrap; }
+.footer-links { list-style: none; display: flex; gap: .9rem 1.25rem; padding: 0; margin: 0; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 640px) { .footer-links { justify-content: flex-start; } }
 .footer-links a { color: var(--muted); text-decoration: none; font-weight: 600; }
 .footer-links a:hover { color: var(--cyan); }
 .footer-fine { grid-column: 1 / -1; color: #8d93b8; font-size: .85rem; margin: 0; }

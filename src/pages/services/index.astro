@@ -49,7 +49,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
 
   <section style="padding-top:1rem;padding-bottom:1rem" aria-labelledby="fop-h">
     <div class="container">
-      <p class="section-label"><span class="pulse" aria-hidden="true"></span>All-inclusive package</p>
+      <p class="section-label"><span class="pulse" aria-hidden="true"></span>Start-Up Deal · All-inclusive package</p>
       <article class="card offer offer-featured topline accent-magenta" id={fop.slug}>
         <div class="offer-featured-grid">
           <div>
@@ -61,12 +61,12 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <OfferDetails offer={fop} />
           </div>
           <div class="offer-featured-side">
-            <p class="fop-value">{usd(fop.value)}+ value · <s>{usd(fop.separately)}</s></p>
-            <p class="price">{usd(fop.from)}<small>Founding-client rate · scoped first</small></p>
+            <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>
+            <p class="price">{usd(fop.from)}<small>Start-Up Deal · founding-client rate · scoped first</small></p>
             <ul class="fop-parts" aria-label="What's bundled">
               {fop.parts.map((p) => <li><span>{p.name}</span> <span class="muted">{p.value}</span></li>)}
             </ul>
-            <p class="muted" style="font-size:.95rem">Over {usd(fop.value)} in value: booked separately at founding rates, the same parts come to {usd(fop.separately)}.</p>
+            <p class="muted" style="font-size:.95rem">The same four parts booked one by one come to more than {usd(fop.value)}. As the Start-Up Deal they are planned and built as one system for {usd(fop.from)}.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Ask about the package</a>
               <a class="btn btn-ghost" href="#auto-h" data-umami-event="services-cta" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See the parts</a>

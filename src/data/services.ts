@@ -219,6 +219,19 @@ export const automationOffers: Offer[] = [
     }, },
 ];
 
+/** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
+export const officeTuneUp: Offer = {
+  slug: 'tune-up',
+  name: 'Office Tech Tune-Up',
+  kicker: 'On-site · Fairbanks and North Pole',
+  from: 249,
+  outcome: 'Your office tech, checked and fixed in one visit',
+  for: 'For small offices, shops and studios in Fairbanks and North Pole, Alaska, that want the basics checked and fixed in person',
+  items: ['Wi-Fi and router: passwords, updates, guest network', 'Backups confirmed and a restore tested', '2-step sign-in on email and key accounts', 'Email security records (SPF, DKIM, DMARC) fixed', 'Printers and slow computers sorted out', 'A one-page report of what was fixed and what is next'],
+  href: '/local/',
+  details: { who: 'Small offices with up to about 10 devices in Fairbanks or North Pole. Evening and Saturday times.', included: [], steps: [], timeline: 'One visit of about 2 to 3 hours', ready: [], priceFactors: ['Number of devices', 'Extra work found on the day, quoted before it is done'] },
+};
+
 /**
  * All-inclusive package: AI Intake & FAQ + Lead-Routing + email lockdown + 3 months of the Support Plan.
  * Founding-client rate $999 (Michael, Nov 3 2026). `separately` is what the same parts cost booked one by one at
@@ -228,7 +241,7 @@ export const automationOffers: Offer[] = [
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
-  kicker: 'All-inclusive package',
+  kicker: 'Start-Up Deal · All-inclusive',
   from: 999,
   value: 1600,
   separately: 1644,

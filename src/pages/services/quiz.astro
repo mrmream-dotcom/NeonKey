@@ -75,6 +75,14 @@ const total = QUESTIONS.length;
     </div>
   </section>
 </Base>
+<style>
+  .quiz-why { margin: .5rem 0 0; }
+  .quiz-pick { margin-top: 1rem; }
+  .quiz-all li { margin-bottom: .6rem; }
+  .quiz-fit { font-size: .92rem; }
+  .quiz-tag { display: inline-block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; padding: .1rem .45rem; border: 1px solid var(--line); border-radius: 999px; margin-left: .3rem; color: var(--muted); }
+  .quiz-tag-rec { border-color: var(--cyan); color: var(--cyan); }
+</style>
 
 <style is:global>
   .quiz-bullets { padding-left: 1.1rem; margin: 0 0 1.2rem; }
@@ -219,13 +227,24 @@ const total = QUESTIONS.length;
       const service = ['R', 'Q', 'F', 'L'].includes(v.type);
       h.push(`<div class="panel"><span class="kicker">${esc(v.kicker)}</span><h2>${esc(v.heading)}</h2>`);
       if (v.startPrice) h.push(`<p class="quiz-price" style="margin-top:0">${esc(v.startPrice)}</p>`);
-      if (!service) h.push(`<p class="muted">${esc(v.intro)}</p>`);
+      h.push(`<p class="muted">${esc(v.intro)}</p>`);
+      if (v.why) h.push(`<p class="quiz-why"><strong>Why this:</strong> ${esc(v.why)}</p>`);
       if (v.scope) h.push(`<h3 class="quiz-h3">${esc(v.scope.title)}</h3><ul class="quiz-list quiz-scope">${v.scope.list.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`);
       if (v.addon) h.push(`<p class="quiz-small" style="margin-top:.8rem">Optional add-on: <a href="${esc(u(v.addon.href))}">${esc(v.addon.name)}</a></p>`);
-      if (v.secondary) h.push(`<p class="quiz-small">Also worth a look: <a href="${esc(u(v.secondary.href))}">${esc(v.secondary.name)}</a></p>`);
+      if (v.secondary) h.push(`<p class="quiz-small">Also worth a look: <a href="${esc(u(v.secondary.href))}">${esc(v.secondary.name)}</a> (${esc(v.secondary.price)}). ${esc(v.secondary.text)}</p>`);
+      if (v.localPick) h.push(`<div class="callout quiz-pick"><span class="kicker eyebrow">On-site option</span><p style="margin:.3rem 0"><strong>${esc(v.localPick.name)}</strong> · ${esc(v.localPick.price)}</p><p class="muted" style="margin:0 0 .6rem">${esc(v.localPick.text)}</p><a class="btn btn-ghost btn-sm" href="${esc(u(v.localPick.href))}" data-umami-event="services-cta" data-umami-event-location="quiz-local">See the tune-up</a></div>`);
+      if (v.packagePick) h.push(`<div class="callout quiz-pick"><span class="kicker eyebrow">Start-Up Deal</span><p style="margin:.3rem 0"><strong>${esc(v.packagePick.name)}</strong> · ${esc(v.packagePick.price)}</p><p class="muted" style="margin:0 0 .6rem">${esc(v.packagePick.text)}</p><a class="btn btn-ghost btn-sm" href="${esc(u(v.packagePick.href))}" data-umami-event="services-cta" data-umami-event-location="quiz-package">See the package</a></div>`);
       h.push(`<div class="btn-row">${v.links.map((l) => `<a class="btn ${l.primary ? 'btn-primary' : 'btn-ghost'}" href="${esc(u(l.href))}" data-umami-event="${l.href.startsWith('/contact') ? 'contact-click' : 'services-cta'}" data-umami-event-location="quiz" data-umami-event-result="${esc(v.type)}">${esc(l.label)}</a>`).join('')}</div>`);
       if (v.footnote) h.push(`<p class="quiz-small" style="margin-top:1rem">${esc(v.footnote)}</p>`);
       h.push('</div>');
+      if (v.allOptions) {
+        h.push(`<div class="panel" style="margin-top:1rem"><h3 class="quiz-h3" style="margin-top:0">Every option, and how it fits your answers</h3><ul class="quiz-list quiz-all">`);
+        for (const o of v.allOptions) {
+          const tag = o.mark === 'recommended' ? '<span class="quiz-tag quiz-tag-rec">Recommended</span>' : o.mark === 'also' ? '<span class="quiz-tag">Also fits</span>' : '';
+          h.push(`<li><a href="${esc(u(o.href))}" data-umami-event="services-cta" data-umami-event-location="quiz-all">${esc(o.name)}</a> <span class="muted">${esc(o.price)}</span> ${tag}<br><span class="muted quiz-fit">${esc(o.line)}</span></li>`);
+        }
+        h.push('</ul></div>');
+      }
       return h.join('');
     }
 
