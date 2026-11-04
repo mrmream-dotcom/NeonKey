@@ -17,7 +17,15 @@ function pagePrice(file, pattern, label) {
   return Number(m[1]);
 }
 const tuneUp = pagePrice("src/pages/local.astro", /<strong>\$(\d+)<\/strong> founding rate/, "Office Tech Tune-Up");
-const lockdown = pagePrice("src/data/services.ts", /Email lockdown[^']*', value: 'normally \$(\d+)'/, "Email lockdown");
+// Email Lockdown is sold by pay link and outreach email, not on its own site card, so its founding rate lives here:
+// $49 (Michael, Nov 3 2026; live Payment Link since Nov 4). The site may list a higher standard rate inside the
+// package ("standard rate $79"); we only check the founding rate is not above what the site shows.
+const lockdown = 49;
+{
+  const text = readFileSync(root + "src/data/services.ts", "utf8");
+  const shown = text.match(/Email lockdown[^']*', value: '(?:standard rate|normally) \$(\d+)'/);
+  if (shown && Number(shown[1]) < lockdown) throw new Error(`Email lockdown on the site ($${shown[1]}) is below the founding rate ($${lockdown}). Update scripts/offers.mjs.`);
+}
 
 // Stripe tax code for these products: txcd_20030000 = "General - Services".
 // automatic_tax is NOT turned on anywhere: it collects nothing without an active tax registration.
