@@ -17,3 +17,6 @@ Preconditions: PR merged to `main`; Michael said "ship" (or the PR is covered by
 7. Record: commit SHAs for `main` and `gh-pages`, check results, date and time (AKST) in the PR or the Decisions/Scoreboard tab as appropriate.
 
 If any check fails: do not re-run blindly. Report the failing check, the page, and the diff. Roll back by republishing the previous `gh-pages` commit only if the live site is broken for visitors.
+
+## Timed Learn releases
+`.github/workflows/timed-release.yml` runs daily at 10:10 AM AKST. When a guide in `src/data/learn-schedule.json` goes live that day and main has no unshipped site changes, it builds, runs `scripts/release-checks.mjs` against the live gh-pages copy, publishes, confirms the new guide returns 200 and pings IndexNow. A manual run publishes main as-is and counts as Michael's ship. Run the checks by hand with `node scripts/release-checks.mjs dist <gh-pages checkout>`.

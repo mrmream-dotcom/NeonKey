@@ -1,0 +1,115 @@
+# Timed Learn releases (approved by Michael, Nov 4 2026): publishes the site to gh-pages on the days a guide in
+# src/data/learn-schedule.json goes live, so each guide is up the day before its first social post.
+#
+# Scheduled run (daily 10:10 AM AKST): deploys only when
+#   1. a guide's go-live date is today (Alaska time), and
+#   2. main has no unshipped site changes since the last deploy. Only non-site paths (workflows, docs, agents,
+#      Workers, CLAUDE.md, AGENTS.md, scripts) may differ. Anything else still needs Michael's "ship", so the run
+#      fails with an error instead of publishing it.
+# Manual run (Actions tab > Timed Learn release > Run workflow): publishes main as-is. Running it by hand IS the "ship".
+#
+# Every run builds exactly as production does, runs scripts/release-checks.mjs against the live gh-pages copy
+# BEFORE publishing (links, Umami, Google tag, Impact meta, forms, newsletter conversion), keeps CNAME and
+# .nojekyll, then pings IndexNow.
+name: Timed Learn release
+
+on:
+  schedule:
+    - cron: '10 19 * * *' # 19:10 UTC = 10:10 AM AKST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITE_URL: https://neonkey.tech
+      BASE_PATH: /
+      PUBLIC_SITE_MODE: live
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Check out the live gh-pages branch
+        run: |
+          git fetch origin gh-pages
+          git worktree add "$RUNNER_TEMP/live" origin/gh-pages
+
+      - name: Decide whether to release
+        id: gate
+        run: |
+          today=$(TZ=America/Anchorage date +%F)
+          due=$(node -e "const s=require('./src/data/learn-schedule.json');console.log(Object.entries(s).filter(([k,d])=>!k.startsWith('_')&&d===process.argv[1]).map(([k])=>k).join(' '))" "$today")
+          echo "today=$today" >> "$GITHUB_OUTPUT"
+          echo "due=$due" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run: publishing main as-is."; echo "go=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ -z "$due" ]; then
+            echo "No guide goes live on $today. Nothing to do."; echo "go=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          last=$(git -C "$RUNNER_TEMP/live" log -1 --format=%s | grep -oE 'Deploy main [0-9a-f]{7,40}' | awk '{print $3}')
+          if [ -z "$last" ]; then echo "::error::Can't find the last deployed main commit in the gh-pages commit message."; exit 1; fi
+          unshipped=$(git diff --name-only "$last" HEAD | grep -vE '^(\.github/|docs/|\.claude/|workers/|scripts/|CLAUDE\.md$|AGENTS\.md$)' || true)
+          if [ -n "$unshipped" ]; then
+            echo "::error::Guides due today ($due), but main has site changes since $last that Michael hasn't shipped:"
+            echo "$unshipped"
+            echo "Ship them (run this workflow by hand) to publish everything."
+            exit 1
+          fi
+          echo "Releasing: $due"; echo "go=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.gate.outputs.go == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Build
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          npm ci
+          rm -rf dist
+          npx astro build
+          touch dist/.nojekyll
+
+      - name: Regression checks (before publishing)
+        if: steps.gate.outputs.go == 'true'
+        run: node scripts/release-checks.mjs dist "$RUNNER_TEMP/live"
+
+      - name: Publish to gh-pages
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          sha=$(git rev-parse --short HEAD)
+          cd "$RUNNER_TEMP/live"
+          git checkout -B gh-pages origin/gh-pages
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a "$GITHUB_WORKSPACE/dist/." .
+          test "$(cat CNAME)" = "neonkey.tech" && test -f .nojekyll
+          git add -A
+          if git diff --cached --quiet; then echo "Live site already matches this build."; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Deploy main $sha (timed release ${{ steps.gate.outputs.today }}: ${{ steps.gate.outputs.due || 'manual' }})"
+          git push origin gh-pages
+
+      - name: Confirm the new guides are live, then ping IndexNow
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          for slug in ${{ steps.gate.outputs.due }}; do
+            for i in $(seq 1 30); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "https://neonkey.tech/learn/$slug/")
+              [ "$code" = "200" ] && break; sleep 10
+            done
+            echo "https://neonkey.tech/learn/$slug/ -> $code"
+            [ "$code" = "200" ] || { echo "::error::/learn/$slug/ is not live after 5 minutes"; exit 1; }
+          done
+          npm run indexnow
