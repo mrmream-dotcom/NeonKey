@@ -37,6 +37,14 @@ One folder per Worker in `workers/`, each with its own README, `package.json` an
 ## Agents
 Recurring jobs are defined in `.claude/agents/` (site-shipper, pipeline-clerk, scoreboard). They mirror scheduled tasks in the NeonKey Claude Project; business rules live in that project's memory, this file holds only code and site rules.
 
+## Reporting: Founder Technical Brief
+Add this to the final report of meaningful technical work only: a new system, an architecture or security choice, a new tool or integration, or a real incident. Skip it for routine runs, copy edits, cosmetic changes and repeated work.
+- **Built:** what was implemented. **Why:** the key technical decision and its reasoning. **Concept:** one relevant engineering concept, explained simply. **Implication:** why it matters to NeonKey or to Michael's technical growth.
+- 50-100 words, written from what you already know about the work. Do no extra research for it.
+- Check the "Covered concepts" table in the project's `founder-learning/competence-log.md` first. If the concept is already covered, link it in one line.
+- On security, customer data, auth, money or production, add **Gap:** when Michael needs to understand something to decide safely. Validate those systems properly; never rely on familiarity or an agent's confidence.
+- Never treat a brief or an approval as evidence of competence.
+
 ## Never
 - Print or commit a secret, token or API key.
 - Push to `gh-pages` without the regression checks passing.
