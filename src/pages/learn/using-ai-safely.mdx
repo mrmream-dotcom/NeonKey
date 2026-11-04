@@ -1,0 +1,84 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Using AI chat safely, and getting better answers"
+description: A beginner guide to AI chat tools like ChatGPT, Claude, Gemini and Copilot. What never to paste in, how to get help without sharing the file, turning off training on your chats, checking answers that sound sure, and three prompt habits that give better results.
+kicker: Learn · Automation · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">AI chat tools are genuinely useful for drafts, plans, summaries and ideas. Use them freely, with two habits: be careful what you paste in, and check what comes out. Then a few small prompt tricks make the answers much better.</p>
+
+## 5 things to never paste into an AI chat
+
+1. **Passwords and login codes.**
+2. **Card and bank numbers.**
+3. **ID numbers,** like a Social Security, driver's license or passport number.
+4. **Other people's private details,** like a customer's address, health information or phone number.
+5. **Confidential work files,** unless your workplace has approved that tool for that kind of data.
+
+## Get the help without handing over the file
+
+You can often get the same help without sharing the document itself:
+
+- **Describe the situation** instead of pasting the whole thing.
+- **Swap names for placeholders,** like "Client A" or "[address]."
+- **Share the shape of your data, not the data.** For a spreadsheet question, give the column names and one made-up row.
+- **Check your workplace's AI rules first.** Many businesses now have a list of approved tools.
+
+The same goes for everyday tasks. To plan a holiday dinner, the AI needs the number of guests, the allergies and how many ovens you have. It doesn't need your address or account numbers. Share the task, not your life.
+
+## Your chats can help train the AI. You can choose.
+
+Many AI apps can use your conversations to improve their models unless you turn that off.
+
+- **ChatGPT:** Settings → Data controls → Improve the model for everyone.
+- **Other apps:** look under Settings → Privacy or Data. Exact wording varies by app and changes over time.
+
+Turning it off doesn't stop you from using the tool. If you use AI at work, your company's account may already have different settings.
+
+## AI can sound sure and still be wrong
+
+AI tools can state wrong facts, made-up quotes or outdated details in a confident tone.
+
+- **Ask for sources, then open them.** Make sure the source exists and says what the AI claims.
+- **Double-check numbers, dates and names** yourself.
+- **Use it for drafts, not final answers,** especially for anything legal, medical, financial or safety-related.
+
+## 3 habits for better answers
+
+### 1. Role, goal, format
+
+One sentence with three parts does most of the work:
+
+- **Role:** who it should be. "You're a friendly office manager."
+- **Goal:** what you need. "Write an email telling clients we're closed Friday."
+- **Format:** how long and what shape. "Three sentences. Keep it warm."
+
+### 2. Make it ask you questions first
+
+Add this line: *"Before you answer, ask me 3 questions about my situation."* You get fewer generic answers and advice that fits you.
+
+### 3. Show it what good looks like
+
+Paste a short example of the tone or format you want: *"Here's an example I like: [paste]. Write mine in the same style."* An example beats a paragraph of description.
+
+## Try it: four prompts for a busy week
+
+Copy one, then change the details to fit you.
+
+- **Dinner timeline:** "Plan dinner for 12. One vegetarian, one nut allergy, one oven. Give me a cooking timeline starting at 9 AM and a shopping list grouped by store aisle."
+- **Gift ideas that aren't boring:** "My dad is 64, loves fishing, just got an iPhone and hates clutter. Give me 10 gift ideas under $50."
+- **Packing list:** "I'm flying for 4 days, carry-on only, cold weather, one dinner out. Make a packing list."
+- **Small-business out-of-office:** "You're a friendly office manager. Write a 3-sentence auto-reply saying we're closed Thursday and Friday and will reply Monday. Keep it warm."
+
+## See it in action
+
+Our <a href={siteUrl('/lab/')}>Lab</a> has live demos of AI used carefully on made-up sample data, including an <a href={siteUrl('/lab/office-ai/')}>office FAQ assistant</a> that answers only from its documents, an <a href={siteUrl('/lab/ai-inquiry-triage/')}>inquiry sorter</a> and a <a href={siteUrl('/lab/receipt-sorter/')}>receipt sorter</a>.
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Thinking about AI for your business?</span>
+  <h3>Start with one task</h3>
+  <p>NeonKey builds small, careful AI helpers for real office work, like answering common questions or sorting new inquiries, with a person reviewing anything before it goes out.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/#automation-menu')}>See what we can automate →</a></p>
+</article>

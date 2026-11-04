@@ -1,0 +1,107 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "The Family Tech Checkup: 8 fixes for one holiday visit"
+description: A checklist for the family tech person. Eight quick fixes to make parents and relatives harder to scam and less likely to lose their photos, plus setting up a kid's first tablet, a new smart TV's viewing-data setting, and the recovery and legacy contacts nobody likes to talk about.
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">Every family has someone who ends up fixing everyone's phone at the holidays. If that's you, here are eight quick fixes you can do in one visit that make the people you love harder to scam and less likely to lose their photos. Don't try to do all eight. Pick the two that worry you most and start there.</p>
+
+This guide goes with our video of the same name on [YouTube](https://www.youtube.com/@neonkeytech). Menu names vary by device and brand, so if a step doesn't match exactly, search the Settings app for the key word.
+
+## 1. Updates
+
+Updates often fix security holes attackers already know about.
+
+- **iPhone:** Settings → General → Software Update. Turn on Automatic Updates.
+- **Android:** Settings → System → Software update (names vary).
+
+Then do the computer and the browser. Restart when it asks.
+
+## 2. Backups
+
+- **iPhone:** check that iCloud Backup is turned on (Settings → [their name] → iCloud → iCloud Backup).
+- **Android:** check that Google backup is turned on (usually Settings → Google → Backup, or Settings → System → Backup).
+
+Then open the photos app and make sure the photos are actually saving somewhere. "Backup is on" and "the photos are backed up" aren't always the same thing, especially if the storage plan is full.
+
+For a home computer or business files, the classic rule is **3-2-1**: three copies of what matters, on two kinds of storage, with one copy kept somewhere else. Then test a restore once, so you know it works.
+
+## 3. The email account
+
+Email can reset almost every other password, so it's the master key.
+
+- Turn on two-step verification. Our <a href={siteUrl('/learn/two-factor-authentication/')}>2FA guide</a> has the steps for Google, Apple and Microsoft.
+- Make sure the recovery phone number is current.
+- Make sure the recovery email is current.
+
+## 4. Passwords
+
+Retire the password notebook and set up a password manager. The ones built into iPhone and Android are a fine start. Move the most important accounts first: email, bank and the phone carrier. Our <a href={siteUrl('/learn/passwords-and-passkeys/')}>passwords and passkeys guide</a> explains why long, unique passwords matter more than complicated ones.
+
+## 5. A family code word
+
+Scammers call pretending to be a grandchild or another relative in trouble, and some use AI to clone a real voice. The FBI recommends a secret word or phrase that your family can use to verify each other ([FBI PSA, Dec 2024](https://www.ic3.gov/PSA/2024/PSA241203)).
+
+The rule: **if a caller can't say the word, hang up and call back on the number you already have.** Agree on the word in person. Don't post it or put it in the group chat.
+
+More scam tells (gift cards, fake delivery texts, fake order emails) are in our <a href={siteUrl('/learn/spot-a-scam/')}>scam-spotting guide</a>.
+
+## 6. The router
+
+That box in the corner may still be on its factory password.
+
+- Sign in to its settings page and change the **admin password**.
+- Check for a **firmware update**.
+- Make sure the Wi-Fi uses **WPA2 or WPA3**.
+
+Our <a href={siteUrl('/learn/wifi-network-checkup/')}>30-minute router checkup</a> walks through every step.
+
+## 7. Make it easier to use
+
+Bigger text, a brighter screen, a louder ringtone, and fewer apps on the home screen. Ask what's frustrating and fix that first. These small changes often mean fewer tech calls all year.
+
+## 8. Plan for the hard day
+
+Not a fun talk, but a kind one. These settings let a trusted person help if someone gets locked out of their account or passes away.
+
+- **Apple:** a [Recovery Contact](https://support.apple.com/en-us/102641) can help someone get back into their account, and a [Legacy Contact](https://support.apple.com/en-us/102631) can request access to their data after they die. Both are in Settings → [their name] → Sign-In &amp; Security.
+- **Google:** [Inactive Account Manager](https://myaccount.google.com/inactive) lets someone choose what happens to their account, and who's told, if it goes unused for a set time.
+
+## Before you leave
+
+Write down what you changed on one page. Not the passwords, just the steps: "Turned on automatic updates. Backups on. Code word set." That helps them, and it helps you next year.
+
+## Bonus: setting up holiday gifts
+
+### Kid's first tablet or phone
+
+Set it up before you wrap it.
+
+- **Apple:** Family Sharing plus Screen Time ([Apple: parental controls](https://support.apple.com/en-us/105121)).
+- **Android:** [Google Family Link](https://families.google/familylink/).
+
+Then turn on download approvals (Ask to Buy on Apple), daily time limits and age-based content limits. One simple house rule, like "tablets charge in the kitchen overnight," helps too.
+
+### A new smart TV
+
+Many smart TVs use **ACR (automatic content recognition)** to recognize what's on screen and use that viewing data for things like recommendations and ads. You can usually turn it off in the TV's settings, often under privacy or viewing information. Current names include Samsung "Viewing Information Services," LG "Live Plus," Vizio "Viewing Data" and Roku "Smart TV Experience." Names change with software updates, so if you can't find it, search the TV maker's support site for your model plus "ACR."
+
+### A new phone, or passing down an old one
+
+Our <a href={siteUrl('/learn/phone-security-checkup/')}>phone security checkup</a> covers the first five things to do on a new phone, and the four steps, in order, before you give an old one away.
+
+## Sources
+
+- FBI IC3: [Criminals use generative AI to facilitate financial fraud](https://www.ic3.gov/PSA/2024/PSA241203)
+- Apple Support: [Recovery contact](https://support.apple.com/en-us/102641), [Legacy Contact](https://support.apple.com/en-us/102631), [Parental controls](https://support.apple.com/en-us/105121)
+- Google: [Inactive Account Manager](https://myaccount.google.com/inactive), [Family Link](https://families.google/familylink/)
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Can't be there in person?</span>
+  <h3>We can do the checkup remotely</h3>
+  <p>NeonKey can run through these fixes with a parent or relative over a screen share, at their pace, and leave a one-page note of what changed.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
+</article>

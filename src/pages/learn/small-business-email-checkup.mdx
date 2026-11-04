@@ -1,0 +1,80 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Small-business email checkup: 5 settings, your domain, and holiday hours"
+description: A beginner checklist for small-business email. Five settings to check (two-step login, forwarding rules, admin access, SPF, DKIM and DMARC, connected apps), Gmail address vs. your own domain, keeping your domain from expiring, booking links, and updating holiday hours in three places.
+kicker: Learn · Security · Practical IT · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">For most small businesses, email is where the money, the customers and the password resets all live. That makes it the account most worth checking. Here are the settings to look at, a few decisions about your domain, and a quick list for when you close for a holiday.</p>
+
+## 5 email settings to check
+
+### 1. A second login step on every mailbox
+
+Every mailbox, including shared ones like info@ or billing@, should have two-step login turned on. Our <a href={siteUrl('/learn/two-factor-authentication/')}>2FA guide</a> has the steps for Google and Microsoft.
+
+### 2. Forwarding rules you didn't set up
+
+After breaking into a mailbox, attackers sometimes add a hidden rule that forwards or deletes certain emails, like invoices. In Gmail, look under Settings → **Forwarding and POP/IMAP** and **Filters and Blocked Addresses**. In Outlook, look under Settings → Mail → **Rules** and **Forwarding**. Remove anything you don't recognize.
+
+### 3. Who has admin access
+
+In Google Workspace or Microsoft 365, check the list of admins. Each should be a named person who still needs it. Past staff and past helpers should be removed. Anyone who helps with your IT should have their own admin login, not yours. Our guide to <a href={siteUrl('/learn/working-with-it-help/')}>working with IT help</a> explains why.
+
+### 4. SPF, DKIM and DMARC for your domain
+
+These are three settings (DNS records) on your domain that tell other email services which servers are allowed to send as you. They make your real emails more likely to land in the inbox and make it harder for scammers to send fake email that looks like it's from your address. Google now requires bulk senders to have them and recommends them for everyone ([Gmail: email sender guidelines](https://support.google.com/a/answer/81126)).
+
+If those three acronyms mean nothing to you, that's normal. Your email provider's help pages walk through it, or it's a good job to hand to someone who has done it before.
+
+### 5. Apps connected to your mailbox
+
+Over time, lots of apps get permission to read or send from your email: schedulers, CRMs, old plug-ins. In your Google Account (Security → Your connections to third-party apps &amp; services) or Microsoft account (Privacy → Apps and services), remove the ones you no longer use.
+
+## Gmail address or your own domain?
+
+A free Gmail address is fine to start. An address at your own domain (you@yourbusiness.com):
+
+- matches your website and looks more established,
+- stays yours if you switch email providers,
+- lets you add addresses like hello@ or billing@ to one inbox,
+- makes staff handoffs cleaner, since the address belongs to the business,
+- and, with SPF, DKIM and DMARC set up, is harder for scammers to fake.
+
+## Don't let your domain expire
+
+If your domain expires, your website and your email can stop working. A two-minute check:
+
+<ol class="steps">
+  <li>Turn on <strong>auto-renew</strong> at the company where you registered the domain.</li>
+  <li>Update the <strong>card on file</strong> so the renewal doesn't fail.</li>
+  <li>Know <strong>which account owns the domain</strong>. It should be the business's account, not a past employee's or helper's personal one.</li>
+</ol>
+
+## Stop the "what time works?" email chain
+
+Share a booking link instead. Clients pick an open time, and it lands on your calendar. Google Calendar's appointment schedules and Microsoft Bookings both do this, and both are included in many business plans.
+
+## Closed for a holiday? Update 3 places
+
+<ol class="steps">
+  <li><strong>Google Business Profile:</strong> add <a href="https://support.google.com/business/answer/6303076">special hours</a> for the days you're closed, so Google Search and Maps show them.</li>
+  <li><strong>Email auto-reply:</strong> say when you're closed and when you'll reply.</li>
+  <li><strong>Voicemail greeting or website banner:</strong> the same message, short.</li>
+</ol>
+
+Then set a calendar reminder to undo all three when you're back.
+
+## Sources
+
+- Gmail Help: [Email sender guidelines](https://support.google.com/a/answer/81126)
+- Google Business Profile Help: [How to set special hours](https://support.google.com/business/answer/6303076)
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Rather have it done?</span>
+  <h3>We can check your email setup with you</h3>
+  <p>NeonKey can go through these settings remotely, set up SPF, DKIM and DMARC, clean up admin access and connected apps, and leave a short note of what changed and how to undo it.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
+</article>

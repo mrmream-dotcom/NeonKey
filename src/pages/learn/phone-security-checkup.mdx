@@ -1,0 +1,97 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "The 15-minute phone security checkup"
+description: Beginner steps to secure an iPhone or Android phone. Updates, auto-lock and a strong passcode, Find My and Find Hub, a carrier PIN against SIM swaps, freeing up storage, public Wi-Fi habits, setting up a new phone and safely giving away an old one.
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">Your phone holds your email, your bank, your photos and the codes that protect everything else. These settings take about 15 minutes, and most of them you only set once. Menu names vary by phone maker and software version, so if a step doesn't match exactly, search your Settings app for the key word.</p>
+
+## 1. Turn on automatic updates
+
+Updates often fix security holes that attackers already know about. Install anything waiting, turn on automatic updates, and restart when it asks.
+
+- **iPhone:** Settings → General → Software Update. Turn on Automatic Updates.
+- **Android:** Settings → System → Software update (names vary by brand).
+
+Do the same for your computer and your browser. In Chrome, opening Menu → Help → About Google Chrome checks for an update. In Edge, it's Menu → Help and feedback → About Microsoft Edge.
+
+**Restart once a week.** A restart finishes waiting updates, clears memory and resets stuck connections. That goes for your phone, your computer and your router.
+
+## 2. Lock it fast, with a real passcode
+
+- **iPhone:** Settings → Display &amp; Brightness → Auto-Lock.
+- **Android:** Settings → Display → Screen timeout.
+
+Thirty seconds to one minute is a good setting. Use a passcode of at least six digits, and turn on Face ID or fingerprint unlock so a short timeout doesn't get annoying.
+
+Stepping away from your computer? Lock it the same way: **Windows key + L** on Windows, **Control + Command + Q** on a Mac.
+
+## 3. Turn on Find My, and test it
+
+If your phone goes missing, you can locate it, ring it, lock it or erase it from another device.
+
+- **iPhone:** Settings → [your name] → Find My → Find My iPhone.
+- **Android:** search Settings for "Find Hub" (Google's new name for Find My Device) and make sure it's on ([Android Help](https://support.google.com/android/answer/6160491)).
+
+Then test it once from a computer at icloud.com/find (iPhone) or google.com/android/find (Android), so you know how before you need it.
+
+## 4. Put a PIN on your phone number itself
+
+In a **SIM swap**, a scammer talks your carrier into moving your phone number to their phone. Then your calls and text-message login codes go to them.
+
+- Call your carrier or open its app and set an **account PIN or passcode**.
+- Turn on a **number transfer lock** (sometimes called a port-out lock or number lock) if your carrier offers one.
+- Where you can, use an authenticator app or a passkey instead of text-message codes. Our <a href={siteUrl('/learn/two-factor-authentication/')}>2FA guide</a> explains the options.
+
+## 5. Clear out what you don't use
+
+**Fewer apps, fewer ways in.** Every app is one more thing to update and one more set of permissions. Delete the ones you haven't opened in months.
+
+**Phone full?** On iPhone, Settings → General → iPhone Storage → **Offload Unused Apps** removes apps you don't use but keeps their data, so you can reinstall anytime and pick up where you left off.
+
+## 6. Public Wi-Fi habits
+
+Most websites and apps encrypt your connection now, so public Wi-Fi is less risky than it used to be. A few habits still help:
+
+- For banking and shopping, your phone's own data or **personal hotspot** is the simpler choice.
+- Confirm the exact network name with staff. Look-alike network names are a known trick.
+- Turn off auto-join for networks you don't trust, and tap **Forget this network** when you leave.
+- Low battery? Use your own charger in a wall outlet rather than an unknown USB cable.
+
+## Got a new phone? Do these 5 things first
+
+<ol class="steps">
+  <li><strong>Install updates</strong> before anything else.</li>
+  <li><strong>Set a passcode</strong> with Face ID or fingerprint.</li>
+  <li><strong>Turn on Find My</strong> (or Find Hub) and test it.</li>
+  <li><strong>Turn on backup:</strong> iCloud Backup on iPhone, Google backup on Android.</li>
+  <li><strong>Move your authenticator app</strong> to the new phone <em>before</em> you wipe the old one. Most authenticator apps have a transfer or export option, and some sync through your account. If you skip this, you can lock yourself out of accounts that use it.</li>
+</ol>
+
+## Giving away or selling your old phone? 4 steps, in order
+
+<ol class="steps">
+  <li><strong>Back it up,</strong> and check the backup finished.</li>
+  <li><strong>Move your two-step login codes</strong> (authenticator app, passkeys) to your new phone and test a sign-in.</li>
+  <li><strong>Sign out</strong> of your Apple Account or Google account. On iPhone, this also turns off Activation Lock, which would otherwise block the next owner.</li>
+  <li><strong>Erase it.</strong> iPhone: Settings → General → Transfer or Reset iPhone → Erase All Content and Settings. Android: Settings → System → Reset options → Erase all data (names vary).</li>
+</ol>
+
+Skip a step and you can lock out the next owner, or yourself. Apple has a full checklist in [What to do before you sell, give away, or trade in your iPhone](https://support.apple.com/en-us/109511).
+
+## Sources
+
+- Apple Support: [What to do before you sell, give away, or trade in your iPhone or iPad](https://support.apple.com/en-us/109511)
+- Android Help: [Find, secure, or erase a lost Android device](https://support.google.com/android/answer/6160491)
+- FTC: [Are public Wi-Fi networks safe? What you need to know](https://consumer.ftc.gov/articles/are-public-wi-fi-networks-safe-what-you-need-know)
+- CISA, Secure Our World: [Update software](https://www.cisa.gov/secure-our-world/update-software)
+
+<article class="card" style="margin-top:2rem">
+  <span class="kicker">Setting up phones for a team?</span>
+  <h3>We can do the checkup with you</h3>
+  <p>NeonKey can walk through these settings remotely for you or your staff, and leave a short note of what's on and why.</p>
+  <p style="margin-top:.8rem"><a class="lab-read" href={siteUrl('/services/remote-it/')}>See how NeonKey can help →</a></p>
+</article>
