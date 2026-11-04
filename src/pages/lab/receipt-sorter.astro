@@ -107,7 +107,7 @@ const sections: [string, string][] = [['scan', 'Read a receipt'], ['entry', 'Add
     <ul>
       <li><strong>Your ledger stays in your browser.</strong> Entries are saved in this browser's local storage on this device. Nothing in the ledger is sent to NeonKey or stored on a server.</li>
       <li><strong>Photos and PDFs are read, then discarded.</strong> When you take a photo or choose a file, it goes to a small Cloudflare Worker, which passes it to Google's Gemini API and returns the fields. The Worker doesn't save or log the file or what was read from it.</li>
-      <li><strong>Free AI tier caveat.</strong> This runs on Gemini's free tier. Google says it may use free-tier submissions to improve its products, and its reviewers may read them. Cover sensitive details before you upload, or type the entry by hand. A business setup would use a paid tier with different data terms.</li>
+      <li><strong>Free AI tier caveat.</strong> This runs on Gemini's free tier. Google says it may use free-tier submissions to improve its products, and its reviewers may read them. Cover sensitive details before you upload, or type the entry by hand. A business setup would use a paid tier with different data terms. Client builds are different: they run on a paid API account in the client's own name, under the paid tier's data terms, not on this free sandbox.</li>
       <li><strong>Manual entries never leave your device.</strong> Adding an entry by hand doesn't call the AI at all.</li>
     </ul>
 

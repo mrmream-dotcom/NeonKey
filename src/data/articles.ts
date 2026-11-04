@@ -109,7 +109,8 @@ export const articles: Article[] = [
     title: 'Four Budget Work Machines for Everyday Work',
     description: 'Smaller-tier alternatives to a gaming-laptop workstation: Mac mini M6, MacBook Air 13-inch M5, ThinkPad E14 Gen 7 and HP ProBook 4 G1i, plus what to look for in a secure, reliable work machine.',
     topic: 'Laptops',
-    category: 'reviews',
+    // A spec-based buying guide, not a hands-on review (the article says so), so it lists under insights.
+    category: 'insights',
     author: 'Michael Ream',
     date: '2026-10-30',
     image: '/images/articles/budget-work-laptops/hero.jpg',

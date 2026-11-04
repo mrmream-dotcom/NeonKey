@@ -1,5 +1,5 @@
 ---
-import { url } from '../config';
+import { url, absoluteUrl, CONTACT_EMAIL } from '../config';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -16,8 +16,36 @@ const checks: { h: string; p: string; icon: IconName; accent: string }[] = [
   { h: 'Printers and slow computers', p: 'Updates, cleanup and the small fixes that eat everyone\'s time.', icon: 'wrench', accent: 'accent-cyan' },
   { h: 'A one-page report', p: 'What we checked, what we fixed, and a short list of what to do next, in order of importance.', icon: 'check', accent: 'accent-magenta' },
 ];
+// Local structured data lives only on this page, so the Fairbanks service area doesn't define the whole site.
+const abs = (p: string) => absoluteUrl(p, Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${abs('/local/')}#business`,
+  name: 'NeonKey',
+  url: abs('/local/'),
+  email: CONTACT_EMAIL,
+  telephone: '+1-302-408-0624',
+  image: abs('/og-default.png'),
+  description: 'On-site Office Tech Tune-Up for small offices in Fairbanks and North Pole, Alaska, plus remote small-office IT setup and AI automation across the US.',
+  areaServed: [
+    { '@type': 'City', name: 'Fairbanks', containedInPlace: { '@type': 'State', name: 'Alaska' } },
+    { '@type': 'City', name: 'North Pole', containedInPlace: { '@type': 'State', name: 'Alaska' } },
+  ],
+  founder: { '@type': 'Person', name: 'Michael Ream', url: abs('/about/') },
+  makesOffer: {
+    '@type': 'Offer',
+    name: 'Office Tech Tune-Up',
+    url: abs('/local/'),
+    price: 249,
+    priceCurrency: 'USD',
+    description: 'One on-site visit of about 2 to 3 hours for an office with up to about 10 devices; founding rate.',
+  },
+};
+const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 <Base title="Office Tech Tune-Up in Fairbanks and North Pole" description="On-site Office Tech Tune-Up for small offices in Fairbanks and North Pole, Alaska: Wi-Fi, backups, passwords, email security and printers in one visit, with a written report. $249 founding rate.">
+  <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <PageHeader eyebrow="Local · Fairbanks and North Pole" title="Office Tech Tune-Up" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Office Tech Tune-Up' }]}>
     <p class="lede">Your office tech, checked and fixed in one visit. On-site help for small offices in Fairbanks and North Pole, with evening and Saturday times available.</p>
     <div class="btn-row">
@@ -28,6 +56,7 @@ const checks: { h: string; p: string; icon: IconName; accent: string }[] = [
       <li><span><strong>$249</strong> founding rate</span></li>
       <li><span>About 2 to 3 hours on site</span></li>
       <li><span>Offices up to about 10 devices</span></li>
+      <li><span>Evenings and Saturdays, so your staff keep working</span></li>
     </Fragment>
   </PageHeader>
 
