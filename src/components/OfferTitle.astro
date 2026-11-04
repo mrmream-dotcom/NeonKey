@@ -1,0 +1,10 @@
+---
+// Card title for a service. When the offer has an outcome `headline`, this is the `cards` A/B test:
+// variant a shows the service name, variant b the outcome headline (see src/data/ab-tests.ts).
+import type { Offer } from '../data/services';
+interface Props { offer: Offer }
+const { offer } = Astro.props;
+---
+{offer.headline ? (
+  <Fragment><span data-ab="cards:a">{offer.name}</span><span data-ab="cards:b">{offer.headline}</span></Fragment>
+) : offer.name}

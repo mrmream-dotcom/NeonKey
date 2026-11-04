@@ -4,6 +4,7 @@ import '../styles/editorial.css';
 import Logo from '../components/Logo.astro';
 import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, absoluteUrl } from '../config';
 import SocialLinks from '../components/SocialLinks.astro';
+import { abTests } from '../data/ab-tests';
 interface Props {
   title: string;
   description?: string;
@@ -31,6 +32,7 @@ const fullTitle = title === 'Home' ? 'NeonKey: Office IT Setup and AI Automation
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 const ogImage = absoluteUrl(image, Astro.site);
+const abIds = abTests.map((t) => t.id);
 const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
 ---
 <!doctype html>
@@ -38,6 +40,39 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    {abIds.length > 0 && (
+      // A/B split (src/data/ab-tests.ts). Runs before paint so the other variant never flashes.
+      <script is:inline define:vars={{ abIds }}>
+        (function () {
+          var d = document.documentElement, k = 'nk-ab', s = {}, v = {};
+          try { s = JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) {}
+          var q = {};
+          (new URLSearchParams(location.search).get('ab') || '').split(',').forEach(function (p) {
+            var x = p.split(':'); if (x[1] === 'a' || x[1] === 'b') q[x[0]] = x[1];
+          });
+          abIds.forEach(function (id) {
+            if (s[id] !== 'a' && s[id] !== 'b') s[id] = Math.random() < 0.5 ? 'a' : 'b';
+            v[id] = q[id] || s[id];
+            d.setAttribute('data-ab-' + id, v[id]);
+          });
+          try { localStorage.setItem(k, JSON.stringify(s)); } catch (e) {}
+          if (Object.keys(q).length) return; // previews are not counted
+          document.addEventListener('DOMContentLoaded', function () {
+            var seen = {};
+            abIds.forEach(function (id) { if (document.querySelector('[data-ab^="' + id + ':"]')) seen[id] = v[id]; });
+            if (!Object.keys(seen).length) return;
+            document.querySelectorAll('[data-umami-event]').forEach(function (el) {
+              Object.keys(seen).forEach(function (id) { el.setAttribute('data-umami-event-ab-' + id, seen[id]); });
+            });
+            var tries = 0;
+            (function send() {
+              if (window.umami && window.umami.track) return window.umami.track('ab-view', seen);
+              if (++tries < 20) setTimeout(send, 250);
+            })();
+          });
+        })();
+      </script>
+    )}
     <meta name="robots" content={robots} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />

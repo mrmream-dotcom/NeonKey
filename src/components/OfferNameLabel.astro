@@ -1,0 +1,7 @@
+---
+// Small service-name label shown under the outcome headline (variant b of the `cards` A/B test).
+import type { Offer } from '../data/services';
+interface Props { offer: Offer }
+const { offer } = Astro.props;
+---
+{offer.headline && <p class="offer-name" data-ab="cards:b">{offer.name}</p>}
