@@ -66,7 +66,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <ul class="fop-parts" aria-label="What's bundled">
               {fop.parts.map((p) => <li><span>{p.name}</span> <span class="muted">{p.value}</span></li>)}
             </ul>
-            <p class="muted" style="font-size:.95rem">The same four parts booked one by one come to more than {usd(fop.value)}. As the Start-Up Deal they are planned and built as one system for {usd(fop.from)}.</p>
+            <p class="muted" style="font-size:.95rem">The same four parts at standard rates come to {usd(fop.separately)}. As the Start-Up Deal, at the founding-client rate, they are planned and built as one system for {usd(fop.from)}.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Ask about the package</a>
               <a class="btn btn-ghost" href="#auto-h" data-umami-event="services-cta" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See the parts</a>
@@ -112,7 +112,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <OfferDetails offer={remoteSupportPlan} />
           </div>
           <div class="offer-featured-side">
-            <p class="price">Starting at {usd(remoteSupportPlan.from)}/mo<small>Scoped to your team</small></p>
+            <p class="price">Starting at {usd(remoteSupportPlan.from)}/mo<small>Founding rate · standard rate from {usd(remoteSupportPlan.standard!)}/mo</small></p>
             <div class="btn-row">
               <a class="btn btn-ghost" href={url('/contact/?topic=support-plan')} data-umami-event="contact-click" data-umami-event-offer={remoteSupportPlan.name}>Get in touch</a>
             </div>
@@ -148,7 +148,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <span class="kicker">{o.kicker ?? 'Automation'}</span>
             <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
             {o.outcome && <p class="offer-outcome">{o.outcome}.</p>}
-            <p class="price">Starting at {usd(o.from)}<small>Scoped per project</small></p>
+            <p class="price">Starting at {usd(o.from)}<small>{o.standard ? `Founding rate · standard rate from ${usd(o.standard)}` : 'Scoped per project'}</small></p>
             <p class="muted">{o.for}.</p>
             <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
             <OfferDetails offer={o} />
