@@ -154,9 +154,12 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
           <article class={`card topline ${accents[i % accents.length]}`} id={`menu-${g.id}`}>
             <h3 style="font-size:1.12rem;margin:0 0 .6rem">{g.title}</h3>
             <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
-            <p class="muted menu-fits">Usually part of: <a href={g.fits === 'support-plan' ? '#support-plan' : `#${g.fits}`} data-umami-event="menu-click" data-umami-event-group={g.id}>{g.fitsLabel}</a></p>
           </article>
         ))}
+      </div>
+      <div class="callout menu-own">
+        <span><strong>This is just a starting list.</strong> If a task is repetitive, follows the same steps or lives in a spreadsheet, there's a good chance we can take it off your plate. Got an idea of your own? Bring it, even if it's half-formed. We're open to it.</span>
+        <a class="btn btn-ghost btn-sm" href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu-own-idea">Pitch us your idea</a>
       </div>
       <div class="btn-row" style="margin-top:1.5rem">
         <a class="btn btn-primary" href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu">Tell us which one</a>
@@ -212,7 +215,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
   .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }
   .menu-list { margin: 0 0 .9rem; padding-left: 1.1rem; }
   .menu-list li { margin-bottom: .45rem; }
-  .menu-fits { font-size: .92rem; margin: auto 0 0; }
+  .menu-own { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
   .menu-grid .card { display: flex; flex-direction: column; }
   .card[id^="menu-"] { scroll-margin-top: 90px; }
 </style>
