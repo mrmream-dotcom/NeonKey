@@ -8,8 +8,6 @@ import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 import type { IconName } from '../lib/ui';
 
-const PHONE = '(302) 408-0624';
-const PHONE_HREF = 'tel:+13024080624';
 const checks: { h: string; p: string; icon: IconName; accent: string }[] = [
   { h: 'Wi-Fi and router', p: 'Speed check, strong admin and Wi-Fi passwords, router updates and a separate guest network.', icon: 'wifi', accent: 'accent-cyan' },
   { h: 'Backups', p: 'Confirm your important files are actually being backed up, and test that a file can be restored.', icon: 'doc', accent: 'accent-magenta' },
@@ -27,7 +25,6 @@ const jsonLd = {
   name: 'NeonKey',
   url: abs('/local/'),
   email: CONTACT_EMAIL,
-  telephone: '+1-302-408-0624',
   image: abs('/og-default.png'),
   description: 'On-site Office Tech Tune-Up for small offices in Fairbanks and North Pole, Alaska, plus remote small-office IT setup and AI automation across the US.',
   areaServed: [
@@ -51,8 +48,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   <PageHeader eyebrow="Local · Fairbanks and North Pole" title="Office Tech Tune-Up" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Office Tech Tune-Up' }]}>
     <p class="lede">Your office tech, checked and fixed in one visit. On-site help for small offices in Fairbanks and North Pole, with evening and Saturday times available.</p>
     <div class="btn-row">
-      <a class="btn btn-primary" href={PHONE_HREF} data-umami-event="contact-click" data-umami-event-location="local-hero-call">Call or text {PHONE}</a>
-      <a class="btn btn-ghost" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-location="local-hero-form">Book by message</a>
+      <a class="btn btn-primary" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-location="local-hero-form">Book by message</a>
+      <a class="btn btn-ghost" href={`mailto:${CONTACT_EMAIL}?subject=Office%20Tech%20Tune-Up`} data-umami-event="contact-click" data-umami-event-location="local-hero-email">Email {CONTACT_EMAIL}</a>
     </div>
     <Fragment slot="meta">
       <li><span><strong>$249</strong> founding rate</span></li>
@@ -88,7 +85,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <div class="panel topline accent-violet">
           <span class="kicker">Free 10-minute tech check</span>
           <p class="muted">Not sure you need a full tune-up? Tell us what's bugging you, and we'll tell you honestly whether it's worth fixing. No obligation.</p>
-          <a class="btn btn-primary" href={PHONE_HREF} data-umami-event="contact-click" data-umami-event-location="local-free-check">Call or text {PHONE}</a>
+          <a class="btn btn-primary" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-location="local-free-check">Ask for a free check</a>
         </div>
       </div>
     </div>
