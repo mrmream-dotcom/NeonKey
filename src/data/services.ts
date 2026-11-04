@@ -281,3 +281,69 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
     note: 'AI usage, automation tools and other software subscriptions are billed to you directly by those providers and are not part of this price. AI answers can be wrong, so the assistant hands off to a person when unsure. After the three included months, the support plan continues at its normal rate only if you choose to keep it.',
   },
 };
+
+/**
+ * "What can we automate?" menu on /services/#automation-menu.
+ * Everyday jobs a small business can hand to an automation, grouped by the work they save,
+ * each pointing to the service it usually fits inside. Examples, not a fixed catalog:
+ * every build is scoped on a call, and simple ones may not need custom work at all.
+ */
+export interface MenuGroup {
+  id: string;
+  title: string;
+  /** Offer slug on this page (an id on /services/) that this group usually fits inside. */
+  fits: string;
+  fitsLabel: string;
+  items: string[];
+}
+
+export const automationMenu: MenuGroup[] = [
+  {
+    id: 'leads', title: 'New leads and inquiries', fits: 'lead-routing', fitsLabel: 'Lead-Routing & Follow-Up',
+    items: [
+      'Sort and tag new inquiries as they arrive, so the hot ones get seen first',
+      'Send each lead to the right person, inbox or spreadsheet automatically',
+      'Follow-up reminders and ready-to-send templates, so nobody goes cold',
+    ],
+  },
+  {
+    id: 'questions', title: 'Customer questions', fits: 'ai-faq', fitsLabel: 'AI Intake & FAQ Assistant',
+    items: [
+      'A website assistant that answers your common questions from your own FAQ',
+      'Collect name, contact and request details before a human takes over',
+      'First-pass sorting of support emails by topic and urgency',
+    ],
+  },
+  {
+    id: 'email', title: 'Email and replies', fits: 'quick-win', fitsLabel: 'Quick Win',
+    items: [
+      'An instant "we got your message" reply that sets expectations',
+      'Draft replies to everyday emails that you review before sending',
+      'Labels and filters that keep receipts, orders and newsletters out of the way',
+    ],
+  },
+  {
+    id: 'money', title: 'Invoices, receipts and admin', fits: 'quick-win', fitsLabel: 'Quick Win',
+    items: [
+      'Polite payment reminders from the invoicing tool you already use',
+      'Receipts read and logged into a spreadsheet by category',
+      'Meeting notes summarized and emailed to everyone after the call',
+    ],
+  },
+  {
+    id: 'reviews', title: 'Bookings and reviews', fits: 'quick-win', fitsLabel: 'Quick Win',
+    items: [
+      'Booking reminders that cut down on no-shows',
+      'A review request sent a day after the job is done',
+      'An alert when a new review lands, with a suggested reply to edit',
+    ],
+  },
+  {
+    id: 'it', title: 'Office IT health', fits: 'support-plan', fitsLabel: 'Monthly Remote Support Plan',
+    items: [
+      'An alert when a backup has not run',
+      'A checklist that runs when someone joins or leaves, so accounts are added and closed on time',
+      'A check that your email security settings (SPF, DKIM, DMARC) are still in place',
+    ],
+  },
+];
