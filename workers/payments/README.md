@@ -59,7 +59,7 @@ The scripts refuse a live key unless you pass `--live`.
 
 ## Webhook Worker
 
-`POST /webhook` verifies the `Stripe-Signature` header with `STRIPE_WEBHOOK_SECRET` before reading anything,
+`POST /webhook` verifies the `Stripe-Signature` header (HMAC-SHA256 via WebCrypto in `src/verify.js`, 5-minute replay window, constant-time compare; tests check it against the official SDK signer) with `STRIPE_WEBHOOK_SECRET` before reading anything,
 then emails a short notice From `NeonKey 🔑 <hello@neonkey.tech>` to `NOTIFY_TO`, BCC `BCC_ADDRESS`
 (payments, failed payments, new/canceled subscriptions, refunds, disputes, fraud warnings). A Resend
 idempotency key per event stops duplicate emails when Stripe retries. If the email fails the Worker

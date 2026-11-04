@@ -4,10 +4,8 @@
 // Stripe itself emails customers their invoices and receipts (Dashboard > Settings > Customer emails),
 // so this Worker only notifies NeonKey (hello@, BCC Michael). It stores nothing.
 // Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET, RESEND_API_KEY. No Stripe API key is needed here.
-import Stripe from "stripe";
 import { describeEvent } from "./events.js";
-
-const crypto = Stripe.createSubtleCryptoProvider();
+import { verifyStripeEvent } from "./verify.js";
 
 export default {
   async fetch(request, env) {
@@ -29,7 +27,7 @@ export default {
 
     let event;
     try {
-      event = await Stripe.webhooks.constructEventAsync(raw, sig, env.STRIPE_WEBHOOK_SECRET, undefined, crypto);
+      event = await verifyStripeEvent(raw, sig, env.STRIPE_WEBHOOK_SECRET);
     } catch {
       console.log("payments: bad webhook signature");
       return json(400, { ok: false });
