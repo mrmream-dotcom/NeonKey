@@ -1,6 +1,9 @@
 ---
 import ArticleIndex from '../../components/ArticleIndex.astro';
+import Bridge from '../../components/Bridge.astro';
+
 // Published articles are listed in src/data/articles.ts (category: 'news' | 'insights').
 // Unpublished drafts live in src/_drafts/articles/ (see LAUNCH.md "Hidden drafts").
 ---
 <ArticleIndex />
+<Bridge location="articles" text="Articles explain the news; the Lab shows it working; services put it to work in your office." links={[{ href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/services/', label: 'See services', event: 'services-cta' }, { href: '/newsletter/', label: 'Get the weekly email', event: 'newsletter-cta' }]} />

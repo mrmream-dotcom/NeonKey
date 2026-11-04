@@ -1,0 +1,32 @@
+---
+// Bridge: a short "where to next" strip so every section of the site points to its neighbors
+// (content → services, services → demos, local → remote, and so on). Keep it to one sentence and 2–3 links.
+import { url } from '../config';
+interface Props {
+  eyebrow?: string;
+  text: string;
+  links: { href: string; label: string; event?: string }[];
+  location: string;
+}
+const { eyebrow = 'Where to next', text, links, location } = Astro.props;
+---
+<section class="bridge" aria-label="Related on NeonKey">
+  <div class="container">
+    <div class="callout bridge-box">
+      <div>
+        <span class="kicker eyebrow">{eyebrow}</span>
+        <p style="margin:.3rem 0 0">{text}</p>
+      </div>
+      <div class="btn-row" style="margin:0">
+        {links.map((l, i) => (
+          <a class={`btn btn-sm ${i === 0 ? 'btn-primary' : 'btn-ghost'}`} href={url(l.href)} data-umami-event={l.event ?? 'bridge-click'} data-umami-event-location={location} data-umami-event-item={l.href}>{l.label}</a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bridge { padding-top: 0; }
+  .bridge-box { display: flex; justify-content: space-between; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; }
+</style>

@@ -2,6 +2,8 @@
 import { url, absoluteUrl, CONTACT_EMAIL } from '../config';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Bridge from '../components/Bridge.astro';
+
 import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 import type { IconName } from '../lib/ui';
@@ -117,4 +119,5 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <p class="muted" style="font-size:.95rem">Outside Fairbanks and North Pole? Our <a href={url('/services/remote-it/')}>remote small-office IT setup</a> covers most of the same ground by video call.</p>
     </div>
   </section>
+  <Bridge location="local" text="After the visit: the Monthly Remote Support Plan keeps things that way, and the free Starter IT Kit helps you track accounts between checkups." links={[{ href: '/services/#support-plan', label: 'Monthly support plan', event: 'services-cta' }, { href: '/free-it-kit/', label: 'Free Starter IT Kit', event: 'free-kit-cta' }, { href: '/services/', label: 'All services', event: 'services-cta' }]} />
 </Base>

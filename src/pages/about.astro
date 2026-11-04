@@ -2,6 +2,8 @@
 import { url, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../config';
 import SocialLinks from '../components/SocialLinks.astro';
 import Base from '../layouts/Base.astro';
+import Bridge from '../components/Bridge.astro';
+
 import PageHeader from '../components/PageHeader.astro';
 import Icon from '../components/Icon.astro';
 ---
@@ -52,4 +54,5 @@ import Icon from '../components/Icon.astro';
     </div>
   </aside>
   </div>
+  <Bridge location="about" text="The same hands-on work, for your office: fixed-scope IT setup and small automations, built after hours on accounts you own." links={[{ href: '/services/', label: 'See services and prices', event: 'services-cta' }, { href: '/local/', label: 'On-site in Fairbanks' }, { href: '/lab/', label: 'Try the Lab demos', event: 'lab-cta' }]} />
 </Base>

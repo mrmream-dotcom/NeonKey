@@ -8,7 +8,7 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -215,12 +215,23 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           <p class="home-offer-note">Done over video and screen share. You keep every login, and you get notes on everything we changed. <a href={url('/services/remote-it/')}>Full details →</a></p>
         </article>
       </div>
+      <article class="card topline accent-magenta fop-strip" id="front-office">
+        <div>
+          <span class="kicker">Best deal · All-inclusive</span>
+          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package">{fop.name}</a></h3>
+          <p class="muted" style="margin:0">{fop.for}. AI intake and FAQ assistant, lead routing and follow-up, email lockdown and three months of the support plan, in one project.</p>
+        </div>
+        <div class="fop-strip-side">
+          <p class="price" style="margin:0">{usd(fop.from)}<small>{usd(fop.value)}+ value · founding-client rate</small></p>
+          <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Ask about the package</a>
+        </div>
+      </article>
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <div class="btn-row">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
         <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
       </div>
-      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. More services, like a monthly support plan, an AI assistant for your FAQs, lead follow-up and the all-inclusive Front Office Package, are on the services page. Results depend on your business and tools.</p>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. More services, like a monthly support plan, an AI assistant for your FAQs and lead follow-up, are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>
 
@@ -334,6 +345,10 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   .home-offers .home-offer-sub { margin: .6rem 0 .3rem; font-weight: 600; color: var(--text); }
   .home-offer-list { margin: 0 0 .8rem; padding-left: 1.15rem; display: grid; gap: .35rem; }
   .home-offer-note { font-size: .95rem; margin: 0; }
+  .fop-strip { margin-top: 1.25rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem 2rem; align-items: center; }
+  .fop-strip-side { display: grid; gap: .6rem; justify-items: start; }
+  .fop-strip .price small { display: block; font-size: .85rem; }
+  @media (max-width: 760px) { .fop-strip { grid-template-columns: 1fr; } }
   .hero-proof { margin: .9rem 0 0; font-size: .92rem; color: var(--muted); }
   .hero-proof a { color: inherit; text-decoration: underline; }
   .who-card { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.5rem; align-items: start; }
