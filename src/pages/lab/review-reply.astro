@@ -1,0 +1,232 @@
+---
+import { url, REVIEW_API_URL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import Toc from '../../components/Toc.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects } from '../../data/lab';
+import { reviewSamples } from '../../data/review-samples';
+const project = labProjects.find((p) => p.slug === 'review-reply')!;
+const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Durable Objects (rate-limit counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output'];
+const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['rules', 'Reply rules'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['related', 'Related']];
+---
+<Base title={project.title} description="A working review reply demo: paste a customer review and an AI reads the mood, flags anything risky, says how fast to respond and drafts a public reply for a person to edit and post.">
+  <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: project.title }]}>
+    <Fragment slot="title">Review reply helper, <span class="glow-c">working demo.</span></Fragment>
+    <p class="lede">Paste a Google, Yelp or Facebook review. An AI reads the mood, flags anything risky, tells you how fast to respond and drafts a public reply. You still read it, fix it and post it yourself. It's one of the builds on the <a href={url('/services/#automation-menu')}>"What can we automate?" menu</a>, running for real.</p>
+    <Fragment slot="meta">
+      <li><span>Level: <strong>{project.level}</strong></span></li>
+      <li><span>{project.tags.join(' · ')}</span></li>
+      {project.flag && <li><span>{project.flag} on this page</span></li>}
+    </Fragment>
+    <div slot="after" class="lab-head-toc"><Toc sections={sections} /></div>
+  </PageHeader>
+
+  <section id="demo" style="padding-top:0" aria-labelledby="demo-h">
+    <div class="container">
+      <h2 id="demo-h" class="sr-only">Try the demo</h2>
+      <div class="triage-wrap">
+        <form class="panel triage-form" id="rv-form" novalidate>
+          <label for="rv-text">Customer review</label>
+          <p class="muted" style="margin:.1rem 0 .3rem;font-size:.9rem">Load a made-up sample, or paste your own:</p>
+          <div class="triage-samples" role="group" aria-label="Made-up sample reviews">
+            {reviewSamples.map((s) => (
+              <button type="button" class="sample-btn" data-sample={s.id} aria-pressed="false" data-umami-event="review-sample" data-umami-event-sample={s.id}>Sample: {s.label}</button>
+            ))}
+          </div>
+          <textarea id="rv-text" name="review" maxlength="2000" rows="7" placeholder="e.g. Great service, but the wait was long..." aria-describedby="rv-note rv-count"></textarea>
+          <div class="rv-row">
+            <label>Stars
+              <select id="rv-stars" name="stars">
+                <option value="">Not given</option>
+                <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+              </select>
+            </label>
+            <label>Business name (optional)
+              <input id="rv-biz" name="business" type="text" maxlength="80" placeholder="e.g. Birch Street Auto" />
+            </label>
+          </div>
+          <div class="triage-meta-row">
+            <span class="char-count" id="rv-count" aria-live="polite">0 / 2000</span>
+            <button class="btn btn-primary" type="submit" id="rv-run" data-umami-event="review-run">Draft a reply</button>
+          </div>
+          <p class="triage-status" id="rv-status" role="status" aria-live="polite"></p>
+          <p class="form-note" id="rv-note" style="margin-top:.8rem">Sample reviews are made up: the people and businesses are fictional. What you type is sent to Google's Gemini API to generate the result. NeonKey doesn't store it. Please don't paste private or sensitive information; on the free tier Google may use what's submitted to improve its products, and its reviewers may read it. This demo shares its limit with the <a href={url('/lab/ai-inquiry-triage/')}>triage demo</a>: 5 runs a minute and 30 a day per visitor. See <a href={url('/privacy/')}>privacy</a>.</p>
+        </form>
+
+        <div id="rv-output" aria-live="polite">
+          <div class="triage-empty">
+            <p style="margin:0 0 .3rem;font-weight:700;color:var(--text)">Your result appears here</p>
+            <p style="margin:0">Mood, topics, any red flags, how fast to respond, a private tip and a draft public reply.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="narrow prose lab-case" style="padding-bottom:3rem">
+    <h2 id="what">What it does</h2>
+    <p>One review goes in. One structured result comes out:</p>
+    <ul>
+      <li><strong>Mood:</strong> positive, mixed or negative, read from the words, not only the stars. A 4-star review can still hide a real complaint.</li>
+      <li><strong>Topics:</strong> up to four short tags, like "wait time" or "friendly staff", so you can spot patterns across reviews.</li>
+      <li><strong>Flags:</strong> a warning when the review names a staff member, mentions private or health details, raises a legal or safety concern, involves money, or looks fake or off-topic.</li>
+      <li><strong>How fast to respond:</strong> high, medium or low, with a one-line reason.</li>
+      <li><strong>A private tip</strong> for you, and a <strong>draft public reply</strong> you can edit. Anything the AI can't know is left as a <code>[placeholder]</code>.</li>
+    </ul>
+
+    <h2 id="why">Why a small business would want it</h2>
+    <ul>
+      <li><strong>Replies get written.</strong> Most owners mean to answer reviews and run out of time. A draft makes it a two-minute job.</li>
+      <li><strong>The angry ones get seen first.</strong> A 1-star review about money gets flagged high, so it doesn't sit for a week.</li>
+      <li><strong>Fewer replies you regret.</strong> The draft stays calm, doesn't argue and doesn't repeat private details, which is easy to forget when a review stings.</li>
+    </ul>
+
+    <h2 id="how">How it works</h2>
+    <ol>
+      <li><strong>Form:</strong> this page sends the review (max 2,000 characters), the star rating and the business name to a small API.</li>
+      <li><strong>Worker:</strong> the same Cloudflare Worker that runs the <a href={url('/lab/ai-inquiry-triage/')}>triage demo</a> checks where the request came from, applies the rate limits and rejects anything empty or too long.</li>
+      <li><strong>AI:</strong> the Worker sends the review to Google's Gemini model with instructions and a strict JSON schema, so the answer always has the same shape. The review is treated as data, so instructions hidden inside it are ignored.</li>
+      <li><strong>Human review:</strong> you read the draft, fix it and post it yourself. In a real setup, new reviews would land in a shared inbox or a spreadsheet with the draft attached, never posted automatically.</li>
+    </ol>
+    <h3>Stack &amp; tools</h3>
+    <ul class="stack-list">{stack.map((s) => <li><span class="tag">{s}</span></li>)}</ul>
+
+    <h2 id="rules">Reply rules built into the prompt</h2>
+    <ul>
+      <li>Thank the reviewer and mention one specific thing they said.</li>
+      <li>On a bad review: apologize for their experience without admitting legal fault, don't argue, and invite them to continue privately.</li>
+      <li>Never repeat private or health details in public, and never use a full name.</li>
+      <li>Never offer discounts, refunds or gifts in exchange for a review or an edit. Review sites ban that.</li>
+      <li>Never invent facts, policies or fixes. Placeholders mark what you need to fill in.</li>
+    </ul>
+
+    <h2 id="cost">What it costs to run</h2>
+    <p>For this demo, nothing so far: it runs on the Cloudflare Workers free plan and the Gemini API free tier, with the same limits described on the <a href={url('/lab/ai-inquiry-triage/#cost')}>triage demo page</a>. For a real business, a paid AI tier is the better choice, because on the paid tier Google says it doesn't use prompts or responses to improve its products. A business gets a handful of reviews a week, so the AI bill is usually small, but it depends on volume, so it gets checked during scoping rather than promised here.</p>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li><strong>The AI can misread tone.</strong> Sarcasm and mixed reviews are hard. Treat the mood and flags as a suggestion.</li>
+      <li><strong>A human posts every reply.</strong> The draft doesn't know what actually happened, your policies or your schedule.</li>
+      <li><strong>It doesn't connect to your review sites here.</strong> This demo works on pasted text. A client build would pull new reviews in automatically where the platform allows it.</li>
+      <li><strong>Free tiers can run out or slow down.</strong> If the main model is busy, the Worker retries on a lighter model, and if both fail you get a friendly error.</li>
+    </ul>
+
+    <h2 id="related">Related</h2>
+    <div class="lab-related">
+      <div class="panel">
+        <span class="kicker">Related service</span>
+        <h3 style="margin-top:.4rem">Quick Win + Tech Checkup</h3>
+        <p class="muted">Want review replies drafted for your business, landing where you already work? It starts with a short scoping call about what to automate and what should stay manual.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-sm" href={url('/services/#automation-menu')} data-umami-event="services-cta" data-umami-event-location="lab-review-reply">See the automation menu</a>
+          <a class="btn btn-ghost btn-sm" href={url('/contact/?topic=quick-win')} data-umami-event="contact-click" data-umami-event-location="lab-review-reply">Ask about this</a>
+        </div>
+      </div>
+    </div>
+    <p><a href={url('/lab/')}>← Back to the Lab</a></p>
+  </article>
+</Base>
+
+<style>
+  .rv-row { display: grid; grid-template-columns: 8rem 1fr; gap: .75rem; margin: .7rem 0 .4rem; }
+  .rv-row label { display: flex; flex-direction: column; gap: .25rem; font-size: .9rem; }
+  @media (max-width: 480px) { .rv-row { grid-template-columns: 1fr; } }
+  :global(.rv-flags) { display: flex; flex-wrap: wrap; gap: .4rem; }
+  :global(.badge-pos) { border-color: rgba(52,211,153,.6); background: rgba(52,211,153,.1); color: #a7f3d0; }
+  :global(.badge-flag) { border-color: rgba(251,191,36,.65); background: rgba(251,191,36,.1); color: #fde68a; }
+</style>
+
+<script is:inline define:vars={{ apiUrl: REVIEW_API_URL, samples: reviewSamples }}>
+  const form = document.getElementById('rv-form');
+  const ta = document.getElementById('rv-text');
+  const stars = document.getElementById('rv-stars');
+  const biz = document.getElementById('rv-biz');
+  const count = document.getElementById('rv-count');
+  const status = document.getElementById('rv-status');
+  const out = document.getElementById('rv-output');
+  const runBtn = document.getElementById('rv-run');
+  const MAX = 2000;
+  const updateCount = () => { count.textContent = `${ta.value.length} / ${MAX}`; count.classList.toggle('over', ta.value.length > MAX * 0.9); };
+  const unpress = () => document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  ta.addEventListener('input', () => { updateCount(); unpress(); });
+  document.querySelectorAll('.sample-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const s = samples.find((x) => x.id === btn.dataset.sample);
+      if (!s) return;
+      ta.value = s.review; stars.value = String(s.stars); biz.value = s.business;
+      updateCount();
+      document.querySelectorAll('.sample-btn').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      ta.focus();
+    });
+  });
+  updateCount();
+
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const moodClass = { positive: 'badge-pos', mixed: 'badge-medium', negative: 'badge-high' };
+  const speed = { high: 'Respond today', medium: 'Respond this week', low: 'Respond when you can' };
+
+  function render(data) {
+    const r = data.result;
+    const card = el('div', 'triage-card');
+    const badges = el('div', 'triage-badges');
+    badges.append(el('span', `badge ${moodClass[r.sentiment] || 'badge-cat'}`, `Mood: ${r.sentiment}`), el('span', `badge badge-${r.priority}`, speed[r.priority] || r.priority), el('span', 'badge badge-conf', `Confidence: ${r.confidence}`));
+    card.append(badges, el('p', 'triage-reason', r.priority_reason));
+    if (r.topics && r.topics.length) {
+      card.append(el('h3', '', 'Topics'));
+      const t = el('div', 'rv-flags');
+      r.topics.forEach((x) => t.append(el('span', 'badge badge-cat', x)));
+      card.append(t);
+    }
+    card.append(el('h3', '', 'Flags'));
+    if (r.flags && r.flags.length) {
+      const f = el('div', 'rv-flags');
+      r.flags.forEach((x) => f.append(el('span', 'badge badge-flag', `⚠ ${x}`)));
+      card.append(f);
+    } else card.append(el('p', 'muted', 'Nothing flagged.'));
+    card.append(el('h3', '', 'Private tip for you'), el('p', 'triage-next', r.owner_note));
+    card.append(el('h3', '', 'Draft public reply (edit before posting)'), el('pre', 'triage-reply', r.reply_draft));
+    const foot = el('div', 'triage-foot');
+    foot.append(el('span', '', `Model: ${data.model}${data.fallback ? ' (fallback)' : ''} · ${(data.ms / 1000).toFixed(1)}s`));
+    if (r.reply_draft && navigator.clipboard) {
+      const copy = el('button', 'btn btn-ghost btn-sm', 'Copy reply');
+      copy.type = 'button';
+      copy.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(r.reply_draft); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed'; }
+        setTimeout(() => (copy.textContent = 'Copy reply'), 1800);
+      });
+      foot.append(copy);
+    }
+    card.append(foot);
+    out.replaceChildren(card);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const review = ta.value.trim();
+    status.className = 'triage-status';
+    if (review.length < 10) { status.classList.add('error'); status.textContent = 'Please enter a review of at least 10 characters, or load a sample.'; return; }
+    if (review.length > MAX) { status.classList.add('error'); status.textContent = `Please keep it under ${MAX} characters.`; return; }
+    runBtn.disabled = true; runBtn.textContent = 'Drafting…';
+    status.textContent = 'Sending to the AI. This usually takes a few seconds…';
+    try {
+      const body = { review };
+      if (stars.value) body.stars = Number(stars.value);
+      if (biz.value.trim()) body.business = biz.value.trim();
+      const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      let data = null;
+      try { data = await res.json(); } catch {}
+      if (!res.ok || !data || !data.ok) {
+        status.classList.add('error');
+        status.textContent = (data && data.message) || `Something went wrong (HTTP ${res.status}). Please try again in a minute.`;
+        return;
+      }
+      status.textContent = 'Done. Edit the draft before posting anything.';
+      render(data);
+    } catch {
+      status.classList.add('error');
+      status.textContent = "Couldn't reach the demo API. Check your connection, or try again in a minute.";
+    } finally {
+      runBtn.disabled = false; runBtn.textContent = 'Draft a reply';
+    }
+  });
+</script>
