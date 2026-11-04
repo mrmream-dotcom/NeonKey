@@ -7,6 +7,12 @@ export interface Offer {
   for: string;
   /** Business outcome in everyday words, shown first on the home and services cards. */
   outcome?: string;
+  /**
+   * Short outcome-first card heading (copy test started Nov 2026): the result the client gets.
+   * The service `name` is shown under it as a small label, and stays the name used in tracking,
+   * pay links and the contact form.
+   */
+  headline?: string;
   items: string[];
   href?: string;
   featured?: boolean;
@@ -49,6 +55,7 @@ export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 export const remoteIt: Offer = {
   slug: 'remote-it',
   name: 'Remote Small-Office IT Setup',
+  headline: 'Email, Wi-Fi and backups, set up right',
   from: 299,
   outcome: "Help your emails reach inboxes instead of spam, make it harder for scammers to fake your domain, and get your Wi-Fi, backups and passwords locked down",
   for: 'Get email, Wi-Fi, backups and passwords set up properly for a small office or solo business, fully remote',
@@ -97,6 +104,7 @@ export const remoteIt: Offer = {
 export const remoteSupportPlan: Offer = {
   slug: 'remote-support-plan',
   name: 'Monthly Remote Support Plan',
+  headline: 'IT help on call, without hiring IT',
   from: 99,
   standard: 129,
   unit: '/mo',
@@ -142,6 +150,7 @@ export const automationOffers: Offer[] = [
   {
     slug: 'quick-win',
     name: 'Quick Win + Tech Checkup',
+    headline: 'One repetitive task, off your plate',
     kicker: 'Start here',
     from: 99,
     outcome: "Get one repetitive task off your plate and a clear list of the tech fixes that matter most",
@@ -155,7 +164,7 @@ export const automationOffers: Offer[] = [
     demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/', example: 'AI inquiry triage' },
     upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
   },
-  { slug: 'ai-faq', name: 'AI Intake & FAQ Assistant', from: 499, standard: 699, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
+  { slug: 'ai-faq', headline: 'Customer questions answered, even after hours', name: 'AI Intake & FAQ Assistant', from: 499, standard: 699, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
       who: "For businesses that answer the same questions every day (hours, prices, booking, what's included) and lose track of new inquiries. The assistant answers from your own FAQ content and collects the details of anyone who wants more.",
       included: [
       'An assistant set up on your own FAQ, policies and service info, written or cleaned up together',
@@ -188,7 +197,7 @@ export const automationOffers: Offer[] = [
       ],
       note: 'AI usage and any tool subscriptions are billed to you directly by those providers. AI answers can be wrong, so the assistant is set up to hand off to a person, and you should review it regularly.',
     }, },
-  { slug: 'lead-routing', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
+  { slug: 'lead-routing', headline: 'Every lead followed up, on time', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
@@ -226,6 +235,7 @@ export const automationOffers: Offer[] = [
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
   name: 'Office Tech Tune-Up',
+  headline: 'Your office tech, checked and fixed in one visit',
   kicker: 'On-site · Fairbanks and North Pole',
   from: 249,
   outcome: 'Your office tech, checked and fixed in one visit',
@@ -245,6 +255,7 @@ export const officeTuneUp: Offer = {
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
+  headline: 'Your whole front office, handled',
   kicker: 'Start-Up Deal · All-inclusive',
   from: 999,
   value: 2000,

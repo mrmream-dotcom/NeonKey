@@ -8,7 +8,7 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, officeTuneUp, introPricing, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -171,7 +171,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <div class="grid grid-3 home-offers">
         <article class="card topline accent-cyan">
           <span class="kicker">On-site · Fairbanks and North Pole · $249</span>
-          <h3><a href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="home-local">Office Tech Tune-Up</a></h3>
+          <h3><a href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="home-local">{officeTuneUp.headline ?? officeTuneUp.name}</a></h3>
+          <p class="offer-name">{officeTuneUp.name}</p>
           <p class="offer-outcome">We come to your office and check and fix the basics in one visit.</p>
           <p class="home-offer-sub">One visit covers:</p>
           <ul class="home-offer-list">
@@ -186,7 +187,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         </article>
         <article class="card offer-featured topline">
           <span class="kicker">AI and automation · Starting at {usd(quickWin.from)}</span>
-          <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win">{quickWin.name}</a></h3>
+          <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win">{quickWin.headline ?? quickWin.name}</a></h3>
+          {quickWin.headline && <p class="offer-name">{quickWin.name}</p>}
           <p class="offer-outcome">We take one boring, repeat task off your plate and set it up to run on its own.</p>
           <p class="home-offer-sub">Some examples of what we can automate:</p>
           <ul class="home-offer-list">
@@ -201,7 +203,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         </article>
         <article class="card topline accent-magenta">
           <span class="kicker">Remote · Anywhere in the US · Starting at {usd(remoteIt.from)}</span>
-          <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it">Remote Small-Office IT Setup</a></h3>
+          <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it">{remoteIt.headline ?? remoteIt.name}</a></h3>
+          {remoteIt.headline && <p class="offer-name">{remoteIt.name}</p>}
           <p class="offer-outcome">We get your office tech set up properly, all done remotely.</p>
           <p class="home-offer-sub">What that covers:</p>
           <ul class="home-offer-list">
@@ -218,7 +221,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <article class="card topline accent-magenta fop-strip" id="front-office">
         <div>
           <span class="kicker">Start-Up Deal · All-inclusive</span>
-          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package">{fop.name}</a></h3>
+          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package">{fop.headline ?? fop.name}</a></h3>
+          {fop.headline && <p class="offer-name">{fop.name}</p>}
           <p class="muted" style="margin:0">{fop.for}. AI intake and FAQ assistant, lead routing and follow-up, email lockdown and three months of the support plan, in one project.</p>
         </div>
         <div class="fop-strip-side">

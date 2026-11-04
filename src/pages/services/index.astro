@@ -54,7 +54,8 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">{fop.kicker} · Everything in one project</span>
-            <h2 id="fop-h" style="font-size:1.6rem;margin-top:.4rem">{fop.name}</h2>
+            <h2 id="fop-h" style="font-size:1.6rem;margin-top:.4rem">{fop.headline ?? fop.name}</h2>
+            {fop.headline && <p class="offer-name">{fop.name}</p>}
             <p class="offer-outcome">{fop.outcome}.</p>
             <p class="muted">{fop.for}.</p>
             <ul>{fop.items.map((i) => <li>{i}</li>)}</ul>
@@ -84,7 +85,8 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">Remote · Anywhere in the US</span>
-            <h2 id="featured-h" style="font-size:1.6rem;margin-top:.4rem">{remoteIt.name}</h2>
+            <h2 id="featured-h" style="font-size:1.6rem;margin-top:.4rem">{remoteIt.headline ?? remoteIt.name}</h2>
+            {remoteIt.headline && <p class="offer-name">{remoteIt.name}</p>}
             <p class="offer-outcome">{remoteIt.outcome}.</p>
             <p class="muted">For small offices and solo pros. {remoteIt.for}.</p>
             <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
@@ -105,7 +107,8 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">Optional add-on</span>
-            <h3 style="font-size:1.3rem;margin-top:.4rem">{remoteSupportPlan.name}</h3>
+            <h3 style="font-size:1.3rem;margin-top:.4rem">{remoteSupportPlan.headline ?? remoteSupportPlan.name}</h3>
+            {remoteSupportPlan.headline && <p class="offer-name">{remoteSupportPlan.name}</p>}
             <p class="offer-outcome">{remoteSupportPlan.outcome}.</p>
             <p class="muted">{remoteSupportPlan.for}.</p>
             <ul>{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
@@ -146,7 +149,8 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
         {automationOffers.map((o, i) => (
           <article class={`card offer topline ${accents[i % accents.length]}`} id={o.slug}>
             <span class="kicker">{o.kicker ?? 'Automation'}</span>
-            <h3 style="font-size:1.3rem;margin-top:.4rem">{o.name}</h3>
+            <h3 style="font-size:1.3rem;margin-top:.4rem">{o.headline ?? o.name}</h3>
+            {o.headline && <p class="offer-name">{o.name}</p>}
             {o.outcome && <p class="offer-outcome">{o.outcome}.</p>}
             <p class="price">Starting at {usd(o.from)}<small>{o.standard ? `Founding rate · standard rate from ${usd(o.standard)}` : 'Scoped per project'}</small></p>
             <p class="muted">{o.for}.</p>
