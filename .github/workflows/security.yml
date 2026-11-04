@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "23 14 * * 1" # weekly, Monday 14:23 UTC
+    - cron: "23 14 * * *" # daily, 14:23 UTC (5:23 AM AKST)
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: [".", "workers/triage", "workers/welcome", "workers/office-ai", "workers/receipts", "workers/quiz", "workers/confirm-reminder"]
+        dir: [".", "workers/triage", "workers/welcome", "workers/office-ai", "workers/receipts", "workers/quiz", "workers/confirm-reminder", "workers/payments"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
