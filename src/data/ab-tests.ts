@@ -5,8 +5,8 @@
 // other one. Without JavaScript, everyone sees "a" (the control).
 //
 // Measuring (Umami): on any page that shows a test, Umami gets one `ab-view` event with the variants
-// shown (e.g. { hero: "b" }), and every tracked click on that page gets an `ab-<id>` property. Compare
-// clicks per `ab-view` for a vs b. Preview a variant with ?ab=hero:b,cards:b (not saved).
+// shown (e.g. { hero: "b" }). Once a visitor has seen a test, every tracked click on any page (including
+// `contact-submit` on /contact/) gets an `ab-<id>` property. Compare clicks and submits per `ab-view`. Preview a variant with ?ab=hero:b,cards:b (not saved).
 //
 // To end a test: keep the winner's markup, delete the loser's and the data-ab attributes, remove the
 // id here and its CSS rule. Results and dates live in /mnt/project-files/site-tests/ab-log.md.

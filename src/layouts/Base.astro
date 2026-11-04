@@ -58,12 +58,19 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
           try { localStorage.setItem(k, JSON.stringify(s)); } catch (e) {}
           if (Object.keys(q).length) return; // previews are not counted
           document.addEventListener('DOMContentLoaded', function () {
-            var seen = {};
-            abIds.forEach(function (id) { if (document.querySelector('[data-ab^="' + id + ':"]')) seen[id] = v[id]; });
-            if (!Object.keys(seen).length) return;
-            document.querySelectorAll('[data-umami-event]').forEach(function (el) {
-              Object.keys(seen).forEach(function (id) { el.setAttribute('data-umami-event-ab-' + id, seen[id]); });
+            // seen = tests shown on this page; tag = every test this visitor has ever been shown, so a
+            // later contact-form submit or pay click on another page still counts toward its variant.
+            var seen = {}, tag = {}, ek = 'nk-ab-seen', ever = {};
+            try { ever = JSON.parse(localStorage.getItem(ek) || '{}') || {}; } catch (e) {}
+            abIds.forEach(function (id) {
+              if (document.querySelector('[data-ab^="' + id + ':"]')) { seen[id] = v[id]; ever[id] = 1; }
+              if (ever[id]) tag[id] = v[id];
             });
+            try { localStorage.setItem(ek, JSON.stringify(ever)); } catch (e) {}
+            document.querySelectorAll('[data-umami-event]').forEach(function (el) {
+              Object.keys(tag).forEach(function (id) { el.setAttribute('data-umami-event-ab-' + id, tag[id]); });
+            });
+            if (!Object.keys(seen).length) return;
             var tries = 0;
             (function send() {
               if (window.umami && window.umami.track) return window.umami.track('ab-view', seen);
