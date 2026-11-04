@@ -8,12 +8,16 @@ says go live (LLC, business license and his explicit OK first). Shares nothing w
 Every offer on the site is a "from" price that gets scoped first, so there are no Buy buttons on the site.
 After a job is scoped, Michael sends one of these:
 
-| Situation | Stripe product | Command |
+| Situation | Stripe product | How |
 | --- | --- | --- |
-| Scoped project, remote or on-site (IT Setup, Quick Win, AI Intake, Lead-Routing, Front Office, Tune-Up) | **Invoicing**: Stripe emails an invoice with a pay-online page (card, bank, Apple/Google Pay) | `npm run invoice` |
-| Monthly Remote Support Plan | **Billing**: subscription started through Stripe Checkout; Stripe charges monthly, retries failed cards, emails receipts | `npm run checkout-link -- --offer support_plan_monthly --email ...` |
+| Scoped project, remote or on-site (IT Setup, Quick Win, AI Intake, Lead-Routing, Front Office, Tune-Up) | **Invoicing**: Stripe emails an invoice with a hosted pay page (card, bank, Apple/Google Pay, Link) | Stripe Dashboard or the Stripe phone app (Invoices > Create). `npm run invoice` does the same from a terminal. |
+| Monthly Remote Support Plan ($99/mo flat, no trial) | **Billing**: subscription through a reusable Payment Link; Stripe charges monthly, retries failed cards, emails receipts | `npm run checkout-link -- --offer support_plan_monthly --reusable` (once), then send that link. Leave out `--reusable` for a 24-hour link tied to one email. |
 | Fixed-price item in an outreach email ($49 Email Lockdown) | **Payments**: reusable Payment Link | `npm run checkout-link -- --offer email_lockdown --reusable` |
-| On-site job paid on the spot | Open the invoice's pay link on the client's phone, or use the Stripe Dashboard app | `npm run invoice -- ... --days 0 --send` |
+| On-site job paid on the spot | Invoice with the client there: open its pay page on their phone | Dashboard or app, due today |
+
+This follows Stripe's integration planner (run Nov 4 2026): invoices made by hand per job in the Dashboard,
+the hosted invoice page for payment, Dashboard for reconciliation (export CSV for the accountant), a
+no-code Payment Link for the flat-rate subscription, the customer portal for self-service, and Smart Retries.
 
 Customers who want to update their card or cancel the support plan use Stripe's no-code
 **customer portal** link (Dashboard > Settings > Billing > Customer portal > turn on the login link).
@@ -77,8 +81,14 @@ Then in Stripe (test mode) > Developers > Webhooks > Add endpoint:
 `customer.subscription.deleted`, `charge.refunded`, `charge.dispute.created`, `radar.early_fraud_warning.created`.
 Copy its signing secret and run `npx wrangler secret put STRIPE_WEBHOOK_SECRET` (paste when asked).
 
-Dashboard settings to turn on: Settings > Customer emails > successful payments and refunds;
-Settings > Billing > Subscriptions and emails > Smart Retries and failed-payment emails; Branding (logo, colors).
+Dashboard settings to turn on (test and live):
+- Settings > Payment methods: keep dynamic payment methods on, turn on Link. Turn on Adaptive Pricing (Checkout settings).
+- Settings > Branding: logo, brand color, invoice footer (applies to every invoice, receipt and Checkout page).
+- Settings > Customer emails: successful payments, refunds, and finalized invoices.
+- Settings > Billing > Revenue recovery: Smart Retries on, failed-payment emails on, automatic card updates on.
+- Settings > Billing > Customer portal: allow cancel (at period end) and payment-method updates; turn on the login link.
+- Settings > Tax: confirm the head office address. Leave collection off for now; Stripe's free threshold monitoring
+  alerts if sales cross a tax threshold. Products already carry tax code `txcd_20030000` (general services).
 
 `npm test` runs the webhook tests with fake secrets and no network.
 

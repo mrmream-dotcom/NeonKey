@@ -21,6 +21,7 @@ if (a.reusable === true) {
     line_items: [{ price: price.id, quantity: 1 }],
     after_completion: { type: "redirect", redirect: { url: done } },
     ...(mode === "payment" ? { invoice_creation: { enabled: true } } : {}),
+    name_collection: { business: { enabled: true, optional: true } },
     metadata: { offer: offer.key },
   });
   console.log(`${tag} Payment Link (${offer.name}): ${link.url}`);
