@@ -5,6 +5,7 @@ Astro 7 static site for https://neonkey.tech, served by GitHub Pages from the `g
 ## Build and check
 - Build exactly as production does: `rm -rf dist && SITE_URL=https://neonkey.tech BASE_PATH=/ PUBLIC_SITE_MODE=live npx astro build`
 - CI (`.github/workflows/ci.yml`) only confirms the build compiles. It does not deploy.
+- Timed Learn releases (`.github/workflows/timed-release.yml`, approved by Michael Nov 4 2026): on each go-live date in `src/data/learn-schedule.json` it rebuilds and publishes to `gh-pages`, but only if main has no unshipped site changes. Running it by hand from the Actions tab is a full ship. Its pre-publish checks live in `scripts/release-checks.mjs`.
 - Secrets scan: `security.yml` runs gitleaks on every push. `.gitleaks.toml` allowlists one false positive.
 
 ## Deploy (only after a PR is merged to `main` and Michael says ship)
