@@ -1,0 +1,90 @@
+# neonkey-payments
+
+Stripe for NeonKey: a webhook Worker plus three small local scripts. **Test mode only** until Michael
+says go live (LLC, business license and his explicit OK first). Shares nothing with the other workers.
+
+## How NeonKey takes money
+
+Every offer on the site is a "from" price that gets scoped first, so there are no Buy buttons on the site.
+After a job is scoped, Michael sends one of these:
+
+| Situation | Stripe product | Command |
+| --- | --- | --- |
+| Scoped project, remote or on-site (IT Setup, Quick Win, AI Intake, Lead-Routing, Front Office, Tune-Up) | **Invoicing**: Stripe emails an invoice with a pay-online page (card, bank, Apple/Google Pay) | `npm run invoice` |
+| Monthly Remote Support Plan | **Billing**: subscription started through Stripe Checkout; Stripe charges monthly, retries failed cards, emails receipts | `npm run checkout-link -- --offer support_plan_monthly --email ...` |
+| Fixed-price item in an outreach email ($49 Email Lockdown) | **Payments**: reusable Payment Link | `npm run checkout-link -- --offer email_lockdown --reusable` |
+| On-site job paid on the spot | Open the invoice's pay link on the client's phone, or use the Stripe Dashboard app | `npm run invoice -- ... --days 0 --send` |
+
+Customers who want to update their card or cancel the support plan use Stripe's no-code
+**customer portal** link (Dashboard > Settings > Billing > Customer portal > turn on the login link).
+
+The Front Office Package includes 3 months of the support plan, and after that it continues only if the
+client chooses. So it's invoiced as one $999 job, and the support-plan link is sent in month 3 only if
+they want to keep it. Don't start a subscription that auto-charges in month 4.
+
+## Catalog
+
+`scripts/offers.mjs` reads every price from the site (`src/data/services.ts`, and `src/pages/local.astro`
+for the $249 tune-up), so the site stays the single source of truth. Each offer is one Stripe Product
+with a fixed ID (`nk_quick_win`, ...) and one founding-rate Price with the same `lookup_key`.
+`npm run catalog` shows the diff and `--apply` writes it. If a site price changes, re-run it: the new
+Price takes over the lookup key and the old one is archived. Offer keys:
+`remote_it_setup, support_plan_monthly, quick_win, ai_intake, lead_routing, front_office, onsite_tuneup, email_lockdown`.
+
+**Tax:** `automatic_tax` is off on purpose. Stripe Tax collects nothing without an active registration.
+Check with a tax professional whether any local sales tax applies to your services (rules differ by city and borough) before turning it on.
+
+## Keys (never in the repo, never in chat)
+
+Use a **restricted key** for the scripts (Dashboard > Developers > API keys > Create restricted key,
+test mode). Permissions: Customers write, Products write, Prices write, Invoices write, Invoice items write,
+Checkout Sessions write, Payment Links write. Everything else none. Keep it in your shell only:
+
+```sh
+cd workers/payments && npm ci
+read -rs STRIPE_API_KEY && export STRIPE_API_KEY   # paste, Enter (nothing is shown)
+npm run catalog                 # dry run
+npm run catalog -- --apply
+npm run invoice -- --email you+test@example.com --name "Test Client" --offer onsite_tuneup   # draft
+npm run invoice -- --email you+test@example.com --offer quick_win --amount 149 --desc "Quick Win: auto-reply setup" --send
+npm run checkout-link -- --offer support_plan_monthly --email you+test@example.com
+```
+
+The scripts refuse a live key unless you pass `--live`.
+
+## Webhook Worker
+
+`POST /webhook` verifies the `Stripe-Signature` header with `STRIPE_WEBHOOK_SECRET` before reading anything,
+then emails a short notice From `NeonKey 🔑 <hello@neonkey.tech>` to `NOTIFY_TO`, BCC `BCC_ADDRESS`
+(payments, failed payments, new/canceled subscriptions, refunds, disputes, fraud warnings). A Resend
+idempotency key per event stops duplicate emails when Stripe retries. If the email fails the Worker
+returns 500 so Stripe retries. Live-mode events are ignored while `ALLOW_LIVE = "false"`.
+It needs no Stripe API key and stores nothing.
+
+Deploy (test mode):
+
+```sh
+npm ci
+export CLOUDFLARE_ACCOUNT_ID=13d2e240576e100fbd65b2499bd6c048   # plus CLOUDFLARE_API_TOKEN
+npx wrangler deploy
+printf '%s' "$RESEND_API_KEY" | npx wrangler secret put RESEND_API_KEY
+```
+
+Then in Stripe (test mode) > Developers > Webhooks > Add endpoint:
+`https://neonkey-payments.mr-mream.workers.dev/webhook`, API version `2026-10-28.endive`, and select only:
+`checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`,
+`invoice.paid`, `invoice.payment_failed`, `customer.subscription.created`, `customer.subscription.updated`,
+`customer.subscription.deleted`, `charge.refunded`, `charge.dispute.created`, `radar.early_fraud_warning.created`.
+Copy its signing secret and run `npx wrangler secret put STRIPE_WEBHOOK_SECRET` (paste when asked).
+
+Dashboard settings to turn on: Settings > Customer emails > successful payments and refunds;
+Settings > Billing > Subscriptions and emails > Smart Retries and failed-payment emails; Branding (logo, colors).
+
+`npm test` runs the webhook tests with fake secrets and no network.
+
+## Going live (only after Michael's explicit OK)
+
+1. Account activated with the LLC's details and EIN, bank account added, 2FA with an authenticator app or passkey.
+2. Create a **live** restricted key and a live webhook endpoint (same events), set the live signing secret.
+3. Set `ALLOW_LIVE = "true"`, redeploy, run `npm run catalog -- --apply --live`.
+4. Review Stripe's go-live checklist: https://docs.stripe.com/get-started/checklist/go-live
