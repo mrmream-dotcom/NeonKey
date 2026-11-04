@@ -5,6 +5,8 @@ import mdx from '@astrojs/mdx';
 import externalLinks from './integrations/external-links.mjs';
 import blurPlaceholders from './integrations/blur-placeholders.mjs';
 import cspMeta from './integrations/csp-meta.mjs';
+import scheduledPages from './integrations/scheduled-pages.mjs';
+import { isLearnPathLive } from './src/lib/schedule.mjs';
 import { articles, ARTICLE_CATEGORIES } from './src/data/articles.ts';
 
 // Build modes are driven by environment variables (see README "Build modes"):
@@ -33,7 +35,7 @@ export default defineConfig({
   // Prefetch only downloads the HTML; no scripts run, so analytics are not affected.
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [mdx(), blurPlaceholders({ base: BASE_PATH }), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks|pay\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) && !isDraftPage(page) }), cspMeta()],
+  integrations: [mdx(), blurPlaceholders({ base: BASE_PATH }), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks|pay\/thanks)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) && !isDraftPage(page) && isLearnPathLive(new URL(page).pathname) }), scheduledPages({ base: BASE_PATH }), cspMeta()],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);

@@ -12,6 +12,7 @@ import PageHeader from '../PageHeader.astro';
 import SectionHeading from '../SectionHeading.astro';
 import StoryCard from '../StoryCard.astro';
 import { learnMinutes } from '../../lib/reading';
+import { isLearnPathLive } from '../../lib/schedule.mjs';
 import type { IconName, Accent } from '../../lib/ui';
 export type LearnView = 'study-tracks' | 'tutorials';
 interface Props { view?: LearnView; eyebrow?: string }
@@ -38,7 +39,7 @@ const tutorials = [
   { topic: 'skills', kicker: 'Automation · Beginner', title: 'Using AI chat safely, and getting better answers', href: '/learn/using-ai-safely/', text: 'What never to paste in, getting help without sharing the file, turning off training on your chats, checking confident answers, and three prompt habits.', cta: 'Read the guide', icon: 'spark', accent: 'violet', label: 'AI safely', tags: ['AI', 'Beginner'] },
   { topic: 'skills', kicker: 'Practical IT · Beginner', title: 'Everyday tech cheat sheet: shortcuts, myths and tech words', href: '/learn/everyday-tech-cheat-sheet/', text: 'Windows and Mac shortcuts, five tech myths busted, and words like cookie, cache, VPN and firmware in one line each.', cta: 'Open the cheat sheet', icon: 'compass', accent: 'amber', label: 'Cheat sheet', tags: ['Practical IT', 'Beginner'] },
   { topic: 'skills', kicker: 'Practical IT · Intermediate', title: 'Set up a virtual machine for any ISO', href: '/learn/virtual-machine-setup/', text: 'Why a VM is worth having, then a step-by-step build that works in VirtualBox, VMware, Hyper-V, UTM or KVM: sizing, network modes, guest tools and snapshots.', cta: 'Read the tutorial', icon: 'wrench', accent: 'amber', label: 'Virtual machine', tags: ['Practical IT', 'Intermediate'] },
-].filter((c) => !(c as { draft?: boolean }).draft);
+].filter((c) => !(c as { draft?: boolean }).draft && isLearnPathLive(c.href));
 
 const tabs: { href: string; label: string; key?: LearnView }[] = [
   { href: '/learn/', label: 'All' },
