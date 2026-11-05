@@ -5,15 +5,21 @@
 //                  something can't be written safely (wrong domain, unusual provider, duplicate records, ...).
 //   cron (daily)   rechecks open orders on day 2, 5 and 10: "locked down" email when everything passes, one friendly
 //                  reminder on day 5, and an ACTION NEEDED notice to Michael if it's still open on day 10.
+//   POST /webhook  charge.refunded for a Lockdown payment: marks the order refunded (stops rechecks) and sets the
+//                  Lead Tracker row's Outcome to "refunded".
+//   Lead Tracker   every paid order is written to the NeonKey Accounts sheet (see sheet.js); a failed write is retried
+//                  by the daily cron.
 //   GET  /health   { ok, live, customerEmails }
 // Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET (this endpoint's own whsec_), RESEND_API_KEY,
-//   BROWSER_TOKEN (optional: Cloudflare API token with Browser Rendering Edit; without it the report is sent as HTML).
+//   BROWSER_TOKEN (optional: Cloudflare API token with Browser Rendering Edit; without it the report is sent as HTML),
+//   GOOGLE_SA_KEY (optional: Google service account JSON key; without it the Lead Tracker sync is off).
 // No Stripe API key: everything needed is in the signed webhook event.
 import { verifyStripeEvent } from "./verify.js";
 import { audit, cleanDomain, openItems } from "./audit.js";
 import { reportEmail, doneEmail, reminderEmail, noticeEmail } from "./email.js";
 import { renderReport, checks } from "./report.js";
 import { renderPdf } from "./pdf.js";
+import { recordPaid, recordRefund } from "./sheet.js";
 
 const passingCount = (a) => checks(a).filter((c) => c.status === "ok").length;
 
@@ -60,6 +66,10 @@ export default {
     if (event.livemode && env.ALLOW_LIVE !== "true") return json(200, { ok: true, ignored: "live" });
 
     const s = event.data?.object || {};
+    if (event.type === "charge.refunded" && s.object === "charge") {
+      const r = await handleRefund(env, s);
+      return json(200, { ok: true, refund: r });
+    }
     const relevant = (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") && s.object === "checkout.session";
     if (!relevant) return json(200, { ok: true, ignored: event.type });
     if (s.payment_link !== env.LOCKDOWN_PAYMENT_LINK) return json(200, { ok: true, ignored: "other_offer" });
@@ -90,6 +100,9 @@ function orderFromSession(s, livemode) {
     rawDomain,
     domain: cleanDomain(rawDomain),
     created: Date.now(),
+    paidAt: s.created ? s.created * 1000 : Date.now(),
+    paymentIntent: typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id || "",
+    amount: typeof s.amount_total === "number" ? s.amount_total / 100 : null,
     checks: 0,
     status: "open",
   };
@@ -136,8 +149,44 @@ export async function handleOrder(env, s, livemode) {
   // Nothing to recheck when the audit couldn't run on a real domain or a person has to take over entirely.
   if (!order.domain || (!a.fixes.length && !a.buyerSteps.length && !a.locked)) order.status = "human";
   else if (a.locked) order.status = "done"; // already fine: the first email said so, nothing to recheck
+  await syncPaid(env, order);
   await env.ORDERS.put(key, JSON.stringify(order), { expirationTtl: ORDER_TTL });
+  if (order.paymentIntent) await env.ORDERS.put(`pi:${order.paymentIntent}`, key, { expirationTtl: ORDER_TTL });
   return true;
+}
+
+// Lead Tracker writes never block or fail an order: on error the order is marked "pending" and the cron retries.
+export async function syncPaid(env, order) {
+  try {
+    order.sheet = await recordPaid(env, order);
+  } catch (e) {
+    console.log("lockdown: lead tracker write failed", String(e));
+    order.sheet = "pending";
+  }
+}
+async function syncRefund(env, order) {
+  try {
+    order.sheetRefund = await recordRefund(env, order);
+  } catch (e) {
+    console.log("lockdown: lead tracker refund write failed", String(e));
+    order.sheetRefund = "pending";
+  }
+}
+
+// Full refund of a Lockdown payment (found by its payment intent). Partial refunds and other offers are ignored.
+export async function handleRefund(env, charge) {
+  if (!charge.refunded || !charge.payment_intent) return "ignored";
+  const pi = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent.id;
+  const key = await env.ORDERS.get(`pi:${pi}`);
+  const order = key && (await env.ORDERS.get(key, "json"));
+  if (!order) return "unknown";
+  if (order.refunded) return "already";
+  order.refunded = true;
+  order.status = "refunded"; // no more rechecks or reminders
+  if (order.sheet === "pending") order.sheetRefund = "with-paid"; // the retried paid write carries "refunded"
+  else await syncRefund(env, order);
+  await env.ORDERS.put(key, JSON.stringify(order), { expirationTtl: ORDER_TTL });
+  return "refunded";
 }
 
 // Which recheck is due: day 2, 5, 10 after the order. Returns the index into RECHECK_DAYS or -1.
@@ -153,7 +202,13 @@ export async function recheckAll(env, now = Date.now()) {
     const page = await env.ORDERS.list({ prefix: "order:", cursor });
     for (const k of page.keys) {
       const order = await env.ORDERS.get(k.name, "json");
-      if (!order || order.status !== "open") continue;
+      if (!order) continue;
+      if (order.sheet === "pending" || order.sheetRefund === "pending") {
+        if (order.sheet === "pending") await syncPaid(env, order);
+        if (order.sheetRefund === "pending") await syncRefund(env, order);
+        await env.ORDERS.put(k.name, JSON.stringify(order), { expirationTtl: ORDER_TTL });
+      }
+      if (order.status !== "open") continue;
       try {
         await recheckOne(env, k.name, order, now);
       } catch (e) {
