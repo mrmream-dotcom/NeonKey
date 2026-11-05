@@ -1,5 +1,6 @@
 // Branded Email Lockdown emails (table layout, inline CSS, matches the Unlock the Week newsletter).
 // Every builder returns { subject, html, text }.
+import { checks } from "./report.js";
 
 const C = { bg: "#0b0d17", panel: "#151935", line: "#262b52", text: "#e8eaf6", muted: "#b3b8d6", cyan: "#22d3ee", violet: "#a78bfa", magenta: "#f472b6", amber: "#fbbf24", green: "#34d399" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -89,15 +90,26 @@ function creditBlock(a) {
 <p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.55;color:${C.muted};">${u.html}</p></td></tr></table>`;
 }
 
-// Two ways to finish, shown ABOVE the steps. Done-for-you is included in the $49 (services page, Nov 4 2026).
-function twoWays(a) {
-  const host = a.dnsHost?.label ? esc(a.dnsHost.label) : "your domain host";
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 14px 0;"><tr>
-<td width="50%" valign="top" style="padding:0 6px 0 0;"><div style="background:${C.panel};border:1px solid ${C.line};border-radius:12px;padding:12px 14px;font-family:${FONT};"><p style="margin:0 0 4px 0;font-size:12px;letter-spacing:1.5px;font-weight:700;color:${C.cyan};">OPTION A</p><p style="margin:0;font-size:14px;line-height:1.5;color:${C.text};"><strong>Do it yourself</strong> with the steps below.</p></div></td>
-<td width="50%" valign="top" style="padding:0 0 0 6px;"><div style="background:${C.panel};border:1px solid ${C.violet};border-radius:12px;padding:12px 14px;font-family:${FONT};"><p style="margin:0 0 4px 0;font-size:12px;letter-spacing:1.5px;font-weight:700;color:${C.violet};">OPTION B · INCLUDED</p><p style="margin:0;font-size:14px;line-height:1.5;color:${C.text};"><strong>We put them in for you.</strong> Reply "do it" and we'll walk you through inviting us as a helper at ${host}. No passwords shared.</p></div></td>
-</tr></table>`;
+// Compact list of changes (Michael, Nov 5 2026: "a complete report, less a long guide"). Full detail is in the attached report.
+function changeTitle(f) { return `${f.action === "replace" ? "Update" : "Add"} ${f.id === "spf" ? "your approved-sender list" : "a fake-email policy"}`; }
+function changeList(a) {
+  const rows = a.fixes.map((f, i) => `<tr><td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};font-size:15px;color:${C.cyan};font-weight:700;width:24px;">${i + 1}</td><td style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};"><p style="margin:0;font-size:15px;font-weight:700;color:${C.text};">${changeTitle(f)}</p><p style="margin:3px 0 0 0;font-size:13px;color:${C.muted};">${f.type} record, name <span style="font-family:${MONO};color:${C.text};">${esc(f.host)}</span>${f.current ? " (replace the existing one)" : ""}</p><p style="margin:3px 0 0 0;font-family:${MONO};font-size:13px;color:${C.green};word-break:break-all;">${esc(f.value)}</p></td></tr>`);
+  a.buyerSteps.forEach((st, j) => rows.push(`<tr><td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};font-size:15px;color:${C.violet};font-weight:700;width:24px;">${a.fixes.length + j + 1}</td><td style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};"><p style="margin:0;font-size:15px;font-weight:700;color:${C.text};">${st.id === "dkim" ? `Turn on email signing in ${esc(a.provider?.label || "your email provider")}` : esc(st.title)}</p><p style="margin:3px 0 0 0;font-size:13px;color:${C.muted};">One setting in your admin. ${link(st.help, "Official guide")}</p></td></tr>`));
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px 0;">${rows.join("")}</table>`;
 }
-const twoWaysText = (a) => `TWO WAYS TO FINISH\nA) Do it yourself with the steps below.\nB) Included in your $49: reply "do it" and we'll walk you through inviting us as a helper at ${a.dnsHost?.label || "your domain host"}, then put the records in for you. No passwords shared.`;
+function changeText(a) {
+  return [...a.fixes.map((f, i) => `${i + 1}. ${changeTitle(f)}: ${f.type} record, name ${f.host}${f.current ? " (replace the existing one)" : ""}\n   ${f.value}`),
+    ...a.buyerSteps.map((st, j) => `${a.fixes.length + j + 1}. ${st.id === "dkim" ? `Turn on email signing in ${a.provider?.label || "your email provider"}` : st.title}: ${st.help}`)].join("\n");
+}
+function scoreLine(passing, a) {
+  const col = passing >= 3 ? C.amber : C.magenta;
+  const seg = Array.from({ length: 4 }, (_, i) => `<td style="width:25%;padding:0 2px;"><div style="height:10px;border-radius:4px;background:${i < passing ? col : C.line};font-size:0;line-height:0;">&nbsp;</div></td>`).join("");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 18px 0;background:${C.panel};border:1px solid ${C.line};border-radius:12px;"><tr><td style="padding:14px 16px;">
+<p style="margin:0 0 8px 0;font-family:${FONT};font-size:20px;font-weight:800;color:${col};">${passing} of 4 checks passing</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${seg}</tr></table>
+<p style="margin:8px 0 0 0;font-family:${FONT};font-size:13px;color:${C.muted};">${esc(a.domain)}${a.provider ? ` · ${esc(a.provider.label)}` : ""}${a.dnsHost?.label ? ` · domain at ${esc(a.dnsHost.label)}` : ""}</p></td></tr></table>`;
+}
+const doneForYou = (a) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in your $49. No passwords shared.`, "font-size:15px;");
 
 const ATTACH_NOTE = "Your full report is attached. Open it in any browser, and save or print it as a PDF for your records.";
 
@@ -120,18 +132,18 @@ export function reportEmail({ name, a }) {
   }
 
   const total = a.fixes.length + a.buyerSteps.length;
-  const subject = `🔑 Your Email Lockdown report: ${total} ${total === 1 ? "step" : "steps"} for ${a.domain}`;
-  let body = p(hi) + p(`Thanks for your order. We checked the public email records for <strong>${esc(a.domain)}</strong>${a.provider ? ` (email by ${esc(a.provider.label)})` : ""}. ${ATTACH_NOTE}`);
-  body += twoWays(a);
-  if (a.fixes.length) body += h2("Records to add") + p(hostLine(a), `font-size:15px;color:${C.muted};`) + a.fixes.map(recordCard).join("");
-  if (a.buyerSteps.length) body += h2("One setting to check", C.violet) + a.buyerSteps.map(stepCard).join("");
-  if (personal) body += h2("We'll handle the rest", C.amber) + p("Part of your setup needs a closer look by a person, so we'll follow up by email within 1 business day about it. You can still add the records above now.", `font-size:15px;color:${C.muted};`);
-  body += h2("What happens next") + p("We'll recheck your public records on day 2 and day 5 and email you an updated report showing what's published and what's still open.", `font-size:15px;`);
-  if (a.notes.length) body += p(a.notes.map(esc).join(" "), `font-size:14px;color:${C.muted};`);
-  body += creditBlock(a) + p("Questions or stuck on a step? Just reply to this email.", `font-size:15px;`) + p("NeonKey", `color:${C.muted};`);
+  const passing = checks(a).filter((c) => c.status === "ok").length;
+  const subject = `🔑 Your Email Lockdown report for ${a.domain}`;
+  let body = p(hi) + p(`Thanks for your order. Here's where <strong>${esc(a.domain)}</strong> stands. Your full report is attached.`);
+  body += scoreLine(passing, a);
+  body += h2(`${total} ${total === 1 ? "change" : "changes"} to make`) + changeList(a);
+  if (a.dnsHost?.help) body += p(`Make these where you manage your domain${a.dnsHost.label ? ` (${esc(a.dnsHost.label)})` : ""}. ${link(a.dnsHost.help, "Their guide")}`, `font-size:14px;color:${C.muted};`);
+  if (personal) body += p("Part of your setup needs a closer look by a person. We'll follow up within 1 business day.", `font-size:14px;color:${C.muted};`);
+  body += doneForYou(a) + p("We'll recheck on day 2 and day 5 and send you an updated report.", `font-size:14px;color:${C.muted};`);
+  body += creditBlock(a) + p("NeonKey", `color:${C.muted};`);
 
-  const text = `${hiT}\n\nThanks for your order. We checked the public email records for ${a.domain}${a.provider ? ` (email by ${a.provider.label})` : ""}. ${ATTACH_NOTE}\n\n${twoWaysText(a)}\n\n${a.fixes.length ? `RECORDS TO ADD\n${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `ONE SETTING TO CHECK\n${stepsText(a)}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person, so we'll follow up within 1 business day.\n\n" : ""}WHAT HAPPENS NEXT\nWe'll recheck your public records on day 2 and day 5 and email you an updated report.\n${a.notes.length ? `\n${a.notes.join(" ")}\n` : ""}\n${upsell(a).text}\n\nQuestions? Just reply.\n\nNeonKey\nhello@neonkey.tech`;
-  return { subject, html: shell(`Exactly what to add for ${a.domain}.`, body), text };
+  const text = `${hiT}\n\nThanks for your order. Here's where ${a.domain} stands (${passing} of 4 checks passing). Your full report is attached.\n\n${total} ${total === 1 ? "CHANGE" : "CHANGES"} TO MAKE\n${changeText(a)}\n\n${a.dnsHost?.help ? `Make these at ${a.dnsHost.label}. Guide: ${a.dnsHost.help}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person. We'll follow up within 1 business day.\n\n" : ""}Rather not do it yourself? Reply and we'll make these changes for you, included in your $49.\nWe'll recheck on day 2 and day 5 and send you an updated report.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  return { subject, html: shell(`${passing} of 4 checks passing for ${a.domain}. Your report is attached.`, body), text };
 }
 
 // 2. Recheck passed: the "after" report is attached.
@@ -153,10 +165,9 @@ export function reminderEmail({ name, a, passing }) {
   const host = a.dnsHost?.label || "your domain host";
   let body = p(hi) + p(`We rechecked <strong>${esc(a.domain)}</strong> today. It's at <strong>${passing} of 4</strong> checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.`);
   body += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 16px 0;background:${C.panel};border:1px solid ${C.violet};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};"><p style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:${C.text};">Rather not deal with ${esc(host)}${a.provider ? ` and ${esc(a.provider.label)}` : ""}?</p><p style="margin:0;font-size:15px;line-height:1.55;color:${C.muted};">Reply <strong style="color:${C.text};">DO IT</strong>. We'll walk you through a quick helper invite (no passwords shared) and finish your Email Lockdown for you, at no extra cost.</p></td></tr></table>`;
-  if (a.fixes.length) body += h2("Still to add") + p(hostLine(a), `font-size:15px;color:${C.muted};`) + a.fixes.map(recordCard).join("");
-  if (a.buyerSteps.length) body += h2("Still to check", C.violet) + a.buyerSteps.map(stepCard).join("");
+  body += h2("Still open") + changeList(a);
   body += p("Just added something? New records can take an hour or two to show up.", `font-size:14px;color:${C.muted};`) + creditBlock(a) + p("NeonKey", `color:${C.muted};`);
-  const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${a.fixes.length ? `${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `${stepsText(a)}\n\n` : ""}${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${changeText(a)}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
   return { subject, html: shell(`${a.domain} is at ${passing} of 4. Reply DO IT and we'll finish it.`, body), text };
 }
 

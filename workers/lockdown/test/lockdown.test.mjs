@@ -120,11 +120,11 @@ test("SPF senders are named for the buyer, and the report shows DKIM as Not veri
   const html = renderReport({ a, order: { id: "cs_test_abc12345" } });
   assert.match(html, /Not verified/);
   assert.doesNotMatch(html, /10 minutes|stop working| -all\b/);
-  assert.match(html, /1 of 4 checks passing/);
+  assert.match(html, />1\/4<\/div><div class="l">checks<br>passing/);
   assert.doesNotMatch(html, />SAMPLE</);
   const sample = renderReport({ a, order: {}, sample: true });
   assert.match(sample, />SAMPLE</);
-  assert.match(sample, /in your full report/);
+  assert.match(sample, /included in your full report/);
 });
 
 test("Microsoft 365 SPF is edited in place: outlook added, +all made safe, existing senders kept", async () => {
@@ -181,11 +181,12 @@ test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with
   assert.equal(buyer.from, env.FROM_ADDRESS);
   assert.deepEqual(buyer.bcc, ["bcc@example.com"]);
   assert.equal(buyer.reply_to, "hello@neonkey.tech");
-  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Lockdown report: 3 steps for bare\.test/);
+  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Lockdown report for bare\.test/);
+  assert.match(buyer.html, /1 of 4 checks passing/);
   assert.equal(buyer.attachments.length, 1);
   assert.match(buyer.attachments[0].filename, /NeonKey-Email-Report-bare\.test\.html/);
-  assert.match(Buffer.from(buyer.attachments[0].content, "base64").toString("utf8"), /Your action plan/);
-  assert.ok(buyer.html.indexOf("OPTION B") < buyer.html.indexOf("Records to add"));
+  assert.match(Buffer.from(buyer.attachments[0].content, "base64").toString("utf8"), /Recommended changes/);
+  assert.match(buyer.html, /included in your \$49/);
   assert.doesNotMatch(buyer.html + buyer.text, /10 minutes|stop working/);
   assert.match(buyer.html, /v=spf1 include:_spf\.google\.com ~all/);
   assert.match(buyer.html, /godaddy\.com\/help\/add-a-txt-record/);
