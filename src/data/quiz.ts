@@ -304,7 +304,7 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
   const names = p.items.map((c) => itemView(c, p).name);
   const text = k === 'R'
     ? `Your answers flagged ${names.length} ${names.length === 1 ? 'basic' : 'basics'} to tighten up: ${names.join(', ')}. The setup covers them remotely, on accounts you own. Ask about them on the same call.`
-    : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. A ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so requests stop getting retyped or lost.` : p.wf === 'reminders' ? `You said you send the same emails or reminders by hand. A ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so nobody has to chase new requests by hand.` : `You said a repetitive task eats your week. A ${quickWin.name} takes one task off your plate: one website form feeding a shared list, with an alert to one person.`)
+    : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so requests stop getting retyped or lost.` : p.wf === 'reminders' ? `You said you send the same emails or reminders by hand. ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so nobody has to chase new requests by hand.` : `You said a repetitive task eats your week. A ${quickWin.name} takes one task off your plate: one website form feeding a shared list, with an alert to one person.`)
     : k === 'F' ? `You said people ask the same questions. The ${aiFaq.name} answers them from your own FAQ and captures the details of new inquiries.`
     : `You said inquiries slip through or follow-up is slow. The ${leadRouting.name} puts every lead in one flow with reminders so each one gets a reply.`;
   return { name: o.name, price: startLabel(k), text, href: SERVICE_HREF[k] };
@@ -420,7 +420,7 @@ function buildPlanBase(p: Plan): PlanView {
     const apps = t === 'A' ? ' (for example Gmail, Google Sheets, Google Calendar)' : t === 'B' ? ' (for example Outlook, Excel, Teams)' : t === 'C' ? ', including any phone apps you use for it' : '';
     const v: PlanView = {
       ...base, resultName: quickWin.name, kicker, heading: quickWin.name,
-      intro: 'One repetitive task is eating your week. The Quick Win starts with the most common one: I connect one website form to a shared list and set up an alert to one person for each new request, using tools you already use. It\'s a small, low-risk first step.',
+      intro: 'One repetitive task is eating your week. Website Inquiry Capture & Alerts starts with the most common one: I connect one website form to a shared list and set up an alert to one person for each new request, using tools you already use. It\'s a small, low-risk first step.',
       focus: { title: 'A good first candidate', text: focusText },
       includes: { title: "What\'s included", list: quickWin.items },
       ready: [
@@ -432,7 +432,7 @@ function buildPlanBase(p: Plan): PlanView {
       price: `${priceLine(quickWin)} ${PRICE_DISCLAIMER}`,
       demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/', text: 'Want to see the kind of thing I build? Try the AI inquiry triage demo in the Lab.' },
       links: [
-        { label: 'Ask about a Quick Win', href: contact('quick-win'), primary: true },
+        { label: 'Ask about Website Inquiry Capture & Alerts', href: contact('quick-win'), primary: true },
         { label: 'See a working demo', href: '/lab/ai-inquiry-triage/' },
       ],
       setupNote: { text: QW_UPSELL, href: '/services/remote-it/' },
@@ -488,7 +488,7 @@ function buildPlanBase(p: Plan): PlanView {
         `Where you track leads now, ${tracking}`,
       ],
       price: `${PACKAGE_PRICE()} ${PRICE_DISCLAIMER}`,
-      note: solo && a.q6 !== 'B' ? `Only one or two places to watch? A ${quickWin.name} (starting at ${usd(quickWin.from)}) might cover it. I\'ll tell you honestly on the call.` : undefined,
+      note: solo && a.q6 !== 'B' ? `Only one or two places to watch? ${quickWin.name} (starting at ${usd(quickWin.from)}) might cover it. I\'ll tell you honestly on the call.` : undefined,
       links: [
         { label: 'Get a written quote', href: contact('front-office-package'), primary: true },
         { label: 'See the Front Office Package', href: frontOfficePackage.href! },
@@ -533,12 +533,12 @@ function buildPlanBase(p: Plan): PlanView {
   if (p.type === 'LEARN-BIZ') {
     return {
       ...base, resultName: 'Nothing urgent (free guides, or a small first step)', kicker, heading: 'Good news: nothing urgent jumped out',
-      intro: `None of your answers flagged a pressing problem: your email, passwords and backups sound covered and no repetitive task stood out. If you want a small first step anyway, a ${quickWin.name} (starting at ${usd(quickWin.from)}) automates one task and checks your basics. Otherwise, the free guides and weekly email are the right next stop, and every service is listed below so you can see what else exists.`,
+      intro: `None of your answers flagged a pressing problem: your email, passwords and backups sound covered and no repetitive task stood out. If you want a small first step anyway, ${quickWin.name} (starting at ${usd(quickWin.from)}) connects one website form to a shared list and alerts one person on each new request. Otherwise, the free guides and weekly email are the right next stop, and every service is listed below so you can see what else exists.`,
       price: `${quickWin.name}: ${priceLine(quickWin)} ${PRICE_DISCLAIMER}`,
       freeLinks,
       links: [
         { label: 'See all services', href: '/services/', primary: true },
-        { label: 'Ask about a Quick Win', href: contact('quick-win') },
+        { label: 'Ask about Website Inquiry Capture & Alerts', href: contact('quick-win') },
         { label: 'Go to Learn', href: '/learn/' },
       ],
       subject: 'Your NeonKey next steps: free guides to start with',
@@ -601,11 +601,11 @@ function addDetail(v: PlanView, p: Plan) {
   } else if (p.type === 'Q') {
     const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
     v.startPrice = `Starting at ${usd(quickWin.from)}`;
-    v.scope = { title: 'Based on your answers, your Quick Win would cover', list: [...quickWin.items] };
+    v.scope = { title: 'Based on your answers, your inquiry capture setup would cover', list: [...quickWin.items] };
     if (!v.footnote) v.footnote = QW_UPSELL;
     v.steps = [
       { title: 'Write down the task', what: 'A good first candidate: ' + v.focus!.text.charAt(0).toLowerCase() + v.focus!.text.slice(1), why, ready: r.slice(0, 2).concat(r.slice(3)) },
-      { title: 'Scope it together', what: 'We pick the single workflow on a short call and agree what it will and won\'t do before anything is built. Keeping it to one task keeps it small and low-risk.', why: 'One workflow, scoped together first, is how every Quick Win starts.', ready: [r[2]] },
+      { title: 'Scope it together', what: 'We pick the single workflow on a short call and agree what it will and won\'t do before anything is built. Keeping it to one task keeps it small and low-risk.', why: 'One workflow, scoped together first, is how every inquiry capture setup starts.', ready: [r[2]] },
       { title: 'Build it on tools you already use', what: 'The automation connects the apps you already use, so your day-to-day routine barely changes.', why: toolsWhy ? cap(toolsWhy) + ', so the build starts there.' : 'The build uses whatever you already work in.' },
       { title: 'Walkthrough and handoff', what: 'A short walkthrough video and notes, then a handoff so you own it.', why: 'So you can run and adjust it without me.' },
     ];
@@ -638,8 +638,8 @@ function addDetail(v: PlanView, p: Plan) {
     v.nextSteps = ['Pick one of the quick fixes above and do it this week.', 'Browse Learn or the Lab when you have a few minutes.', 'Reply to this email if you get stuck.'];
   } else if (p.type === 'LEARN-BIZ') {
     v.startPrice = `${quickWin.name}: starting at ${usd(quickWin.from)}`;
-    v.scope = { title: 'Good places to start', list: ['Free guides in Learn and the Lab', 'Unlock the Week, one short weekly email', `Optional: a ${quickWin.name}`] };
-    v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about a ${quickWin.name}.`, 'You get a fixed quote after a short scoping call before any work starts.'];
+    v.scope = { title: 'Good places to start', list: ['Free guides in Learn and the Lab', 'Unlock the Week, one short weekly email', `Optional: ${quickWin.name}`] };
+    v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about ${quickWin.name}.`, 'You get a fixed quote after a short scoping call before any work starts.'];
   } else {
     v.scope = v.includes ? { title: v.includes.title, list: v.includes.list } : undefined;
     v.nextSteps = ['Reply to this email with roughly how many people you have and what\'s bugging you most.', 'I\'ll tell you honestly whether it\'s something I can help with, and point you somewhere better if not.'];

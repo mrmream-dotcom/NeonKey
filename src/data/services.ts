@@ -153,7 +153,7 @@ export const remoteSupportPlan: Offer = {
 export const automationOffers: Offer[] = [
   {
     slug: 'quick-win',
-    name: 'Quick Win',
+    name: 'Website Inquiry Capture & Alerts',
     headline: 'One repetitive task, off your plate',
     kicker: 'Start here',
     from: 99,
@@ -372,7 +372,7 @@ export const automationMenu: MenuGroup[] = [
     ],
   },
   {
-    id: 'email', title: 'Email and replies', fits: 'quick-win', fitsLabel: 'Quick Win',
+    id: 'email', title: 'Email and replies', fits: 'quick-win', fitsLabel: 'Website Inquiry Capture & Alerts',
     items: [
       'An instant "we got your message" reply that sets expectations',
       'Draft replies to everyday emails that you review before sending',
@@ -380,7 +380,7 @@ export const automationMenu: MenuGroup[] = [
     ],
   },
   {
-    id: 'money', title: 'Invoices, receipts and admin', fits: 'quick-win', fitsLabel: 'Quick Win',
+    id: 'money', title: 'Invoices, receipts and admin', fits: 'quick-win', fitsLabel: 'Website Inquiry Capture & Alerts',
     items: [
       'Polite payment reminders from the invoicing tool you already use',
       'Receipts read and logged into a spreadsheet by category',
@@ -388,7 +388,7 @@ export const automationMenu: MenuGroup[] = [
     ],
   },
   {
-    id: 'reviews', title: 'Bookings and reviews', fits: 'quick-win', fitsLabel: 'Quick Win',
+    id: 'reviews', title: 'Bookings and reviews', fits: 'quick-win', fitsLabel: 'Website Inquiry Capture & Alerts',
     items: [
       'Booking reminders that cut down on no-shows',
       'A review request sent a day after the job is done',
