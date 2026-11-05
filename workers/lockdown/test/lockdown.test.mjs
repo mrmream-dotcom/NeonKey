@@ -98,16 +98,33 @@ test("bare Google domain gets SPF + DMARC records and a DKIM click, with GoDaddy
   const a = await audit("bare.test", { contactEmail: "pat@bare.test" });
   assert.equal(a.provider.key, "google");
   assert.equal(a.dnsHost.label, "GoDaddy");
-  assert.deepEqual(a.fixes.map((f) => [f.id, f.host, f.value]), [["spf", "@", "v=spf1 include:_spf.google.com ~all"], ["dmarc", "_dmarc", "v=DMARC1; p=none; rua=mailto:pat@bare.test"]]);
+  assert.deepEqual(a.fixes.map((f) => [f.id, f.host, f.value]), [["spf", "@", "v=spf1 include:_spf.google.com ~all"], ["dmarc", "_dmarc", "v=DMARC1; p=none"]]);
   assert.deepEqual(a.buyerSteps.map((s) => s.id), ["dkim"]);
   assert.equal(a.human.length, 0);
   assert.equal(a.locked, false);
 });
 
-test("DMARC rua is left out when the buyer's email isn't on the domain", async () => {
-  const a = await audit("bare.test", { contactEmail: "pat@gmail.com" });
-  assert.equal(a.fixes.find((f) => f.id === "dmarc").value, "v=DMARC1; p=none");
-  assert.equal(a.notes.length, 1);
+test("DMARC is always monitor mode with no rua, whatever the buyer's email", async () => {
+  for (const contactEmail of ["pat@gmail.com", "pat@bare.test"]) {
+    const d = (await audit("bare.test", { contactEmail })).fixes.find((f) => f.id === "dmarc");
+    assert.equal(d.value, "v=DMARC1; p=none");
+    assert.match(d.why, /monitor mode/);
+  }
+});
+
+test("SPF senders are named for the buyer, and the report shows DKIM as Not verified", async () => {
+  const { sendersIn } = await import("../src/audit.js");
+  assert.deepEqual(sendersIn("v=spf1 include:servers.mcsv.net include:sendgrid.net ~all"), ["Mailchimp", "SendGrid"]);
+  const { renderReport } = await import("../src/report.js");
+  const a = await audit("bare.test");
+  const html = renderReport({ a, order: { id: "cs_test_abc12345" } });
+  assert.match(html, /Not verified/);
+  assert.doesNotMatch(html, /10 minutes|stop working| -all\b/);
+  assert.match(html, />1\/4<\/div><div class="l">checks<br>passing/);
+  assert.doesNotMatch(html, />SAMPLE</);
+  const sample = renderReport({ a, order: {}, sample: true });
+  assert.match(sample, />SAMPLE</);
+  assert.match(sample, /included in your full report/);
 });
 
 test("Microsoft 365 SPF is edited in place: outlook added, +all made safe, existing senders kept", async () => {
@@ -164,11 +181,17 @@ test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with
   assert.equal(buyer.from, env.FROM_ADDRESS);
   assert.deepEqual(buyer.bcc, ["bcc@example.com"]);
   assert.equal(buyer.reply_to, "hello@neonkey.tech");
-  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Lockdown: 3 steps to protect bare\.test/);
+  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Lockdown report for bare\.test/);
+  assert.match(buyer.html, /1 of 4 checks passing/);
+  assert.equal(buyer.attachments.length, 1);
+  assert.match(buyer.attachments[0].filename, /NeonKey-Email-Report-bare\.test\.html/);
+  assert.match(Buffer.from(buyer.attachments[0].content, "base64").toString("utf8"), /Recommended changes/);
+  assert.match(buyer.html, /included in your \$49/);
+  assert.doesNotMatch(buyer.html + buyer.text, /10 minutes|stop working/);
   assert.match(buyer.html, /v=spf1 include:_spf\.google\.com ~all/);
   assert.match(buyer.html, /godaddy\.com\/help\/add-a-txt-record/);
   assert.match(buyer.html, /Your \$49 counts toward any NeonKey package/);
-  assert.match(buyer.text, /we take the \$49 off/);
+  assert.match(buyer.text, /from \$250 with your \$49 credit/);
   assert.match(buyer.html, /Hi Pat,/);
   assert.deepEqual(notice.to, ["hello@neonkey.tech"]);
   assert.equal(notice.reply_to, "pat@owner.example");
@@ -210,7 +233,7 @@ test("an invalid domain at checkout is flagged without a DNS lookup", async () =
 
 test("already-done domain: buyer hears it's in good shape, no rechecks queued", async () => {
   await worker.fetch(signed(ev(session("done.test"))), env);
-  assert.match(sent[0].body.subject, /already in great shape/);
+  assert.match(sent[0].body.subject, /records already in place/);
   assert.equal(JSON.parse([...env.ORDERS.m.values()][0]).status, "done");
 });
 
@@ -247,7 +270,9 @@ test("rechecks: quiet on day 2, reminder on day 5, ACTION NEEDED on day 10, done
 
   await recheckAll(env, created + 5 * DAY);
   assert.equal(sent.length, 2);
-  assert.match(sent[0].body.subject, /Still 3 steps left to protect bare\.test/);
+  assert.match(sent[0].body.subject, /bare\.test is at 1 of 4\. Want us to finish it\?/);
+  assert.match(sent[0].body.html, /DO IT/);
+  assert.ok(sent[0].body.attachments?.length === 1);
   assert.deepEqual(sent[0].body.to, ["pat@owner.example"]);
   sent = [];
 
@@ -269,7 +294,9 @@ test("buyer fixes everything by day 2: locked-down email with the $49 credit", a
   sent = [];
   await recheckAll(env, created + 2 * DAY);
   assert.equal(sent.length, 2);
-  assert.match(sent[0].body.subject, /bare\.test is locked down/);
+  assert.match(sent[0].body.subject, /bare\.test: all four records published/);
+  assert.match(sent[0].body.html, /up from 1 of 4/);
+  assert.ok(sent[0].body.attachments?.length === 1);
   assert.match(sent[0].body.html, /Your \$49 counts toward any NeonKey package/);
   assert.match(sent[1].body.subject, /FYI: Email Lockdown locked down/);
 });

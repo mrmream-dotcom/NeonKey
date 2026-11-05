@@ -7,7 +7,7 @@ import PageHeader from '../../components/PageHeader.astro';
 ---
 <Base title="Email Lockdown questions" description="Five quick questions for your Email Lockdown order." noindex>
   <PageHeader width="narrow" eyebrow="Email Lockdown · Paid order" title="Five quick questions" crumbs={[{ href: '/', label: 'Home' }, { label: 'Email Lockdown questions' }]}>
-    <p class="lede">Thanks for your order. This is everything we need to get started, and it takes about two minutes.</p>
+    <p class="lede">Thanks for your order. Your report is already on its way by email, usually within a few minutes. These questions are optional: they help us tailor anything that needs a closer look.</p>
   </PageHeader>
   <section style="padding-top:0">
     <div class="container narrow">
@@ -34,7 +34,7 @@ import PageHeader from '../../components/PageHeader.astro';
         <button class="btn btn-primary" type="submit" data-umami-event="lockdown-intake-submit">Send my answers</button>
         <p class="form-note">We match your answers to your Stripe payment by the checkout email before any work starts. If we can't find a payment, we'll reply with the payment link. Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
       </form>
-      <p class="muted" style="font-size:.9rem;margin-top:1rem">What happens next: we check your domain's public records and email you the exact records and steps (or a time to add them, if you chose to invite us). See <a href={url('/services/email-lockdown/')}>what's included</a>.</p>
+      <p class="muted" style="font-size:.9rem;margin-top:1rem">What happens next: we check your domain's public records and email you the exact records and steps, usually within a few minutes (up to 1 business day if your setup needs a closer look). If you chose to invite us, we'll reply to set a time to add them. See <a href={url('/services/email-lockdown/')}>what's included</a>.</p>
     </div>
   </section>
 </Base>
