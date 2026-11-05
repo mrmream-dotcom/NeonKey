@@ -1,0 +1,5 @@
+{
+  "_note": "Form markup the release check accepts even though it differs from what is live. Each value is the sha256 of the page's joined <form> markup in the new build (see scripts/release-checks.mjs). Add an entry only with Michael's OK in the PR; remove it once that version is live. Nov 5 2026: contact topic tune-up -> Email Lockdown, quiz location question removed (Michael approved on a decision card, Nov 4 8:10 PM AKST).",
+  "contact": "4ba7a6cbb6e0284dacdbb3ef3f129dc9a5134ee3928683d50078bfe53f4479d9",
+  "services/quiz": "1ac8a4628759605c87e00155e55c49b0a04f8aa5549d498be2f158b3f4af3965"
+}
