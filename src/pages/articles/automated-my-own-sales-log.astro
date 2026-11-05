@@ -1,0 +1,129 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import MoreArticles from '../../components/MoreArticles.astro';
+import { getArticle } from '../../data/articles';
+const article = getArticle('automated-my-own-sales-log');
+---
+<Base title={article.title} description={article.description} type="article" image="/images/articles/automated-my-own-sales-log/hero.jpg">
+  <article class="narrow page-head prose article-page">
+    <span class="kicker">Articles · Automation</span>
+    <h1>{article.title}</h1>
+    <ArticleMeta article={article} />
+<figure class="tut-shot"><img src={url('/images/articles/automated-my-own-sales-log/hero.jpg')} alt="A made-up NeonKey sales log with a new row marked Paid, added automatically." width="1400" height="933" decoding="async" /></figure>
+<p class="lead">Before I build an automation for anyone else, I want it running on my own business first. So the first one I built was for NeonKey.</p>
+<p>It's a simple one: every sale now writes itself into the tracker I already use to follow up with people. Nobody copies anything.</p>
+
+<h2>What it does</h2>
+<ul>
+<li><strong>A sale logs itself.</strong> When someone buys from NeonKey, the tracker gets who bought, what they bought and when.</li>
+<li><strong>It finds the right row.</strong> If that person was already in the tracker, their row is updated. If they're new, a row is added.</li>
+<li><strong>Refunds update the same row.</strong> If an order is refunded, that row changes to "refunded," so the numbers I review each week match what really happened.</li>
+</ul>
+
+<div class="sl-demo panel" aria-labelledby="sl-demo-h">
+  <div class="sl-top">
+    <h3 id="sl-demo-h" style="margin:0">Try it: a made-up sales log</h3>
+    <span class="muted" style="font-size:.85rem">Fictional customers. Nothing is sent anywhere.</span>
+  </div>
+  <div class="sl-table" role="table" aria-label="Made-up sales log">
+    <div class="sl-row sl-head" role="row"><span role="columnheader">Customer</span><span role="columnheader">Status</span><span role="columnheader">Updated</span></div>
+    <div class="sl-row" role="row" data-name="Ridgeline Dental"><span role="cell">Ridgeline Dental</span><span role="cell"><span class="sl-chip sl-lead">Lead</span></span><span role="cell" class="muted">last week</span></div>
+    <div class="sl-row" role="row" data-name="Birch Street Auto"><span role="cell">Birch Street Auto</span><span role="cell"><span class="sl-chip sl-lead">Lead</span></span><span role="cell" class="muted">2 days ago</span></div>
+  </div>
+  <div class="btn-row" style="margin-top:.9rem">
+    <button type="button" class="btn btn-primary btn-sm" id="sl-sale" data-umami-event="sales-log-demo" data-umami-event-action="sale">Simulate a sale</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="sl-refund" disabled data-umami-event="sales-log-demo" data-umami-event-action="refund">Simulate a refund</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="sl-reset" data-umami-event="sales-log-demo" data-umami-event-action="reset">Reset</button>
+  </div>
+  <p class="sl-status" id="sl-status" role="status" aria-live="polite">Click "Simulate a sale" to watch a row update on its own.</p>
+</div>
+
+<h2>Why I trust it with my own sales</h2>
+<ul>
+<li><strong>It only believes real notices.</strong> The payment company signs every notice it sends. Anything that can't be verified is ignored, so nobody can fake a sale into the tracker.</li>
+<li><strong>Practice runs don't count.</strong> Test payments are skipped, so the log never looks better than reality.</li>
+<li><strong>I tested it with real money first.</strong> Before turning it on, I ran a live payment and a refund all the way through and checked the row changed both times.</li>
+<li><strong>A person still reads it.</strong> I look at the tracker every week. The automation does the typing. I still make the decisions.</li>
+</ul>
+<p>It's new, so it hasn't handled a big pile of sales yet. That's exactly why it runs on my business first: if there's a rough edge, I find it before a client ever does.</p>
+
+<h2>What this could look like for you</h2>
+<p>The idea isn't limited to payments. Most jobs shaped like "something happened, write it down" can log themselves:</p>
+<ul>
+<li>A web form is filled in</li>
+<li>A booking is made or canceled</li>
+<li>An invoice gets paid</li>
+<li>A quote is accepted</li>
+</ul>
+<p>It usually lands in a spreadsheet or tool you already use, so there's nothing new to learn. You keep every login, and you get written notes on what was set up.</p>
+<p>Want to see a bigger version? The <a href={url('/lab/front-office/')}>front office demo</a> shows inquiries, follow-ups and replies working together. Or, if there's a "write it down" job eating your week, <a href={url('/contact/?topic=quick-win')} data-umami-event="contact-click" data-umami-event-location="article-sales-log">get a written quote</a> and tell me what it is.</p>
+    <p><a href={url('/articles/')}>← Back to Articles</a></p>
+  </article>
+  <MoreArticles current={article.slug} />
+</Base>
+
+<style>
+  .sl-demo { margin: 1.6rem 0; padding: 1.1rem 1.2rem; }
+  .sl-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .4rem; margin-bottom: .8rem; }
+  .sl-table { display: grid; gap: .35rem; font-size: .95rem; }
+  .sl-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: .6rem; align-items: center; padding: .55rem .7rem; border-radius: .6rem; border: 1px solid var(--line, rgba(255,255,255,.12)); transition: background-color .4s, border-color .4s; }
+  .sl-head { border: 0; padding-top: 0; padding-bottom: .1rem; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted, #b3b8d6); }
+  :global(.sl-row.sl-flash) { background: rgba(34, 211, 238, .12); border-color: rgba(34, 211, 238, .6); }
+  :global(.sl-row.sl-flash-r) { background: rgba(244, 114, 182, .12); border-color: rgba(244, 114, 182, .6); }
+  :global(.sl-chip) { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; border: 1px solid; border-radius: 999px; padding: .1rem .55rem; }
+  :global(.sl-lead) { color: var(--muted, #b3b8d6); }
+  :global(.sl-paid) { color: #22d3ee; }
+  :global(.sl-refunded) { color: #f472b6; }
+  .sl-status { margin: .7rem 0 0; font-size: .9rem; color: var(--muted, #b3b8d6); }
+  @media (max-width: 480px) { .sl-row { grid-template-columns: 1.4fr 1fr; } .sl-row > span:nth-child(3) { display: none; } }
+</style>
+
+<script>
+  const table = document.querySelector<HTMLElement>('.sl-table');
+  const sale = document.getElementById('sl-sale') as HTMLButtonElement | null;
+  const refund = document.getElementById('sl-refund') as HTMLButtonElement | null;
+  const reset = document.getElementById('sl-reset') as HTMLButtonElement | null;
+  const status = document.getElementById('sl-status');
+  if (table && sale && refund && reset && status) {
+    const initial = table.innerHTML;
+    const target = () => table.querySelector<HTMLElement>('[data-name="Birch Street Auto"]');
+    const set = (row: HTMLElement, label: string, cls: string, when: string, flash: string) => {
+      const cells = row.querySelectorAll<HTMLElement>('[role="cell"]');
+      const chip = document.createElement('span');
+      chip.className = `sl-chip ${cls}`;
+      chip.textContent = label;
+      cells[1].replaceChildren(chip);
+      cells[2].textContent = when;
+      row.classList.remove('sl-flash', 'sl-flash-r');
+      void row.offsetWidth;
+      row.classList.add(flash);
+    };
+    const steps = ['Payment received…', 'Checking the notice is real…', 'Finding the customer in the tracker…'];
+    const run = (msgs: string[], done: () => void) => {
+      let i = 0;
+      sale.disabled = refund.disabled = true;
+      const tick = () => {
+        if (i < msgs.length) { status.textContent = msgs[i++]; setTimeout(tick, 650); } else done();
+      };
+      tick();
+    };
+    sale.addEventListener('click', () => run(steps, () => {
+      const row = target();
+      if (row) set(row, 'Paid', 'sl-paid', 'just now', 'sl-flash');
+      status.textContent = 'Done. The existing row was updated to Paid. Nobody typed anything.';
+      refund.disabled = false;
+    }));
+    refund.addEventListener('click', () => run(['Refund notice received…', 'Checking the notice is real…'], () => {
+      const row = target();
+      if (row) set(row, 'Refunded', 'sl-refunded', 'just now', 'sl-flash-r');
+      status.textContent = 'Done. The same row now says Refunded, so the log matches reality.';
+    }));
+    reset.addEventListener('click', () => {
+      table.innerHTML = initial;
+      sale.disabled = false; refund.disabled = true;
+      status.textContent = 'Click "Simulate a sale" to watch a row update on its own.';
+    });
+  }
+</script>
