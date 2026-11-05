@@ -153,20 +153,20 @@ export const remoteSupportPlan: Offer = {
 export const automationOffers: Offer[] = [
   {
     slug: 'quick-win',
-    name: 'Quick Win + Tech Checkup',
+    name: 'Quick Win',
     headline: 'One repetitive task, off your plate',
     kicker: 'Start here',
     from: 99,
-    outcome: "Get one repetitive task off your plate and a clear list of the tech fixes that matter most",
-    for: 'Automate one repetitive task and get a quick remote check of your tech basics',
+    outcome: 'New requests stop getting lost: your website form feeds one shared list, and one person gets an alert for each new request',
+    for: 'Connect one website form to a shared list and alert one person on new requests',
     items: [
-      'One simple workflow automated, scoped together first, using tools you already use',
-      'A short remote checkup of the basics: passwords and a second login step, like a code on your phone (2FA), backups, Wi-Fi and router basics, device updates and security settings',
-      'A jargon-free written to-do list of the top fixes',
+      'One website form connected to a shared list (like a Google Sheet), scoped together first, using tools you already use',
+      'An alert to one person each time a new request comes in',
+      'A test with a real sample request before it goes live',
       'Short walkthrough video and notes, then a handoff so you own it',
     ],
     demo: { label: 'See a working demo', href: '/lab/ai-inquiry-triage/', example: 'AI inquiry triage' },
-    upsell: { text: 'Want the fixes done for you?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
+    upsell: { text: 'Want your whole office set up?', linkText: "That's what the Remote Small-Office IT Setup is for.", href: '/services/remote-it/' },
   },
   { slug: 'ai-faq', headline: 'Customer questions answered, even after hours', name: 'AI Intake & FAQ Assistant', from: 499, standard: 699, outcome: "Answer the questions customers ask every day and catch new inquiries before they slip through the cracks", for: 'Answer common questions and capture inquiries', items: ['Trained on your own FAQ content', 'Captures name, contact and request details', 'Clear handoff to a human', 'Review and tuning session'], demo: { label: 'See a working demo', href: '/lab/office-ai/', example: 'Office AI' }, details: {
       who: "For businesses that answer the same questions every day (hours, prices, booking, what's included) and lose track of new inquiries. The assistant answers from your own FAQ content and collects the details of anyone who wants more.",
