@@ -383,3 +383,29 @@ test("the already-protected email names the PDF when one is attached", () => {
   assert.doesNotMatch(reportEmail({ name: "Pat", a, pdf: true }).html, /monitor mode/);
   assert.match(reportEmail({ name: "Pat", a }).html, /Open it in any browser/);
 });
+
+test("protected domains get extra checks in the report and a next step in the email", async () => {
+  const { extraChecks } = await import("../src/audit.js");
+  const recs = { "_mta-sts.ok.test": ["v=STSv1; id=1"], "_smtp._tls.ok.test": [], "default._bimi.ok.test": [] };
+  const txt = async (n) => recs[n] || [];
+  const x = await extraChecks("ok.test", { dmarc: { policy: "none" }, spf: { lookups: 9 } }, "v=spf1 include:_spf.google.com -all", "v=DMARC1; p=none", txt);
+  const by = Object.fromEntries(x.map((e) => [e.id, e]));
+  assert.equal(by.enforce.status, "tip");
+  assert.equal(by.reports.status, "tip");
+  assert.equal(by.spfmode.status, "good");
+  assert.equal(by.lookups.status, "tip");
+  assert.equal(by.mtasts.status, "good");
+  assert.equal(by.tlsrpt.status, "info");
+  const q = await extraChecks("ok.test", { dmarc: { policy: "quarantine" }, spf: { lookups: 3 } }, "v=spf1 ~all", "v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc@ok.test", txt);
+  assert.match(q.find((e) => e.id === "enforce").detail, /25%/);
+  assert.match(q.find((e) => e.id === "reports").detail, /dmarc@ok\.test/);
+
+  const a = { domain: "ok.test", provider: { label: "Google Workspace" }, mx: ["x"], dkim: ["google"], fixes: [], buyerSteps: [], human: [], notes: [], locked: true, dmarc: { policy: "none" }, extras: x };
+  const { renderReport } = await import("../src/report.js");
+  const html = renderReport({ a, order: { id: "cs_test_x" } });
+  assert.match(html, /Extra checks/);
+  assert.match(html, /2 of 7 in place/);
+  const m = reportEmail({ name: "Pat", a, pdf: true });
+  assert.match(m.html, /7 extra checks/);
+  assert.match(m.text, /Worth doing next: move from monitoring fakes to blocking them/);
+});

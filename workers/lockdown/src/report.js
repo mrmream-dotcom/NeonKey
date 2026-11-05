@@ -113,6 +113,8 @@ export function renderReport({ a, order = {}, sample = false }) {
     const st = STATUS[c.status];
     return `<tr><td><b>${PLAIN[c.key]}</b><span class="tech">${c.key}</span></td><td><span class="pill" style="color:${st.color};background:${st.bg};border-color:${st.color}55">${st.label}</span></td><td>${esc(finding(c, a))}</td></tr>`;
   };
+  const XS = { good: { label: "In place", color: "#34d399" }, tip: { label: "Next step", color: "#fbbf24" }, info: { label: "Optional", color: "#a78bfa" } };
+  const extra = (e) => { const st = XS[e.status] || XS.info; return `<div class="xr"><span class="dot" style="background:${st.color}"></span><div><div class="xn">${esc(e.label)} <span class="pill" style="color:${st.color};background:${st.color}1f;border-color:${st.color}55">${st.label}</span></div><div class="xt">${esc(e.detail)}</div></div></div>`; };
   const change = (x, i) => {
     const hidden = sample && i > 0;
     const body = hidden
@@ -165,6 +167,7 @@ table.f td:first-child{width:170px}table.f td:nth-child(2){width:120px}
 .bar{display:grid;grid-template-columns:120px 1fr 36px;gap:12px;align-items:center;font-size:12.5px;color:var(--muted)}.bar b{color:var(--text);text-align:right}
 .segs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.segs span{height:12px;border-radius:4px}
 .next{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xs{font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);font-size:11px;margin-left:6px}.xg{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}.xr{display:grid;grid-template-columns:10px 1fr;gap:9px;align-items:start;padding:6px 0;border-top:1px solid var(--line)}.dot{width:9px;height:9px;border-radius:50%;margin-top:5px}.xn{font-size:12.5px;font-weight:700;color:var(--text)}.xt{font-size:11.5px;color:var(--muted);line-height:1.45;margin-top:2px}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted)}.box b{color:var(--text)}
 .credit{border-left:3px solid var(--magenta)}
 .wm{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5}
@@ -172,7 +175,7 @@ table.f td:first-child{width:170px}table.f td:nth-child(2){width:120px}
 .sbanner{margin:16px 0 0;padding:10px 16px;border-radius:12px;border:1px solid var(--magenta);background:rgba(244,114,182,.08);font-size:13px;color:var(--muted)}.sbanner b{color:var(--text)}
 .foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}.foot a{color:var(--cyan);text-decoration:none}
 @media print{body{background:var(--bg)}.page{margin:0;min-height:auto}.in{zoom:.84}.box,.hero,table.f{break-inside:avoid}.h2{break-after:avoid}}
-@media screen and (max-width:820px){.page{width:auto;margin:0}.in{padding:22px 18px}.hero,.next,.cards{grid-template-columns:1fr}.flow{flex-direction:column}.arrow{display:none}table.f td{display:block;width:auto!important;border-top:0;padding:4px 14px}table.f tr{display:block;border-top:1px solid var(--line);padding:6px 0}}
+@media screen and (max-width:820px){.page{width:auto;margin:0}.in{padding:22px 18px}.hero,.next,.cards,.xg{grid-template-columns:1fr}.flow{flex-direction:column}.arrow{display:none}table.f td{display:block;width:auto!important;border-top:0;padding:4px 14px}table.f tr{display:block;border-top:1px solid var(--line);padding:6px 0}}
 </style></head><body>${sample ? `<div class="wm"><span>SAMPLE</span></div>` : ""}<div class="page"><div class="grad"></div><div class="in">
 <div class="top"><img src="https://neonkey.tech/email/neonkey-logo.png" alt="NeonKey"><div class="meta">Report <b>${esc(ref)}</b><br>${fmtDate(a.checkedAt)}${who ? `<br>Prepared for <b>${esc(who)}</b>` : ""}</div></div>
 <p class="eyebrow">Email security report</p>
@@ -190,6 +193,8 @@ ${bars}<div class="facts"><span>Email provider<b>${esc(a.provider?.label || "Unk
 <div class="flow">${flow}</div>
 <div class="h2">What we found</div>
 <div class="cards">${cs.map(card).join("")}</div>
+
+${a.locked && a.extras?.length ? `<div class="h2">Extra checks <span class="xs">${a.extras.filter((e) => e.status === "good").length} of ${a.extras.length} in place · these don't affect your score</span></div><div class="xg">${a.extras.map(extra).join("")}</div>` : ""}
 
 ${ch.length ? `<div class="h2" style="color:var(--cyan)">Recommended changes</div>${ch.map(change).join("")}` : ""}
 ${a.human.length ? `<div class="box" style="margin-top:8px;border-left:3px solid var(--violet)"><b>We're taking a closer look.</b> Part of your setup needs a person to review it. We'll email you within 1 business day.</div>` : ""}

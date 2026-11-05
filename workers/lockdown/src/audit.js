@@ -275,7 +275,40 @@ export async function audit(domain, opts = {}) {
   const dmarcOk = dmarc.length === 1 && ["none", "quarantine", "reject"].includes(out.dmarc.policy);
   out.locked = Boolean(P) && spfOk && dmarcOk && out.dkim.length > 0;
   out.senders = sendersIn(spf[0]);
+  if (out.locked) out.extras = await extraChecks(domain, out, spf[0], dmarc[0], txt);
   return out;
+}
+
+// Extra checks for domains that already pass the four basics, so a protected buyer still learns something useful.
+// Informational only: they never change the score or `locked`. status: "good" (in place), "tip" (worth doing next),
+// "info" (optional nice-to-have).
+export async function extraChecks(domain, out, spfRec = "", dmarcRec = "", txt) {
+  const [sts, tls, bimi] = await Promise.all([txt(`_mta-sts.${domain}`), txt(`_smtp._tls.${domain}`), txt(`default._bimi.${domain}`)]);
+  const x = [];
+  const pol = out.dmarc?.policy;
+  const pct = Number((dmarcRec.match(/\bpct=(\d+)/i) || [])[1] ?? 100);
+  if (pol === "reject") x.push({ id: "enforce", label: "Fake email is blocked", status: "good", detail: "Your DMARC policy tells inboxes to reject mail that fakes your address." });
+  else if (pol === "quarantine") x.push({ id: "enforce", label: "Fake email is blocked", status: pct < 100 ? "tip" : "good", next: "cover every fake, not just some", detail: pct < 100 ? `Inboxes send fakes to spam, but only for ${pct}% of them. Raising it to 100% covers every fake.` : "Your DMARC policy tells inboxes to send fakes to spam. The strictest step after this is reject." });
+  else x.push({ id: "enforce", label: "Fake email is blocked", status: "tip", next: "move from monitoring fakes to blocking them", detail: "Not yet. Your DMARC policy is in monitor mode, so fakes are reported but still delivered. Once every service that sends as you passes, moving to quarantine blocks them." });
+
+  const rua = (dmarcRec.match(/\brua=([^;]+)/i) || [])[1];
+  x.push(rua
+    ? { id: "reports", label: "Fake-email reports", status: "good", detail: `Inboxes send reports about mail using your name to ${rua.replace(/mailto:/gi, "").split(",")[0].trim()}.` }
+    : { id: "reports", label: "Fake-email reports", status: "tip", next: "turn on fake-email reports", detail: "No one receives DMARC reports, so you can't see who is sending as you. Adding a report address (rua=) turns that on." });
+
+  if (spfRec) {
+    const hard = /\s-all\b/i.test(spfRec);
+    x.push({ id: "spfmode", label: "Approved-sender rule", status: hard ? "good" : "info", detail: hard ? "Strict (-all): mail from unapproved servers fails outright." : "Soft (~all): mail from unapproved servers is flagged, not failed. That's common and fine while DMARC does the blocking." });
+    if (Number.isInteger(out.spf?.lookups)) x.push({ id: "lookups", label: "Room for more senders", status: out.spf.lookups <= 8 ? "good" : "tip", next: "make room in your approved-senders record", detail: `Your approved-senders record uses ${out.spf.lookups} of the 10 lookups inboxes allow.${out.spf.lookups <= 8 ? " There's room to add another tool that sends as you." : " You're close to the limit, so check before adding another sending tool."}` });
+  }
+
+  const hasSts = sts.some((r) => /^v=STSv1/i.test(r));
+  x.push({ id: "mtasts", label: "Encrypted delivery (MTA-STS)", status: hasSts ? "good" : "info", detail: hasSts ? "Other mail servers must use encryption when they deliver to you." : "Optional. It makes other mail servers use encryption when delivering to you, instead of only trying to." });
+  const hasTls = tls.some((r) => /^v=TLSRPTv1/i.test(r));
+  x.push({ id: "tlsrpt", label: "Delivery problem reports", status: hasTls ? "good" : "info", detail: hasTls ? "You get reports when mail to you can't be delivered securely." : "Optional. Sends you a daily report if mail to you couldn't be delivered securely." });
+  const hasBimi = bimi.some((r) => /^v=BIMI1/i.test(r));
+  x.push({ id: "bimi", label: "Your logo in inboxes (BIMI)", status: hasBimi ? "good" : "info", detail: hasBimi ? "Your logo record is published. Some inboxes show it next to your emails." : pol === "none" ? "Optional. It can show your logo next to your emails in some inboxes, once DMARC blocks fakes." : "Optional. It can show your logo next to your emails in some inboxes. Your DMARC policy already meets the first requirement." });
+  return x;
 }
 
 // What's still open, for reminders: ids of fixes and buyer steps.
