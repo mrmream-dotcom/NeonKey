@@ -114,6 +114,7 @@ export const remoteSupportPlan: Offer = {
     'A set number of small requests each month, agreed up front',
     'Email or ticket based, answered within an agreed business-day window',
     'Account adds and removes, settings changes, how-to questions',
+    'Modular: add or change features as your needs change (advanced features may cost extra, always quoted first)',
     'No 24/7 or emergency cover; cancel anytime',
   ],
   href: '/services/remote-it/#support-plan',
@@ -125,6 +126,7 @@ export const remoteSupportPlan: Offer = {
       'Settings changes, for example a new alias, a shared folder or a shared password folder (vault)',
       'How-to questions answered without the jargon',
       'A short note of what was changed for each request',
+      'Room to grow: as your business changes, we can add or change features on the systems we built, like a new form, routing rule or template. Small changes count as requests; advanced features may cost extra and are always quoted before any work starts',
     ],
     steps: [
       { h: 'Agree the plan', p: 'We agree how many requests are included each month and the response window, in writing.' },
