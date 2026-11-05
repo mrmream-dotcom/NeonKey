@@ -64,6 +64,19 @@ function defineArticle(input: ArticleInput): Article {
 
 export const articles: Article[] = [
   defineArticle({
+    slug: 'automated-my-own-sales-log',
+    title: 'I Automated My Own Sales Log Before Offering It to Anyone',
+    description: "Every NeonKey sale now writes itself into our tracker, and refunds update the same row. What it does, why I trust it, and what the same idea could do for your business.",
+    topic: 'Automation',
+    category: 'insights',
+    author: 'Michael Ream',
+    date: '2026-11-04',
+    image: '/images/articles/automated-my-own-sales-log/hero.jpg',
+    imageAlt: 'A made-up NeonKey sales log with a new row marked Paid, added automatically.',
+    imageWidth: 1400,
+    imageHeight: 933,
+  }),
+  defineArticle({
     slug: 'supermarket-fridge-hacks',
     title: "Hackers Turned Up the Heat on Supermarket Fridges. Here's the Lesson for Every Small Business.",
     description: "Supermarket fridges in several European countries were remotely heated up this week. Here's how that happened in everyday terms, and the simple steps that protect any business with connected equipment.",
