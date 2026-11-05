@@ -41,8 +41,8 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
 - [Monthly Remote Support Plan](https://neonkey.tech/services/#support-plan)  
   Optional add-on after setup: async help by email or ticket within an agreed response window, starting at $99/mo.
 
-- [Quick Win + Tech Checkup](https://neonkey.tech/services/#quick-win)  
-  One automation improvement plus a tech basics review, with a plain-language to-do list, starting at $99.
+- [Quick Win](https://neonkey.tech/services/#quick-win)  
+  One website form connected to a shared list, with an alert to one person on each new request, starting at $99.
 
 - [Front Office Package](https://neonkey.tech/services/#front-office-package)  
   An AI assistant that answers common questions from your own FAQ, lead routing with follow-up reminders, an email security lockdown and three months of remote support, as one project. $999 founding rate.

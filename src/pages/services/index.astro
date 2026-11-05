@@ -20,7 +20,7 @@ import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fo
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const smallJobs = [
   { o: emailLockdown, price: `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online and get the exact fixes by email, usually within minutes. No call or passwords needed.', href: emailLockdown.buyUrl!, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
-  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One repetitive task taken off your plate with the tools you already have.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
+  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
 ---

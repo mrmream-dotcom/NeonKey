@@ -37,7 +37,7 @@ export const labProjects: LabProject[] = [
     summary: 'Paste a customer message and an AI sorts it, flags urgency, pulls out the key details and drafts a reply for a human to review. Live demo plus the full write-up.',
     tags: ['AI', 'Automation'],
     level: 'Beginner → Intermediate',
-    service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
+    service: { label: 'Quick Win', href: '/services/' },
     icon: 'spark', accent: 'cyan', flag: 'Live demo',
   },
   {
@@ -46,7 +46,7 @@ export const labProjects: LabProject[] = [
     summary: 'Paste a customer review and an AI reads the mood, flags anything risky, tells you how fast to respond and drafts a public reply for you to edit. Live demo plus the full write-up.',
     tags: ['AI', 'Automation'],
     level: 'Beginner',
-    service: { label: 'Quick Win + Tech Checkup', href: '/services/#automation-menu' },
+    service: { label: 'Quick Win', href: '/services/#automation-menu' },
     icon: 'spark', accent: 'magenta', flag: 'Live demo',
   },
   {
@@ -64,7 +64,7 @@ export const labProjects: LabProject[] = [
     summary: 'Snap a receipt or upload an invoice and an AI reads the date, vendor, total, tax and category into a form you check. Add payments by hand too, then export a simple ledger to a spreadsheet.',
     tags: ['AI', 'Automation'],
     level: 'Beginner',
-    service: { label: 'Quick Win + Tech Checkup', href: '/services/' },
+    service: { label: 'Quick Win', href: '/services/' },
     icon: 'receipt', accent: 'magenta', flag: 'Try it',
   },
   {
