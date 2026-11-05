@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: [".", "workers/triage", "workers/welcome", "workers/office-ai", "workers/receipts", "workers/quiz", "workers/confirm-reminder", "workers/payments"]
+        dir: [".", "workers/triage", "workers/welcome", "workers/office-ai", "workers/receipts", "workers/quiz", "workers/confirm-reminder", "workers/payments", "workers/lockdown"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
