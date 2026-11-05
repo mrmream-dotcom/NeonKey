@@ -226,6 +226,7 @@ function sendNotice(env, kind, order, a, extra) {
     subject: `${order.livemode ? "" : "[TEST] "}${n.subject}`,
     html: n.html,
     text: n.text,
+    ...(n.urgent ? { headers: { "X-Priority": "1 (Highest)", Importance: "high", Priority: "urgent" } } : {}),
     tags: [{ name: "kind", value: "lockdown_notice" }],
   }, `lockdown-notice-${kind}-${order.id}-${order.checks || 0}`);
 }

@@ -175,7 +175,8 @@ export function reminderEmail({ name, a, passing }) {
 export function noticeEmail({ kind, order, a, extra }) {
   const action = kind === "stuck" || (kind === "new" && a.human.length > 0) || kind === "error";
   const label = { new: "new order", done: "locked down", reminder: "reminder sent", stuck: "not finished after 10 days", error: "audit failed" }[kind] || kind;
-  const subject = `${action ? "ACTION NEEDED" : "FYI"}: Email Lockdown ${label} · ${order.domain || order.rawDomain}`;
+  // Manual work is flagged urgent (Michael, Nov 5 2026): subject prefix here, high-priority headers in index.js.
+  const subject = `${action ? "🚨 URGENT · ACTION NEEDED" : "FYI"}: Email Lockdown ${label} · ${order.domain || order.rawDomain}`;
   const rows = [
     ["Buyer", `${order.name || ""} <${order.email}>`.trim()],
     ["Domain", order.domain || `(couldn't read "${order.rawDomain}")`],
@@ -194,5 +195,5 @@ export function noticeEmail({ kind, order, a, extra }) {
 ${needs.length ? `<p style="margin:14px 0 4px"><strong>Needs a person:</strong></p><ul style="margin:0">${needs.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
 ${extra ? `<p style="margin:14px 0 0">${esc(extra)}</p>` : ""}
 <p style="margin:14px 0 0;color:#555">${action ? "Reply to the buyer from hello@ (reply-to is set to them)." : "Nothing to do. This is automatic."}</p></div>`;
-  return { subject, html, text };
+  return { subject, html, text, urgent: action };
 }

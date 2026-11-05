@@ -232,6 +232,7 @@ test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with
   assert.deepEqual(notice.to, ["hello@neonkey.tech"]);
   assert.equal(notice.reply_to, "pat@owner.example");
   assert.match(notice.subject, /^\[TEST\] FYI: Email Lockdown new order · bare\.test/);
+  assert.equal(notice.headers, undefined);
   const order = JSON.parse(env.ORDERS.m.get("order:cs_test_https___www_bare_test_"));
   assert.equal(order.status, "open");
   assert.equal(order.domain, "bare.test");
@@ -257,7 +258,8 @@ test("anything unsafe to automate is flagged ACTION NEEDED and the buyer gets a 
   const [buyer, notice] = sent.map((s) => s.body);
   assert.match(buyer.subject, /one quick check/);
   assert.doesNotMatch(buyer.html, /v=spf1/);
-  assert.match(notice.subject, /ACTION NEEDED/);
+  assert.match(notice.subject, /🚨 URGENT · ACTION NEEDED/);
+  assert.equal(notice.headers.Importance, "high");
   const order = [...env.ORDERS.m.values()].map((v) => JSON.parse(v))[0];
   assert.equal(order.status, "human");
 });
