@@ -11,6 +11,20 @@
 import { verifyStripeEvent } from "./verify.js";
 import { audit, cleanDomain, openItems } from "./audit.js";
 import { reportEmail, doneEmail, reminderEmail, noticeEmail } from "./email.js";
+import { renderReport, checks } from "./report.js";
+
+const passingCount = (a) => checks(a).filter((c) => c.status === "ok").length;
+
+// The branded report rides along as an HTML attachment (opens in any browser, prints to PDF).
+function b64utf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+export function reportAttachment(a, order) {
+  return [{ filename: `NeonKey-Email-Report-${a.domain}.html`, content: b64utf8(renderReport({ a, order })) }];
+}
 
 const DAY = 86400000;
 export const RECHECK_DAYS = [2, 5, 10];
@@ -101,7 +115,10 @@ export async function handleOrder(env, s, livemode) {
     }
   }
 
+  const audited = Boolean(order.domain && a.mx);
+  if (audited) order.before = passingCount(a);
   const mail = reportEmail({ name: order.name, a });
+  if (audited && (a.fixes.length || a.buyerSteps.length || a.locked)) mail.attachments = reportAttachment(a, order);
   const sentBuyer = await sendCustomer(env, order, mail, `lockdown-report-${order.id}`);
   if (!sentBuyer) return false;
   const sentNotice = await sendNotice(env, "new", order, a);
@@ -149,12 +166,16 @@ export async function recheckOne(env, key, order, now = Date.now()) {
   let result = "quiet";
 
   if (a.locked) {
-    await sendCustomer(env, order, doneEmail({ name: order.name, a }), `lockdown-done-${order.id}`);
+    const mail = doneEmail({ name: order.name, a, before: order.before });
+    mail.attachments = reportAttachment(a, order);
+    await sendCustomer(env, order, mail, `lockdown-done-${order.id}`);
     await sendNotice(env, "done", order, a);
     order.status = "done";
     result = "done";
   } else if (RECHECK_DAYS[i] === 5) {
-    await sendCustomer(env, order, reminderEmail({ name: order.name, a }), `lockdown-remind-${order.id}`);
+    const mail = reminderEmail({ name: order.name, a, passing: passingCount(a) });
+    mail.attachments = reportAttachment(a, order);
+    await sendCustomer(env, order, mail, `lockdown-remind-${order.id}`);
     await sendNotice(env, "reminder", order, a);
     result = "reminded";
   } else if (i === RECHECK_DAYS.length - 1) {
@@ -192,6 +213,7 @@ function sendCustomer(env, order, mail, idem) {
     subject: `${test}${shadow ? `[SHADOW for ${order.email}] ` : ""}${mail.subject}`,
     html: mail.html,
     text: mail.text,
+    ...(mail.attachments ? { attachments: mail.attachments } : {}),
     tags: [{ name: "kind", value: "lockdown_customer" }],
   }, `${idem}${shadow ? "-shadow" : ""}`);
 }

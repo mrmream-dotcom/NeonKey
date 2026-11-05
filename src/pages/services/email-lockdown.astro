@@ -25,7 +25,8 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
           <li>Your domain's SPF, DKIM and DMARC records checked (these are the settings that prove your email is really from you)</li>
           <li>The exact records your domain needs, written for your email provider and the other tools that send email as you</li>
           <li>Either step-by-step instructions for your domain host, or we add them for you if you invite us as a collaborator</li>
-          <li>DMARC started in report-only mode (monitor mode), so nothing that works today gets blocked</li>
+          <li>DMARC started in monitor mode: it reports mail that fakes your address but doesn't block anything yet</li>
+          <li>A branded report you can keep, plus rechecks on day 2 and day 5 with an updated report</li>
           <li>A short note of what changed and what to watch for</li>
         </ul>
         <h2 class="el-h">Good to know</h2>
@@ -40,6 +41,7 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
         <span class="kicker">{emailLockdown.kicker}</span>
         <p class="price">{usd(emailLockdown.from)}<small>{introPricing.label} · standard {usd(emailLockdown.standard!)}</small></p>
         <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
+        <a class="btn btn-ghost btn-sm" href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a>
         <p class="el-small"><strong>{lockdownCredit}</strong></p>
         <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
         <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>

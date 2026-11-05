@@ -67,14 +67,39 @@ function recordsText(a) {
 }
 const stepsText = (a) => a.buyerSteps.map((s) => `- ${s.title}: ${s.text}\n  Guide: ${s.help}`).join("\n\n");
 
-// Bridge offer (Michael, Nov 5 2026): the $49 Lockdown is credited toward any larger NeonKey package.
-function creditBlock() {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 16px 0;background:${C.panel};border:1px solid ${C.line};border-left:3px solid ${C.magenta};border-radius:12px;"><tr><td style="padding:14px 16px;">
-<p style="margin:0 0 6px 0;font-family:${FONT};font-size:15px;font-weight:700;color:${C.text};">Your $49 counts toward any NeonKey package</p>
-<p style="margin:0 0 8px 0;font-family:${FONT};font-size:14px;line-height:1.55;color:${C.muted};">If you decide to go further, like a full remote IT setup or the Front Office Package that answers and routes new leads for you, we take the $49 you paid for this Lockdown off the price. Just mention this order when you reply.</p>
-<p style="margin:0;font-family:${FONT};font-size:14px;">${link("https://neonkey.tech/services/?utm_source=lockdown&utm_medium=email", "See the packages")}</p></td></tr></table>`;
+// Upsell (Michael, Nov 4 2026: the $49 is credited toward any package). Specific to what the audit detected,
+// and always after the result: deliver first, offer relevant help second, broader services third.
+const SERVICES = "https://neonkey.tech/services/";
+function upsell(a) {
+  const ws = a.provider && /Google|Microsoft/.test(a.provider.label) ? a.provider.label : null;
+  return {
+    title: "Your $49 counts toward any NeonKey package",
+    html: ws
+      ? `Since you're on <strong>${esc(ws)}</strong>, these records are only part of the picture. The <a href="https://neonkey.tech/services/remote-it/?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">Remote Small-Office IT Setup</a> also covers 2-step sign-in, a password manager and backups: from $299, or from $250 with your $49 credit. Want every new lead answered and followed up too? The <a href="https://neonkey.tech/services/?utm_source=lockdown&utm_medium=email#front-office-package" style="color:${C.cyan};font-weight:700;text-decoration:none;">Front Office Package</a> is $950 after your credit.`
+      : `Going further, like a full remote IT setup (from $250 after your credit) or the Front Office Package ($950 after your credit)? We take the $49 you paid for this Lockdown off the price. <a href="${SERVICES}?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">See the packages</a>.`,
+    text: ws
+      ? `Your $49 counts toward any NeonKey package. Since you're on ${ws}, these records are only part of the picture: the Remote Small-Office IT Setup also covers 2-step sign-in, a password manager and backups (from $299, or from $250 with your $49 credit): https://neonkey.tech/services/remote-it/ . The Front Office Package is $950 after your credit.`
+      : `Your $49 counts toward any NeonKey package: a full remote IT setup is from $250 after your credit, the Front Office Package $950. ${SERVICES}`,
+  };
 }
-const CREDIT_TEXT = "Your $49 counts toward any NeonKey package: if you go further (a full remote IT setup or the Front Office Package), we take the $49 off the price. See them at https://neonkey.tech/services/ and mention this order when you reply.";
+function creditBlock(a) {
+  const u = upsell(a);
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 16px 0;background:${C.panel};border:1px solid ${C.line};border-left:3px solid ${C.magenta};border-radius:12px;"><tr><td style="padding:14px 16px;">
+<p style="margin:0 0 6px 0;font-family:${FONT};font-size:15px;font-weight:700;color:${C.text};">${u.title}</p>
+<p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.55;color:${C.muted};">${u.html}</p></td></tr></table>`;
+}
+
+// Two ways to finish, shown ABOVE the steps. Done-for-you is included in the $49 (services page, Nov 4 2026).
+function twoWays(a) {
+  const host = a.dnsHost?.label ? esc(a.dnsHost.label) : "your domain host";
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 14px 0;"><tr>
+<td width="50%" valign="top" style="padding:0 6px 0 0;"><div style="background:${C.panel};border:1px solid ${C.line};border-radius:12px;padding:12px 14px;font-family:${FONT};"><p style="margin:0 0 4px 0;font-size:12px;letter-spacing:1.5px;font-weight:700;color:${C.cyan};">OPTION A</p><p style="margin:0;font-size:14px;line-height:1.5;color:${C.text};"><strong>Do it yourself</strong> with the steps below.</p></div></td>
+<td width="50%" valign="top" style="padding:0 0 0 6px;"><div style="background:${C.panel};border:1px solid ${C.violet};border-radius:12px;padding:12px 14px;font-family:${FONT};"><p style="margin:0 0 4px 0;font-size:12px;letter-spacing:1.5px;font-weight:700;color:${C.violet};">OPTION B · INCLUDED</p><p style="margin:0;font-size:14px;line-height:1.5;color:${C.text};"><strong>We put them in for you.</strong> Reply "do it" and we'll walk you through inviting us as a helper at ${host}. No passwords shared.</p></div></td>
+</tr></table>`;
+}
+const twoWaysText = (a) => `TWO WAYS TO FINISH\nA) Do it yourself with the steps below.\nB) Included in your $49: reply "do it" and we'll walk you through inviting us as a helper at ${a.dnsHost?.label || "your domain host"}, then put the records in for you. No passwords shared.`;
+
+const ATTACH_NOTE = "Your full report is attached. Open it in any browser, and save or print it as a PDF for your records.";
 
 // 1. First email, right after payment.
 export function reportEmail({ name, a }) {
@@ -83,51 +108,56 @@ export function reportEmail({ name, a }) {
   const personal = a.human.length > 0;
 
   if (a.locked && !personal) {
-    const subject = `🔑 Your Email Lockdown report for ${a.domain}: already in great shape`;
-    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong> and the three records that protect your email (SPF, DKIM and DMARC) are already set up and working.`)}${p(`There's nothing for you to add. Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail. We'll check the records again over the next few days and let you know if anything changes.`)}${creditBlock()}${p("NeonKey", `color:${C.muted};`)}`;
-    return { subject, html: shell(`${a.domain} is already protected.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain} and SPF, DKIM and DMARC are already set up and working. There's nothing for you to add. We'll check again over the next few days.\n\n${CREDIT_TEXT}\n\nNeonKey\nhello@neonkey.tech` };
+    const subject = `🔑 Your Email Lockdown report for ${a.domain}: records already in place`;
+    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${ATTACH_NOTE}`)}${p("Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail.", "font-size:15px;")}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
+    return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${ATTACH_NOTE}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   if (!a.fixes.length && !a.buyerSteps.length) {
-    // Nothing safe to send automatically (wrong domain, no mail server, unusual setup): Michael follows up.
     const subject = `🔑 Your Email Lockdown order for ${a.domain}: one quick check`;
     const body = `${p(hi)}${p(`Thanks for your order. We started checking <strong>${esc(a.domain)}</strong> and found something we want a person to look at before we send records, so nothing goes in wrong.`)}${p("We'll email you within 1 business day. If the domain you typed at checkout has a typo, just reply with the right one.")}${p("NeonKey", `color:${C.muted};`)}`;
     return { subject, html: shell("A person is taking a quick look at your setup.", body), text: `${hiT}\n\nThanks for your order. We started checking ${a.domain} and want a person to look at something before we send records. We'll email you within 1 business day. If the domain you typed at checkout has a typo, just reply with the right one.\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   const total = a.fixes.length + a.buyerSteps.length;
-  const subject = `🔑 Your Email Lockdown: ${total} ${total === 1 ? "step" : "steps"} to protect ${a.domain}`;
-  let body = p(hi) + p(`Thanks for your order. We checked the public email records for <strong>${esc(a.domain)}</strong>${a.provider ? ` (email by ${esc(a.provider.label)})` : ""}. Below is exactly what to add. It usually takes about 10 minutes, and nothing that works today will stop working.`);
+  const subject = `🔑 Your Email Lockdown report: ${total} ${total === 1 ? "step" : "steps"} for ${a.domain}`;
+  let body = p(hi) + p(`Thanks for your order. We checked the public email records for <strong>${esc(a.domain)}</strong>${a.provider ? ` (email by ${esc(a.provider.label)})` : ""}. ${ATTACH_NOTE}`);
+  body += twoWays(a);
   if (a.fixes.length) body += h2("Records to add") + p(hostLine(a), `font-size:15px;color:${C.muted};`) + a.fixes.map(recordCard).join("");
-  if (a.buyerSteps.length) body += h2("One setting to switch on", C.violet) + a.buyerSteps.map(stepCard).join("");
+  if (a.buyerSteps.length) body += h2("One setting to check", C.violet) + a.buyerSteps.map(stepCard).join("");
   if (personal) body += h2("We'll handle the rest", C.amber) + p("Part of your setup needs a closer look by a person, so we'll follow up by email within 1 business day about it. You can still add the records above now.", `font-size:15px;color:${C.muted};`);
-  body += h2("What happens next") + p("We'll recheck your records automatically over the next few days and email you once everything passes. Rather have us add them for you? Reply and we'll walk you through inviting us as a helper on your domain account, no passwords shared.", `font-size:15px;`);
+  body += h2("What happens next") + p("We'll recheck your public records on day 2 and day 5 and email you an updated report showing what's published and what's still open.", `font-size:15px;`);
   if (a.notes.length) body += p(a.notes.map(esc).join(" "), `font-size:14px;color:${C.muted};`);
-  body += creditBlock() + p("Questions or stuck on a step? Just reply to this email.", `font-size:15px;`) + p("NeonKey", `color:${C.muted};`);
+  body += creditBlock(a) + p("Questions or stuck on a step? Just reply to this email.", `font-size:15px;`) + p("NeonKey", `color:${C.muted};`);
 
-  const text = `${hiT}\n\nThanks for your order. We checked the public email records for ${a.domain}${a.provider ? ` (email by ${a.provider.label})` : ""}. Here's exactly what to add. It usually takes about 10 minutes, and nothing that works today will stop working.\n\n${a.fixes.length ? `RECORDS TO ADD\n${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `ONE SETTING TO SWITCH ON\n${stepsText(a)}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person, so we'll follow up within 1 business day.\n\n" : ""}WHAT HAPPENS NEXT\nWe'll recheck your records over the next few days and email you once everything passes. Rather have us add them? Reply and we'll walk you through inviting us as a helper, no passwords shared.\n${a.notes.length ? `\n${a.notes.join(" ")}\n` : ""}\n${CREDIT_TEXT}\n\nQuestions? Just reply.\n\nNeonKey\nhello@neonkey.tech`;
-  return { subject, html: shell(`Exactly what to add to protect ${a.domain}.`, body), text };
+  const text = `${hiT}\n\nThanks for your order. We checked the public email records for ${a.domain}${a.provider ? ` (email by ${a.provider.label})` : ""}. ${ATTACH_NOTE}\n\n${twoWaysText(a)}\n\n${a.fixes.length ? `RECORDS TO ADD\n${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `ONE SETTING TO CHECK\n${stepsText(a)}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person, so we'll follow up within 1 business day.\n\n" : ""}WHAT HAPPENS NEXT\nWe'll recheck your public records on day 2 and day 5 and email you an updated report.\n${a.notes.length ? `\n${a.notes.join(" ")}\n` : ""}\n${upsell(a).text}\n\nQuestions? Just reply.\n\nNeonKey\nhello@neonkey.tech`;
+  return { subject, html: shell(`Exactly what to add for ${a.domain}.`, body), text };
 }
 
-// 2. Recheck passed.
-export function doneEmail({ name, a }) {
+// 2. Recheck passed: the "after" report is attached.
+export function doneEmail({ name, a, before }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
-  const subject = `🔑 ${a.domain} is locked down`;
-  const body = `${p(hi)}${p(`Good news: we rechecked <strong>${esc(a.domain)}</strong> and SPF, DKIM and DMARC are all in place and passing.`)}${h2("What changed")}${p("Inboxes can now confirm your mail really comes from you, and mail that fakes your address gets reported. DMARC is in monitor mode, so nothing that worked before gets blocked.", "font-size:15px;")}${h2("What to watch for")}${p("If you start using a new tool that sends email as you (a newsletter, invoicing or booking app), look for its \"authenticate your domain\" setting. In a few weeks, once real mail is passing, DMARC can move from monitor mode to blocking fakes. Reply any time and we'll help.", "font-size:15px;")}${creditBlock()}${p("Thanks for trusting NeonKey with this.")}${p("NeonKey", `color:${C.muted};`)}`;
-  return { subject, html: shell(`${a.domain} now passes SPF, DKIM and DMARC.`, body), text: `${firstName(name) ? `Hi ${firstName(name)},` : "Hi there,"}\n\nGood news: we rechecked ${a.domain} and SPF, DKIM and DMARC are all in place and passing.\n\nWhat changed: inboxes can now confirm your mail really comes from you, and mail that fakes your address gets reported. DMARC is in monitor mode, so nothing that worked before gets blocked.\n\nWhat to watch for: if you start using a new tool that sends email as you, look for its "authenticate your domain" setting. In a few weeks DMARC can move from monitor mode to blocking fakes. Reply any time and we'll help.\n\n${CREDIT_TEXT}\n\nNeonKey\nhello@neonkey.tech` };
+  const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
+  const from = before != null ? ` (up from ${before} of 4 on your first check)` : "";
+  const subject = `🔑 ${a.domain}: all four records published`;
+  const body = `${p(hi)}${p(`Good news: we rechecked <strong>${esc(a.domain)}</strong>, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached as your "after" copy.`)}${h2("What changed")}${p("Inboxes can now check that mail claiming to be from you really is, and mail that fakes your address gets reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.", "font-size:15px;")}${h2("What to watch for")}${p("When you start using a new tool that sends email as you (a newsletter, invoicing or booking app), look for its \"authenticate your domain\" setting. Once a few weeks of real mail pass, DMARC can move from monitor mode to blocking fakes. Reply any time and we'll help.", "font-size:15px;")}${creditBlock(a)}${p("Thanks for trusting NeonKey with this.")}${p("NeonKey", `color:${C.muted};`)}`;
+  return { subject, html: shell(`${a.domain}: SPF, DKIM and DMARC published.`, body), text: `${hiT}\n\nGood news: we rechecked ${a.domain}, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached.\n\nWhat changed: inboxes can now check that mail claiming to be from you really is, and fakes get reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.\n\nWhat to watch for: when you add a new tool that sends email as you, turn on its "authenticate your domain" setting. Later, DMARC can move to blocking fakes. Reply any time.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
 }
 
-// 3. Friendly nudge when steps are still open.
-export function reminderEmail({ name, a }) {
+// 3. Day 5, still open: lead with doing it for them (included), then the stack-specific upgrade.
+export function reminderEmail({ name, a, passing }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
+  const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
   const n = a.fixes.length + a.buyerSteps.length;
-  const subject = `🔑 Still ${n} ${n === 1 ? "step" : "steps"} left to protect ${a.domain}`;
-  let body = p(hi) + p(`We rechecked <strong>${esc(a.domain)}</strong> today. Here's what's still missing (if you just added something, it can take an hour or two to show up).`);
-  if (a.fixes.length) body += h2("Records still to add") + p(hostLine(a), `font-size:15px;color:${C.muted};`) + a.fixes.map(recordCard).join("");
-  if (a.buyerSteps.length) body += h2("Setting still to switch on", C.violet) + a.buyerSteps.map(stepCard).join("");
-  body += p("Short on time? Reply and we'll walk you through inviting us as a helper on your domain account so we can add them for you. No passwords shared.", "font-size:15px;") + p("NeonKey", `color:${C.muted};`);
-  const text = `${firstName(name) ? `Hi ${firstName(name)},` : "Hi there,"}\n\nWe rechecked ${a.domain} today. Here's what's still missing (new records can take an hour or two to show up).\n\n${a.fixes.length ? `${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `${stepsText(a)}\n\n` : ""}Short on time? Reply and we'll help you invite us to add them. No passwords shared.\n\nNeonKey\nhello@neonkey.tech`;
-  return { subject, html: shell(`What's still missing for ${a.domain}.`, body), text };
+  const subject = `🔑 ${a.domain} is at ${passing} of 4. Want us to finish it?`;
+  const host = a.dnsHost?.label || "your domain host";
+  let body = p(hi) + p(`We rechecked <strong>${esc(a.domain)}</strong> today. It's at <strong>${passing} of 4</strong> checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.`);
+  body += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 16px 0;background:${C.panel};border:1px solid ${C.violet};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};"><p style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:${C.text};">Rather not deal with ${esc(host)}${a.provider ? ` and ${esc(a.provider.label)}` : ""}?</p><p style="margin:0;font-size:15px;line-height:1.55;color:${C.muted};">Reply <strong style="color:${C.text};">DO IT</strong>. We'll walk you through a quick helper invite (no passwords shared) and finish your Email Lockdown for you, at no extra cost.</p></td></tr></table>`;
+  if (a.fixes.length) body += h2("Still to add") + p(hostLine(a), `font-size:15px;color:${C.muted};`) + a.fixes.map(recordCard).join("");
+  if (a.buyerSteps.length) body += h2("Still to check", C.violet) + a.buyerSteps.map(stepCard).join("");
+  body += p("Just added something? New records can take an hour or two to show up.", `font-size:14px;color:${C.muted};`) + creditBlock(a) + p("NeonKey", `color:${C.muted};`);
+  const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${a.fixes.length ? `${hostText(a)}\n\n${recordsText(a)}\n\n` : ""}${a.buyerSteps.length ? `${stepsText(a)}\n\n` : ""}${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  return { subject, html: shell(`${a.domain} is at ${passing} of 4. Reply DO IT and we'll finish it.`, body), text };
 }
 
 // Internal notice to hello@ (BCC Michael). Subject starts with ACTION NEEDED only when a person must step in.

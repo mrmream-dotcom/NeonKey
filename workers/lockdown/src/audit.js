@@ -103,6 +103,27 @@ async function spfLookups(record, txt, depth = 0, seen = new Set()) {
   return n;
 }
 
+// Known senders by SPF include, so the report can say who is allowed in plain words.
+const SENDERS = [
+  ["_spf.google.com", "Google Workspace"], ["spf.protection.outlook.com", "Microsoft 365"], ["servers.mcsv.net", "Mailchimp"],
+  ["mandrillapp.com", "Mailchimp Transactional"], ["sendgrid.net", "SendGrid"], ["mailgun.org", "Mailgun"], ["amazonses.com", "Amazon SES"],
+  ["zoho.com", "Zoho"], ["zohomail.com", "Zoho"], ["secureserver.net", "GoDaddy email"], ["constantcontact.com", "Constant Contact"],
+  ["hubspotemail.net", "HubSpot"], ["sendinblue.com", "Brevo"], ["brevo.com", "Brevo"], ["shopify.com", "Shopify"],
+  ["salesforce.com", "Salesforce"], ["zendesk.com", "Zendesk"], ["mailjet.com", "Mailjet"], ["mailerlite.com", "MailerLite"],
+  ["convertkit.com", "Kit (ConvertKit)"], ["kit.com", "Kit"], ["freshdesk.com", "Freshdesk"], ["intuit.com", "Intuit/QuickBooks"],
+];
+export function sendersIn(record) {
+  if (!record) return [];
+  const out = [];
+  for (const m of record.toLowerCase().matchAll(/(?:include:|redirect=)([^\s]+)/g)) {
+    const hit = SENDERS.find(([k]) => m[1] === k || m[1].endsWith(`.${k}`));
+    const name = hit ? hit[1] : m[1];
+    if (!out.includes(name)) out.push(name);
+  }
+  return out;
+}
+const listWords = (xs) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+
 // Insert an include before the "all" term (or at the end), keeping everything else the buyer already has.
 export function addInclude(record, include) {
   const terms = record.trim().split(/\s+/);
@@ -144,7 +165,7 @@ export async function audit(domain, opts = {}) {
   if (spf.length > 1) {
     out.human.push(`${domain} has ${spf.length} SPF records, which counts as no SPF at all. Merging them needs a look at which services still send: ${spf.join("  |  ")}`);
   } else if (spf.length === 0) {
-    if (P) out.fixes.push({ id: "spf", type: "TXT", host: "@", value: `v=spf1 ${P.spf} ~all`, action: "add", why: `Lists ${P.label} as allowed to send email as ${domain}. Without it, your mail is more likely to land in spam and your address is easier to fake.` });
+    if (P) out.fixes.push({ id: "spf", type: "TXT", host: "@", value: `v=spf1 ${P.spf} ~all`, action: "add", why: `Right now nothing is listed as allowed to send email as ${domain}, so inboxes can't tell your real mail from a fake. This lists ${P.label}, which handles your everyday email.` });
   } else {
     const rec = spf[0];
     out.spf.lookups = await spfLookups(rec, txt);
@@ -153,19 +174,24 @@ export async function audit(domain, opts = {}) {
     let added = 0;
     if (P && !next.toLowerCase().includes(P.spf.toLowerCase()) && !/redirect=/i.test(next)) { next = addInclude(next, P.spf); added = 1; }
     if (out.spf.lookups + added > 10) out.human.push(`SPF needs about ${out.spf.lookups + added} DNS lookups${added ? ` once ${P.spf} is added` : ""} (the limit is 10), so some receivers would fail it. Trimming it means deciding which services to keep: ${rec}`);
-    else if (next !== rec) out.fixes.push({ id: "spf", type: "TXT", host: "@", value: next, current: rec, action: "replace", why: "Your SPF record needs a small change so it lists your email provider and ends safely. Edit the existing record (there must only ever be one), don't add a second one." });
+    else if (next !== rec) {
+      const now = sendersIn(rec);
+      const why = added
+        ? `Right now your record allows ${now.length ? listWords(now) : "no named services"} to send as you, but not ${P.label}, which handles your everyday email. That makes your normal replies look unverified to your customers' inboxes. This adds ${P.label} and keeps everything already listed.`
+        : `Your record ends in a way that lets anyone claim to be you. This changes only the ending to ~all ("treat others as suspicious") and keeps every service already listed.`;
+      out.fixes.push({ id: "spf", type: "TXT", host: "@", value: next, current: rec, action: "replace", why: `${why} Edit the existing record; there must only ever be one.`, senders: now });
+    }
+    out.notes.push("Does anything else send email as you, like a website form, invoicing or booking app? Reply and tell us. We'll check it's covered before you tighten anything later.");
   }
 
-  // DMARC: always started in monitor mode (p=none) so nothing that works today gets blocked.
+  // DMARC: started in monitor mode (p=none), which reports but blocks nothing. No rua: raw XML reports confuse owners.
   const dmarc = (await txt(`_dmarc.${domain}`)).filter((r) => /^v=dmarc1\b/i.test(r));
   out.dmarc = { records: dmarc, policy: dmarc[0] ? ((dmarc[0].match(/\bp=(\w+)/i) || [])[1] || "missing").toLowerCase() : null };
   if (dmarc.length > 1) out.human.push(`${domain} has ${dmarc.length} DMARC records, which receivers ignore. Needs merging: ${dmarc.join("  |  ")}`);
   else if (!dmarc.length) {
-    const rua = contactEmail.endsWith(`@${domain}`) ? `; rua=mailto:${contactEmail}` : "";
-    out.fixes.push({ id: "dmarc", type: "TXT", host: "_dmarc", value: `v=DMARC1; p=none${rua}`, action: "add", why: "DMARC tells inboxes what to do with mail that pretends to be from you. This starts it in monitor mode, so nothing that works today gets blocked." });
-    if (!rua) out.notes.push("Want weekly DMARC reports? Reply with an address at your own domain and we'll send the one-line change. It's optional.");
+    out.fixes.push({ id: "dmarc", type: "TXT", host: "_dmarc", value: "v=DMARC1; p=none", action: "add", why: "DMARC tells inboxes what to do with mail that pretends to be from you. This publishes it in monitor mode: it doesn't block anything yet. Moving to blocking (quarantine or reject) is a later step, once we've confirmed every service that sends as you." });
   } else if (out.dmarc.policy === "missing") {
-    out.fixes.push({ id: "dmarc", type: "TXT", host: "_dmarc", value: dmarc[0].replace(/^v=dmarc1\s*;?\s*/i, "v=DMARC1; p=none; "), current: dmarc[0], action: "replace", why: "Your DMARC record is missing its policy (p=), so it does nothing. This adds monitor mode." });
+    out.fixes.push({ id: "dmarc", type: "TXT", host: "_dmarc", value: dmarc[0].replace(/^v=dmarc1\s*;?\s*/i, "v=DMARC1; p=none; "), current: dmarc[0], action: "replace", why: "Your DMARC record is missing its policy (p=), so it does nothing. This adds monitor mode, which reports but doesn't block anything yet." });
   }
 
   // DKIM: keys are generated inside the provider's admin console, so this is a buyer click, not a record we can write.
@@ -175,11 +201,12 @@ export async function audit(domain, opts = {}) {
     const [t, c] = await Promise.all([txt(name), resolve(name, "CNAME")]);
     if (t.some((r) => /\bp=[A-Za-z0-9+/]/.test(r)) || c.answers.length) out.dkim.push(s);
   }
-  if (P && !out.dkim.length) out.buyerSteps.push({ id: "dkim", title: `Turn on DKIM in ${P.label}`, text: `${P.dkimSteps} Already turned it on with a custom name? Reply and tell us, and we'll mark it done.`, help: P.dkimHelp });
+  if (P && !out.dkim.length) out.buyerSteps.push({ id: "dkim", title: `Turn on (or confirm) DKIM in ${P.label}`, text: `We couldn't verify a DKIM key at the names ${P.label} normally uses. It may be off, or set up under a custom name. ${P.dkimSteps} Already on? Reply and tell us, and we'll mark it verified.`, help: P.dkimHelp });
 
   const spfOk = spf.length === 1 && /\s[~-]all\b|redirect=/i.test(spf[0]) && (!P || spf[0].toLowerCase().includes(P.spf.toLowerCase()) || /redirect=/i.test(spf[0])) && !(out.spf.lookups > 10);
   const dmarcOk = dmarc.length === 1 && ["none", "quarantine", "reject"].includes(out.dmarc.policy);
   out.locked = Boolean(P) && spfOk && dmarcOk && out.dkim.length > 0;
+  out.senders = sendersIn(spf[0]);
   return out;
 }
 
