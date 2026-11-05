@@ -18,7 +18,7 @@ import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fo
 // downsells for calls and email. Their old anchors (#ai-faq, #lead-routing) now land on the package card.
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const smallJobs = [
-  { o: emailLockdown, price: usd(emailLockdown.from), line: 'Make it harder for scammers to send email pretending to be you. Flat price, buy online, no call needed.', href: emailLockdown.buyUrl!, cta: `Buy now`, buy: true },
+  { o: emailLockdown, price: `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online, then answer five quick questions; no call or passwords needed.', href: emailLockdown.buyUrl!, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
   { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One repetitive task taken off your plate with the tools you already have.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
@@ -52,14 +52,6 @@ const smallJobs = [
             <a class="btn btn-ghost btn-sm" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">What's included</a>
           </div>
         </div>
-      </div>
-      <div class="buy-strip">
-        <div>
-          <span class="kicker">Buy online · no call needed</span>
-          <strong><OfferTitle offer={emailLockdown} /> · {usd(emailLockdown.from)} flat</strong>
-          <span class="muted">Your email security records (SPF, DKIM, DMARC) checked and fixed so it's harder for scammers to fake your address. Pay online, then we email you the next steps.</span>
-        </div>
-        <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="services-buy-strip">Buy now · {usd(emailLockdown.from)}</a>
       </div>
       <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
     </div>
@@ -165,6 +157,7 @@ const smallJobs = [
             </div>
             <div class="job-side">
               <span class="job-price">{j.price}</span>
+              {j.more && <a class="btn btn-ghost btn-sm" href={url(j.more)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small-details">Details</a>}
               {j.buy
                 ? <a class="btn btn-primary btn-sm" href={j.href} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>
                 : <a class="btn btn-ghost btn-sm" href={url(j.href)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>}
@@ -248,10 +241,6 @@ const smallJobs = [
   .choice-btns { margin-top: auto; padding-top: .4rem; }
   .anchor { display: block; scroll-margin-top: 90px; }
   .small-note { margin: 1rem 0 0; font-size: .92rem; }
-  .buy-strip { margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.2rem; border: 1px dashed var(--cyan); border-radius: 14px; background: var(--bg-2); }
-  .buy-strip > div { display: flex; flex-direction: column; gap: .25rem; max-width: 760px; }
-  .buy-strip strong { font-size: 1.1rem; color: var(--text); }
-  .buy-strip .muted { font-size: .93rem; }
   .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }
   @media (max-width: 900px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }

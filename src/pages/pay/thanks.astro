@@ -13,6 +13,7 @@ import Icon from '../../components/Icon.astro';
     <p class="lede">Stripe emails your receipt. We'll be in touch by email to schedule the work. Questions in the meantime? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
   </PageHeader>
   <div class="narrow status-body">
+    <div class="callout" style="margin-bottom:1.25rem"><strong>Bought the Email Lockdown?</strong> Answer five quick questions so we can start: <a href={url('/services/email-lockdown/#intake')} data-umami-event="lockdown-intake-link" data-umami-event-location="pay-thanks">Email Lockdown questions</a>. No passwords needed.</div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/learn/')}>Browse Learn</a></p>
   </div>
 </Base>
