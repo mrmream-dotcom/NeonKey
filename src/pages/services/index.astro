@@ -5,11 +5,13 @@ import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, officeTuneUp, automationMenu, introPricing, usd } from '../../data/services';
-// Page layout (Nov 2026, after two outside reviews): lead with TWO offers, picked by the buyer's problem.
-//   $999 Front Office Package for quote and inquiry follow-up (remote), $249 Office Tech Tune-Up on site in Fairbanks and North Pole.
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, automationMenu, introPricing, usd } from '../../data/services';
+// Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
+//   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
+//   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
+//   from the site; it is the landing page for the Fairbanks Google Ads campaign and direct local outreach. Don't delete it.
 //   Every smaller job sits in one short "Need just one thing?" list further down.
-// Keep the old anchors (#front-office-package, #support-plan, #local, #quick-win, #ai-faq, #lead-routing,
+// Keep the old anchors (#front-office-package, #support-plan, #quick-win, #ai-faq, #lead-routing,
 // #email-lockdown, #remote-it, #automation-menu, #featured-h, #auto-h): other pages, the quiz and outreach links point to them.
 // Set showValue to true to bring back the crossed-out "$2,000+ value" line on the package (Michael's call).
 const showValue = false;
@@ -17,7 +19,6 @@ const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
 const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
 const smallJobs = [
-  { o: remoteIt, price: `from ${usd(remoteIt.from)}`, line: 'Business email, Wi-Fi, backups and passwords set up properly, fully remote. For offices outside Fairbanks and North Pole.', href: '/services/remote-it/', cta: "See what's included", headingId: 'featured-h' },
   { o: emailLockdown, price: usd(emailLockdown.from), line: 'Make it harder for scammers to send email pretending to be you.', href: '/contact/?topic=remote-it', cta: 'Ask about it' },
   { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One repetitive task taken off your plate with the tools you already have.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: aiFaq, price: `from ${usd(aiFaq.from)}`, line: 'Just the FAQ assistant: answers common questions from answers you approve, and hands the rest to a person.', href: `/contact/?topic=${aiFaq.slug}`, cta: 'Ask about it', demo: aiFaq.demo },
@@ -25,8 +26,8 @@ const smallJobs = [
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
 ---
-<Base title="Services" description="Quote and inquiry follow-up set up for small businesses ($999, remote), or an on-site office tech tune-up in Fairbanks and North Pole ($249). Written scope first, built after hours, in accounts you own.">
-  <PageHeader eyebrow="Services" title="Losing track of quote requests, or need your office tech fixed?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
+<Base title="Services" description="Remote help for small businesses: quote and inquiry follow-up set up for $999, or your office email, Wi-Fi, backups and passwords set up right from $299. Written scope first, built after hours, in accounts you own.">
+  <PageHeader eyebrow="Services" title="Losing track of quote requests, or need your office tech set up right?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
     <p class="lede">Pick the one that sounds like you. Either way you get a written scope and price before any work starts.</p>
   </PageHeader>
 
@@ -35,21 +36,21 @@ const smallJobs = [
       <h2 id="pick-h" class="sr-only">Two ways to start</h2>
       <div class="choices">
         <a class="card topline accent-magenta choice" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">
-          <span class="kicker">Remote · anywhere in the US</span>
+          <span class="kicker">Lead follow-up · remote</span>
           <strong>Track every quote request and follow-up</strong>
           <span class="muted">New requests land in one list, someone is assigned, and reminders go out until the customer answers.</span>
           <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
           <span class="choice-go">See the Front Office Package →</span>
         </a>
-        <a class="card topline accent-cyan choice" href="#local" data-umami-event="services-cta" data-umami-event-location="services-choice-local">
-          <span class="kicker">On-site · Fairbanks and North Pole</span>
-          <strong>Get your office tech checked and fixed</strong>
-          <span class="muted">One evening or Saturday visit: Wi-Fi, backups, sign-ins, email security, printers and slow computers.</span>
-          <span class="choice-price">{usd(officeTuneUp.from)} <small>one visit</small></span>
-          <span class="choice-go">See the Tune-Up →</span>
+        <a class="card topline accent-cyan choice" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">
+          <span class="kicker">Office IT · remote</span>
+          <strong>Get your office tech set up right</strong>
+          <span class="muted">Business email on your own domain, safer Wi-Fi, tested backups and a password manager, all over screen share.</span>
+          <span class="choice-price">from {usd(remoteIt.from)} <small>one-time setup</small></span>
+          <span class="choice-go">See the Remote IT Setup →</span>
         </a>
       </div>
-      <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note} Outside Interior Alaska and want IT help? <a href="#remote-it">Remote IT setup from {usd(remoteIt.from)}</a>.</p>
+      <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
     </div>
   </section>
 
@@ -101,23 +102,23 @@ const smallJobs = [
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="local-h">
+  <section class="alt" aria-labelledby="featured-h">
     <div class="container">
-      <article class="card offer offer-featured topline accent-cyan" id="local">
+      <article class="card offer offer-featured topline accent-cyan" id={remoteIt.slug}>
         <div class="offer-featured-grid">
           <div>
-            <span class="kicker">{officeTuneUp.kicker}</span>
-            <h2 id="local-h" class="offer-h2"><OfferTitle offer={officeTuneUp} /></h2>
-            <OfferNameLabel offer={officeTuneUp} />
-            <p class="offer-outcome">One on-site visit to check your office tech, fix what we can during the visit, and leave you a written list of what's next.</p>
-            <ul>{officeTuneUp.items.map((i) => <li>{i}</li>)}</ul>
+            <span class="kicker">Remote · anywhere in the US</span>
+            <h2 id="featured-h" class="offer-h2"><OfferTitle offer={remoteIt} /></h2>
+            <OfferNameLabel offer={remoteIt} />
+            <p class="offer-outcome">Your office tech set up properly, done over video and screen share.</p>
+            <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
           </div>
           <div class="offer-featured-side">
-            <p class="price">{usd(officeTuneUp.from)}<small>One visit · up to about 10 devices</small></p>
-            <p class="muted side-note">Evenings and Saturdays, about 2 to 3 hours. Extra work found on the day is quoted before it's done.</p>
+            <p class="price">Starting at {usd(remoteIt.from)}<small>{introPricing.label} · scoped first</small></p>
+            <p class="muted side-note">You keep every login, and you get notes on everything we changed. Ongoing help is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-offer="Office Tech Tune-Up" data-umami-event-location="services-local">Request a tune-up</a>
-              <a class="btn btn-ghost" href={url('/local/')} data-umami-event="services-cta" data-umami-event-offer="Office Tech Tune-Up" data-umami-event-location="services-local">More about the visit</a>
+              <a class="btn btn-primary" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Book a 15-minute fit call</a>
+              <a class="btn btn-ghost" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">See what's included</a>
             </div>
           </div>
         </div>
@@ -206,7 +207,7 @@ const smallJobs = [
       </details>
       <div class="btn-row" style="margin-top:1.5rem">
         <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Book a 15-minute fit call</a>
-        <a class="btn btn-ghost" href={url('/contact/?topic=tune-up')} data-umami-event="contact-click" data-umami-event-offer="Office Tech Tune-Up" data-umami-event-location="services-faq">Request a tune-up</a>
+        <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-faq">Ask about IT setup</a>
       </div>
       <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Not ready for a project? Grab the <a href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services">free Starter IT Kit</a> to check your own accounts in 10 minutes, or take the <a href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">2-minute quiz</a>.</p>
       <p class="muted" style="font-size:.9rem">Prices shown are starting points, not quotes. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
@@ -242,7 +243,7 @@ const smallJobs = [
   .incl-h { font-size: 1.05rem; margin: 1rem 0 .3rem; }
   .side-note { font-size: .92rem; }
   .fop-value { margin: 0 0 -.4rem; color: var(--muted); font-weight: 600; }
-  .offer[id], #local, #smaller, .job { scroll-margin-top: 90px; }
+  .offer[id], #smaller, .job { scroll-margin-top: 90px; }
   .founder-line { margin-top: 1.25rem; font-size: .95rem; max-width: 860px; }
   .jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
   .job { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }

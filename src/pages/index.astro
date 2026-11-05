@@ -10,7 +10,7 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, officeTuneUp, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -87,7 +87,7 @@ const jsonLd = {
       url: home,
       name: 'NeonKey: Office IT Setup and AI Automation for Small Businesses',
       headline: 'Office IT and practical AI for small businesses.',
-      description: 'Office IT setup, security basics and practical AI automation for small businesses, on-site in Fairbanks and North Pole, Alaska and remote across the US. Plus free guides, Lab demos and a weekly email.',
+      description: 'Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides, Lab demos and a weekly email.',
       inLanguage: 'en',
       isPartOf: { '@id': `${home}#website` },
       about: { '@id': orgId },
@@ -135,7 +135,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description="Office IT setup, security basics and practical AI automation for small businesses, on-site in Fairbanks and North Pole, Alaska and remote across the US. Plus free guides, Lab demos and a weekly email.">
+<Base title="Home" description="Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides, Lab demos and a weekly email.">
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="hero hero-bg">
     <div class="hero-art" aria-hidden="true">
@@ -157,9 +157,9 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     <div class="container hero-content">
       <span class="kicker">Unlock tech, whatever your level</span>
       <h1 data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></h1>
-      <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. On-site in Fairbanks and North Pole, Alaska. Remote anywhere in the US.</p>
+      <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. Done remotely, anywhere in the US.</p>
       <h1 data-ab="hero:b">Catch every lead. <span class="glow">Answer every customer.</span><br /> <span class="glow-m">Keep the office running.</span></h1>
-      <p class="lead" data-ab="hero:b">Lead follow-up, AI intake and office IT for small businesses, set up on accounts you own, with a written quote before any work. On-site in Fairbanks and North Pole, Alaska. Remote anywhere in the US.</p>
+      <p class="lead" data-ab="hero:b">Lead follow-up, AI intake and office IT for small businesses, set up on accounts you own, with a written quote before any work. Done remotely, anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a free quote</a>
         <a class="btn btn-alt" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
@@ -171,24 +171,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Three ways to start" intro="Pick the one that matches your office. Every project is scoped on a short call and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
-      <div class="grid grid-3 home-offers">
-        <article class="card topline accent-cyan">
-          <span class="kicker">On-site · Fairbanks and North Pole · $249</span>
-          <h3><a href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="home-local"><OfferTitle offer={officeTuneUp} /></a></h3>
-          <OfferNameLabel offer={officeTuneUp} />
-          <p class="offer-outcome">We come to your office and check and fix the basics in one visit.</p>
-          <p class="home-offer-sub">One visit covers:</p>
-          <ul class="home-offer-list">
-            <li>Wi-Fi and router: passwords, updates, a separate guest network</li>
-            <li>Backups confirmed and a restore tested</li>
-            <li>2-step sign-in on email and key accounts</li>
-            <li>Email records fixed so scammers can't fake your address</li>
-            <li>Printers and slow computers sorted out</li>
-            <li>A one-page report of what we fixed and what's next</li>
-          </ul>
-          <p class="home-offer-note">Evening and Saturday times. In Alaska's Interior only; everyone else, see the remote setup. <a href={url('/local/')}>Full details →</a></p>
-        </article>
+      <SectionHeading id="svc-h" eyebrow="Services" title="Ways to start" intro="Pick the one that matches your office. Every project is scoped on a short call and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <div class="grid grid-2 home-offers">
         <article class="card offer-featured topline">
           <span class="kicker">AI and automation · Starting at {usd(quickWin.from)}</span>
           <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win"><OfferTitle offer={quickWin} /></a></h3>
