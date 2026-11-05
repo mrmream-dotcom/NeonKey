@@ -155,6 +155,10 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </svg>
     </div>
     <div class="container hero-content">
+      <div class="hero-lockdown">
+        <p><strong>Start with your email.</strong><span class="hl-more"> {emailLockdown.name}: {usd(emailLockdown.from)} flat, done remotely, buy online with no call.</span></p>
+        <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="lockdown-cta" data-umami-event-offer={emailLockdown.name} data-umami-event-location="home-hero">Lock down my email · {usd(emailLockdown.from)}</a>
+      </div>
       <span class="kicker">Unlock tech, whatever your level</span>
       <h1 data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></h1>
       <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. Done remotely, anywhere in the US.</p>
@@ -335,6 +339,10 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   .fop-strip-side { display: grid; gap: .6rem; justify-items: start; }
   .fop-strip .price small { display: block; font-size: .85rem; }
   @media (max-width: 760px) { .fop-strip { grid-template-columns: 1fr; } }
+  .hero-lockdown { margin: 0 0 1.4rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem 1rem; padding: .7rem 1rem; border: 1px solid rgba(244,114,182,.45); border-radius: 12px; background: rgba(11,13,23,.6); max-width: 46rem; }
+  .hero-lockdown p { margin: 0; color: #c9cde6; font-size: .95rem; }
+  .hero-lockdown strong { color: var(--text); }
+  @media (max-width: 640px) { .hero-lockdown { max-width: 420px; width: 100%; margin-bottom: 1rem; padding: .6rem .8rem; } .hero-lockdown .btn { width: 100%; } }
   .hero-proof { margin: .9rem 0 0; font-size: .92rem; color: var(--muted); }
   .hero-proof a { color: inherit; text-decoration: underline; }
   .who-card { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.5rem; align-items: start; }
