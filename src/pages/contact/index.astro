@@ -27,7 +27,7 @@ import Icon from '../../components/Icon.astro';
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
       <div class="field"><label for="c-topic">Topic</label>
-        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Office Tech Tune-Up (Fairbanks / North Pole)</option><option>Monthly remote support plan</option><option>Automation services</option><option>Front Office Package (all-inclusive)</option><option>Tutorials or reviews</option><option>Newsletter</option><option>I was referred by a client</option><option>Something else</option></select>
+        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Email Lockdown ($49)</option><option>Monthly remote support plan</option><option>Automation services</option><option>Front Office Package (all-inclusive)</option><option>Tutorials or reviews</option><option>Newsletter</option><option>I was referred by a client</option><option>Something else</option></select>
       </div>
       <div class="field"><label for="c-ref">Referred by <span class="muted">(optional)</span></label><input id="c-ref" name="referred_by" maxlength="80" placeholder="Name or code, like NK-SMITH" /></div>
       <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required></textarea></div>
@@ -59,7 +59,10 @@ import Icon from '../../components/Icon.astro';
   // when coming from the quiz, also suggest a starter message if the box is still empty.
   const TOPICS: Record<string, [string, string]> = {
     'front-office-package': ['Front Office Package (all-inclusive)', 'the Front Office Package'],
+    // tune-up: only reached from /local/ (Fairbanks ad landing page); the option is added on the fly so the
+    // remote-only site never lists it.
     'tune-up': ['Office Tech Tune-Up (Fairbanks / North Pole)', 'an on-site Office Tech Tune-Up'],
+    'email-lockdown': ['Email Lockdown ($49)', 'the $49 Email Lockdown'],
     'remote-it': ['Remote small-office IT setup', 'the Remote Small-Office IT Setup'],
     'support-plan': ['Monthly remote support plan', 'the Monthly Remote Support Plan'],
     'quick-win': ['Automation services', 'a Quick Win + Tech Checkup'],
@@ -71,6 +74,7 @@ import Icon from '../../components/Icon.astro';
   const t = TOPICS[qp.get('topic') || ''];
   const sel = document.getElementById('c-topic') as HTMLSelectElement | null;
   const msg = document.getElementById('c-msg') as HTMLTextAreaElement | null;
+  if (t && sel && !Array.from(sel.options).some((o) => o.text === t[0])) sel.add(new Option(t[0]), 1);
   if (t && sel) {
     const opt = Array.from(sel.options).find((o) => o.text === t[0]);
     if (opt) sel.value = opt.value;

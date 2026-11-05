@@ -40,7 +40,7 @@ import { emailLockdown, introPricing, usd } from '../../data/services';
         <p class="price">{usd(emailLockdown.from)}<small>{introPricing.label} · standard {usd(emailLockdown.standard!)}</small></p>
         <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
         <p class="muted el-small">Secure checkout by Stripe. Right after paying, you'll get a short form with five quick questions.</p>
-        <p class="muted el-small">Questions first? <a href={url('/contact/?topic=remote-it')}>Send a message</a>.</p>
+        <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>
       </aside>
     </div>
   </section>
