@@ -42,6 +42,7 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
         <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
         <p class="el-small"><strong>{lockdownCredit}</strong></p>
         <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
+        <p class="muted el-small">Not sure you need it? <a href={url('/lab/email-check/')} data-umami-event="email-check-link" data-umami-event-location="lockdown-page">Grade your domain free</a>.</p>
         <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>
       </aside>
     </div>
