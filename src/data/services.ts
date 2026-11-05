@@ -239,6 +239,9 @@ export const automationOffers: Offer[] = [
  * Email Lockdown: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
  * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
  */
+/** Michael, Nov 4 2026: the $49 Lockdown is a bridge into bigger work; its price comes off any larger package or setup. */
+export const lockdownCredit = 'Want more later? Your $49 comes off any larger package or setup.';
+
 export const emailLockdown: Offer = {
   slug: 'email-lockdown',
   name: 'Email Lockdown',

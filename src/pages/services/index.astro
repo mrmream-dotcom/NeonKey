@@ -1,4 +1,5 @@
 ---
+import LockdownStrip from '../../components/LockdownStrip.astro';
 import OfferTitle from '../../components/OfferTitle.astro';
 import OfferNameLabel from '../../components/OfferNameLabel.astro';
 import { url } from '../../config';
@@ -53,6 +54,7 @@ const smallJobs = [
           </div>
         </div>
       </div>
+      <LockdownStrip location="services-lockdown-strip" />
       <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
     </div>
   </section>

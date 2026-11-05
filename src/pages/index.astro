@@ -9,6 +9,7 @@ import ArticleCard from '../components/ArticleCard.astro';
 import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import LockdownStrip from '../components/LockdownStrip.astro';
 import { publishedLabProjects } from '../data/lab';
 import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
@@ -207,6 +208,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           </div>
         </article>
       </div>
+      <LockdownStrip location="home-lockdown-strip" />
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <div class="btn-row">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
