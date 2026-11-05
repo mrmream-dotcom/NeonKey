@@ -92,6 +92,14 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
         </div>
       </div>
 
+      <div class="panel fo-grow">
+        <span class="fo-num" aria-hidden="true">+</span>
+        <div>
+          <h3>It grows with you</h3>
+          <p class="muted">Stay on the monthly support plan and the system stays modular. Need a new form, another person in the routing, a new follow-up or a different template? We add or change it as your business changes. Small changes are part of the plan. Advanced features may cost extra, and you always get the price before any work starts.</p>
+        </div>
+      </div>
+
       <div class="nl-box lab-cta topline fo-cta">
         <div>
           <span class="kicker">{fop.name}</span>
@@ -127,6 +135,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
       <li>The templates and rules, written in your voice, which you can change yourself.</li>
       <li>Every account and login. If we stop working together, it keeps running.</li>
       <li>A walkthrough video and written notes, plus three months of the support plan while it beds in.</li>
+      <li>Room to grow. On the monthly plan we add or change features as you need them. Advanced features may cost extra, quoted first.</li>
     </ul>
 
     <h2 id="how">How it gets built</h2>
@@ -218,6 +227,9 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
   .fo-chk p { margin: 0; font-size: .85rem; color: var(--muted); }
   .fo-chk .st { font: 600 .8rem/1 var(--mono); }
   .fo-chk .st.bad { color: #f87171; } .fo-chk .st.good { color: #4ade80; }
+  .fo-grow { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; border-color: rgba(167,139,250,.55); }
+  .fo-grow h3 { margin: 0 0 .25rem; font-size: 1.2rem; }
+  .fo-grow p { margin: 0; max-width: 72ch; }
   .fo-cta { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: center; }
   .fo-cta-side { display: grid; gap: .6rem; justify-items: start; }
   @media (max-width: 760px) { .fo-cta { grid-template-columns: 1fr; } }
