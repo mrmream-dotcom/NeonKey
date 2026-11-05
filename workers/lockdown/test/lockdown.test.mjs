@@ -27,7 +27,14 @@ function setZones() {
     "_dmarc.done.test": { TXT: [q("v=DMARC1; p=none")] },
     "google._domainkey.done.test": { TXT: ['"v=DKIM1; k=rsa; p=MIIBIjANBgkq" "hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"'] },
     // Two SPF records + Zoho: needs a person
-    "messy.test": { MX: ["10 mx.zoho.com."], NS: ["ns1.wixdns.net."], TXT: [q("v=spf1 include:zoho.com ~all"), q("v=spf1 include:sendgrid.net ~all")] },
+    "zoho.test": { MX: ["10 mx.zoho.eu."], NS: ["ns1.cloudflare.com."], TXT: [] },
+    "fm.test": { MX: ["10 in1-smtp.messagingengine.com."], NS: ["ns1.porkbun.com."], TXT: [q("v=spf1 include:spf.messagingengine.com ?all")] },
+    "fwd.test": { MX: ["10 fwd1.porkbun.com.", "20 fwd2.porkbun.com."], NS: ["curitiba.ns.porkbun.com."], TXT: [q("v=spf1 include:_spf.porkbun.com ~all")] },
+    "_dmarc.fwd.test": { TXT: [q("v=DMARC1; p=quarantine")] },
+    "fwd2.test": { MX: ["10 fwd1.porkbun.com."], NS: ["curitiba.ns.porkbun.com."], TXT: [q("v=spf1 include:_spf.porkbun.com ~all")] },
+    "_dmarc.fwd2.test": { TXT: [q("v=DMARC1; p=none")] },
+    "resend._domainkey.fwd2.test": { TXT: [q("p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC")] },
+    "messy.test": { MX: ["10 mail.mxroute.com."], NS: ["ns1.wixdns.net."], TXT: [q("v=spf1 include:zoho.com ~all"), q("v=spf1 include:sendgrid.net ~all")] },
     // No MX
     "nomail.test": { MX: [], NS: ["ns1.domaincontrol.com."], TXT: [] },
   };
@@ -146,9 +153,38 @@ test("finished domain reads as locked", async () => {
 
 test("duplicate SPF and an unsupported provider go to a person, no SPF written", async () => {
   const a = await audit("messy.test");
-  assert.ok(a.human.some((h) => /Zoho/.test(h)));
+  assert.ok(a.human.some((h) => /MXroute/.test(h)));
   assert.ok(a.human.some((h) => /2 SPF records/.test(h)));
   assert.equal(a.fixes.some((f) => f.id === "spf"), false);
+});
+
+test("more providers: Zoho EU gets zohomail.eu and a DKIM click, Fastmail gets its three DKIM CNAMEs", async () => {
+  const z = await audit("zoho.test");
+  assert.equal(z.provider.label, "Zoho Mail");
+  assert.equal(z.human.length, 0);
+  assert.equal(z.fixes.find((f) => f.id === "spf").value, "v=spf1 include:zohomail.eu ~all");
+  assert.match(z.buyerSteps[0].help, /zoho\.com\/mail\/help/);
+  const f = await audit("fm.test");
+  assert.equal(f.fixes.find((x) => x.id === "spf").value, "v=spf1 include:spf.messagingengine.com ~all");
+  assert.deepEqual(f.fixes.filter((x) => x.id === "dkim").map((x) => [x.type, x.host, x.value]), [1, 2, 3].map((i) => ["CNAME", `fm${i}._domainkey`, `fm${i}.fm.test.dkim.fmhosted.com`]));
+  assert.equal(f.buyerSteps.length, 0);
+});
+
+test("forwarding (Porkbun): automatic report, asks where they send from; a key at a common name counts", async () => {
+  const a = await audit("fwd.test");
+  assert.equal(a.provider.label, "Porkbun email forwarding");
+  assert.equal(a.human.length, 0);
+  assert.equal(a.fixes.length, 0);
+  assert.equal(a.buyerSteps[0].id, "dkim");
+  assert.equal(a.buyerSteps[0].help, null);
+  assert.match(a.buyerSteps[0].text, /send from/);
+  const { reportEmail } = await import("../src/email.js");
+  const m = reportEmail({ name: "Pat", a });
+  assert.match(m.subject, /report for fwd\.test/);
+  assert.match(m.text, /send from/);
+  const b = await audit("fwd2.test");
+  assert.deepEqual(b.dkim, ["resend"]);
+  assert.equal(b.locked, true);
 });
 
 test("typo domain, no MX and free-mail domains go straight to a person", async () => {

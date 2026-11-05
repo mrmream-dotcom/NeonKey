@@ -51,18 +51,78 @@ export const PROVIDERS = {
     dkimHelp: "https://learn.microsoft.com/en-us/defender-office-365/email-authentication-dkim-configure",
     dkimSteps: "Sign in to security.microsoft.com as an admin. Go to Email & collaboration > Policies & rules > Threat policies > Email authentication settings > DKIM. Click your domain. It shows two CNAME records (selector1._domainkey and selector2._domainkey). Add both at your domain host, wait an hour, then come back and switch Sign messages for this domain with DKIM signatures to Enabled.",
   },
+  // Added Nov 5 2026 after a real test order on Porkbun forwarding fell to "a person needs to look".
+  // SPF includes checked against each provider's live SPF record and help page that day.
+  zoho: {
+    label: "Zoho Mail",
+    spf: "include:zohomail.com", // EU/IN data centers swap the TLD, see spfFor()
+    dkimSelectors: ["zmail", "zoho", "default"],
+    dkimHelp: "https://www.zoho.com/mail/help/adminconsole/dkim-configuration.html",
+    dkimSteps: "Sign in to mailadmin.zoho.com. Go to Domains, pick your domain, open Email Configuration > DKIM, click Add, enter a selector name (for example zmail) and generate the key. Add the TXT record it shows at your domain host, then come back and click Verify.",
+  },
+  fastmail: {
+    label: "Fastmail",
+    spf: "include:spf.messagingengine.com",
+    dkimSelectors: ["fm1", "fm2", "fm3"],
+    dkimHelp: "https://www.fastmail.help/hc/en-us/articles/360060591153-Manual-DNS-configuration",
+    dkimRecords: (d) => [1, 2, 3].map((i) => ({ type: "CNAME", host: `fm${i}._domainkey`, value: `fm${i}.${d}.dkim.fmhosted.com` })),
+  },
+  proton: {
+    label: "Proton Mail",
+    spf: "include:_spf.protonmail.ch",
+    dkimSelectors: ["protonmail", "protonmail2", "protonmail3"],
+    dkimHelp: "https://proton.me/support/anti-spoofing-custom-domain",
+    dkimSteps: "Sign in to Proton, open Settings > Domain names, click Review next to your domain and open the DKIM tab. Add the three CNAME records it shows (protonmail._domainkey, protonmail2._domainkey, protonmail3._domainkey) at your domain host. Proton checks them on its own.",
+  },
+  titan: {
+    label: "Titan Email",
+    spf: "include:spf.titan.email",
+    dkimSelectors: ["titan1", "titan", "default"],
+    dkimHelp: null,
+    dkimSteps: "Sign in to the Titan admin panel (or open your email settings where you bought Titan, such as Hostinger), find the DKIM setting for your domain, and add the TXT record it shows at your domain host.",
+  },
+  godaddy: {
+    label: "GoDaddy email",
+    spf: "include:secureserver.net",
+    dkimSelectors: ["default", "selector1", "selector2"],
+    dkimHelp: null,
+    dkimSteps: "GoDaddy email is usually Microsoft 365 or Workspace Email behind the scenes. In your GoDaddy account, open Email & Office, pick your domain and look for the DKIM or email authentication setting, then turn it on.",
+  },
+  privateemail: {
+    label: "Namecheap Private Email",
+    spf: "include:spf.privateemail.com",
+    dkimSelectors: ["default"],
+    dkimHelp: "https://www.namecheap.com/support/knowledgebase/article.aspx/1316/2290/how-to-set-up-dkim-for-private-email/",
+    dkimSteps: "Sign in to Namecheap, open Private Email for your domain, find the DKIM record, and add it as a TXT record named default._domainkey at your domain host.",
+  },
+  // Forwarding services only receive mail and pass it on. The mail you send comes from somewhere else
+  // (Gmail "send as", a newsletter tool), so DKIM is that service's setting, not the forwarder's.
+  porkbun: { label: "Porkbun email forwarding", forward: true, spf: "include:_spf.porkbun.com" },
+  cfrouting: { label: "Cloudflare Email Routing", forward: true, spf: "include:_spf.mx.cloudflare.net" },
+  improvmx: { label: "ImprovMX forwarding", forward: true, spf: "include:spf.improvmx.com" },
 };
 
-const OTHER_PROVIDERS = [
-  ["zoho", "Zoho Mail"], ["protonmail", "Proton Mail"], ["secureserver", "GoDaddy email"], ["mxroute", "MXroute"],
-  ["messagingengine", "Fastmail"], ["mx.cloudflare.net", "Cloudflare Email Routing"], ["porkbun", "Porkbun email forwarding"],
-  ["titan.email", "Titan Email"], ["yahoodns", "Yahoo"], ["icloud", "iCloud Mail"], ["improvmx", "ImprovMX forwarding"],
+// Zoho's EU and India data centers use their own SPF domain.
+function spfFor(P, mx) {
+  if (P.spf !== "include:zohomail.com") return P.spf;
+  const s = mx.join(" ");
+  return /zoho\.eu\b/.test(s) ? "include:zohomail.eu" : /zoho\.in\b/.test(s) ? "include:zohomail.in" : P.spf;
+}
+
+// DKIM names many sending tools use, checked for every domain so a key set up elsewhere still counts.
+const COMMON_DKIM = ["google", "selector1", "selector2", "default", "k1", "k2", "s1", "s2", "resend", "mandrill", "mte1", "dkim", "mail", "zmail", "zoho", "fm1", "protonmail", "titan1"];
+
+const KNOWN_MX = [
+  ["zoho", "zoho"], ["protonmail", "proton"], ["secureserver", "godaddy"], ["messagingengine", "fastmail"],
+  ["mx.cloudflare.net", "cfrouting"], ["porkbun", "porkbun"], ["titan.email", "titan"], ["improvmx", "improvmx"], ["privateemail", "privateemail"],
 ];
+const OTHER_PROVIDERS = [["mxroute", "MXroute"], ["yahoodns", "Yahoo"], ["icloud", "iCloud Mail"]];
 
 export function providerFromMx(mx) {
   const s = mx.join(" ").toLowerCase();
   if (/google(mail)?\.com|aspmx/.test(s)) return { key: "google", label: PROVIDERS.google.label };
   if (/outlook\.com|protection\.outlook/.test(s)) return { key: "microsoft", label: PROVIDERS.microsoft.label };
+  for (const [k, key] of KNOWN_MX) if (s.includes(k)) return { key, label: PROVIDERS[key].label };
   for (const [k, label] of OTHER_PROVIDERS) if (s.includes(k)) return { key: null, label };
   return mx.length ? { key: null, label: "an email host we didn't recognize" } : null;
 }
@@ -110,6 +170,9 @@ const SENDERS = [
   ["zoho.com", "Zoho"], ["zohomail.com", "Zoho"], ["secureserver.net", "GoDaddy email"], ["constantcontact.com", "Constant Contact"],
   ["hubspotemail.net", "HubSpot"], ["sendinblue.com", "Brevo"], ["brevo.com", "Brevo"], ["shopify.com", "Shopify"],
   ["salesforce.com", "Salesforce"], ["zendesk.com", "Zendesk"], ["mailjet.com", "Mailjet"], ["mailerlite.com", "MailerLite"],
+  ["_spf.porkbun.com", "Porkbun forwarding"], ["_spf.mx.cloudflare.net", "Cloudflare Email Routing"], ["spf.improvmx.com", "ImprovMX"],
+  ["spf.messagingengine.com", "Fastmail"], ["_spf.protonmail.ch", "Proton Mail"], ["spf.titan.email", "Titan Email"],
+  ["spf.privateemail.com", "Namecheap Private Email"], ["zohomail.eu", "Zoho"], ["zohomail.in", "Zoho"], ["resend.com", "Resend"],
   ["convertkit.com", "Kit (ConvertKit)"], ["kit.com", "Kit"], ["freshdesk.com", "Freshdesk"], ["intuit.com", "Intuit/QuickBooks"],
 ];
 export function sendersIn(record) {
@@ -157,7 +220,8 @@ export async function audit(domain, opts = {}) {
     return out;
   }
   const P = out.provider && out.provider.key ? PROVIDERS[out.provider.key] : null;
-  if (!P) out.human.push(`Email is hosted by ${out.provider.label} (MX: ${out.mx.join(", ")}). We only write records automatically for Google Workspace and Microsoft 365, so the SPF include and DKIM steps need a person.`);
+  if (!P) out.human.push(`Email is hosted by ${out.provider.label} (MX: ${out.mx.join(", ")}). It isn't one of the providers we write records for automatically, so the SPF include and DKIM steps need a person.`);
+  const SPF_INC = P ? spfFor(P, out.mx) : null;
 
   // SPF
   const spf = (await txt(domain)).filter((r) => /^v=spf1\b/i.test(r));
@@ -165,19 +229,19 @@ export async function audit(domain, opts = {}) {
   if (spf.length > 1) {
     out.human.push(`${domain} has ${spf.length} SPF records, which counts as no SPF at all. Merging them needs a look at which services still send: ${spf.join("  |  ")}`);
   } else if (spf.length === 0) {
-    if (P) out.fixes.push({ id: "spf", type: "TXT", host: "@", value: `v=spf1 ${P.spf} ~all`, action: "add", why: `Right now nothing is listed as allowed to send email as ${domain}, so inboxes can't tell your real mail from a fake. This lists ${P.label}, which handles your everyday email.` });
+    if (P) out.fixes.push({ id: "spf", type: "TXT", host: "@", value: `v=spf1 ${SPF_INC} ~all`, action: "add", why: `Right now nothing is listed as allowed to send email as ${domain}, so inboxes can't tell your real mail from a fake. This lists ${P.label}, which handles your ${P.forward ? "incoming mail. If you also send from another service, tell us and we'll add it" : "everyday email"}.` });
   } else {
     const rec = spf[0];
     out.spf.lookups = await spfLookups(rec, txt);
     let next = rec.replace(/\s[+?]all\b/i, " ~all");
     if (!/\s[~-]all\b/i.test(next) && !/\sredirect=/i.test(next)) next = `${next.trim()} ~all`;
     let added = 0;
-    if (P && !next.toLowerCase().includes(P.spf.toLowerCase()) && !/redirect=/i.test(next)) { next = addInclude(next, P.spf); added = 1; }
-    if (out.spf.lookups + added > 10) out.human.push(`SPF needs about ${out.spf.lookups + added} DNS lookups${added ? ` once ${P.spf} is added` : ""} (the limit is 10), so some receivers would fail it. Trimming it means deciding which services to keep: ${rec}`);
+    if (P && !next.toLowerCase().includes(SPF_INC.toLowerCase()) && !/redirect=/i.test(next)) { next = addInclude(next, SPF_INC); added = 1; }
+    if (out.spf.lookups + added > 10) out.human.push(`SPF needs about ${out.spf.lookups + added} DNS lookups${added ? ` once ${SPF_INC} is added` : ""} (the limit is 10), so some receivers would fail it. Trimming it means deciding which services to keep: ${rec}`);
     else if (next !== rec) {
       const now = sendersIn(rec);
       const why = added
-        ? `Right now your record allows ${now.length ? listWords(now) : "no named services"} to send as you, but not ${P.label}, which handles your everyday email. That makes your normal replies look unverified to your customers' inboxes. This adds ${P.label} and keeps everything already listed.`
+        ? `Right now your record allows ${now.length ? listWords(now) : "no named services"} to send as you, but not ${P.label}, which handles your ${P.forward ? "incoming mail" : "everyday email"}. That makes your normal replies look unverified to your customers' inboxes. This adds ${P.label} and keeps everything already listed.`
         : `Your record ends in a way that lets anyone claim to be you. This changes only the ending to ~all ("treat others as suspicious") and keeps every service already listed.`;
       out.fixes.push({ id: "spf", type: "TXT", host: "@", value: next, current: rec, action: "replace", why: `${why} Edit the existing record; there must only ever be one.`, senders: now });
     }
@@ -195,15 +259,19 @@ export async function audit(domain, opts = {}) {
   }
 
   // DKIM: keys are generated inside the provider's admin console, so this is a buyer click, not a record we can write.
-  const selectors = P ? P.dkimSelectors : ["google", "selector1", "selector2", "default", "k1", "s1", "zoho", "fm1", "protonmail"];
+  const selectors = [...new Set([...(P?.dkimSelectors || []), ...COMMON_DKIM])];
   for (const s of selectors) {
     const name = `${s}._domainkey.${domain}`;
     const [t, c] = await Promise.all([txt(name), resolve(name, "CNAME")]);
     if (t.some((r) => /\bp=[A-Za-z0-9+/]/.test(r)) || c.answers.length) out.dkim.push(s);
   }
-  if (P && !out.dkim.length) out.buyerSteps.push({ id: "dkim", title: `Turn on (or confirm) DKIM in ${P.label}`, text: `We couldn't verify a DKIM key at the names ${P.label} normally uses. It may be off, or set up under a custom name. ${P.dkimSteps} Already on? Reply and tell us, and we'll mark it verified.`, help: P.dkimHelp });
+  if (P && !out.dkim.length && P.dkimRecords) {
+    for (const r of P.dkimRecords(domain)) out.fixes.push({ id: "dkim", ...r, action: "add", why: `These let ${P.label} sign your email so inboxes can prove it really came from you.` });
+  } else if (P?.forward && !out.dkim.length) {
+    out.buyerSteps.push({ id: "dkim", title: "Turn on email signing where you send from", text: `${P.label} only forwards your incoming mail. The mail you send comes from another service (for example Gmail's "send mail as", or a newsletter or invoicing tool), and that service has its own "authenticate your domain" or DKIM setting. Reply and tell us what you send from, and we'll send the exact steps. Already set up? Tell us and we'll mark it verified.`, help: null });
+  } else if (P && !out.dkim.length) out.buyerSteps.push({ id: "dkim", title: `Turn on (or confirm) DKIM in ${P.label}`, text: `We couldn't verify a DKIM key at the names ${P.label} normally uses. It may be off, or set up under a custom name. ${P.dkimSteps} Already on? Reply and tell us, and we'll mark it verified.`, help: P.dkimHelp });
 
-  const spfOk = spf.length === 1 && /\s[~-]all\b|redirect=/i.test(spf[0]) && (!P || spf[0].toLowerCase().includes(P.spf.toLowerCase()) || /redirect=/i.test(spf[0])) && !(out.spf.lookups > 10);
+  const spfOk = spf.length === 1 && /\s[~-]all\b|redirect=/i.test(spf[0]) && (!P || spf[0].toLowerCase().includes(SPF_INC.toLowerCase()) || /redirect=/i.test(spf[0])) && !(out.spf.lookups > 10);
   const dmarcOk = dmarc.length === 1 && ["none", "quarantine", "reject"].includes(out.dmarc.policy);
   out.locked = Boolean(P) && spfOk && dmarcOk && out.dkim.length > 0;
   out.senders = sendersIn(spf[0]);
