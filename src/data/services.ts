@@ -111,10 +111,10 @@ export const remoteSupportPlan: Offer = {
   standard: 129,
   unit: '/mo',
   outcome: "Get small IT changes and questions handled without hiring an IT department",
-  for: 'Optional add-on after setup: help by email or support ticket, answered in writing rather than live (async), with an agreed response window',
+  for: 'Optional add-on after setup: help by email, answered in writing rather than live (async), with a set response window',
   items: [
-    'A set number of small requests each month, agreed up front',
-    'Email or ticket based, answered within an agreed business-day window',
+    'Up to 3 small requests a month (about 30 minutes each), unless your plan says otherwise',
+    'By email, with a first reply by the end of the next business day (Monday to Friday, Alaska time)',
     'Account adds and removes, settings changes, how-to questions',
     'Modular: add or change features as your needs change (advanced features may cost extra, always quoted first)',
     'No 24/7 or emergency cover; cancel anytime',
@@ -123,7 +123,7 @@ export const remoteSupportPlan: Offer = {
   details: {
     who: "For offices that already have their basics set up and want someone to email when a small change or question comes up, without a big IT contract.",
     included: [
-      'A set number of small requests each month, agreed up front',
+      'Up to 3 small requests a month as standard, each about 30 minutes or less. Unused requests don\'t roll over. A different number can be agreed in writing',
       'Account adds and removes when people join or leave',
       'Settings changes, for example a new alias, a shared folder or a shared password folder (vault)',
       'How-to questions answered without the jargon',
@@ -131,14 +131,14 @@ export const remoteSupportPlan: Offer = {
       'Room to grow: as your business changes, we can add or change features on the systems we built, like a new form, routing rule or template. Small changes count as requests; advanced features may cost extra and are always quoted before any work starts',
     ],
     steps: [
-      { h: 'Agree the plan', p: 'We agree how many requests are included each month and the response window, in writing.' },
-      { h: 'Send a request', p: 'Email or open a ticket describing what you need.' },
-      { h: 'Get it handled', p: 'I answer within the agreed business-day window and make the change remotely where needed.' },
+      { h: 'Agree the plan', p: 'We confirm in writing how many requests are included each month (3 as standard) and the response window, before you pay.' },
+      { h: 'Send a request', p: 'Email one request at a time, describing what you need.' },
+      { h: 'Get it handled', p: 'I reply by the end of the next business day and make the change remotely where needed. If a request is bigger than a small one, I say so and quote it before doing the work.' },
       { h: 'Review as you go', p: 'If your needs change, we adjust the plan. Cancel anytime.' },
     ],
     provide: [
       'Admin access (or a delegated admin account) for the systems covered',
-      'Requests by email or ticket, with enough detail to act on',
+      'Requests by email, with enough detail to act on',
     ],
     tools: 'The same tools covered by the setup: Google Workspace or Microsoft 365, your password manager, backups and devices. Usually offered after a Remote Small-Office IT Setup.',
     priceFactors: [
@@ -146,7 +146,7 @@ export const remoteSupportPlan: Offer = {
       'How many requests are included each month',
       'The response window you choose',
     ],
-    note: 'No 24/7, emergency or onsite cover. Bigger projects are scoped and quoted separately.',
+    note: 'No 24/7, emergency or onsite cover. For an outage or a security problem, contact the provider (for example Google or Microsoft) first, and I\'ll help as soon as I can. Requests over about 30 minutes, new systems, migrations, hardware and systems I haven\'t set up or reviewed are scoped and quoted separately.',
   },
 };
 
@@ -312,7 +312,7 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
       'Lead-Routing & Follow-Up System: intake from your forms, inbox or booking tool, routing rules, follow-up reminders, reply templates and a simple tracking view',
       'The assistant and the lead routing connected, so inquiries the assistant captures go straight into your lead tracking',
       'Email lockdown: your domain\'s email security records (SPF, DKIM and DMARC) checked and fixed, with DMARC started in report-only mode (monitor mode)',
-      'Three months of the Monthly Remote Support Plan, starting at go-live: small changes, tuning and how-to questions by email or ticket',
+      'Three months of the Monthly Remote Support Plan, starting at go-live: small changes, tuning and how-to questions by email',
       'One walkthrough video and written notes covering the whole system, and admin access that stays with you',
     ],
     steps: [

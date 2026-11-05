@@ -35,7 +35,12 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
           <li>No passwords needed. Your public records are visible to anyone, so we can check them without logging in.</li>
           <li>DKIM keys are created in your email provider's admin settings (Google Workspace or Microsoft 365). If you're not the admin, your admin may need to click one button. We'll show you where.</li>
           <li>One domain per purchase. Moving email to a new provider or a messy multi-domain setup is a bigger job, and we'll tell you before doing anything more.</li>
+          <li>Already protected? If your three records are already in place, your report says so and covers extra checks beyond the basics, with the next useful step if there is one. That's still a full report, so the sale is final once it's sent.</li>
         </ul>
+        <h2 class="el-h" id="all-set">What "all set" means</h2>
+        <p class="muted">When your report shows 4 of 4, SPF, DKIM and DMARC are published for your domain and pass our check of your public records on the day we checked. Inboxes can then confirm that mail claiming to be from you really is. It doesn't stop scam emails sent <em>to</em> you, it can't make every message land in the inbox, and DMARC starts in monitor mode, so it reports fakes before anything gets blocked. When you add a new tool that sends email as you, like a newsletter or invoicing app, turn on its "authenticate your domain" setting.</p>
+        <h2 class="el-h">What we keep</h2>
+        <p class="muted">Your order record (name, email, business name, domain and check results) is kept for 180 days so we can run your rechecks and answer questions, then it deletes automatically. Copies of the emails we send you stay in our business inbox as records. Your card details stay with Stripe and never reach us. See the <a href={url('/privacy/#email-lockdown')}>privacy policy</a>.</p>
       </div>
       <aside class="panel topline accent-magenta el-buy">
         <span class="kicker">{emailLockdown.kicker}</span>
