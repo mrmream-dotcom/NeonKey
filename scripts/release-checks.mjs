@@ -6,6 +6,7 @@
 // Exits 1 and prints every failure if any check fails.
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { createHash } from 'node:crypto';
 
 const [distDir = 'dist', liveDir] = process.argv.slice(2);
 if (!liveDir) { console.error('usage: release-checks.mjs <dist> <gh-pages checkout>'); process.exit(2); }
@@ -50,11 +51,18 @@ const impact = (dir) => (read(join(dir, 'index.html')).match(/<meta name="impact
 if (!impact(distDir) || impact(distDir) !== impact(liveDir)) fail('Impact meta tag missing or changed on the home page');
 
 // 5. Form markup unchanged on contact, newsletter, quiz and free-kit pages.
+const approvedPath = new URL('./approved-form-changes.json', import.meta.url);
+const approvedForms = existsSync(approvedPath) ? JSON.parse(read(approvedPath)) : {};
+const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 const forms = (dir, page) => { const p = join(dir, page, 'index.html'); return existsSync(p) ? (read(p).match(/<form[\s\S]*?<\/form>/g) || []).join('\n') : null; };
 for (const page of ['contact', 'newsletter', 'services/quiz', 'free-it-kit']) {
   const a = forms(distDir, page), b = forms(liveDir, page);
   if (a === null) fail(`/${page}/ missing from the build`);
-  else if (b !== null && a !== b) fail(`form markup changed on /${page}/`);
+  else if (b !== null && a !== b) {
+    // An intended change passes only if this exact new markup was approved (sha256 pinned in approved-form-changes.json).
+    if (approvedForms[page] && approvedForms[page] === sha256(a)) console.log(`approved form change on /${page}/ (${approvedForms[page].slice(0, 12)})`);
+    else fail(`form markup changed on /${page}/ (new sha256 ${sha256(a)})`);
+  }
 }
 
 // 6. /newsletter/thanks/ still loads its conversion script.

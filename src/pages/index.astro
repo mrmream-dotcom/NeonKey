@@ -10,13 +10,12 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
 const moreStories = latestArticles.filter((a) => a !== leadStory).slice(0, 3);
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
-const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
 const pillars = [
   { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Practical automations and remote small-office IT setup for small businesses. Clear setup and handoff.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
@@ -55,7 +54,6 @@ const serviceNode = (o: typeof remoteIt, offerPath: string, monthly = false) => 
     },
   },
 });
-const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -116,8 +114,9 @@ const jsonLd = {
     serviceNode(remoteIt, '/services/remote-it/'),
     serviceNode(remoteSupportPlan, '/services/remote-it/#support-plan', true),
     serviceNode(quickWin, '/services/#quick-win'),
-    serviceNode(aiFaq, '/services/#ai-faq'),
-    serviceNode(leadRouting, '/services/#lead-routing'),
+    // AI Intake and Lead-Routing are sold inside the Front Office Package, not listed on their own (Nov 4 2026).
+    serviceNode(fop, '/services/#front-office-package'),
+    serviceNode(emailLockdown, '/services/email-lockdown/'),
     {
       '@type': 'SoftwareApplication',
       '@id': `${home}#ai-inquiry-triage`,
