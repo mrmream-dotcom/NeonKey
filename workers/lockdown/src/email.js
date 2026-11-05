@@ -121,7 +121,7 @@ export function reportEmail({ name, a }) {
 
   if (a.locked && !personal) {
     const subject = `🔑 Your Email Lockdown report for ${a.domain}: records already in place`;
-    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${ATTACH_NOTE}`)}${p("Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail.", "font-size:15px;")}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
+    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${ATTACH_NOTE}`)}${a.dmarc?.policy === "none" ? p("Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail.", "font-size:15px;") : ""}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
     return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${ATTACH_NOTE}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
   }
 
