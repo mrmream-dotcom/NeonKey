@@ -233,6 +233,23 @@ export const automationOffers: Offer[] = [
     }, },
 ];
 
+/**
+ * Email Lockdown: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
+ * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
+ */
+export const emailLockdown: Offer = {
+  slug: 'email-lockdown',
+  name: 'Email Lockdown',
+  headline: 'Stop scammers faking your email address',
+  kicker: 'Remote · fixed price',
+  from: 49,
+  standard: 79,
+  outcome: 'Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes',
+  for: 'For any business that sends email from its own domain',
+  items: ['Your SPF, DKIM and DMARC records checked', 'Missing or broken records fixed', 'DMARC started in report-only mode', 'A short note of what changed'],
+  href: '/services/#email-lockdown',
+};
+
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
