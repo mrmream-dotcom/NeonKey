@@ -7,7 +7,7 @@
 // Runs after gtag-init.js (loaded in <head>), so gtag() and the AW config already exist.
 (function () {
   // Filled in from Google Ads: Goals > Conversions > Lockdown purchase > Tag setup > Use Google tag.
-  var SEND_TO = '';
+  var SEND_TO = 'AW-18547389944/0tWyCJHetbIdEPjrioxF';
   if (!SEND_TO || window.__nkLockdownConv) return;
   var p = new URLSearchParams(window.location.search);
   var sid = p.get('session_id') || '';
