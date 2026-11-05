@@ -308,10 +308,10 @@ const KIT_FIT = {
   email: "Remote Small-Office IT Setup or the $49 Email Lockdown",
   passwords: "Remote Small-Office IT Setup (password manager + 2FA)",
   backups: "Remote Small-Office IT Setup (backups)",
-  devices: "Remote Small-Office IT Setup or a Quick Win + Tech Checkup",
+  devices: "Remote Small-Office IT Setup",
   leads: "Front Office Package or Lead-Routing",
   ai: "AI Intake & FAQ Assistant or the Front Office Package",
-  unsure: "Quick Win + Tech Checkup",
+  unsure: "Remote Small-Office IT Setup or a Quick Win (one form to a shared list)",
 };
 
 /** Internal lead copy for a free kit download. */

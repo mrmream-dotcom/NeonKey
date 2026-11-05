@@ -4,7 +4,7 @@ import LegalDoc from '../components/LegalDoc.astro';
 import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 ---
 <Base title="Privacy" description="How NeonKey handles your data: what is collected, cookieless Umami analytics, and your choices.">
-  <LegalDoc eyebrow="Privacy" title="Privacy policy" updated={{ iso: '2026-11-05', text: 'Last updated November 5, 2026.' }} sections={[{ id: 'analytics', label: 'Analytics' }, { id: 'advertising', label: 'Advertising' }, { id: 'newsletter', label: 'Newsletter' }, { id: 'contact', label: 'Contact' }, { id: 'payments', label: 'Payments' }, { id: 'email-lockdown', label: 'Email Lockdown' }, { id: 'client-files-and-access', label: 'Client files and access' }, { id: 'ai-inquiry-triage-demo-lab', label: 'AI inquiry triage demo (Lab)' }, { id: 'service-quiz', label: 'Service quiz' }, { id: 'free-it-kit', label: 'Free IT kit' }, { id: 'cookies', label: 'Cookies' }, { id: 'hosting', label: 'Hosting' }, { id: 'your-choices', label: 'Your choices' }]}>
+  <LegalDoc eyebrow="Privacy" title="Privacy policy" updated={{ iso: '2026-11-05', text: 'Last updated November 5, 2026.' }} sections={[{ id: 'analytics', label: 'Analytics' }, { id: 'advertising', label: 'Advertising' }, { id: 'newsletter', label: 'Newsletter' }, { id: 'contact', label: 'Contact' }, { id: 'payments', label: 'Payments' }, { id: 'email-lockdown', label: 'Email Lockdown' }, { id: 'client-files-and-access', label: 'Client files and access' }, { id: 'ai-inquiry-triage-demo-lab', label: 'AI inquiry triage demo (Lab)' }, { id: 'other-ai-demos-lab', label: 'Other AI demos (Lab)' }, { id: 'service-quiz', label: 'Service quiz' }, { id: 'free-it-kit', label: 'Free IT kit' }, { id: 'cookies', label: 'Cookies' }, { id: 'hosting', label: 'Hosting' }, { id: 'your-choices', label: 'Your choices' }]}>
 
     <h2 id="analytics">Analytics</h2>
     {UMAMI.websiteId ? (
@@ -49,6 +49,15 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
     <p>The <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sends the text you type to a small NeonKey API running on Cloudflare Workers. The API forwards it to Google's <a href="https://ai.google.dev/gemini-api/terms">Gemini API</a> to generate the result, then returns the result to your browser. NeonKey doesn't store or log the message or the result.</p>
     <p>The demo uses Gemini's free tier. Under Google's terms, content sent on the free tier may be used by Google to improve its products, and human reviewers may read it. <strong>Please don't paste private, sensitive or personal information into the demo.</strong> Because of those terms, the demo isn't available in the UK, Switzerland or the EEA.</p>
     <p>To enforce rate limits (5 runs a minute and 30 a day per visitor, plus a daily total), the API keeps short-lived counters in Cloudflare: a one-way hash of your IP address with the date, and a run count. The counters expire after 48 hours. Cloudflare, as the host, may also process standard request data such as your IP address; see <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</p>
+
+    <h2 id="other-ai-demos-lab">Other AI demos (Lab)</h2>
+    <p>Three more Lab demos work the same way as the triage demo: what you send goes through a small NeonKey API on Cloudflare Workers to Google's <a href="https://ai.google.dev/gemini-api/terms">Gemini API</a> on the free tier, the result comes back to your browser, and NeonKey doesn't store or log what you send or the result. The same free-tier warning applies: <strong>please don't send private, sensitive or personal information</strong>, and these demos aren't available in the UK, Switzerland or the EEA.</p>
+    <ul>
+      <li>The <a href={url('/lab/review-reply/')}>review reply demo</a> sends the review text you type. It shares the triage demo's API and limits (5 runs a minute and 30 a day per visitor).</li>
+      <li>The <a href={url('/lab/office-ai/')}>Office AI demo</a> sends the question you type (up to 400 characters); the documents it answers from are made-up samples. Limits: 5 runs a minute and 30 a day per visitor, plus a daily total.</li>
+      <li>The <a href={url('/lab/receipt-sorter/')}>receipt sorter demo</a> sends the receipt photo or PDF you choose (up to 5 MB). Limits: 5 runs a minute and 20 a day per visitor, plus a daily total.</li>
+    </ul>
+    <p>Each API keeps the same kind of short-lived rate-limit counters as the triage demo: a one-way hash of your IP address with the date and a run count, deleted 48 hours after last use.</p>
 
     <h2 id="service-quiz">Service quiz</h2>
     <p>The <a href={url('/services/quiz/')}>"What service do I need?" quiz</a> works out your result in your browser. Your answers aren't sent anywhere unless you ask for your plan by email.</p>
