@@ -23,6 +23,15 @@ export const labTags = ['Homelab', 'Automation', 'Networking', 'Security', 'AI']
 
 export const labProjects: LabProject[] = [
   {
+    slug: 'front-office',
+    title: 'Front office demo: what we build for a small business',
+    summary: 'Click through the system behind the Front Office Package: every inquiry in one tracker, FAQ answers after hours, routing, replies you approve, follow-ups that stop when the customer answers, and email security.',
+    tags: ['Automation', 'AI'],
+    level: 'Beginner',
+    service: { label: 'Front Office Package', href: '/services/#front-office-package' },
+    icon: 'bolt', accent: 'cyan', flag: 'Interactive demo',
+  },
+  {
     slug: 'ai-inquiry-triage',
     title: 'AI inquiry triage: a working demo',
     summary: 'Paste a customer message and an AI sorts it, flags urgency, pulls out the key details and drafts a reply for a human to review. Live demo plus the full write-up.',

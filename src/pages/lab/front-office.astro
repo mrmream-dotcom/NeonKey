@@ -1,0 +1,373 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import Toc from '../../components/Toc.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects } from '../../data/lab';
+import { demoTypes, followUpSteps } from '../../data/front-office-demo';
+import { frontOfficePackage as fop, usd } from '../../data/services';
+const project = labProjects.find((p) => p.slug === 'front-office')!;
+const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets built'], ['own', 'What you own'], ['how', 'How it gets built'], ['limits', 'Limitations'], ['related', 'Related']];
+// Personalized links for a lead: ?type=home&biz=Acme%20Plumbing&owner=Pat&domain=acmeplumbing.com
+// (build them with `node scripts/demo-link.mjs`). Values are cleaned in the browser and only ever set as text.
+---
+<Base title={project.title} description="Click through the front office NeonKey builds for a small business: every inquiry in one tracker, FAQ answers after hours, routing, replies you approve, follow-ups that stop when the customer answers, and email security.">
+  <PageHeader eyebrow="Lab · Automation · AI · Interactive demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: project.title }]}>
+    <Fragment slot="title">This is what we'll build for <span class="glow-c" id="fo-for">your business.</span></Fragment>
+    <p class="lede">A front office that catches every inquiry, answers the easy questions, sends the rest to the right person and remembers to follow up. You approve every message before a customer sees it. Pick a business like yours and click through it.</p>
+    <Fragment slot="meta">
+      <li><span>Made-up sample data</span></li>
+      <li><span>Nothing is sent</span></li>
+      <li><span>Runs in your browser</span></li>
+    </Fragment>
+    <div slot="after" class="lab-head-toc"><Toc sections={sections} /></div>
+  </PageHeader>
+
+  <section id="demo" style="padding-top:0" aria-labelledby="demo-h">
+    <div class="container fo">
+      <h2 id="demo-h" class="sr-only">Try the demo</h2>
+
+      <div class="panel fo-picker">
+        <p class="fo-lead-note" id="fo-lead-note" hidden></p>
+        <span class="fo-lbl">Pick a business like yours</span>
+        <div class="fo-chips" id="fo-types" role="group" aria-label="Business type">
+          {demoTypes.map((t) => (
+            <button type="button" class="filter-chip" data-k={t.key} aria-pressed="false" data-umami-event="fo-demo-type" data-umami-event-type={t.key}>{t.label}</button>
+          ))}
+        </div>
+        <p class="muted fo-small" id="fo-bizline"></p>
+        <p class="fo-note">Demo only: the customers and messages are made up, and nothing here sends a real message.</p>
+      </div>
+
+      <div class="fo-stage">
+        <div class="fo-stage-h"><span class="fo-num" aria-hidden="true">1</span><div><h3>Every inquiry lands in one place</h3><p class="muted">Website form, email and after-hours chat all feed one tracker. Easy questions get answered from your own FAQ. Everything else goes to the right person, and anything urgent skips the line.</p></div></div>
+        <div class="fo-grid">
+          <div class="panel fo-panel">
+            <div class="fo-ph"><span class="fo-lbl">Incoming</span><div class="btn-row"><button class="btn btn-primary btn-sm" id="fo-next" type="button" data-umami-event="fo-demo-next">Send in the next inquiry</button><button class="btn btn-ghost btn-sm" id="fo-all" type="button">Send all</button></div></div>
+            <div class="fo-feed" id="fo-feed"></div>
+          </div>
+          <div class="panel fo-panel">
+            <div class="fo-ph"><span class="fo-lbl">Your lead tracker</span><span class="muted fo-small" id="fo-count">0 leads</span></div>
+            <div class="fo-tbl"><table>
+              <thead><tr><th>ID</th><th>Received</th><th>From</th><th>Request</th><th>Assigned to</th><th>Status</th><th>Next follow-up</th></tr></thead>
+              <tbody id="fo-tbody"></tbody>
+            </table></div>
+            <p class="muted fo-small">Lives in a Google Sheet or the customer database you already use, in your account.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="fo-stage">
+        <div class="fo-stage-h"><span class="fo-num" aria-hidden="true">2</span><div><h3>You approve every reply</h3><p class="muted">A reply is drafted from templates you signed off on. Edit it, then send. Nothing goes to a customer on its own.</p></div></div>
+        <div class="fo-grid">
+          <div class="panel fo-panel">
+            <span class="fo-lbl">Rules we set together</span>
+            <ul class="fo-rules" id="fo-rules"></ul>
+          </div>
+          <div class="panel fo-panel">
+            <div class="fo-ph"><span class="fo-lbl">Draft reply</span><span class="fo-pill fo-p-wait" id="fo-dstate">Waiting for a lead</span></div>
+            <p class="fo-mono" id="fo-dto">Pick "Review reply" on any routed inquiry.</p>
+            <label for="fo-dtext" class="fo-mono">Message (you can edit it)</label>
+            <textarea id="fo-dtext" rows="8" disabled></textarea>
+            <div class="btn-row"><button class="btn btn-primary btn-sm" id="fo-approve" type="button" disabled data-umami-event="fo-demo-approve">Approve and send</button><span class="fo-ok" id="fo-sent" hidden>Sent (demo). Follow-ups are now scheduled.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fo-stage">
+        <div class="fo-stage-h"><span class="fo-num" aria-hidden="true">3</span><div><h3>Follow-ups that don't forget</h3><p class="muted">Once you've replied, the system reminds your team on a set schedule, with a draft ready each time. The moment the customer answers, it stops.</p></div></div>
+        <div class="panel fo-panel">
+          <div class="fo-ph"><span class="fo-lbl" id="fo-fufor">Follow-up schedule</span><div class="btn-row"><span class="fo-clock" id="fo-clock">Day 0</span><button class="btn btn-ghost btn-sm" id="fo-skip" type="button">Skip ahead a day</button><button class="btn btn-ghost btn-sm" id="fo-replied" type="button">Customer replied</button><button class="btn btn-ghost btn-sm" id="fo-reset" type="button">Reset</button></div></div>
+          <div class="fo-timeline" id="fo-timeline"></div>
+          <p class="muted fo-small" id="fo-funote"></p>
+        </div>
+      </div>
+
+      <div class="fo-stage">
+        <div class="fo-stage-h"><span class="fo-num" aria-hidden="true">4</span><div><h3>Your email, locked down</h3><p class="muted">Follow-ups only help if they reach the inbox. We check and fix the three settings that tell other email services your messages are really from you.</p></div></div>
+        <div class="panel fo-panel">
+          <div class="fo-ph"><span class="fo-lbl">Email security for <span id="fo-domain"></span></span><div class="fo-chips" role="group" aria-label="Before or after"><button type="button" class="filter-chip" id="fo-before" aria-pressed="true">Before</button><button type="button" class="filter-chip" id="fo-after" aria-pressed="false">After</button></div></div>
+          <div class="fo-checks" id="fo-checks"></div>
+          <p class="muted fo-small">Example only. On a real project we check your actual domain first.</p>
+        </div>
+      </div>
+
+      <div class="nl-box lab-cta topline fo-cta">
+        <div>
+          <span class="kicker">{fop.name}</span>
+          <h2 style="margin:.3rem 0">All of this, set up as one system</h2>
+          <p class="muted" style="margin:0">{fop.parts.map((p) => p.name.replace(/ \(.*\)$/, '')).join(', ')}. Fixed quote after a short scoping call.</p>
+        </div>
+        <div class="fo-cta-side">
+          <p class="price" style="margin:0"><s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
+          <div class="btn-row">
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="lab-front-office">Talk about your setup</a>
+            <a class="btn btn-ghost btn-sm" href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="lab-front-office">See the package</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="narrow prose lab-case" style="padding-bottom:3rem">
+    <h2 id="what">What gets built</h2>
+    <p>The demo above is the Front Office Package, piece by piece:</p>
+    <ul>
+      <li><strong>One intake.</strong> Your website form, shared inbox and chat all feed one list, so nothing lives only in someone's head or phone.</li>
+      <li><strong>An FAQ assistant.</strong> It answers the questions you get every day from your own content, and hands off to a person when it's unsure. See it working in the <a href={url('/lab/office-ai/')}>Office AI demo</a>.</li>
+      <li><strong>Routing rules.</strong> Each inquiry goes to the right person by service, location or source. Urgent ones alert the owner right away.</li>
+      <li><strong>Replies you approve.</strong> Drafts come from templates you signed off on. A person presses send.</li>
+      <li><strong>Follow-up reminders.</strong> A set schedule with a draft ready each time. It stops when the customer answers.</li>
+      <li><strong>Email security.</strong> SPF, DKIM and DMARC checked and fixed, so scammers have a harder time faking your address.</li>
+    </ul>
+
+    <h2 id="own">What you own at the end</h2>
+    <ul>
+      <li>The tracker, in your Google Sheet or customer database (CRM).</li>
+      <li>The templates and rules, written in your voice, which you can change yourself.</li>
+      <li>Every account and login. If we stop working together, it keeps running.</li>
+      <li>A walkthrough video and written notes, plus three months of the support plan while it beds in.</li>
+    </ul>
+
+    <h2 id="how">How it gets built</h2>
+    <ol>
+      <li><strong>Scoping call.</strong> Where inquiries come from today, who handles what, and what should never be automated. You get a fixed quote before any work starts.</li>
+      <li><strong>Build in your accounts.</strong> Usually Google Workspace or Microsoft 365, a sheet or your CRM, and a mainstream automation tool or Google Apps Script.</li>
+      <li><strong>Test with fake leads.</strong> Every path gets tested before a real customer touches it, and you approve every template.</li>
+      <li><strong>Go live and hand off.</strong> We check the first real inquiries together, then you get the walkthrough and notes.</li>
+    </ol>
+
+    <h2 id="limits">Limitations</h2>
+    <ul>
+      <li>This page is a simulation that runs in your browser. The real version runs on your own tools, so it will look like your inbox and sheet, not this page.</li>
+      <li>AI drafts can be wrong. That's why a person approves every message and the assistant hands off when unsure.</li>
+      <li>It doesn't replace answering the phone. Calls still need a person or a separate phone setup.</li>
+      <li>Some tools need a paid plan at higher volume. Those subscriptions are billed to you by the provider, and we check that on the scoping call.</li>
+    </ul>
+
+    <h2 id="related">Related</h2>
+    <div class="lab-related">
+      <div class="panel">
+        <span class="kicker">Related service</span>
+        <h3 style="margin-top:.4rem">{fop.name}</h3>
+        <p class="muted">Want this for your business? Start with a short scoping call. Or pick just the part you need, like the Lead-Routing &amp; Follow-Up System.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-location="lab-front-office-related">Ask about this</a>
+          <a class="btn btn-ghost btn-sm" href={url('/services/#lead-routing')} data-umami-event="services-cta" data-umami-event-location="lab-front-office-related">See Lead-Routing</a>
+        </div>
+      </div>
+    </div>
+    <p><a href={url('/lab/')}>← Back to the Lab</a></p>
+  </article>
+</Base>
+
+<style is:global>
+  .fo { display: flex; flex-direction: column; gap: 2.4rem; }
+  .fo-picker { display: flex; flex-direction: column; gap: .7rem; }
+  .fo-lbl { font: 600 .74rem/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .fo-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .fo-small { font-size: .9rem; margin: 0; }
+  .fo-note { font: 500 .78rem/1.4 var(--mono); color: #fbbf24; border: 1px dashed rgba(251,191,36,.7); border-radius: 8px; padding: .5rem .75rem; margin: 0; align-self: flex-start; }
+  .fo-lead-note { margin: 0; font-weight: 600; color: var(--cyan); }
+  .fo-stage { display: flex; flex-direction: column; gap: 1rem; }
+  .fo-stage-h { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; }
+  .fo-stage-h h3 { margin: 0 0 .2rem; font-size: 1.3rem; }
+  .fo-stage-h p { margin: 0; max-width: 70ch; }
+  .fo-num { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--violet); }
+  .fo-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1rem; }
+  @media (max-width: 860px) { .fo-grid { grid-template-columns: 1fr; } }
+  .fo-panel { display: flex; flex-direction: column; gap: .8rem; min-width: 0; }
+  .fo-ph { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .fo-ph .btn-row { margin: 0; }
+  .fo-feed { display: flex; flex-direction: column; gap: .6rem; }
+  .fo-empty { color: var(--muted); font-size: .9rem; border: 1px dashed var(--line); border-radius: 10px; padding: 1rem; text-align: center; margin: 0; }
+  .fo-inq { border: 1px solid var(--line); border-left: 3px solid var(--violet); border-radius: 10px; padding: .75rem; background: var(--bg-2); display: flex; flex-direction: column; gap: .35rem; }
+  .fo-inq.faq { border-left-color: var(--cyan); }
+  .fo-inq.urgent { border-left-color: #f87171; }
+  .fo-inq.sel { box-shadow: 0 0 0 1px var(--cyan); }
+  .fo-inq p { margin: 0; }
+  .fo-meta { display: flex; flex-wrap: wrap; gap: .5rem; font: .75rem/1.3 var(--mono); color: var(--muted); }
+  .fo-res { font-size: .85rem; color: var(--muted); }
+  .fo-res strong { color: var(--text); }
+  .fo-inq button { align-self: flex-start; }
+  .fo-pill { display: inline-block; font: 500 .7rem/1 var(--mono); padding: .3rem .5rem; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .fo-p-new { color: var(--violet); } .fo-p-faq { color: var(--cyan); } .fo-p-urg { color: #f87171; } .fo-p-sent { color: #4ade80; } .fo-p-wait { color: #fbbf24; } .fo-p-stop { color: var(--muted); }
+  .fo-tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .fo-tbl table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .85rem; margin: 0; }
+  .fo-tbl th, .fo-tbl td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--line); }
+  .fo-tbl th { font: 600 .68rem/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg-2); white-space: nowrap; }
+  .fo-tbl tr:last-child td { border-bottom: 0; }
+  .fo-tbl .sub { color: var(--muted); }
+  .fo-mono { font: .78rem/1.4 var(--mono); color: var(--muted); margin: 0; }
+  .fo textarea { width: 100%; min-height: 10rem; resize: vertical; font: inherit; font-size: .92rem; color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: .75rem; }
+  .fo-ok { color: #4ade80; font-size: .9rem; }
+  .fo-rules { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .35rem; font-size: .9rem; color: var(--muted); }
+  .fo-clock { font: 600 .9rem/1 var(--mono); color: var(--cyan); }
+  .fo-timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; }
+  @media (max-width: 700px) { .fo-timeline { grid-template-columns: 1fr 1fr; } }
+  .fo-step { border: 1px solid var(--line); border-radius: 10px; padding: .75rem; background: var(--bg-2); display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+  .fo-step p { margin: 0; font-size: .82rem; color: var(--muted); }
+  .fo-step strong { font-size: .95rem; }
+  .fo-step .d { font: 600 .74rem/1.2 var(--mono); color: var(--muted); }
+  .fo-step.done { border-color: #4ade80; } .fo-step.done .d { color: #4ade80; }
+  .fo-step.next { border-color: #fbbf24; } .fo-step.next .d { color: #fbbf24; }
+  .fo-step.stopped { opacity: .45; }
+  .fo-checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+  @media (max-width: 700px) { .fo-checks { grid-template-columns: 1fr; } }
+  .fo-chk { border: 1px solid var(--line); border-radius: 10px; padding: .85rem; background: var(--bg-2); display: flex; flex-direction: column; gap: .3rem; }
+  .fo-chk p { margin: 0; font-size: .85rem; color: var(--muted); }
+  .fo-chk .st { font: 600 .8rem/1 var(--mono); }
+  .fo-chk .st.bad { color: #f87171; } .fo-chk .st.good { color: #4ade80; }
+  .fo-cta { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: center; }
+  .fo-cta-side { display: grid; gap: .6rem; justify-items: start; }
+  @media (max-width: 760px) { .fo-cta { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: no-preference) { .fo-inq { animation: fo-in .3s ease-out; } }
+  @keyframes fo-in { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+</style>
+
+<script is:inline define:vars={{ TYPES: demoTypes, STEPS: followUpSteps }}>
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  // Optional per-lead personalization from the URL. Cleaned, length-capped and only ever set as text.
+  const qs = new URLSearchParams(location.search);
+  const clean = (v, max) => (v || '').replace(/[\u0000-\u001f<>"]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const lead = {
+    biz: clean(qs.get('biz'), 60),
+    owner: clean(qs.get('owner'), 30),
+    domain: clean(qs.get('domain'), 80).toLowerCase(),
+    type: clean(qs.get('type'), 12),
+  };
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(lead.domain)) lead.domain = '';
+  if (lead.biz) {
+    $('fo-for').textContent = lead.biz + '.';
+    const n = $('fo-lead-note'); n.textContent = `Made for ${lead.biz}. The customers and messages below are samples.`; n.hidden = false;
+  }
+
+  let T, V, idx, leads, active, fu;
+  const fill = (s) => String(s).replace(/\{biz\}/g, V.biz).replace(/\{owner\}/g, V.owner).replace(/\{domain\}/g, V.domain);
+
+  function pick(key) {
+    T = TYPES.find((t) => t.key === key) || TYPES[0];
+    V = { biz: lead.biz || T.biz, owner: lead.owner || T.owner, domain: lead.domain || (lead.biz ? 'your domain' : T.domain) };
+    idx = 0; leads = []; active = null; fu = { day: 0, on: false, stopped: false, stopDay: 0, lead: null };
+    document.querySelectorAll('#fo-types button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === T.key)));
+    const bl = $('fo-bizline'); bl.textContent = '';
+    bl.append(lead.biz ? 'Your business, ' : 'Sample: ', el('strong', '', V.biz), lead.biz ? `, set up like ${T.label.toLowerCase()}. Sample team: ${fill(T.team)}.` : `, ${T.what}. Team: ${fill(T.team)}.`);
+    const rules = $('fo-rules'); rules.textContent = ''; T.rules.forEach((r) => rules.append(el('li', '', fill(r))));
+    $('fo-domain').textContent = V.domain;
+    $('fo-feed').textContent = ''; $('fo-feed').append(el('p', 'fo-empty', 'No inquiries yet. Press "Send in the next inquiry".'));
+    $('fo-next').disabled = false; $('fo-all').disabled = false;
+    resetDraft(); renderTable(); renderFU(); renderChecks(false);
+  }
+
+  function pill(l) {
+    if (l.kind === 'faq') return ['fo-p-faq', 'Answered by assistant'];
+    if (l.kind === 'urgent') return ['fo-p-urg', 'Urgent: owner alerted'];
+    if (l.stopped) return ['fo-p-stop', 'Customer replied'];
+    if (l.sent) return ['fo-p-sent', 'Reply sent'];
+    return ['fo-p-new', 'Needs reply'];
+  }
+  function nextFU(l) {
+    if (l.kind === 'faq') return 'Only if they ask';
+    if (l.kind === 'urgent') return 'Owner handles now';
+    if (l.stopped) return 'None, in conversation';
+    if (!l.sent) return 'Today';
+    if (fu.lead === l) { const n = STEPS.find((s) => s.d > fu.day); return n ? `Day ${n.d}` : 'Closed'; }
+    return 'Day 1';
+  }
+  function renderTable() {
+    $('fo-count').textContent = leads.length + (leads.length === 1 ? ' lead' : ' leads');
+    const tb = $('fo-tbody'); tb.textContent = '';
+    if (!leads.length) { const tr = el('tr'); const td = el('td', 'sub', 'Leads appear here as they come in.'); td.colSpan = 7; tr.append(td); tb.append(tr); return; }
+    leads.forEach((l) => {
+      const tr = el('tr');
+      const from = el('td', '', l.name); from.append(el('br'), el('span', 'sub', l.src));
+      const st = el('td'); const p = pill(l); st.append(el('span', 'fo-pill ' + p[0], p[1]));
+      tr.append(el('td', '', l.id), el('td', '', l.when), from, el('td', '', l.req), el('td', '', l.to ? fill(l.to) : 'Assistant'), st, el('td', '', nextFU(l)));
+      tb.append(tr);
+    });
+  }
+  function addOne() {
+    if (idx >= T.inquiries.length) return;
+    const l = Object.assign({ id: 'L-' + (101 + idx) }, T.inquiries[idx++]); leads.push(l);
+    const feed = $('fo-feed'); const empty = feed.querySelector('.fo-empty'); if (empty) empty.remove();
+    const card = el('div', 'fo-inq ' + (l.kind === 'route' ? '' : l.kind)); card.id = 'fo-c-' + l.id;
+    const meta = el('div', 'fo-meta'); meta.append(el('span', '', l.src), el('span', '', l.when), el('span', '', l.name));
+    const res = el('p', 'fo-res');
+    if (l.kind === 'faq') res.append('Assistant answered from your FAQ: ', el('strong', '', `"${fill(l.ans)}"`));
+    else if (l.kind === 'urgent') res.append('Skipped the workflow. ', el('strong', '', fill(l.to)), ' gets an alert right away. No automatic reply.');
+    else res.append('Routed to ', el('strong', '', fill(l.to)), '. A draft reply is ready.');
+    card.append(meta, el('p', '', `"${l.msg}"`), res);
+    if (l.kind === 'route') { const b = el('button', 'btn btn-ghost btn-sm', 'Review reply'); b.type = 'button'; b.dataset.id = l.id; card.append(b); }
+    feed.append(card);
+    if (idx >= T.inquiries.length) { $('fo-next').disabled = true; $('fo-all').disabled = true; }
+    renderTable();
+    if (l.kind === 'route' && !active) openDraft(l);
+  }
+  function setState(cls, text) { const s = $('fo-dstate'); s.className = 'fo-pill ' + cls; s.textContent = text; }
+  function resetDraft() {
+    active = null; $('fo-dtext').value = ''; $('fo-dtext').disabled = true; $('fo-approve').disabled = true; $('fo-sent').hidden = true;
+    $('fo-dto').textContent = 'Pick "Review reply" on any routed inquiry.'; setState('fo-p-wait', 'Waiting for a lead');
+  }
+  function openDraft(l) {
+    active = l;
+    document.querySelectorAll('.fo-inq').forEach((c) => c.classList.toggle('sel', c.id === 'fo-c-' + l.id));
+    $('fo-dto').textContent = `To: ${l.name} · Re: ${l.req} · Assigned to ${fill(l.to)}`;
+    $('fo-dtext').value = l.edited ?? fill(l.draft); $('fo-dtext').disabled = !!l.sent;
+    $('fo-approve').disabled = !!l.sent; $('fo-sent').hidden = !l.sent;
+    l.sent ? setState('fo-p-sent', 'Sent') : setState('fo-p-new', 'Needs your OK');
+  }
+  $('fo-feed').addEventListener('click', (e) => { const b = e.target.closest('button[data-id]'); if (b) openDraft(leads.find((x) => x.id === b.dataset.id)); });
+  $('fo-dtext').addEventListener('input', () => { if (active) active.edited = $('fo-dtext').value; });
+  $('fo-approve').addEventListener('click', () => {
+    if (!active) return;
+    active.sent = true; $('fo-approve').disabled = true; $('fo-dtext').disabled = true; $('fo-sent').hidden = false; setState('fo-p-sent', 'Sent');
+    if (!fu.on || fu.stopped || fu.day >= 7) fu = { day: 0, on: true, stopped: false, stopDay: 0, lead: active };
+    renderTable(); renderFU();
+  });
+
+  function renderFU() {
+    const l = fu.lead;
+    $('fo-fufor').textContent = l ? `Follow-up schedule: ${l.name}` : 'Follow-up schedule';
+    $('fo-clock').textContent = 'Day ' + fu.day;
+    $('fo-skip').disabled = !fu.on || fu.stopped || fu.day >= 7; $('fo-replied').disabled = !fu.on || fu.stopped; $('fo-reset').disabled = !fu.on;
+    const nxt = STEPS.find((x) => x.d > fu.day);
+    const tl = $('fo-timeline'); tl.textContent = '';
+    STEPS.forEach((s) => {
+      let c = '', label = 'Scheduled';
+      if (fu.on) {
+        if (s.d <= fu.day) { c = 'done'; label = 'Done'; }
+        else if (fu.stopped) { c = 'stopped'; label = 'Not needed'; }
+        else if (s === nxt) { c = 'next'; label = 'Next'; }
+      }
+      const box = el('div', 'fo-step ' + c); box.append(el('span', 'd', `Day ${s.d} · ${label}`), el('strong', '', s.h), el('p', '', s.p)); tl.append(box);
+    });
+    $('fo-funote').textContent = !fu.on ? 'Approve a reply in step 2 to start a schedule.'
+      : fu.stopped ? `${l.name} replied on day ${fu.stopDay}, so the remaining follow-ups were cancelled.`
+      : fu.day >= 7 ? "All four touches done. The lead is marked closed so it doesn't sit open forever."
+      : 'Each step is a reminder plus a ready-to-send draft. Your team still presses send.';
+  }
+  $('fo-skip').addEventListener('click', () => { const n = STEPS.find((s) => s.d > fu.day); if (n) fu.day = n.d; renderFU(); renderTable(); });
+  $('fo-replied').addEventListener('click', () => { fu.stopped = true; fu.stopDay = fu.day; fu.lead.stopped = true; renderFU(); renderTable(); });
+  $('fo-reset').addEventListener('click', () => { if (fu.lead) fu.lead.stopped = false; fu = { day: 0, on: !!fu.lead, stopped: false, stopDay: 0, lead: fu.lead }; renderFU(); renderTable(); });
+
+  function renderChecks(after) {
+    const C = [
+      { n: 'SPF', bad: 'Missing', good: 'Set', pb: `Nothing lists which services may send email as ${V.domain}.`, pg: 'Lists the services allowed to send your email.' },
+      { n: 'DKIM', bad: 'Not signing', good: 'Signing', pb: "Messages carry no signature, so they're easier to fake.", pg: 'Each message is signed so receivers can check it.' },
+      { n: 'DMARC', bad: 'Missing', good: 'Monitoring', pb: 'No policy telling receivers what to do with fakes.', pg: 'Started in report-only mode, tightened once reports look clean.' },
+    ];
+    const box = $('fo-checks'); box.textContent = '';
+    C.forEach((c) => { const d = el('div', 'fo-chk'); d.append(el('span', 'st ' + (after ? 'good' : 'bad'), after ? '✓ ' + c.good : '✕ ' + c.bad), el('strong', '', c.n), el('p', '', after ? c.pg : c.pb)); box.append(d); });
+    $('fo-before').setAttribute('aria-pressed', String(!after)); $('fo-after').setAttribute('aria-pressed', String(after));
+  }
+  $('fo-before').addEventListener('click', () => renderChecks(false));
+  $('fo-after').addEventListener('click', () => renderChecks(true));
+  $('fo-next').addEventListener('click', addOne);
+  $('fo-all').addEventListener('click', () => { while (idx < T.inquiries.length) addOne(); });
+  $('fo-types').addEventListener('click', (e) => { const b = e.target.closest('button[data-k]'); if (b) pick(b.dataset.k); });
+
+  pick(TYPES.some((t) => t.key === lead.type) ? lead.type : 'home');
+  addOne(); addOne();
+</script>

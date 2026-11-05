@@ -197,7 +197,7 @@ export const automationOffers: Offer[] = [
       ],
       note: 'AI usage and any tool subscriptions are billed to you directly by those providers. AI answers can be wrong, so the assistant is set up to hand off to a person, and you should review it regularly.',
     }, },
-  { slug: 'lead-routing', headline: 'Every lead followed up, on time', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], details: {
+  { slug: 'lead-routing', headline: 'Every lead followed up, on time', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], demo: { label: 'See it working', href: '/lab/front-office/', example: 'Front office demo' }, details: {
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
