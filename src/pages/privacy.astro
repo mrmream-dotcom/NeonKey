@@ -4,7 +4,7 @@ import LegalDoc from '../components/LegalDoc.astro';
 import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 ---
 <Base title="Privacy" description="How NeonKey handles your data: what is collected, cookieless Umami analytics, and your choices.">
-  <LegalDoc eyebrow="Privacy" title="Privacy policy" updated={{ iso: '2026-11-03', text: 'Last updated November 3, 2026.' }} sections={[{ id: 'analytics', label: 'Analytics' }, { id: 'advertising', label: 'Advertising' }, { id: 'newsletter', label: 'Newsletter' }, { id: 'contact', label: 'Contact' }, { id: 'ai-inquiry-triage-demo-lab', label: 'AI inquiry triage demo (Lab)' }, { id: 'service-quiz', label: 'Service quiz' }, { id: 'free-it-kit', label: 'Free IT kit' }, { id: 'cookies', label: 'Cookies' }, { id: 'hosting', label: 'Hosting' }, { id: 'your-choices', label: 'Your choices' }]}>
+  <LegalDoc eyebrow="Privacy" title="Privacy policy" updated={{ iso: '2026-11-05', text: 'Last updated November 5, 2026.' }} sections={[{ id: 'analytics', label: 'Analytics' }, { id: 'advertising', label: 'Advertising' }, { id: 'newsletter', label: 'Newsletter' }, { id: 'contact', label: 'Contact' }, { id: 'payments', label: 'Payments' }, { id: 'email-lockdown', label: 'Email Lockdown' }, { id: 'client-files-and-access', label: 'Client files and access' }, { id: 'ai-inquiry-triage-demo-lab', label: 'AI inquiry triage demo (Lab)' }, { id: 'service-quiz', label: 'Service quiz' }, { id: 'free-it-kit', label: 'Free IT kit' }, { id: 'cookies', label: 'Cookies' }, { id: 'hosting', label: 'Hosting' }, { id: 'your-choices', label: 'Your choices' }]}>
 
     <h2 id="analytics">Analytics</h2>
     {UMAMI.websiteId ? (
@@ -33,6 +33,17 @@ import { UMAMI, NEWSLETTER, CONTACT_EMAIL, url } from '../config';
 
     <h2 id="contact">Contact</h2>
     <p>The contact form is delivered by <a href="https://web3forms.com/privacy">Web3Forms</a>, which passes your name, email, topic and message to {CONTACT_EMAIL}. Messages, whether sent through the form or by email, are kept only as long as needed to reply and are never sold.</p>
+
+    <h2 id="payments">Payments</h2>
+    <p>Online payments, such as the Email Lockdown checkout, the Monthly Remote Support Plan and invoices, are handled by <a href="https://stripe.com/privacy">Stripe</a>. Stripe collects your card details directly, and NeonKey never sees or stores your full card number. Stripe shares your name, email, business name (if you give one), what you bought and the amount with NeonKey so I can deliver the work, send receipts and handle refunds. Stripe keeps payment records as its own policy and the law require.</p>
+
+    <h2 id="email-lockdown">Email Lockdown</h2>
+    <p>When you buy the <a href={url('/services/email-lockdown/')}>Email Lockdown</a>, Stripe passes the domain you type at checkout, along with your name, email and business name, to a small NeonKey service on Cloudflare Workers. It checks your domain's public DNS records (the same records anyone can look up) and emails your report through <a href="https://resend.com/legal/privacy-policy">Resend</a>. The report is turned into a PDF with Cloudflare's browser rendering service, which processes the report itself, not any other data. No passwords are needed or collected.</p>
+    <p>Your order record (name, email, business name, domain and check results) is kept in Cloudflare for 180 days, so I can run your rechecks, answer questions and deal with any payment dispute. After that it deletes automatically. Copies of the emails sent to you, and order notices sent to NeonKey at {CONTACT_EMAIL}, are kept in NeonKey's business email as business records. To have them deleted sooner, email {CONTACT_EMAIL} (payment records Stripe must keep are the exception).</p>
+
+    <h2 id="client-files-and-access">Client files and access</h2>
+    <p>Some work needs files or access from you, such as a spreadsheet export, your FAQ or price list, or a helper invite to your domain or admin settings. I ask only for what the job needs, and I never ask for your passwords, card or bank details, or other sensitive personal information. If you send something like that by mistake, I delete it and let you know.</p>
+    <p>Files you send for a free report are deleted within 7 days after the report is sent. Files for paid work are deleted within 30 days after handoff, unless you ask me to keep them. Deleting means removing them from NeonKey's email (including the trash), any copies and any saved files. Client files are never shared or sold, and they're never pasted into the free Lab demos. At handoff, you remove my access (or I confirm it's removed), and every admin login stays with you.</p>
 
     <h2 id="ai-inquiry-triage-demo-lab">AI inquiry triage demo (Lab)</h2>
     <p>The <a href={url('/lab/ai-inquiry-triage/')}>AI inquiry triage demo</a> sends the text you type to a small NeonKey API running on Cloudflare Workers. The API forwards it to Google's <a href="https://ai.google.dev/gemini-api/terms">Gemini API</a> to generate the result, then returns the result to your browser. NeonKey doesn't store or log the message or the result.</p>
