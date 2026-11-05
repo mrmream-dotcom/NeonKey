@@ -5,7 +5,8 @@ import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { emailLockdown, introPricing, usd } from '../../data/services';
 // Email Lockdown: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
-// It is NOT instant: after paying, the buyer answers the intake form below and the work is done by hand.
+// It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
+// from /pay/thanks/ where Stripe sends buyers) and the work is done by hand.
 // Scope (Nov 4 2026): we check the domain's public records, then either send exact records plus steps for their
 // DNS host, or add them ourselves if they invite us as a collaborator/delegate. DKIM keys come from the email
 // provider's admin console, so the buyer (or their admin) may need to generate one.
@@ -28,7 +29,7 @@ import { emailLockdown, introPricing, usd } from '../../data/services';
         </ul>
         <h2 class="el-h">Good to know</h2>
         <ul class="muted">
-          <li>It isn't instant. After you pay, you answer five quick questions (below), and we do the work by hand. We aim to reply within 1 business day.</li>
+          <li>It isn't instant. After you pay, you answer five quick questions, and we do the work by hand. We aim to reply within 1 business day.</li>
           <li>No passwords needed. Your public records are visible to anyone, so we can check them without logging in.</li>
           <li>DKIM keys are created in your email provider's admin settings (Google Workspace or Microsoft 365). If you're not the admin, your admin may need to click one button. We'll show you where.</li>
           <li>One domain per purchase. Moving email to a new provider or a messy multi-domain setup is a bigger job, and we'll tell you before doing anything more.</li>
@@ -38,40 +39,12 @@ import { emailLockdown, introPricing, usd } from '../../data/services';
         <span class="kicker">{emailLockdown.kicker}</span>
         <p class="price">{usd(emailLockdown.from)}<small>{introPricing.label} · standard {usd(emailLockdown.standard!)}</small></p>
         <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
-        <p class="muted el-small">Secure checkout by Stripe. Then come back to this page and answer the questions below.</p>
+        <p class="muted el-small">Secure checkout by Stripe. Right after paying, you'll get a short form with five quick questions.</p>
         <p class="muted el-small">Questions first? <a href={url('/contact/?topic=remote-it')}>Send a message</a>.</p>
       </aside>
     </div>
   </section>
 
-  <section class="alt" id="intake" aria-labelledby="intake-h">
-    <div class="container narrow">
-      <SectionHeading id="intake-h" eyebrow="After you pay" title="Five quick questions" intro="This is everything we need to get started. It takes about two minutes." />
-      <form class="panel" action="https://api.web3forms.com/submit" method="post">
-        <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
-        <input type="hidden" name="subject" value="Email Lockdown intake (paid order)" />
-        <input type="hidden" name="from_name" value="NeonKey website" />
-        <input type="hidden" name="redirect" value="https://neonkey.tech/contact/thanks/" />
-        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
-        <div class="field"><label for="el-name">Your name</label><input id="el-name" name="name" autocomplete="name" required /></div>
-        <div class="field"><label for="el-email">Email you used at checkout</label><input id="el-email" name="email" type="email" autocomplete="email" required /></div>
-        <div class="field"><label for="el-domain">1. Your business domain</label><input id="el-domain" name="domain" required maxlength="120" placeholder="yourbusiness.com" /></div>
-        <div class="field"><label for="el-provider">2. Where do you read your business email?</label>
-          <select id="el-provider" name="email_provider" required><option value="">Choose one</option><option>Google Workspace (Gmail with my domain)</option><option>Microsoft 365 (Outlook with my domain)</option><option>Something else (name it below)</option><option>Not sure</option></select>
-        </div>
-        <div class="field"><label for="el-host">3. Where is your domain managed? <span class="muted">(where you bought it or pay for it)</span></label>
-          <select id="el-host" name="dns_host" required><option value="">Choose one</option><option>GoDaddy</option><option>Squarespace / Google Domains</option><option>Cloudflare</option><option>Namecheap</option><option>Wix</option><option>Something else (name it below)</option><option>Not sure</option></select>
-        </div>
-        <div class="field"><label for="el-senders">4. What else sends email as your business? <span class="muted">(website form, newsletter tool, invoicing or booking app, CRM)</span></label><textarea id="el-senders" name="other_senders" rows="3" maxlength="600" placeholder="For example: Squarespace form, Mailchimp, QuickBooks invoices. Write 'not sure' if you don't know."></textarea></div>
-        <div class="field"><label for="el-how">5. How do you want the fix done?</label>
-          <select id="el-how" name="how" required><option value="">Choose one</option><option>Send me the exact records and steps, I'll paste them in</option><option>I'll invite you as a collaborator or delegate so you can add them</option><option>Not sure, tell me what's easiest</option></select>
-        </div>
-        <div class="field"><label for="el-msg">Anything else? <span class="muted">(optional)</span></label><textarea id="el-msg" name="message" rows="3" maxlength="1000"></textarea></div>
-        <button class="btn btn-primary" type="submit" data-umami-event="lockdown-intake-submit">Send my answers</button>
-        <p class="form-note">We match your answers to your Stripe payment by the checkout email before any work starts. If we can't find a payment, we'll reply with the payment link. Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
-      </form>
-    </div>
-  </section>
 </Base>
 
 <style>
@@ -86,5 +59,4 @@ import { emailLockdown, introPricing, usd } from '../../data/services';
   .el-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
   .el-buy .btn { align-self: flex-start; }
   .el-small { font-size: .88rem; margin: 0; }
-  #intake { scroll-margin-top: 90px; }
 </style>
