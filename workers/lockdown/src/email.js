@@ -91,15 +91,15 @@ function creditBlock(a) {
 }
 
 // Compact list of changes (Michael, Nov 5 2026: "a complete report, less a long guide"). Full detail is in the attached report.
-function changeTitle(f) { return `${f.action === "replace" ? "Update" : "Add"} ${f.id === "spf" ? "your approved-sender list" : "a fake-email policy"}`; }
+function changeTitle(f) { return f.id === "dkim" ? `Add an email-signing record (${f.host})` : `${f.action === "replace" ? "Update" : "Add"} ${f.id === "spf" ? "your approved-sender list" : "a fake-email policy"}`; }
 function changeList(a) {
   const rows = a.fixes.map((f, i) => `<tr><td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};font-size:15px;color:${C.cyan};font-weight:700;width:24px;">${i + 1}</td><td style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};"><p style="margin:0;font-size:15px;font-weight:700;color:${C.text};">${changeTitle(f)}</p><p style="margin:3px 0 0 0;font-size:13px;color:${C.muted};">${f.type} record, name <span style="font-family:${MONO};color:${C.text};">${esc(f.host)}</span>${f.current ? " (replace the existing one)" : ""}</p><p style="margin:3px 0 0 0;font-family:${MONO};font-size:13px;color:${C.green};word-break:break-all;">${esc(f.value)}</p></td></tr>`);
-  a.buyerSteps.forEach((st, j) => rows.push(`<tr><td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};font-size:15px;color:${C.violet};font-weight:700;width:24px;">${a.fixes.length + j + 1}</td><td style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};"><p style="margin:0;font-size:15px;font-weight:700;color:${C.text};">${st.id === "dkim" ? `Turn on email signing in ${esc(a.provider?.label || "your email provider")}` : esc(st.title)}</p><p style="margin:3px 0 0 0;font-size:13px;color:${C.muted};">One setting in your admin. ${link(st.help, "Official guide")}</p></td></tr>`));
+  a.buyerSteps.forEach((st, j) => rows.push(`<tr><td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};font-size:15px;color:${C.violet};font-weight:700;width:24px;">${a.fixes.length + j + 1}</td><td style="padding:10px 0;border-top:1px solid ${C.line};font-family:${FONT};"><p style="margin:0;font-size:15px;font-weight:700;color:${C.text};">${st.id === "dkim" ? `Turn on email signing in ${esc(a.provider?.label || "your email provider")}` : esc(st.title)}</p><p style="margin:3px 0 0 0;font-size:13px;color:${C.muted};">${st.help ? `One setting in your admin. ${link(st.help, "Official guide")}` : esc(st.text)}</p></td></tr>`));
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px 0;">${rows.join("")}</table>`;
 }
 function changeText(a) {
   return [...a.fixes.map((f, i) => `${i + 1}. ${changeTitle(f)}: ${f.type} record, name ${f.host}${f.current ? " (replace the existing one)" : ""}\n   ${f.value}`),
-    ...a.buyerSteps.map((st, j) => `${a.fixes.length + j + 1}. ${st.id === "dkim" ? `Turn on email signing in ${a.provider?.label || "your email provider"}` : st.title}: ${st.help}`)].join("\n");
+    ...a.buyerSteps.map((st, j) => `${a.fixes.length + j + 1}. ${st.id === "dkim" ? `Turn on email signing in ${a.provider?.label || "your email provider"}` : st.title}: ${st.help || st.text}`)].join("\n");
 }
 function scoreLine(passing, a) {
   const col = passing >= 3 ? C.amber : C.magenta;
@@ -175,7 +175,8 @@ export function reminderEmail({ name, a, passing }) {
 export function noticeEmail({ kind, order, a, extra }) {
   const action = kind === "stuck" || (kind === "new" && a.human.length > 0) || kind === "error";
   const label = { new: "new order", done: "locked down", reminder: "reminder sent", stuck: "not finished after 10 days", error: "audit failed" }[kind] || kind;
-  const subject = `${action ? "ACTION NEEDED" : "FYI"}: Email Lockdown ${label} · ${order.domain || order.rawDomain}`;
+  // Manual work is flagged urgent (Michael, Nov 5 2026): subject prefix here, high-priority headers in index.js.
+  const subject = `${action ? "🚨 URGENT · ACTION NEEDED" : "FYI"}: Email Lockdown ${label} · ${order.domain || order.rawDomain}`;
   const rows = [
     ["Buyer", `${order.name || ""} <${order.email}>`.trim()],
     ["Domain", order.domain || `(couldn't read "${order.rawDomain}")`],
@@ -194,5 +195,5 @@ export function noticeEmail({ kind, order, a, extra }) {
 ${needs.length ? `<p style="margin:14px 0 4px"><strong>Needs a person:</strong></p><ul style="margin:0">${needs.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
 ${extra ? `<p style="margin:14px 0 0">${esc(extra)}</p>` : ""}
 <p style="margin:14px 0 0;color:#555">${action ? "Reply to the buyer from hello@ (reply-to is set to them)." : "Nothing to do. This is automatic."}</p></div>`;
-  return { subject, html, text };
+  return { subject, html, text, urgent: action };
 }

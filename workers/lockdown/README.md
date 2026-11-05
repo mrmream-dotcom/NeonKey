@@ -13,7 +13,7 @@ Runs the $49 **Email Lockdown** end to end with no manual step. Shares nothing w
 3. `src/audit.js` reads the domain's **public** DNS through Cloudflare DNS-over-HTTPS: MX (which email provider),
    NS (which DNS host), SPF, DMARC and DKIM. No logins, nothing changed.
 4. The buyer gets a branded email (`src/email.js`) with the exact records to add, written for their provider
-   (Google Workspace or Microsoft 365), a link to their DNS host's own guide, the DKIM click-path for their admin
+   (Google Workspace, Microsoft 365, Zoho, Fastmail, Proton, Titan, GoDaddy email, Namecheap Private Email, or forwarding via Porkbun, Cloudflare Email Routing or ImprovMX), a link to their DNS host's own guide, the DKIM click-path for their admin
    console, and the "$49 counts toward any NeonKey package" credit (Michael, Nov 4 2026).
 5. hello@ (BCC Michael) gets a short notice. The subject starts with **FYI** when everything was automatic and
    **ACTION NEEDED** only when a person has to step in.
@@ -27,7 +27,7 @@ Runs the $49 **Email Lockdown** end to end with no manual step. Shares nothing w
 The Worker never guesses. It hands off when it can't write a safe record:
 
 - the domain doesn't exist, has no mail server, isn't valid, or is a personal mailbox (gmail.com and similar)
-- the email provider isn't Google Workspace or Microsoft 365 (Zoho, GoDaddy email, forwarding, ...)
+- the email provider isn't one we write records for (for example MXroute, iCloud or Yahoo)
 - two SPF or two DMARC records (merging needs judgment)
 - SPF would go over the 10-lookup limit
 - still not finished after 10 days

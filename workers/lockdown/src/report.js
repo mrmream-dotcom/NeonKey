@@ -29,7 +29,7 @@ export function checks(a) {
     },
     {
       key: "DKIM", name: "Digital signature", what: "A signature that proves a message really came from you.",
-      status: a.dkim?.length ? "ok" : a.buyerSteps.some((s) => s.id === "dkim") ? "unverified" : "review",
+      status: a.dkim?.length ? "ok" : a.fixes.some((f) => f.id === "dkim") ? "missing" : a.buyerSteps.some((s) => s.id === "dkim") ? "unverified" : "review",
       detail: a.dkim?.length ? `Key found: ${a.dkim.join(", ")}` : `Couldn't verify a key at the names ${a.provider?.label || "your provider"} normally uses. It may be off, or set up under a custom name.`,
     },
     {
@@ -67,11 +67,11 @@ const PLAIN = { MX: "Mail delivery", SPF: "Approved senders", DKIM: "Email signa
 
 function changes(a) {
   const out = a.fixes.map((f) => ({
-    title: `${f.action === "replace" ? "Update" : "Add"} ${f.id === "spf" ? "your approved-sender list" : "a fake-email policy"}`,
+    title: f.id === "dkim" ? `Add an email-signing record (${f.host})` : `${f.action === "replace" ? "Update" : "Add"} ${f.id === "spf" ? "your approved-sender list" : "a fake-email policy"}`,
     where: a.dnsHost?.label ? `at ${a.dnsHost.label}` : "where you manage your domain",
     rec: f,
   }));
-  for (const s of a.buyerSteps) out.push({ title: s.id === "dkim" ? `Turn on email signing in ${a.provider?.label || "your email provider"}` : s.title, where: "one setting", help: s.help });
+  for (const s of a.buyerSteps) out.push({ title: s.id === "dkim" ? (s.help ? `Turn on email signing in ${a.provider?.label || "your email provider"}` : s.title) : s.title, where: "one setting", help: s.help, text: s.text });
   return out;
 }
 
@@ -119,7 +119,7 @@ export function renderReport({ a, order = {}, sample = false }) {
       ? `<div class="hid">Exact record and where to paste it: included in your full report.</div>`
       : x.rec
         ? `<div class="recl"><span>${x.rec.type} record · name <b class="mono">${esc(x.rec.host)}</b></span><div class="mono val">${esc(x.rec.value)}</div>${x.rec.current ? `<div class="was">Replaces: <span class="mono">${esc(x.rec.current)}</span></div>` : ""}</div>`
-        : `<div class="recl">A setting in your ${esc(a.provider?.label || "email")} admin. <a href="${esc(x.help)}">Official guide</a></div>`;
+        : (x.help ? `<div class="recl">A setting in your ${esc(a.provider?.label || "email")} admin. <a href="${esc(x.help)}">Official guide</a></div>` : `<div class="recl">${esc(x.text)}</div>`);
     return `<div class="chg${hidden ? " locked" : ""}"><div class="num">${i + 1}</div><div><div class="ct">${esc(x.title)} <span class="cw">${esc(x.where)}</span></div>${body}</div></div>`;
   };
 
