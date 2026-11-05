@@ -87,6 +87,9 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
     <meta name="theme-color" content="#0b0d17" />
     <meta name="impact-site-verification" value="e2d6ea6f-5c85-4a57-9433-4af8c38c571a" />
     <!-- Google tag (gtag.js): Google Ads AW-18547389944. Config lives in public/js/gtag-init.js (CSP blocks inline scripts). -->
+    <!-- First-touch source for lead forms: where this visit started (page, utm tags, outside referrer).
+         Kept in sessionStorage for this tab only; the contact form copies it into hidden fields. -->
+    <script is:inline>try{if(!sessionStorage.getItem('nk_src')){var q=new URLSearchParams(location.search),r=document.referrer,x='';try{if(r&&new URL(r).host!==location.host)x=r.slice(0,200)}catch(e){}sessionStorage.setItem('nk_src',JSON.stringify({l:location.pathname.slice(0,120),u:['utm_source','utm_medium','utm_campaign'].map(function(n){return(q.get(n)||'').slice(0,60)}).join(' / '),r:x}))}}catch(e){}</script>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-18547389944"></script>
     <script is:inline src={url('/js/gtag-init.js')}></script>
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />

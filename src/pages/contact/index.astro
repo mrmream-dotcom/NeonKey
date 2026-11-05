@@ -23,6 +23,9 @@ import Icon from '../../components/Icon.astro';
       <input type="hidden" name="subject" value="New NeonKey contact form message" />
       <input type="hidden" name="from_name" value="NeonKey website" />
       <input type="hidden" name="redirect" value="https://neonkey.tech/contact/thanks/" />
+      <input type="hidden" name="landing_page" id="c-src-landing" value="" />
+      <input type="hidden" name="utm" id="c-src-utm" value="" />
+      <input type="hidden" name="referrer" id="c-src-ref" value="" />
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
@@ -79,6 +82,13 @@ import Icon from '../../components/Icon.astro';
     const opt = Array.from(sel.options).find((o) => o.text === t[0]);
     if (opt) sel.value = opt.value;
   }
+  // Lead source: copy the first-touch data saved by Base.astro into hidden fields, so the emailed
+  // message says where the visit started. Empty when storage is blocked.
+  try {
+    const src = JSON.parse(sessionStorage.getItem('nk_src') || '{}');
+    const setv = (id: string, v: unknown) => { const el = document.getElementById(id) as HTMLInputElement | null; if (el && typeof v === 'string') el.value = v; };
+    setv('c-src-landing', src.l); setv('c-src-utm', src.u); setv('c-src-ref', src.r || 'direct or internal');
+  } catch { /* storage blocked: leave blank */ }
   // Referral links (/refer/?code=NK-SMITH or /contact/?ref=NK-SMITH) prefill "Referred by".
   const ref = (qp.get('ref') || qp.get('code') || '').replace(/[^A-Za-z0-9 .'-]/g, '').slice(0, 80);
   const refInput = document.getElementById('c-ref') as HTMLInputElement | null;
