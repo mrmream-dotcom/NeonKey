@@ -34,7 +34,7 @@ export async function reportAttachment(env, a, order) {
 
 const DAY = 86400000;
 export const RECHECK_DAYS = [2, 5, 10];
-const ORDER_TTL = 60 * 86400; // KV keeps an order 60 days, then it expires on its own.
+const ORDER_TTL = 180 * 86400; // KV keeps an order 180 days (covers the card-dispute window), then it expires on its own.
 
 export default {
   async fetch(request, env) {

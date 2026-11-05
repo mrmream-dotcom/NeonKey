@@ -25,7 +25,7 @@ CUSTOMER_EMAILS = "send"
 # Cloudflare account that renders the PDF report (Browser Rendering). Not a secret.
 CF_ACCOUNT_ID = "13d2e240576e100fbd65b2499bd6c048"
 
-# Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 60 days.
+# Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 180 days (covers the card-dispute window).
 # KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).
 [[kv_namespaces]]
 binding = "ORDERS"

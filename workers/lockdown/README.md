@@ -38,7 +38,7 @@ nobody is left waiting.
 ### What it stores
 
 KV `ORDERS`, key `order:<checkout session id>`: buyer email and name, domain, recheck count and status.
-Every entry expires after 60 days. No payment details. Re-delivered Stripe events for the same session do nothing.
+Every entry expires after 180 days (long enough to cover a card dispute). No payment details. Re-delivered Stripe events for the same session do nothing.
 
 ## Settings (`wrangler.toml`)
 
