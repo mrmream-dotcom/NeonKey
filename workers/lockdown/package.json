@@ -1,0 +1,16 @@
+{
+  "name": "neonkey-lockdown-worker",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/*.test.mjs",
+    "audit-domain": "node scripts/audit-domain.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

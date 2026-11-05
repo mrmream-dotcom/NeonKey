@@ -1,0 +1,35 @@
+# NeonKey Email Lockdown Worker: Stripe payment -> DNS audit -> branded report to the buyer, rechecks, notices to hello@.
+# Shares nothing with the other workers (its own Stripe webhook endpoint, its own secret, its own KV).
+# Secrets (set with `wrangler secret put`, never committed, never pasted in chat):
+#   STRIPE_WEBHOOK_SECRET  whsec_... from THIS endpoint in Stripe (not the payments Worker's)
+#   RESEND_API_KEY
+name = "neonkey-lockdown"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+NOTIFY_TO = "hello@neonkey.tech"
+REPLY_TO = "hello@neonkey.tech"
+# Every email this Worker sends is BCC'd here (Resend has no account-level BCC).
+BCC_ADDRESS = "mr.mream@gmail.com"
+# Only checkouts from this Payment Link are handled: the live $49 Email Lockdown link (buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01).
+LOCKDOWN_PAYMENT_LINK = "plink_1UXuPCCRxS1tvAi22FJy7HTk"
+ALLOW_LIVE = "true"
+# "shadow": buyer emails go to hello@ only (Michael reads them first). "send": they go to the buyer.
+CUSTOMER_EMAILS = "shadow"
+
+# Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 60 days.
+# KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).
+[[kv_namespaces]]
+binding = "ORDERS"
+id = "7629cb98c9ed42598f842af4426f491f"
+
+# Daily rechecks at 17:07 UTC (8:07 AM AKST).
+[triggers]
+crons = ["7 17 * * *"]
+
+[observability]
+enabled = false
