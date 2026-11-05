@@ -68,7 +68,7 @@ import { emailLockdown, introPricing, usd } from '../../data/services';
         </div>
         <div class="field"><label for="el-msg">Anything else? <span class="muted">(optional)</span></label><textarea id="el-msg" name="message" rows="3" maxlength="1000"></textarea></div>
         <button class="btn btn-primary" type="submit" data-umami-event="lockdown-intake-submit">Send my answers</button>
-        <p class="form-note">Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
+        <p class="form-note">We match your answers to your Stripe payment by the checkout email before any work starts. If we can't find a payment, we'll reply with the payment link. Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
       </form>
     </div>
   </section>

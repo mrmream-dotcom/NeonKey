@@ -83,15 +83,9 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'D', label: 'A mix, or something else (Apple, Dropbox, etc.)' },
     { v: 'E', label: 'Not sure' },
   ] },
-  { id: 'q9', text: 'Where is your office (or where do you work from)?', hint: 'All work is done remotely, by video and screen share.', options: [
-    { v: 'A', label: 'Fairbanks or North Pole, Alaska' },
-    { v: 'B', label: 'Somewhere else in Alaska' },
-    { v: 'C', label: 'Somewhere else in the US' },
-    { v: 'D', label: 'Outside the US, or it doesn\'t apply' },
-  ] },
 ];
 
-export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; q9: string };
+export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; /** Retired Nov 2026 (site is remote-only); old saved answers may still carry it. */ q9?: string };
 
 /** Strict whitelist check. Returns normalized answers or null. Used by the Worker on every request. */
 export function validateAnswers(raw: unknown): Answers | null {
@@ -359,7 +353,8 @@ function addPicks(v: PlanView, p: Plan) {
     };
   }
 
-  const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? 'recommended' : k === p.secondary ? 'also' : null);
+  // When both FAQ and lead problems come up, the package is the recommendation and its parts are 'also'.
+  const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? (p.packageFit ? 'also' : 'recommended') : k === p.secondary ? 'also' : null);
   const fit = (k: ServiceKey | 'S' | 'T' | 'P'): string => {
     switch (k) {
       case 'R': return p.items.length ? `Covers the basics your answers flagged: ${p.items.map((c) => itemView(c, p).name).join(', ')}.` : 'Email on your own domain, email security, passwords, Wi-Fi and backups, set up remotely on accounts you own.';
@@ -377,7 +372,7 @@ function addPicks(v: PlanView, p: Plan) {
     { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },
     { name: aiFaq.name, price: `from ${usd(aiFaq.from)}`, line: fit('F'), href: '/services/#ai-faq', mark: mark('F') },
     { name: leadRouting.name, price: `from ${usd(leadRouting.from)}`, line: fit('L'), href: '/services/#lead-routing', mark: mark('L') },
-    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit ? 'also' : null },
+    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit ? 'recommended' : null },
   ];
 }
 
