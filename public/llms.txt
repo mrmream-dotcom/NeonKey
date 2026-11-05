@@ -44,11 +44,11 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
 - [Quick Win + Tech Checkup](https://neonkey.tech/services/#quick-win)  
   One automation improvement plus a tech basics review, with a plain-language to-do list, starting at $99.
 
-- [AI Intake & FAQ Assistant](https://neonkey.tech/services/#ai-faq)  
-  Automated FAQ answers and lead collection, starting at $499.
+- [Front Office Package](https://neonkey.tech/services/#front-office-package)  
+  An AI assistant that answers common questions from your own FAQ, lead routing with follow-up reminders, an email security lockdown and three months of remote support, as one project. $999 founding rate.
 
-- [Lead-Routing & Follow-Up System](https://neonkey.tech/services/#lead-routing)  
-  Sends new leads to the right place with follow-up reminders and templates, starting at $799.
+- [Email Lockdown](https://neonkey.tech/services/email-lockdown/)  
+  Your domain's SPF, DKIM and DMARC email records checked and fixed, $49 flat. Buy online; no passwords needed.
 
 - [All Builds & Projects](https://neonkey.tech/lab/)  
   Portfolio of practical builds and lessons from real-world system setups and automations.
