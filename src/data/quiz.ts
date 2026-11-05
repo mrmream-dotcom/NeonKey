@@ -2,7 +2,7 @@
 // Shared by the page (src/pages/services/quiz.astro, runs in the browser) and the plan-email
 // Worker (workers/quiz/), so the on-screen result and the email always match.
 // Names and prices come from ./services.ts only. Never add per-item prices or estimates here.
-import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, introPricing, usd, type Offer } from './services';
+import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, showPackageValue, introPricing, usd, type Offer } from './services';
 
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
@@ -10,8 +10,8 @@ const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
 
 export type ServiceKey = 'R' | 'Q' | 'F' | 'L';
 export const SERVICES: Record<ServiceKey | 'S', Offer> = { R: remoteIt, Q: quickWin, F: aiFaq, L: leadRouting, S: remoteSupportPlan };
-const SERVICE_HREF: Record<ServiceKey, string> = { R: '/services/remote-it/', Q: '/services/#quick-win', F: '/services/#ai-faq', L: '/services/#lead-routing' };
-export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it', S: 'support-plan', Q: 'quick-win', F: 'ai-faq', L: 'lead-routing' };
+const SERVICE_HREF: Record<ServiceKey, string> = { R: '/services/remote-it/', Q: '/services/#quick-win', F: '/services/#front-office-package', L: '/services/#front-office-package' };
+export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it', S: 'support-plan', Q: 'quick-win', F: 'front-office-package', L: 'front-office-package' };
 
 export function priceLine(o: Offer): string {
   return o.unit
@@ -19,6 +19,8 @@ export function priceLine(o: Offer): string {
     : `Starting at ${usd(o.from)}, scoped per project.`;
 }
 const QW_UPSELL = `Want the fixes from your checkup done for you? That\'s what the ${remoteIt.name} (starting at ${usd(remoteIt.from)}) is for.`;
+// F and L results point at the Front Office Package: the $499/$799 parts are quoted on request, not listed (Nov 4 2026).
+const PACKAGE_PRICE = () => `This is part of the ${frontOfficePackage.name}: ${usd(frontOfficePackage.from)} flat for the assistant, lead routing, an email lockdown and three months of support. Need only this one piece? Ask, and we'll quote it on its own.`;
 export const PRICE_DISCLAIMER = `Pricing is a starting point, not a quote. ${introPricing.label} apply to the first 10 clients.`;
 
 // ------------------------------------------------------------------ questions
@@ -83,15 +85,9 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'D', label: 'A mix, or something else (Apple, Dropbox, etc.)' },
     { v: 'E', label: 'Not sure' },
   ] },
-  { id: 'q9', text: 'Where is your office (or where do you work from)?', hint: 'On-site visits are available in Fairbanks and North Pole, Alaska. Everything else is done remotely.', options: [
-    { v: 'A', label: 'Fairbanks or North Pole, Alaska' },
-    { v: 'B', label: 'Somewhere else in Alaska' },
-    { v: 'C', label: 'Somewhere else in the US' },
-    { v: 'D', label: 'Outside the US, or it doesn\'t apply' },
-  ] },
 ];
 
-export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; q9: string };
+export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; /** Retired Nov 2026 (site is remote-only); old saved answers may still carry it. */ q9?: string };
 
 /** Strict whitelist check. Returns normalized answers or null. Used by the Worker on every request. */
 export function validateAnswers(raw: unknown): Answers | null {
@@ -186,7 +182,8 @@ export function computePlan(a: Answers): Plan {
   const support = rShown ? (a.q7 === 'A' ? 'yes' : a.q7 === 'C' ? 'soft' : null) : null;
   const basicsTip = (type === 'Q' || type === 'F' || type === 'L') && items.has('R-EMAIL') && secondary !== 'R';
 
-  const local = a.q9 === 'A' && !personal;
+  // The site is remote-only (Michael, Nov 4 2026): the on-site tune-up is offered only through direct local outreach.
+  const local = false;
   const packageFit = !personal && !tooBig && ((type === 'F' && s.L >= 2) || (type === 'L' && s.F >= 2));
 
   return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, local, packageFit, answers: a };
@@ -297,6 +294,11 @@ function itemView(code: ItemCode, p: Plan): ItemView {
   }
 }
 
+/** F and L are sold inside the Front Office Package on the site, so they never show their own starting price. */
+function startLabel(k: ServiceKey): string {
+  return k === 'F' || k === 'L' ? `Part of the ${frontOfficePackage.name}, ${usd(frontOfficePackage.from)}` : `Starting at ${usd(SERVICES[k].from)}`;
+}
+
 function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
   const o = SERVICES[k];
   const names = p.items.map((c) => itemView(c, p).name);
@@ -305,7 +307,7 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
     : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. A ${quickWin.name} automates that one workflow and includes a short checkup of your basics.` : p.wf === 'reminders' ? `You said you send the same emails or reminders by hand. A ${quickWin.name} sends them for you on schedule and includes a short checkup of your basics.` : `You said a repetitive task eats your week. A ${quickWin.name} automates one workflow, scoped with you first.`)
     : k === 'F' ? `You said people ask the same questions. The ${aiFaq.name} answers them from your own FAQ and captures the details of new inquiries.`
     : `You said inquiries slip through or follow-up is slow. The ${leadRouting.name} puts every lead in one flow with reminders so each one gets a reply.`;
-  return { name: o.name, price: `Starting at ${usd(o.from)}`, text, href: SERVICE_HREF[k] };
+  return { name: o.name, price: startLabel(k), text, href: SERVICE_HREF[k] };
 }
 
 const BASICS_TIP = `Tip: a business email on your own domain makes any automation cleaner and looks more trustworthy to customers. It\'s part of the ${remoteIt.name} (starting at ${usd(remoteIt.from)}).`;
@@ -353,12 +355,13 @@ function addPicks(v: PlanView, p: Plan) {
   if (p.packageFit) {
     const f = frontOfficePackage;
     v.packagePick = {
-      name: f.name, price: `${usd(f.from)}, ${usd(f.value)}+ value`, href: f.href!,
+      name: f.name, price: showPackageValue ? `${usd(f.from)}, ${usd(f.value)}+ value` : usd(f.from), href: f.href!,
       text: `Both repeat questions and missed inquiries came up in your answers. The ${f.name} (the Start-Up Deal) bundles the ${aiFaq.name}, the ${leadRouting.name}, an email security lockdown and three months of the ${remoteSupportPlan.name} as one connected system.`,
     };
   }
 
-  const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? 'recommended' : k === p.secondary ? 'also' : null);
+  // When both FAQ and lead problems come up, the package is the recommendation and its parts are 'also'.
+  const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? (p.packageFit ? 'also' : 'recommended') : k === p.secondary ? 'also' : null);
   const fit = (k: ServiceKey | 'S' | 'T' | 'P'): string => {
     switch (k) {
       case 'R': return p.items.length ? `Covers the basics your answers flagged: ${p.items.map((c) => itemView(c, p).name).join(', ')}.` : 'Email on your own domain, email security, passwords, Wi-Fi and backups, set up remotely on accounts you own.';
@@ -367,17 +370,17 @@ function addPicks(v: PlanView, p: Plan) {
       case 'F': return a.q6 === 'A' || a.q3 === 'D' ? 'Fits: people ask you the same questions (hours, prices, how to book).' : 'For businesses that answer the same customer questions every day. Did not come up in your answers.';
       case 'L': return a.q6 === 'B' || a.q3 === 'E' ? 'Fits: inquiries arrive in several places and some get missed.' : 'For businesses losing leads between inboxes. Did not come up in your answers.';
       case 'T': return p.local ? 'Fits: you are in Fairbanks or North Pole, so the basics can be checked and fixed in person.' : 'On-site only, in Fairbanks and North Pole, Alaska. Not available where you are; the remote setup covers the same ground.';
-      case 'P': return p.packageFit ? 'Fits: both repeat questions and missed inquiries came up. All four parts as one system.' : 'The FAQ assistant, lead routing, email lockdown and three months of support as one project. Best when two or more of those apply.';
+      case 'P': return p.packageFit ? 'Fits: both repeat questions and missed inquiries came up. All four parts as one system.'
+        : pick === 'F' ? `${fit('F')} The FAQ assistant, lead routing, email lockdown and three months of support as one project.`
+        : pick === 'L' ? `${fit('L')} Lead routing, the FAQ assistant, email lockdown and three months of support as one project.`
+        : 'The FAQ assistant, lead routing, email lockdown and three months of support as one project. Best when repeat questions or missed inquiries are a problem.';
     }
   };
   v.allOptions = [
-    { name: officeTuneUp.name, price: usd(officeTuneUp.from), line: fit('T'), href: officeTuneUp.href!, mark: p.local && pick === 'R' ? 'also' : null },
     { name: remoteIt.name, price: `from ${usd(remoteIt.from)}`, line: fit('R'), href: '/services/remote-it/', mark: mark('R') },
     { name: remoteSupportPlan.name, price: `from ${usd(remoteSupportPlan.from)}/mo`, line: fit('S'), href: remoteSupportPlan.href!, mark: p.support === 'yes' ? 'also' : null },
     { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },
-    { name: aiFaq.name, price: `from ${usd(aiFaq.from)}`, line: fit('F'), href: '/services/#ai-faq', mark: mark('F') },
-    { name: leadRouting.name, price: `from ${usd(leadRouting.from)}`, line: fit('L'), href: '/services/#lead-routing', mark: mark('L') },
-    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit ? 'also' : null },
+    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit || pick === 'F' || pick === 'L' ? 'recommended' : null },
   ];
 }
 
@@ -453,11 +456,11 @@ function buildPlanBase(p: Plan): PlanView {
         'What details you need from someone before you can help (name, contact, what they need, when)',
         solo ? "How you\'d like to be alerted when it hands off" : 'Who should get which kind of request when it hands off',
       ],
-      price: `${priceLine(aiFaq)} ${PRICE_DISCLAIMER}`,
+      price: `${PACKAGE_PRICE()} ${PRICE_DISCLAIMER}`,
       demo: { label: 'See the triage demo', href: '/lab/ai-inquiry-triage/', text: 'Related demo: the AI inquiry triage demo in the Lab sorts a customer message and drafts a reply for a person to review.' },
       links: [
-        { label: 'Ask about this', href: contact('ai-faq'), primary: true },
-        { label: 'See the triage demo', href: '/lab/ai-inquiry-triage/' },
+        { label: 'Get a written quote', href: contact('front-office-package'), primary: true },
+        { label: 'Try the front office demo', href: '/lab/front-office/' },
       ],
       subject: 'Your NeonKey plan: an assistant for your repeat questions',
       preheader: 'What it would include for you, and the FAQ prep that makes it work.',
@@ -484,11 +487,11 @@ function buildPlanBase(p: Plan): PlanView {
         "How quickly you\'d like to follow up, and the message you usually send first",
         `Where you track leads now, ${tracking}`,
       ],
-      price: `${priceLine(leadRouting)} ${PRICE_DISCLAIMER}`,
+      price: `${PACKAGE_PRICE()} ${PRICE_DISCLAIMER}`,
       note: solo && a.q6 !== 'B' ? `Only one or two places to watch? A ${quickWin.name} (starting at ${usd(quickWin.from)}) might cover it. I\'ll tell you honestly on the call.` : undefined,
       links: [
-        { label: 'Ask about this', href: contact('lead-routing'), primary: true },
-        { label: 'See all services', href: '/services/' },
+        { label: 'Get a written quote', href: contact('front-office-package'), primary: true },
+        { label: 'See the Front Office Package', href: frontOfficePackage.href! },
       ],
       subject: 'Your NeonKey plan: stop losing leads between inboxes',
       preheader: 'The intake, routing and follow-up pieces your answers point to.',
@@ -546,7 +549,7 @@ function buildPlanBase(p: Plan): PlanView {
   // TALK (11+ people)
   const q3Map: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L' };
   const named = q3Map[a.q3];
-  const touched = TIE.filter((k) => p.scores[k] >= 2).map((k) => `${SERVICES[k].name} (starting at ${usd(SERVICES[k].from)})`);
+  const touched = TIE.filter((k) => p.scores[k] >= 2).map((k) => `${SERVICES[k].name} (${startLabel(k).toLowerCase()})`);
   return {
     ...base, resultName: "Let\'s talk it through", kicker, heading: "Let\'s talk it through",
     intro: `My setups are built for teams of about 1–10 people, so a bigger team may need more than I offer. I\'d rather say that up front. A short chat is the honest way to find out, and if it\'s not something I can help with, I\'ll say so.${named ? ` The ${SERVICES[named].name} may still help with one piece.` : ''}`,
@@ -611,7 +614,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.nextSteps = SCOPING;
   } else if (p.type === 'F') {
     const why = a.q6 === 'A' ? 'You said people ask the same questions (hours, prices, how to book).' : 'You said you answer the same customer questions again and again.';
-    v.startPrice = `Starting at ${usd(aiFaq.from)}`;
+    v.startPrice = startLabel('F');
     v.scope = { title: 'Based on your answers, your assistant would include', list: v.includes!.list };
     v.steps = [
       { title: 'Gather your common questions and answers', what: 'The assistant is trained on your own FAQ content, so this is the most important prep.', why, ready: [r[0]] },
@@ -623,7 +626,7 @@ function addDetail(v: PlanView, p: Plan) {
   } else if (p.type === 'L') {
     const why = a.q6 === 'B' ? 'You said inquiries come in from several places and some get missed.' : 'You said new inquiries or leads slip through the cracks, or follow-up is slow.';
     const inc = v.includes!.list;
-    v.startPrice = `Starting at ${usd(leadRouting.from)}`;
+    v.startPrice = startLabel('L');
     v.scope = { title: 'Based on your answers, your system would include', list: ['Form, email or chat intake', p.team ? 'Routing rules to the right person' : 'Routing rules into one list', 'Follow-up reminders and templates', 'Simple tracking view'] };
     v.steps = [
       { title: 'Bring every inquiry into one flow', what: inc[0] + '.', why, ready: [r[0]] },

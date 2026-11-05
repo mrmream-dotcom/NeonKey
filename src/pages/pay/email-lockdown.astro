@@ -1,0 +1,40 @@
+---
+import { url, CONTACT_EMAIL } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+// Email Lockdown intake for PAID orders. Unlisted and noindex: linked only from /pay/thanks/ (Stripe's after-payment page).
+// Answers go to hello@ via web3forms; match them to the Stripe payment notice by checkout email before doing any work.
+---
+<Base title="Email Lockdown questions" description="Five quick questions for your Email Lockdown order." noindex>
+  <PageHeader width="narrow" eyebrow="Email Lockdown · Paid order" title="Five quick questions" crumbs={[{ href: '/', label: 'Home' }, { label: 'Email Lockdown questions' }]}>
+    <p class="lede">Thanks for your order. This is everything we need to get started, and it takes about two minutes.</p>
+  </PageHeader>
+  <section style="padding-top:0">
+    <div class="container narrow">
+      <form class="panel" action="https://api.web3forms.com/submit" method="post">
+        <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
+        <input type="hidden" name="subject" value="Email Lockdown intake (paid order)" />
+        <input type="hidden" name="from_name" value="NeonKey website" />
+        <input type="hidden" name="redirect" value="https://neonkey.tech/contact/thanks/" />
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+        <div class="field"><label for="el-name">Your name</label><input id="el-name" name="name" autocomplete="name" required /></div>
+        <div class="field"><label for="el-email">Email you used at checkout</label><input id="el-email" name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label for="el-domain">1. Your business domain</label><input id="el-domain" name="domain" required maxlength="120" placeholder="yourbusiness.com" /></div>
+        <div class="field"><label for="el-provider">2. Where do you read your business email?</label>
+          <select id="el-provider" name="email_provider" required><option value="">Choose one</option><option>Google Workspace (Gmail with my domain)</option><option>Microsoft 365 (Outlook with my domain)</option><option>Something else (name it below)</option><option>Not sure</option></select>
+        </div>
+        <div class="field"><label for="el-host">3. Where is your domain managed? <span class="muted">(where you bought it or pay for it)</span></label>
+          <select id="el-host" name="dns_host" required><option value="">Choose one</option><option>GoDaddy</option><option>Squarespace / Google Domains</option><option>Cloudflare</option><option>Namecheap</option><option>Wix</option><option>Something else (name it below)</option><option>Not sure</option></select>
+        </div>
+        <div class="field"><label for="el-senders">4. What else sends email as your business? <span class="muted">(website form, newsletter tool, invoicing or booking app, CRM)</span></label><textarea id="el-senders" name="other_senders" rows="3" maxlength="600" placeholder="For example: Squarespace form, Mailchimp, QuickBooks invoices. Write 'not sure' if you don't know."></textarea></div>
+        <div class="field"><label for="el-how">5. How do you want the fix done?</label>
+          <select id="el-how" name="how" required><option value="">Choose one</option><option>Send me the exact records and steps, I'll paste them in</option><option>I'll invite you as a collaborator or delegate so you can add them</option><option>Not sure, tell me what's easiest</option></select>
+        </div>
+        <div class="field"><label for="el-msg">Anything else? <span class="muted">(optional)</span></label><textarea id="el-msg" name="message" rows="3" maxlength="1000"></textarea></div>
+        <button class="btn btn-primary" type="submit" data-umami-event="lockdown-intake-submit">Send my answers</button>
+        <p class="form-note">We match your answers to your Stripe payment by the checkout email before any work starts. If we can't find a payment, we'll reply with the payment link. Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
+      </form>
+      <p class="muted" style="font-size:.9rem;margin-top:1rem">What happens next: we check your domain's public records and email you the exact records and steps (or a time to add them, if you chose to invite us). See <a href={url('/services/email-lockdown/')}>what's included</a>.</p>
+    </div>
+  </section>
+</Base>

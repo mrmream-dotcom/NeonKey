@@ -3,77 +3,103 @@ import OfferTitle from '../../components/OfferTitle.astro';
 import OfferNameLabel from '../../components/OfferNameLabel.astro';
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
-import OfferDetails from '../../components/OfferDetails.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, automationMenu, introPricing, usd } from '../../data/services';
-const offerCount = automationOffers.length + 3;
-const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber'];
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
+// Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
+//   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
+//   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
+//   from the site; it is the landing page for the Fairbanks Google Ads campaign and direct local outreach. Don't delete it.
+//   Every smaller job sits in one short "Need just one thing?" list further down.
+// Keep the old anchors (#front-office-package, #support-plan, #quick-win, #ai-faq, #lead-routing,
+// #email-lockdown, #remote-it, #automation-menu, #featured-h, #auto-h): other pages, the quiz and outreach links point to them.
+// The crossed-out "$2,000+ value" line is controlled site-wide by showPackageValue in src/data/services.ts.
+// The $499 and $799 parts are not listed on their own (reviewers: it invites a $799 vs $999 comparison); they are
+// downsells for calls and email. Their old anchors (#ai-faq, #lead-routing) now land on the package card.
+const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
+const smallJobs = [
+  { o: emailLockdown, price: `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online, then answer five quick questions; no call or passwords needed.', href: emailLockdown.buyUrl!, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
+  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One repetitive task taken off your plate with the tools you already have.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
+  { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
+];
 ---
-<Base title="Services" description="NeonKey services for small businesses: remote small-office IT setup, a monthly support plan, an on-site Office Tech Tune-Up in Fairbanks and North Pole, practical AI automations and an all-inclusive Front Office Package. Scoped first, explained clearly.">
-  <PageHeader eyebrow="Services · Unlock AI" title="Practical IT and automation for small businesses" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
-    <p class="lede">Office IT setup, a monthly support plan and small automations, explained in simple terms. Every project starts with a short scoping call so we agree on what "done" looks like before any work begins, and setup happens after 4 PM Alaska time or on weekends so your staff never lose a working hour.</p>
-    <Fragment slot="meta">
-      <li><span><strong>{offerCount}</strong> services</span></li>
-      <li><span>Remote across the US · On-site in Fairbanks and North Pole</span></li>
-      <li><span>Scoped before work begins</span></li>
-      <li><span>You own every account</span></li>
-    </Fragment>
+<Base title="Services" description="Remote help for small businesses: quote and inquiry follow-up set up for $999, or your office email, Wi-Fi, backups and passwords set up right from $299. Written scope first, built after hours, in accounts you own.">
+  <PageHeader eyebrow="Services" title="Losing quote requests, or need IT set up?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
+    <p class="lede">Pick one. You get a written scope and price before any work starts.</p>
   </PageHeader>
-
-  <div class="container">
-    <p class="intro-pricing" role="note"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
-  </div>
 
   <section style="padding-top:0;padding-bottom:1rem" aria-labelledby="pick-h">
     <div class="container">
-      <SectionHeading id="pick-h" eyebrow="Start here" title="What do you need?" />
-      <div class="grid grid-3 pick-grid">
-        <a class="card topline accent-cyan pick-card" href={url('/local/')} data-umami-event="services-cta" data-umami-event-location="services-pick-local">
-          <span class="kicker">On-site · Fairbanks and North Pole</span>
-          <strong>Someone to come to my office</strong>
-          <span class="muted">Office Tech Tune-Up, $249. Wi-Fi, backups, passwords, email security and printers in one visit.</span>
-        </a>
-        <a class="card topline accent-magenta pick-card" href="#featured-h" data-umami-event="services-cta" data-umami-event-location="services-pick-remote">
-          <span class="kicker">Remote · Anywhere in the US</span>
-          <strong>My office tech set up properly</strong>
-          <span class="muted">Remote Small-Office IT Setup from {usd(remoteIt.from)}, with an optional monthly support plan.</span>
-        </a>
-        <a class="card topline accent-violet pick-card" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-pick-ai">
-          <span class="kicker">AI and automation</span>
-          <strong>A repetitive job taken off my plate</strong>
-          <span class="muted">From a {usd(automationOffers[0].from)} Quick Win to the all-in-one Front Office Package.</span>
-        </a>
+      <h2 id="pick-h" class="sr-only">Two ways to start</h2>
+      <div class="choices">
+        <div class="card topline accent-magenta choice">
+          <span class="kicker">Lead follow-up · remote</span>
+          <strong>Keep quote requests and follow-ups in one place</strong>
+          <span class="muted">Requests from your website form or shared inbox land on one list. Your team sees who's handling each one and when to follow up.</span>
+          <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
+          <div class="btn-row choice-btns">
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Get a written quote</a>
+            <a class="btn btn-ghost btn-sm" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">What's included</a>
+          </div>
+        </div>
+        <div class="card topline accent-cyan choice">
+          <span class="kicker">Office IT · remote</span>
+          <strong>Get your office tech set up right</strong>
+          <span class="muted">Business email on your own domain, safer Wi-Fi, tested backups and a password manager, over screen share.</span>
+          <span class="choice-price">from {usd(remoteIt.from)} <small>depends on people and devices</small></span>
+          <div class="btn-row choice-btns">
+            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-choice-remote-it">Get a written quote</a>
+            <a class="btn btn-ghost btn-sm" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">What's included</a>
+          </div>
+        </div>
       </div>
-      <p class="muted" style="margin:1rem 0 0;font-size:.95rem">Not sure? <a href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">Take the 2-minute quiz</a>: eight quick questions, no email needed.</p>
+      <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
     </div>
   </section>
 
-  <section style="padding-top:1rem;padding-bottom:1rem" aria-labelledby="fop-h">
+  <section class="alt" aria-labelledby="demo-h">
     <div class="container">
-      <p class="section-label"><span class="pulse" aria-hidden="true"></span>Start-Up Deal · All-inclusive package</p>
+      <SectionHeading id="demo-h" eyebrow="See it first" title="What happens to a new quote request" intro="A sample request from the clickable demo (made-up business and customer). This is the flow we'd set up in your own inbox and spreadsheet." />
+      <ol class="flow">
+        <li><span class="flow-n">Tue 7:42 AM</span><strong>A website form comes in</strong><span class="muted">"Looking for a quote to replace two bathroom fans. Do you do free estimates?"</span></li>
+        <li><span class="flow-n">Same minute</span><strong>It's added to your list</strong><span class="muted">Logged in your Google Sheet as "Needs reply · Today", so it can't get buried in the inbox.</span></li>
+        <li><span class="flow-n">Assigned</span><strong>Dana gets it, with a draft</strong><span class="muted">Estimate requests go to the owner, with a reply drafted from approved templates. Nothing goes out until Dana sends it.</span></li>
+        <li><span class="flow-n">Day 1, 3 and 7</span><strong>Follow-up reminders</strong><span class="muted">If the customer goes quiet, Dana gets a reminder with a draft ready. They stop the moment the customer replies.</span></li>
+      </ol>
+      <div class="btn-row" style="margin-top:1.25rem">
+        <a class="btn btn-primary" href={url('/lab/front-office/?type=home')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Try a sample request</a>
+        <a class="btn btn-ghost" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Get a written quote</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="fop-h">
+    <div class="container">
+      <span id="ai-faq" class="anchor"></span><span id="lead-routing" class="anchor"></span>
       <article class="card offer offer-featured topline accent-magenta" id={fop.slug}>
         <div class="offer-featured-grid">
           <div>
-            <span class="kicker">{fop.kicker} · Everything in one project</span>
-            <h2 id="fop-h" style="font-size:1.6rem;margin-top:.4rem"><OfferTitle offer={fop} /></h2>
+            <span class="kicker">Remote · fixed price after scoping</span>
+            <h2 id="fop-h" class="offer-h2"><OfferTitle offer={fop} /></h2>
             <OfferNameLabel offer={fop} />
-            <p class="offer-outcome">{fop.outcome}.</p>
-            <p class="muted">{fop.for}.</p>
-            <ul>{fop.items.map((i) => <li>{i}</li>)}</ul>
-            <OfferDetails offer={fop} />
-          </div>
-          <div class="offer-featured-side">
-            <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>
-            <p class="price">{usd(fop.from)}<small>Start-Up Deal · founding-client rate · scoped first</small></p>
-            <ul class="fop-parts" aria-label="What's bundled">
-              {fop.parts.map((p) => <li><span>{p.name}</span> <span class="muted">{p.value}</span></li>)}
+            <p class="offer-outcome">Keep quote requests and follow-ups in one place. For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups.</p>
+            <h3 class="incl-h">What the setup includes</h3>
+            <ul>
+              <li>Requests from your website form and shared inbox in one list, with who's handling each one and when to follow up</li>
+              <li>Reply drafts from your approved templates, and follow-up reminders on day 1, 3 and 7 that stop when the customer replies. A person sends every quote reply and follow-up</li>
+              <li>An FAQ assistant that only gives answers you approved, and hands everything else to a person</li>
+              <li>Business email security set up (SPF, DKIM and DMARC), so it's harder to fake your address</li>
+              <li>Three months of the Monthly Remote Support Plan, so small changes are covered while it beds in</li>
             </ul>
-            <p class="muted" style="font-size:.95rem">The same four parts at standard rates come to {usd(fop.separately)}. As the Start-Up Deal, at the founding-client rate, they are planned and built as one system for {usd(fop.from)}.</p>
+            <p class="muted side-note">Phone calls aren't part of this setup. They still need a person or a separate phone setup, which we can quote.</p>
+          </div>
+          <div class="offer-featured-side">
+            {showPackageValue && <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>}
+            <p class="price">{usd(fop.from)}<small>{introPricing.label} · scoped first</small></p>
+            <p class="muted side-note">Any software fees are listed in your written quote and billed to you by that provider. After the three months, support is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Ask about the package</a>
-              <a class="btn btn-ghost" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See it working</a>
-              <a class="btn btn-ghost" href="#auto-h" data-umami-event="services-cta" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See the parts</a>
+              <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Get a written quote</a>
+              <a class="btn btn-ghost" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Try the demo</a>
             </div>
           </div>
         </div>
@@ -81,147 +107,94 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
     </div>
   </section>
 
-  <section style="padding-top:1rem" aria-labelledby="featured-h">
+  <section class="alt" aria-labelledby="featured-h">
     <div class="container">
-      <p class="section-label"><span class="pulse" aria-hidden="true"></span>Remote office IT</p>
-      <article class="card offer offer-featured topline">
+      <article class="card offer offer-featured topline accent-cyan" id={remoteIt.slug}>
         <div class="offer-featured-grid">
           <div>
-            <span class="kicker">Remote · Anywhere in the US</span>
-            <h2 id="featured-h" style="font-size:1.6rem;margin-top:.4rem"><OfferTitle offer={remoteIt} /></h2>
+            <span class="kicker">Remote · anywhere in the US</span>
+            <h2 id="featured-h" class="offer-h2"><OfferTitle offer={remoteIt} /></h2>
             <OfferNameLabel offer={remoteIt} />
-            <p class="offer-outcome">{remoteIt.outcome}.</p>
-            <p class="muted">For small offices and solo pros. {remoteIt.for}.</p>
+            <p class="offer-outcome">Your office tech set up properly, done over video and screen share.</p>
             <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
-            <OfferDetails offer={remoteIt} />
           </div>
           <div class="offer-featured-side">
-            <p class="price">Starting at {usd(remoteIt.from)}<small>Scoped per project</small></p>
-            <p class="muted" style="font-size:.95rem">Optional add-on: <a href="#support-plan">{remoteSupportPlan.name}</a>, starting at {usd(remoteSupportPlan.from)}/mo.</p>
+            <p class="price">Starting at {usd(remoteIt.from)}<small>{introPricing.label} · scoped first</small></p>
+            <p class="muted side-note">You keep every login, and you get notes on everything we changed. Ongoing help is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-featured">See what's included</a>
-              <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name}>Get in touch</a>
+              <a class="btn btn-primary" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Get a written quote</a>
+              <a class="btn btn-ghost" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">See what's included</a>
             </div>
           </div>
         </div>
       </article>
-
-      <article class="card offer support-card topline accent-violet" id="support-plan" style="margin-top:1.25rem">
-        <div class="offer-featured-grid">
-          <div>
-            <span class="kicker">Optional add-on</span>
-            <h3 style="font-size:1.3rem;margin-top:.4rem"><OfferTitle offer={remoteSupportPlan} /></h3>
-            <OfferNameLabel offer={remoteSupportPlan} />
-            <p class="offer-outcome">{remoteSupportPlan.outcome}.</p>
-            <p class="muted">{remoteSupportPlan.for}.</p>
-            <ul>{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
-            <OfferDetails offer={remoteSupportPlan} />
-          </div>
-          <div class="offer-featured-side">
-            <p class="price">Starting at {usd(remoteSupportPlan.from)}/mo<small>Founding rate · standard rate from {usd(remoteSupportPlan.standard!)}/mo</small></p>
-            <div class="btn-row">
-              <a class="btn btn-ghost" href={url('/contact/?topic=support-plan')} data-umami-event="contact-click" data-umami-event-offer={remoteSupportPlan.name}>Get in touch</a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="card offer topline accent-cyan local-card" id="local" style="margin-top:1.25rem">
-        <div class="offer-featured-grid">
-          <div>
-            <span class="kicker">On-site · Fairbanks and North Pole, Alaska</span>
-            <h3 style="font-size:1.3rem;margin-top:.4rem">Office Tech Tune-Up</h3>
-            <p class="offer-outcome">Your office tech, checked and fixed in one visit.</p>
-            <p class="muted">For small offices, shops and studios in Alaska's Interior. Wi-Fi and router, backups, 2-step sign-in, email security, printers and slow computers, plus a one-page report. Evening and Saturday times.</p>
-          </div>
-          <div class="offer-featured-side">
-            <p class="price">$249<small>One visit, up to about 10 devices</small></p>
-            <div class="btn-row">
-              <a class="btn btn-primary" href={url('/local/')} data-umami-event="services-cta" data-umami-event-offer="Office Tech Tune-Up" data-umami-event-location="services-local">See the tune-up</a>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section style="padding-top:0" aria-labelledby="auto-h">
-    <div class="container">
-      <SectionHeading id="auto-h" eyebrow="AI and automation" title="Automation services" count={`${automationOffers.length} services`} intro="Start small with a Quick Win + Tech Checkup, or take repetitive work off your plate with a bigger build." />
-      <div class="grid grid-3">
-        {automationOffers.map((o, i) => (
-          <article class={`card offer topline ${accents[i % accents.length]}`} id={o.slug}>
-            <span class="kicker">{o.kicker ?? 'Automation'}</span>
-            <h3 style="font-size:1.3rem;margin-top:.4rem"><OfferTitle offer={o} /></h3>
-            <OfferNameLabel offer={o} />
-            {o.outcome && <p class="offer-outcome">{o.outcome}.</p>}
-            <p class="price">Starting at {usd(o.from)}<small>{o.standard ? `Founding rate · standard rate from ${usd(o.standard)}` : 'Scoped per project'}</small></p>
-            <p class="muted">{o.for}.</p>
-            <ul>{o.items.map((i) => <li>{i}</li>)}</ul>
-            <OfferDetails offer={o} />
-            {o.demo && (
-              <p class="offer-demo"><a href={url(o.demo.href)} data-umami-event="demo-click" data-umami-event-offer={o.name} data-umami-event-location="services">{o.demo.label} →</a>{o.demo.example && <span class="muted"> Example: {o.demo.example}</span>}</p>
-            )}
-            {o.upsell && (
-              <p class="offer-upsell">{o.upsell.text} <a href={url(o.upsell.href)} data-umami-event="services-cta" data-umami-event-offer={o.name} data-umami-event-location="services-upsell">{o.upsell.linkText}</a></p>
-            )}
-            <a class="btn btn-primary" href={url(`/contact/?topic=${o.slug}`)} data-umami-event="services-cta" data-umami-event-offer={o.name}>Get in touch</a>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section style="padding-top:0" aria-label="More">
-    <div class="container">
-      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.75rem">
-        <span>Curious how these get built? The Lab documents hands-on builds, with the results and lessons, including what I'd do differently.</span>
-        <a class="btn btn-ghost btn-sm" href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="services">See the builds</a>
-      </div>
-      <div class="callout" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1rem">
-        <span><strong>Free:</strong> the NeonKey Starter IT Kit. A simple spreadsheet to list your accounts, spot the risky ones and run a 10-minute monthly checkup.</span>
-        <a class="btn btn-ghost btn-sm" href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services">Get the free kit</a>
-      </div>
-      <p class="muted" style="margin-top:1.25rem;font-size:.95rem">Pricing shown is a starting point, not a quote. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
-    </div>
-  </section>
-  <section class="alt" aria-labelledby="menu-h" id="automation-menu">
-    <div class="container">
-      <SectionHeading id="menu-h" eyebrow="Ideas" title="What can we automate?" intro="Everyday jobs small businesses hand off to an automation, grouped by the work they save. Pick the one that eats the most of your week and we'll scope it with you. If a simple app already does it, we'll tell you." />
-      <div class="grid grid-3 menu-grid">
-        {automationMenu.map((g, i) => (
-          <article class={`card topline ${accents[i % accents.length]}`} id={`menu-${g.id}`}>
-            <h3 style="font-size:1.12rem;margin:0 0 .6rem">{g.title}</h3>
-            <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
-          </article>
-        ))}
-      </div>
-      <div class="callout menu-own">
-        <span><strong>This is just a starting list.</strong> If a task is repetitive, follows the same steps or lives in a spreadsheet, there's a good chance we can take it off your plate. Got an idea of your own? Bring it, even if it's half-formed. We're open to it.</span>
-        <a class="btn btn-ghost btn-sm" href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu-own-idea">Pitch us your idea</a>
-      </div>
-      <div class="btn-row" style="margin-top:1.5rem">
-        <a class="btn btn-primary" href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu">Tell us which one</a>
-        <a class="btn btn-ghost" href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="automation-menu">See real builds in the Lab</a>
-      </div>
-      <p class="muted" style="margin-top:1rem;font-size:.95rem">Examples, not a promise of results. What fits depends on your tools and how you work today.</p>
     </div>
   </section>
 
   <section aria-labelledby="how-h">
     <div class="container">
-      <SectionHeading id="how-h" eyebrow="Process" title="How it works" />
+      <SectionHeading id="how-h" eyebrow="How it works" title="You know what's changing before it goes live" />
       <ol class="step-cards">
-        <li><strong>Scope:</strong> a short call to pick one problem worth solving.</li>
-        <li><strong>Build:</strong> I set it up with the tools you already use where possible, after 4 PM Alaska time or on weekends so nobody loses a working hour.</li>
-        <li><strong>Hand off:</strong> you get notes, a walkthrough and full ownership of every account.</li>
+        <li><strong>Written scope and price.</strong> Tell us what you need by message (or a short call, if you prefer), then get a fixed quote in writing. If a simple app you already have does the job, I'll tell you.</li>
+        <li><strong>Built after hours.</strong> After 4 PM Alaska time or on weekends, tested with sample requests first, so nobody loses a working hour.</li>
+        <li><strong>You approve going live.</strong> We run a test together, and nothing switches on until you say so.</li>
+        <li><strong>Handoff.</strong> Everything lives in accounts you control, with a walkthrough and written notes.</li>
       </ol>
+      <p class="muted founder-line">NeonKey is run by Michael Ream, who holds a Computer Installation and Repair Technician certificate from the California Institute of Applied Technology (CIAT).</p>
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="faq-h">
+  <section class="alt" aria-labelledby="auto-h" id="smaller">
+    <div class="container">
+      <SectionHeading id="auto-h" eyebrow="Smaller jobs" title="Need just one thing?" intro="Fixed-scope jobs for when you know exactly what you want." />
+      <ul class="jobs">
+        {smallJobs.map((j) => (
+          <li class="job" id={j.slug ?? j.o.slug}>
+            <div class="job-main">
+              <h3 id={j.headingId}><OfferTitle offer={j.o} /></h3>
+              <OfferNameLabel offer={j.o} />
+              <p class="muted">{j.line}{j.demo && <Fragment> <a href={url(j.demo.href)} data-umami-event="demo-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.demo.label}</a>.</Fragment>}</p>
+            </div>
+            <div class="job-side">
+              <span class="job-price">{j.price}</span>
+              {j.more && <a class="btn btn-ghost btn-sm" href={url(j.more)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small-details">Details</a>}
+              {j.buy
+                ? <a class="btn btn-primary btn-sm" href={j.href} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>
+                : <a class="btn btn-ghost btn-sm" href={url(j.href)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <details class="offer-details menu-wrap" id="automation-menu">
+        <summary>Ideas: everyday jobs we can automate</summary>
+        <div class="grid grid-3 menu-grid">
+          {automationMenu.map((g) => (
+            <div id={`menu-${g.id}`}>
+              <h4>{g.title}</h4>
+              <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
+            </div>
+          ))}
+        </div>
+        <p class="muted" style="font-size:.95rem">Examples, not a promise of results. Got your own idea? <a href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu-own-idea">Tell us about it</a>.</p>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-h">
     <div class="container faq">
-      <SectionHeading id="faq-h" eyebrow="Questions" title="FAQ" />
+      <SectionHeading id="faq-h" eyebrow="Questions" title="A few things to know before booking" />
+      <details class="offer-details faq-item">
+        <summary>Does anything reply to my customers without me?</summary>
+        <div class="offer-details-body">
+          <p>Only the FAQ assistant, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your team sends them.</p>
+        </div>
+      </details>
+      <details class="offer-details faq-item">
+        <summary>Are there software costs on top?</summary>
+        <div class="offer-details-body">
+          <p>Where possible we build on tools you already pay for, like your email and a spreadsheet. If a setup needs a paid tool, its monthly fee is listed in your written quote before you decide, and the provider bills you directly.</p>
+        </div>
+      </details>
       <details class="offer-details faq-item">
         <summary>Why not just buy software?</summary>
         <div class="offer-details-body">
@@ -234,31 +207,69 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
           <p>Your accounts stay yours. You keep every admin login, and where a tool allows it I work from a separate admin account or delegated access that you can switch off, rather than your own password. I only open the settings and files the job needs. At handoff we review who has access, and you can remove mine (I'll show you how). If you're on a support plan, my access stays only for the systems the plan covers. I don't keep copies of your files or passwords after the work is done. Questions about this are welcome on the scoping call.</p>
         </div>
       </details>
+      <details class="offer-details faq-item">
+        <summary>Can I start small and add more later?</summary>
+        <div class="offer-details-body">
+          <p>Yes, that's how most people start. Begin with one fix or one module. Anything you add later is built to fit what's already there, and on the monthly plan simple changes are part of the plan. Advanced features may cost extra, and you always get the price before any work starts.</p>
+        </div>
+      </details>
+      <div class="btn-row" style="margin-top:1.5rem">
+        <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Get a written quote</a>
+        <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-faq">Ask about IT setup</a>
+      </div>
+      <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Not ready for a project? Grab the <a href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services">free Starter IT Kit</a> to check your own accounts in 10 minutes, or take the <a href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">2-minute quiz</a>.</p>
+      <p class="muted" style="font-size:.9rem">Prices shown are starting points, not quotes. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
     </div>
   </section>
 </Base>
 
+<script is:inline>
+  (() => {
+    const open = () => { const h = location.hash.slice(1); const d = document.getElementById('automation-menu'); if (d && (h === 'automation-menu' || h.startsWith('menu-'))) { d.open = true; const t = document.getElementById(h); if (t) t.scrollIntoView(); } };
+    open(); window.addEventListener('hashchange', open);
+  })();
+</script>
+
 <style>
-  .pick-card { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: inherit; }
-  .pick-card strong { font-size: 1.1rem; color: var(--text); }
-  .pick-card .muted { font-size: .95rem; }
-  .pick-card:hover strong { text-decoration: underline; }
-  .local-card .offer-featured-grid { align-items: start; }
-  .offer[id] { scroll-margin-top: 90px; }
-  .support-card .offer-featured-grid { align-items: start; }
-  .fop-parts { list-style: none; padding: 0; margin: 0 0 .9rem; display: grid; gap: .45rem; font-size: .95rem; }
-  .fop-parts li { display: flex; flex-direction: column; border-left: 3px solid var(--line); padding-left: .6rem; }
-  .fop-parts .muted { font-size: .85rem; }
+  .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 760px) { .choices { grid-template-columns: 1fr; } }
+  .choice { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: inherit; height: 100%; }
+  .choice strong { font-size: 1.3rem; color: var(--text); line-height: 1.25; }
+  .choice .muted { font-size: .98rem; }
+  .choice-price { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-top: .3rem; font-variant-numeric: tabular-nums; }
+  .choice-price small { font-size: .9rem; font-weight: 500; color: var(--muted); }
+  .choice-btns { margin-top: auto; padding-top: .4rem; }
+  .anchor { display: block; scroll-margin-top: 90px; }
+  .small-note { margin: 1rem 0 0; font-size: .92rem; }
+  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }
+  @media (max-width: 900px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
+  .flow li { display: flex; flex-direction: column; gap: .3rem; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
+  .flow-n { font-weight: 700; color: var(--cyan); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+  .flow .muted { font-size: .93rem; }
+  .offer-h2 { font-size: 1.6rem; margin: .4rem 0 0; }
+  .incl-h { font-size: 1.05rem; margin: 1rem 0 .3rem; }
+  .side-note { font-size: .92rem; }
   .fop-value { margin: 0 0 -.4rem; color: var(--muted); font-weight: 600; }
-  .support-card .btn { margin-top: 0; }
+  .offer[id], #smaller, .job { scroll-margin-top: 90px; }
+  .founder-line { margin-top: 1.25rem; font-size: .95rem; max-width: 860px; }
+  .jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+  .job { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
+  .job h3 { font-size: 1.08rem; margin: 0; }
+  .job p { margin: .2rem 0 0; font-size: .93rem; }
+  .job-side { display: flex; align-items: center; gap: .9rem; flex-shrink: 0; }
+  .job-price { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) { .job { flex-direction: column; align-items: flex-start; } }
+  .menu-wrap { margin-top: 1.5rem; }
+  .menu-wrap > summary { color: var(--text); font-size: 1.05rem; }
+  .menu-grid { margin-top: 1rem; }
+  .menu-grid h4 { margin: 0 0 .5rem; font-size: 1rem; }
+  .menu-list { margin: 0 0 .9rem; padding-left: 1.1rem; font-size: .93rem; }
+  .menu-list li { margin-bottom: .35rem; }
+  [id^="menu-"] { scroll-margin-top: 90px; }
   .faq .faq-item { max-width: 860px; }
   .step-cards > li strong:first-child { display: inline; font-size: inherit; }
   .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
   .faq-item > summary { color: var(--text); font-size: 1.05rem; }
   .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }
-  .menu-list { margin: 0 0 .9rem; padding-left: 1.1rem; }
-  .menu-list li { margin-bottom: .45rem; }
-  .menu-own { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
-  .menu-grid .card { display: flex; flex-direction: column; }
-  .card[id^="menu-"] { scroll-margin-top: 90px; }
 </style>

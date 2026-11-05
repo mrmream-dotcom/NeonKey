@@ -1,6 +1,8 @@
 // Services offered on /services/. Prices are starting points, scoped per project.
 // Remote IT pricing basis: see docs/pricing-research.md.
 export interface Offer {
+  /** Stripe Payment Link for offers that can be bought online with no call (fixed price only). */
+  buyUrl?: string;
   slug: string;
   name: string;
   from: number;
@@ -233,6 +235,25 @@ export const automationOffers: Offer[] = [
     }, },
 ];
 
+/**
+ * Email Lockdown: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
+ * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
+ */
+export const emailLockdown: Offer = {
+  slug: 'email-lockdown',
+  name: 'Email Lockdown',
+  headline: 'Stop scammers faking your email address',
+  kicker: 'Remote · fixed price',
+  from: 49,
+  standard: 79,
+  outcome: 'Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes',
+  for: 'For any business that sends email from its own domain',
+  items: ['Your SPF, DKIM and DMARC records checked', 'Missing or broken records fixed', 'DMARC started in report-only mode', 'A short note of what changed'],
+  href: '/services/#email-lockdown',
+  // Live Stripe Payment Link (Nov 4 2026, see workers/payments). After paying, the customer lands on /pay/thanks/.
+  buyUrl: 'https://buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01',
+};
+
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
@@ -254,6 +275,9 @@ export const officeTuneUp: Offer = {
  * `value` is the rounded-down "$2,000+ value" shown crossed out on the card, so the value claim stays true.
  * Shown as the "Start-Up Deal".
  */
+/** Show the crossed-out "$2,000+ value" line on the package (services, homepage, demo, quiz). Off since Nov 4 2026 after two outside reviews; Michael's call. */
+export const showPackageValue = false;
+
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
