@@ -56,7 +56,7 @@ Secrets (never in the repo, never in chat): `STRIPE_WEBHOOK_SECRET`, `RESEND_API
 ```sh
 cd workers/lockdown && npm ci && npm test
 export CLOUDFLARE_ACCOUNT_ID=13d2e240576e100fbd65b2499bd6c048   # plus CLOUDFLARE_API_TOKEN
-npx wrangler kv namespace create ORDERS     # paste the id into wrangler.toml
+# KV namespace already exists (neonkey-lockdown-orders); id is in wrangler.toml
 npx wrangler deploy
 printf '%s' "$RESEND_API_KEY" | npx wrangler secret put RESEND_API_KEY
 ```

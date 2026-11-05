@@ -22,10 +22,10 @@ ALLOW_LIVE = "true"
 CUSTOMER_EMAILS = "shadow"
 
 # Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 60 days.
-# Create once with `npx wrangler kv namespace create ORDERS` and paste the id here.
+# KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).
 [[kv_namespaces]]
 binding = "ORDERS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "7629cb98c9ed42598f842af4426f491f"
 
 # Daily rechecks at 17:07 UTC (8:07 AM AKST).
 [triggers]
