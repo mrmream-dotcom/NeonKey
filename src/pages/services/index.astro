@@ -38,7 +38,7 @@ const smallJobs = [
           <span class="muted">Requests from your website form or shared inbox land on one list. Your team sees who's handling each one and when to follow up.</span>
           <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
           <div class="btn-row choice-btns">
-            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Book a 15-minute fit call</a>
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Get a written quote</a>
             <a class="btn btn-ghost btn-sm" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">What's included</a>
           </div>
         </div>
@@ -48,7 +48,7 @@ const smallJobs = [
           <span class="muted">Business email on your own domain, safer Wi-Fi, tested backups and a password manager, over screen share.</span>
           <span class="choice-price">from {usd(remoteIt.from)} <small>depends on people and devices</small></span>
           <div class="btn-row choice-btns">
-            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-choice-remote-it">Book a 15-minute fit call</a>
+            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-choice-remote-it">Get a written quote</a>
             <a class="btn btn-ghost btn-sm" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">What's included</a>
           </div>
         </div>
@@ -68,7 +68,7 @@ const smallJobs = [
       </ol>
       <div class="btn-row" style="margin-top:1.25rem">
         <a class="btn btn-primary" href={url('/lab/front-office/?type=home')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Try a sample request</a>
-        <a class="btn btn-ghost" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Book a 15-minute fit call</a>
+        <a class="btn btn-ghost" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Get a written quote</a>
       </div>
     </div>
   </section>
@@ -98,7 +98,7 @@ const smallJobs = [
             <p class="price">{usd(fop.from)}<small>{introPricing.label} · scoped first</small></p>
             <p class="muted side-note">Any software fees are listed in your written quote and billed to you by that provider. After the three months, support is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Book a 15-minute fit call</a>
+              <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Get a written quote</a>
               <a class="btn btn-ghost" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Try the demo</a>
             </div>
           </div>
@@ -122,7 +122,7 @@ const smallJobs = [
             <p class="price">Starting at {usd(remoteIt.from)}<small>{introPricing.label} · scoped first</small></p>
             <p class="muted side-note">You keep every login, and you get notes on everything we changed. Ongoing help is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Book a 15-minute fit call</a>
+              <a class="btn btn-primary" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Get a written quote</a>
               <a class="btn btn-ghost" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">See what's included</a>
             </div>
           </div>
@@ -135,7 +135,7 @@ const smallJobs = [
     <div class="container">
       <SectionHeading id="how-h" eyebrow="How it works" title="You know what's changing before it goes live" />
       <ol class="step-cards">
-        <li><strong>Written scope and price.</strong> A short call, then a fixed quote in writing. If a simple app you already have does the job, I'll tell you.</li>
+        <li><strong>Written scope and price.</strong> Tell us what you need by message (or a short call, if you prefer), then get a fixed quote in writing. If a simple app you already have does the job, I'll tell you.</li>
         <li><strong>Built after hours.</strong> After 4 PM Alaska time or on weekends, tested with sample requests first, so nobody loses a working hour.</li>
         <li><strong>You approve going live.</strong> We run a test together, and nothing switches on until you say so.</li>
         <li><strong>Handoff.</strong> Everything lives in accounts you control, with a walkthrough and written notes.</li>
@@ -211,7 +211,7 @@ const smallJobs = [
         </div>
       </details>
       <div class="btn-row" style="margin-top:1.5rem">
-        <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Book a 15-minute fit call</a>
+        <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Get a written quote</a>
         <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-faq">Ask about IT setup</a>
       </div>
       <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Not ready for a project? Grab the <a href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services">free Starter IT Kit</a> to check your own accounts in 10 minutes, or take the <a href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">2-minute quiz</a>.</p>

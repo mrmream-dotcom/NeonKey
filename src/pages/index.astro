@@ -171,7 +171,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Two ways we help" intro="Pick the one that sounds like you. Every project is scoped on a short call and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <SectionHeading id="svc-h" eyebrow="Services" title="Two ways we help" intro="Pick the one that sounds like you. Every project is scoped with you and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-2 home-offers">
         <article class="card offer-featured topline accent-magenta" id="front-office">
           <span class="kicker">Lead follow-up · Remote · {usd(fop.from)}</span>
@@ -186,7 +186,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           </ul>
           <p class="price" style="margin:.4rem 0 .8rem">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Setup + three months of support · {introPricing.label.toLowerCase()}</small></p>
           <div class="btn-row">
-            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Book a 15-minute fit call</a>
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Get a written quote</a>
             <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Try a sample request</a>
           </div>
         </article>
@@ -203,7 +203,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           </ul>
           <p class="price" style="margin:.4rem 0 .8rem">From {usd(remoteIt.from)}<small>Price depends on how many people and devices · fixed quote first</small></p>
           <div class="btn-row">
-            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="home-remote-it">Book a 15-minute fit call</a>
+            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="home-remote-it">Get a written quote</a>
             <a class="btn btn-ghost btn-sm" href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it-details">What's included</a>
           </div>
         </article>
@@ -221,7 +221,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     <div class="container">
       <SectionHeading id="how-h" eyebrow="How it works" title="Scoped, built after hours, handed over to you" />
       <ol class="step-cards">
-        <li><strong>Scope:</strong> a short call to agree on what "done" looks like. You get a written quote before any work starts.</li>
+        <li><strong>Scope:</strong> we agree on what "done" looks like, by message or a short call. You get a written quote before any work starts.</li>
         <li><strong>Build:</strong> setup and changeovers happen after 4 PM Alaska time or on weekends, so your staff don't lose a working hour.</li>
         <li><strong>Check:</strong> we test it with you on screen: email records, sign-ins, a backup restore.</li>
         <li><strong>Hand off:</strong> every account is created in your name. You get notes and a walkthrough, and you can switch off our access.</li>
