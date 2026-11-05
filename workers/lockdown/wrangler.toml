@@ -19,7 +19,7 @@ BCC_ADDRESS = "mr.mream@gmail.com"
 LOCKDOWN_PAYMENT_LINK = "plink_1UXuPCCRxS1tvAi22FJy7HTk"
 ALLOW_LIVE = "true"
 # "shadow": buyer emails go to hello@ only (Michael reads them first). "send": they go to the buyer.
-CUSTOMER_EMAILS = "shadow"
+CUSTOMER_EMAILS = "send"
 
 # Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 60 days.
 # KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).
