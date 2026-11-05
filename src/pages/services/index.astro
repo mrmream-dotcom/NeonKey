@@ -72,6 +72,7 @@ const accents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber
             <p class="muted" style="font-size:.95rem">The same four parts at standard rates come to {usd(fop.separately)}. As the Start-Up Deal, at the founding-client rate, they are planned and built as one system for {usd(fop.from)}.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Ask about the package</a>
+              <a class="btn btn-ghost" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See it working</a>
               <a class="btn btn-ghost" href="#auto-h" data-umami-event="services-cta" data-umami-event-offer={fop.name} data-umami-event-location="services-package">See the parts</a>
             </div>
           </div>

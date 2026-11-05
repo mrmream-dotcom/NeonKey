@@ -232,6 +232,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <div class="fop-strip-side">
           <p class="price" style="margin:0"><s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
           <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Ask about the package</a>
+          <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">See it working</a>
         </div>
       </article>
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
