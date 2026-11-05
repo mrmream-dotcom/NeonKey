@@ -23,15 +23,6 @@ export const labTags = ['Homelab', 'Automation', 'Networking', 'Security', 'AI']
 
 export const labProjects: LabProject[] = [
   {
-    slug: 'email-check',
-    title: 'Free email security check',
-    summary: 'Enter your business domain and get a letter grade across nine ratings (SPF, DKIM, DMARC, encryption and more) that decide whether scammers can send mail as you. Runs in your browser on public records only.',
-    tags: ['Security'],
-    level: 'Beginner',
-    service: { label: 'Email Lockdown', href: '/services/email-lockdown/' },
-    icon: 'shield', accent: 'magenta', flag: 'Free tool',
-  },
-  {
     slug: 'front-office',
     title: 'Front office demo: what we build for a small business',
     summary: 'Click through the system behind the Front Office Package: every inquiry in one tracker, FAQ answers after hours, routing, replies you approve, follow-ups that stop when the customer answers, and email security.',
