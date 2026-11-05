@@ -10,7 +10,7 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -171,60 +171,49 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Ways to start" intro="Pick the one that matches your office. Every project is scoped on a short call and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <SectionHeading id="svc-h" eyebrow="Services" title="Two ways we help" intro="Pick the one that sounds like you. Every project is scoped on a short call and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-2 home-offers">
-        <article class="card offer-featured topline">
-          <span class="kicker">AI and automation · Starting at {usd(quickWin.from)}</span>
-          <h3><a href={url('/services/#quick-win')} data-umami-event="services-cta" data-umami-event-location="home-quick-win"><OfferTitle offer={quickWin} /></a></h3>
-          <OfferNameLabel offer={quickWin} />
-          <p class="offer-outcome">We take one boring, repeat task off your plate and set it up to run on its own.</p>
-          <p class="home-offer-sub">Some examples of what we can automate:</p>
+        <article class="card offer-featured topline accent-magenta" id="front-office">
+          <span class="kicker">Lead follow-up · Remote · {usd(fop.from)}</span>
+          <h3><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
+          <OfferNameLabel offer={fop} />
+          <p class="offer-outcome">Keep quote requests and follow-ups in one place.</p>
           <ul class="home-offer-list">
-            <li>New website messages saved to a spreadsheet, with an email alert so you never miss one</li>
-            <li>An instant "we got your message" reply to every new customer inquiry</li>
-            <li>Incoming emails sorted and labeled, so urgent ones stand out</li>
-            <li>Receipts and invoices filed in folders, with the totals added to a spreadsheet</li>
-            <li>Reminder emails sent to customers the day before their appointment</li>
-            <li>A weekly summary of new leads or orders sent to your inbox</li>
+            <li>Requests from your website form or shared inbox land on one list</li>
+            <li>Your team sees who's handling each request and when to follow up</li>
+            <li>Reply drafts from your templates; a person sends every quote reply and follow-up</li>
+            <li>Business email security set up, plus three months of support</li>
           </ul>
-          <p class="home-offer-note">Plus a quick check of your passwords, backups and Wi-Fi, and a short to-do list of the fixes that matter most. <a href={url('/lab/')}>See working demos in the Lab →</a></p>
+          <p class="price" style="margin:.4rem 0 .8rem">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Setup + three months of support · {introPricing.label.toLowerCase()}</small></p>
+          <div class="btn-row">
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Book a 15-minute fit call</a>
+            <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Try a sample request</a>
+          </div>
         </article>
-        <article class="card topline accent-magenta">
-          <span class="kicker">Remote · Anywhere in the US · Starting at {usd(remoteIt.from)}</span>
+        <article class="card topline accent-cyan">
+          <span class="kicker">Office IT · Remote · From {usd(remoteIt.from)}</span>
           <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it"><OfferTitle offer={remoteIt} /></a></h3>
           <OfferNameLabel offer={remoteIt} />
-          <p class="offer-outcome">We get your office tech set up properly, all done remotely.</p>
-          <p class="home-offer-sub">What that covers:</p>
+          <p class="offer-outcome">Get your office tech set up properly, all done over screen share.</p>
           <ul class="home-offer-list">
             <li>A professional email address with your business name (you@yourbusiness.com)</li>
             <li>Settings that help your emails stay out of spam and stop scammers pretending to be you</li>
-            <li>Safer Wi-Fi: new passwords, router updates and a separate network for guests</li>
-            <li>Automatic backups of your important files, tested so you know they work</li>
-            <li>A password manager for your team, plus a code on your phone for signing in to key accounts</li>
-            <li>Simple checklists for setting up a new laptop or phone, and for when someone leaves</li>
+            <li>Safer Wi-Fi, tested backups and a password manager for your team</li>
+            <li>Simple checklists for new laptops and phones, and for when someone leaves</li>
           </ul>
-          <p class="home-offer-note">Done over video and screen share. You keep every login, and you get notes on everything we changed. <a href={url('/services/remote-it/')}>Full details →</a></p>
+          <p class="price" style="margin:.4rem 0 .8rem">From {usd(remoteIt.from)}<small>Price depends on how many people and devices · fixed quote first</small></p>
+          <div class="btn-row">
+            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="home-remote-it">Book a 15-minute fit call</a>
+            <a class="btn btn-ghost btn-sm" href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it-details">What's included</a>
+          </div>
         </article>
       </div>
-      <article class="card topline accent-magenta fop-strip" id="front-office">
-        <div>
-          <span class="kicker">Start-Up Deal · All-inclusive</span>
-          <h3 style="margin:.3rem 0"><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
-          <OfferNameLabel offer={fop} />
-          <p class="muted" style="margin:0">{fop.for}. AI intake and FAQ assistant, lead routing and follow-up, email lockdown and three months of the support plan, in one project.</p>
-        </div>
-        <div class="fop-strip-side">
-          <p class="price" style="margin:0"><s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
-          <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Ask about the package</a>
-          <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">See it working</a>
-        </div>
-      </article>
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <div class="btn-row">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
         <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
       </div>
-      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. More services, like a monthly support plan, an AI assistant for your FAQs and lead follow-up, are on the services page. Results depend on your business and tools.</p>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Smaller jobs, like a one-task automation from {usd(quickWin.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>
 
@@ -335,6 +324,9 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 </Base>
 
 <style>
+  .home-offers > .card { display: flex; flex-direction: column; }
+  .home-offers .price { margin-top: auto !important; font-size: 1.7rem; font-weight: 800; color: var(--text); }
+  .home-offers .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
   .home-offers .home-offer-sub { margin: .6rem 0 .3rem; font-weight: 600; color: var(--text); }
   .home-offer-list { margin: 0 0 .8rem; padding-left: 1.15rem; display: grid; gap: .35rem; }
   .home-offer-note { font-size: .95rem; margin: 0; }

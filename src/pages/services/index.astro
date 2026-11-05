@@ -5,7 +5,7 @@ import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, automationMenu, introPricing, usd } from '../../data/services';
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
 // Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
 //   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
 //   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
@@ -13,42 +13,45 @@ import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fo
 //   Every smaller job sits in one short "Need just one thing?" list further down.
 // Keep the old anchors (#front-office-package, #support-plan, #quick-win, #ai-faq, #lead-routing,
 // #email-lockdown, #remote-it, #automation-menu, #featured-h, #auto-h): other pages, the quiz and outreach links point to them.
-// Set showValue to true to bring back the crossed-out "$2,000+ value" line on the package (Michael's call).
-const showValue = false;
+// The crossed-out "$2,000+ value" line is controlled site-wide by showPackageValue in src/data/services.ts.
+// The $499 and $799 parts are not listed on their own (reviewers: it invites a $799 vs $999 comparison); they are
+// downsells for calls and email. Their old anchors (#ai-faq, #lead-routing) now land on the package card.
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
-const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
-const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
 const smallJobs = [
   { o: emailLockdown, price: usd(emailLockdown.from), line: 'Make it harder for scammers to send email pretending to be you.', href: '/contact/?topic=remote-it', cta: 'Ask about it' },
   { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One repetitive task taken off your plate with the tools you already have.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
-  { o: aiFaq, price: `from ${usd(aiFaq.from)}`, line: 'Just the FAQ assistant: answers common questions from answers you approve, and hands the rest to a person.', href: `/contact/?topic=${aiFaq.slug}`, cta: 'Ask about it', demo: aiFaq.demo },
-  { o: leadRouting, price: `from ${usd(leadRouting.from)}`, line: 'Just the tracker and follow-up reminders, without the assistant.', href: `/contact/?topic=${leadRouting.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
 ---
 <Base title="Services" description="Remote help for small businesses: quote and inquiry follow-up set up for $999, or your office email, Wi-Fi, backups and passwords set up right from $299. Written scope first, built after hours, in accounts you own.">
-  <PageHeader eyebrow="Services" title="Losing track of quote requests, or need your office tech set up right?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
-    <p class="lede">Pick the one that sounds like you. Either way you get a written scope and price before any work starts.</p>
+  <PageHeader eyebrow="Services" title="Losing quote requests, or need IT set up?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
+    <p class="lede">Pick one. You get a written scope and price before any work starts.</p>
   </PageHeader>
 
   <section style="padding-top:0;padding-bottom:1rem" aria-labelledby="pick-h">
     <div class="container">
       <h2 id="pick-h" class="sr-only">Two ways to start</h2>
       <div class="choices">
-        <a class="card topline accent-magenta choice" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">
+        <div class="card topline accent-magenta choice">
           <span class="kicker">Lead follow-up · remote</span>
-          <strong>Track every quote request and follow-up</strong>
-          <span class="muted">New requests land in one list, someone is assigned, and reminders go out until the customer answers.</span>
+          <strong>Keep quote requests and follow-ups in one place</strong>
+          <span class="muted">Requests from your website form or shared inbox land on one list. Your team sees who's handling each one and when to follow up.</span>
           <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
-          <span class="choice-go">See the Front Office Package →</span>
-        </a>
-        <a class="card topline accent-cyan choice" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">
+          <div class="btn-row choice-btns">
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Book a 15-minute fit call</a>
+            <a class="btn btn-ghost btn-sm" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">What's included</a>
+          </div>
+        </div>
+        <div class="card topline accent-cyan choice">
           <span class="kicker">Office IT · remote</span>
           <strong>Get your office tech set up right</strong>
-          <span class="muted">Business email on your own domain, safer Wi-Fi, tested backups and a password manager, all over screen share.</span>
-          <span class="choice-price">from {usd(remoteIt.from)} <small>one-time setup</small></span>
-          <span class="choice-go">See the Remote IT Setup →</span>
-        </a>
+          <span class="muted">Business email on your own domain, safer Wi-Fi, tested backups and a password manager, over screen share.</span>
+          <span class="choice-price">from {usd(remoteIt.from)} <small>depends on people and devices</small></span>
+          <div class="btn-row choice-btns">
+            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-choice-remote-it">Book a 15-minute fit call</a>
+            <a class="btn btn-ghost btn-sm" href="#remote-it" data-umami-event="services-cta" data-umami-event-location="services-choice-remote-it">What's included</a>
+          </div>
+        </div>
       </div>
       <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
     </div>
@@ -56,12 +59,12 @@ const smallJobs = [
 
   <section class="alt" aria-labelledby="demo-h">
     <div class="container">
-      <SectionHeading id="demo-h" eyebrow="See it first" title="What happens to a new quote request" intro="Sample data, from the clickable demo. This is the flow we'd set up in your own inbox and spreadsheet." />
+      <SectionHeading id="demo-h" eyebrow="See it first" title="What happens to a new quote request" intro="A sample request from the clickable demo (made-up business and customer). This is the flow we'd set up in your own inbox and spreadsheet." />
       <ol class="flow">
-        <li><span class="flow-n">1</span><strong>A request comes in</strong><span class="muted">From your website form, email or after-hours chat.</span></li>
-        <li><span class="flow-n">2</span><strong>It lands on one list</strong><span class="muted">Everyone can see what's new, what's waiting and what's done.</span></li>
-        <li><span class="flow-n">3</span><strong>The right person gets it</strong><span class="muted">With a reply drafted from your templates, ready to edit and send.</span></li>
-        <li><span class="flow-n">4</span><strong>Follow-ups on day 1, 3 and 7</strong><span class="muted">They stop the moment the customer answers.</span></li>
+        <li><span class="flow-n">Tue 7:42 AM</span><strong>A website form comes in</strong><span class="muted">"Looking for a quote to replace two bathroom fans. Do you do free estimates?"</span></li>
+        <li><span class="flow-n">Same minute</span><strong>It's added to your list</strong><span class="muted">Logged in your Google Sheet as "Needs reply · Today", so it can't get buried in the inbox.</span></li>
+        <li><span class="flow-n">Assigned</span><strong>Dana gets it, with a draft</strong><span class="muted">Estimate requests go to the owner, with a reply drafted from approved templates. Nothing goes out until Dana sends it.</span></li>
+        <li><span class="flow-n">Day 1, 3 and 7</span><strong>Follow-up reminders</strong><span class="muted">If the customer goes quiet, Dana gets a reminder with a draft ready. They stop the moment the customer replies.</span></li>
       </ol>
       <div class="btn-row" style="margin-top:1.25rem">
         <a class="btn btn-primary" href={url('/lab/front-office/?type=home')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Try a sample request</a>
@@ -72,24 +75,26 @@ const smallJobs = [
 
   <section aria-labelledby="fop-h">
     <div class="container">
+      <span id="ai-faq" class="anchor"></span><span id="lead-routing" class="anchor"></span>
       <article class="card offer offer-featured topline accent-magenta" id={fop.slug}>
         <div class="offer-featured-grid">
           <div>
             <span class="kicker">Remote · fixed price after scoping</span>
             <h2 id="fop-h" class="offer-h2"><OfferTitle offer={fop} /></h2>
             <OfferNameLabel offer={fop} />
-            <p class="offer-outcome">For owner-led businesses that get quote requests or questions by website form, email or phone messages, and lose some to slow replies or forgotten follow-ups.</p>
+            <p class="offer-outcome">Keep quote requests and follow-ups in one place. For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups.</p>
             <h3 class="incl-h">What the setup includes</h3>
             <ul>
-              <li>Every new inquiry in one tracker, with who's handling it and when to follow up</li>
-              <li>Follow-up reminders with reply drafts, sent by a person, that stop when the customer answers</li>
+              <li>Requests from your website form and shared inbox in one list, with who's handling each one and when to follow up</li>
+              <li>Reply drafts from your approved templates, and follow-up reminders on day 1, 3 and 7 that stop when the customer replies. A person sends every quote reply and follow-up</li>
               <li>An FAQ assistant that only gives answers you approved, and hands everything else to a person</li>
               <li>Business email security set up (SPF, DKIM and DMARC), so it's harder to fake your address</li>
               <li>Three months of the Monthly Remote Support Plan, so small changes are covered while it beds in</li>
             </ul>
+            <p class="muted side-note">Phone calls aren't part of this setup. They still need a person or a separate phone setup, which we can quote.</p>
           </div>
           <div class="offer-featured-side">
-            {showValue && <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>}
+            {showPackageValue && <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>}
             <p class="price">{usd(fop.from)}<small>{introPricing.label} · scoped first</small></p>
             <p class="muted side-note">Any software fees are listed in your written quote and billed to you by that provider. After the three months, support is optional from {usd(remoteSupportPlan.from)}/mo.</p>
             <div class="btn-row">
@@ -230,14 +235,14 @@ const smallJobs = [
   .choice .muted { font-size: .98rem; }
   .choice-price { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-top: .3rem; font-variant-numeric: tabular-nums; }
   .choice-price small { font-size: .9rem; font-weight: 500; color: var(--muted); }
-  .choice-go { margin-top: auto; color: var(--cyan); font-weight: 600; }
-  .choice:hover .choice-go { text-decoration: underline; }
+  .choice-btns { margin-top: auto; padding-top: .4rem; }
+  .anchor { display: block; scroll-margin-top: 90px; }
   .small-note { margin: 1rem 0 0; font-size: .92rem; }
   .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }
   @media (max-width: 900px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
   .flow li { display: flex; flex-direction: column; gap: .3rem; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
-  .flow-n { font-weight: 800; color: var(--magenta, var(--cyan)); font-size: 1.2rem; }
+  .flow-n { font-weight: 700; color: var(--cyan); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
   .flow .muted { font-size: .93rem; }
   .offer-h2 { font-size: 1.6rem; margin: .4rem 0 0; }
   .incl-h { font-size: 1.05rem; margin: 1rem 0 .3rem; }

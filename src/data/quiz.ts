@@ -2,7 +2,7 @@
 // Shared by the page (src/pages/services/quiz.astro, runs in the browser) and the plan-email
 // Worker (workers/quiz/), so the on-screen result and the email always match.
 // Names and prices come from ./services.ts only. Never add per-item prices or estimates here.
-import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, introPricing, usd, type Offer } from './services';
+import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, showPackageValue, introPricing, usd, type Offer } from './services';
 
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
@@ -83,7 +83,7 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'D', label: 'A mix, or something else (Apple, Dropbox, etc.)' },
     { v: 'E', label: 'Not sure' },
   ] },
-  { id: 'q9', text: 'Where is your office (or where do you work from)?', hint: 'On-site visits are available in Fairbanks and North Pole, Alaska. Everything else is done remotely.', options: [
+  { id: 'q9', text: 'Where is your office (or where do you work from)?', hint: 'All work is done remotely, by video and screen share.', options: [
     { v: 'A', label: 'Fairbanks or North Pole, Alaska' },
     { v: 'B', label: 'Somewhere else in Alaska' },
     { v: 'C', label: 'Somewhere else in the US' },
@@ -186,7 +186,8 @@ export function computePlan(a: Answers): Plan {
   const support = rShown ? (a.q7 === 'A' ? 'yes' : a.q7 === 'C' ? 'soft' : null) : null;
   const basicsTip = (type === 'Q' || type === 'F' || type === 'L') && items.has('R-EMAIL') && secondary !== 'R';
 
-  const local = a.q9 === 'A' && !personal;
+  // The site is remote-only (Michael, Nov 4 2026): the on-site tune-up is offered only through direct local outreach.
+  const local = false;
   const packageFit = !personal && !tooBig && ((type === 'F' && s.L >= 2) || (type === 'L' && s.F >= 2));
 
   return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, local, packageFit, answers: a };
@@ -353,7 +354,7 @@ function addPicks(v: PlanView, p: Plan) {
   if (p.packageFit) {
     const f = frontOfficePackage;
     v.packagePick = {
-      name: f.name, price: `${usd(f.from)}, ${usd(f.value)}+ value`, href: f.href!,
+      name: f.name, price: showPackageValue ? `${usd(f.from)}, ${usd(f.value)}+ value` : usd(f.from), href: f.href!,
       text: `Both repeat questions and missed inquiries came up in your answers. The ${f.name} (the Start-Up Deal) bundles the ${aiFaq.name}, the ${leadRouting.name}, an email security lockdown and three months of the ${remoteSupportPlan.name} as one connected system.`,
     };
   }
@@ -371,7 +372,6 @@ function addPicks(v: PlanView, p: Plan) {
     }
   };
   v.allOptions = [
-    { name: officeTuneUp.name, price: usd(officeTuneUp.from), line: fit('T'), href: officeTuneUp.href!, mark: p.local && pick === 'R' ? 'also' : null },
     { name: remoteIt.name, price: `from ${usd(remoteIt.from)}`, line: fit('R'), href: '/services/remote-it/', mark: mark('R') },
     { name: remoteSupportPlan.name, price: `from ${usd(remoteSupportPlan.from)}/mo`, line: fit('S'), href: remoteSupportPlan.href!, mark: p.support === 'yes' ? 'also' : null },
     { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },

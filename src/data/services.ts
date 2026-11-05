@@ -271,6 +271,9 @@ export const officeTuneUp: Offer = {
  * `value` is the rounded-down "$2,000+ value" shown crossed out on the card, so the value claim stays true.
  * Shown as the "Start-Up Deal".
  */
+/** Show the crossed-out "$2,000+ value" line on the package (services, homepage, demo, quiz). Off since Nov 4 2026 after two outside reviews; Michael's call. */
+export const showPackageValue = false;
+
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',

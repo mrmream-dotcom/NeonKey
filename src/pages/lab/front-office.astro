@@ -5,7 +5,7 @@ import Toc from '../../components/Toc.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import { labProjects } from '../../data/lab';
 import { demoTypes, followUpSteps } from '../../data/front-office-demo';
-import { frontOfficePackage as fop, usd } from '../../data/services';
+import { frontOfficePackage as fop, usd , showPackageValue } from '../../data/services';
 const project = labProjects.find((p) => p.slug === 'front-office')!;
 const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets built'], ['own', 'What you own'], ['how', 'How it gets built'], ['limits', 'Limitations'], ['related', 'Related']];
 // Personalized links for a lead: ?type=home&biz=Acme%20Plumbing&owner=Pat&domain=acmeplumbing.com
@@ -107,7 +107,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
           <p class="muted" style="margin:0">{fop.parts.map((p) => p.name.replace(/ \(.*\)$/, '')).join(', ')}. Fixed quote after a short scoping call.</p>
         </div>
         <div class="fo-cta-side">
-          <p class="price" style="margin:0"><s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
+          <p class="price" style="margin:0">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
           <div class="btn-row">
             <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="lab-front-office">Talk about your setup</a>
             <a class="btn btn-ghost btn-sm" href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="lab-front-office">See the package</a>
