@@ -44,6 +44,7 @@ const nx = new Set(["typo.test"]);
 let sent = [];
 let pdfCalls = [];
 let pdfMode = "ok";
+let gRows = [], gCalls = [], gTokenCalls = [], gMode = "ok";
 globalThis.fetch = async (url, init = {}) => {
   const u = new URL(url);
   if (u.hostname === "cloudflare-dns.com") {
@@ -61,6 +62,26 @@ globalThis.fetch = async (url, init = {}) => {
   if (u.hostname === "api.resend.com") {
     sent.push({ body: JSON.parse(init.body), headers: init.headers });
     return Response.json({ id: "email_1" });
+  }
+  if (u.hostname === "oauth2.googleapis.com") {
+    gTokenCalls.push(Object.fromEntries(new URLSearchParams(init.body)));
+    return Response.json({ access_token: "ya29.fake" });
+  }
+  if (u.hostname === "sheets.googleapis.com") {
+    if (gMode === "fail") return new Response("{}", { status: 503 });
+    const path = decodeURIComponent(u.pathname);
+    gCalls.push({ method: init.method || "GET", path, body: init.body ? JSON.parse(init.body) : null });
+    const col = (c) => [...c].reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0) - 1;
+    const setCells = (a1, values) => {
+      const m = /!([A-Z]+)(\d+)/.exec(a1);
+      const r = Number(m[2]) - 2, c0 = col(m[1]);
+      while (gRows.length <= r) gRows.push([]);
+      values[0].forEach((v, j) => { gRows[r][c0 + j] = String(v); });
+    };
+    if (path.endsWith("A2:Z")) return Response.json({ values: gRows.map((r) => r.slice(0, 26)) });
+    if (path.endsWith("values:batchUpdate")) { JSON.parse(init.body).data.forEach((d) => setCells(d.range, d.values)); return Response.json({}); }
+    if (path.endsWith(":append")) { gRows.push(JSON.parse(init.body).values[0].map(String)); return Response.json({}); }
+    if (init.method === "PUT") { setCells(path, JSON.parse(init.body).values); return Response.json({}); }
   }
   throw new Error(`unexpected fetch ${url}`);
 };
@@ -81,6 +102,7 @@ beforeEach(() => {
   sent = [];
   pdfCalls = [];
   pdfMode = "ok";
+  gRows = []; gCalls = []; gTokenCalls = []; gMode = "ok";
   env = { STRIPE_WEBHOOK_SECRET: SECRET, RESEND_API_KEY: "re_fake", FROM_ADDRESS: "NeonKey 🔑 <hello@neonkey.tech>", NOTIFY_TO: "hello@neonkey.tech", REPLY_TO: "hello@neonkey.tech", BCC_ADDRESS: "bcc@example.com", LOCKDOWN_PAYMENT_LINK: PLINK, ALLOW_LIVE: "false", CUSTOMER_EMAILS: "send", ORDERS: kv() };
 });
 
@@ -408,4 +430,99 @@ test("protected domains get extra checks in the report and a next step in the em
   const m = reportEmail({ name: "Pat", a, pdf: true });
   assert.match(m.html, /7 extra checks/);
   assert.match(m.text, /Worth doing next: move from monitoring fakes to blocking them/);
+});
+
+// ---- Lead Tracker sync ----
+const { privateKey } = await crypto.subtle.generateKey({ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" }, true, ["sign", "verify"]);
+const pkcs8 = Buffer.from(await crypto.subtle.exportKey("pkcs8", privateKey)).toString("base64");
+const SA_KEY = JSON.stringify({ client_email: "lockdown@neonkey-test.iam.gserviceaccount.com", private_key: `-----BEGIN PRIVATE KEY-----\n${pkcs8.match(/.{1,64}/g).join("\n")}\n-----END PRIVATE KEY-----\n` });
+const W = 22; // column W (0-based)
+function liveSheetEnv() {
+  Object.assign(env, { ALLOW_LIVE: "true", GOOGLE_SA_KEY: SA_KEY, LEAD_SHEET_ID: "sheet_test" });
+  gRows = [
+    ["FBX1", "Fairbanks 100", "Some Shop", "owner@shop.example"],
+    ["IN3", "Inbound / Hot", "Pat", "pat@owner.example", "website contact form"],
+  ];
+}
+const liveEv = (obj, type) => ({ ...ev(obj, type), livemode: true });
+const paidSession = (domain, extra = {}) => session(domain, { payment_intent: "pi_live_1", created: Date.UTC(2026, 10, 5, 7, 0) / 1000, ...extra });
+
+test("paid order fills the buyer's existing tracker row: won, AKST date, $, Stripe id, 0 hours", async () => {
+  liveSheetEnv();
+  const r = await worker.fetch(signed(liveEv(paidSession("done.test"))), env);
+  assert.equal(r.status, 200);
+  assert.equal(gTokenCalls[0].grant_type, "urn:ietf:params:oauth:grant-type:jwt-bearer");
+  assert.equal(JSON.parse(Buffer.from(gTokenCalls[0].assertion.split(".")[1], "base64url")).iss, "lockdown@neonkey-test.iam.gserviceaccount.com");
+  assert.equal(gRows.length, 2);
+  assert.deepEqual(gRows[1].slice(W, W + 6), ["won", "2026-11-04", "49", "pi_live_1", "0", "0"]);
+  assert.equal(JSON.parse(env.ORDERS.m.get("order:cs_test_done_test")).sheet, "written");
+  // Stripe retry: nothing written twice
+  await worker.fetch(signed(liveEv(paidSession("done.test"))), env);
+  assert.equal(gRows.length, 2);
+});
+
+test("a new buyer gets an Inbound / Hot row with the lockdown49 offer", async () => {
+  liveSheetEnv();
+  await worker.fetch(signed(liveEv(paidSession("done.test", { customer_details: { email: "New@Buyer.example", name: "Sam New", business_name: "Sam's Bakery" } }))), env);
+  assert.equal(gRows.length, 3);
+  const row = gRows[2];
+  assert.equal(row.length, 28);
+  assert.deepEqual(row.slice(0, 4), ["IN4", "Inbound / Hot", "Sam New / Sam's Bakery", "new@buyer.example"]);
+  assert.equal(row[8], "lockdown49 (Stripe)");
+  assert.deepEqual(row.slice(W), ["won", "2026-11-04", "49", "pi_live_1", "0", "0"]);
+});
+
+test("orders a person must finish leave delivery and support hours blank", async () => {
+  liveSheetEnv();
+  await worker.fetch(signed(liveEv(paidSession("nomail.test"))), env);
+  assert.deepEqual(gRows[1].slice(W, W + 4), ["won", "2026-11-04", "49", "pi_live_1"]);
+  assert.equal(gRows[1][W + 4], undefined);
+});
+
+test("test-mode orders and the owner's own buys stay out of the tracker", async () => {
+  liveSheetEnv();
+  await worker.fetch(signed(ev(paidSession("done.test"))), env);
+  await worker.fetch(signed(liveEv(paidSession("done.test", { id: "cs_own", customer_details: { email: "BCC@example.com", name: "Owner" } }))), env);
+  assert.equal(gCalls.length, 0);
+});
+
+test("a full refund marks the row refunded and stops rechecks; partial refunds are ignored", async () => {
+  liveSheetEnv();
+  await worker.fetch(signed(liveEv(paidSession("bare.test"))), env);
+  const charge = { id: "ch_1", object: "charge", payment_intent: "pi_live_1", refunded: false, amount_refunded: 1000 };
+  let r = await worker.fetch(signed(liveEv(charge, "charge.refunded")), env);
+  assert.equal((await r.json()).refund, "ignored");
+  assert.equal(gRows[1][W], "won");
+  r = await worker.fetch(signed(liveEv({ ...charge, refunded: true, amount_refunded: 4900 }, "charge.refunded")), env);
+  assert.equal((await r.json()).refund, "refunded");
+  assert.equal(gRows[1][W], "refunded");
+  const order = JSON.parse(env.ORDERS.m.get("order:cs_test_bare_test"));
+  assert.equal(order.status, "refunded");
+  const before = sent.length;
+  await recheckAll(env, order.created + 6 * DAY);
+  assert.equal(sent.length, before);
+  r = await worker.fetch(signed(liveEv({ ...charge, payment_intent: "pi_other", refunded: true }, "charge.refunded")), env);
+  assert.equal((await r.json()).refund, "unknown");
+});
+
+test("if Google is down the order still goes out, and the daily run writes the row later", async () => {
+  liveSheetEnv();
+  gMode = "fail";
+  const r = await worker.fetch(signed(liveEv(paidSession("done.test"))), env);
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 2);
+  assert.equal(JSON.parse(env.ORDERS.m.get("order:cs_test_done_test")).sheet, "pending");
+  // refund while the paid write is still pending: the retry carries it
+  await worker.fetch(signed(liveEv({ id: "ch_2", object: "charge", payment_intent: "pi_live_1", refunded: true }, "charge.refunded")), env);
+  gMode = "ok";
+  await recheckAll(env);
+  assert.equal(JSON.parse(env.ORDERS.m.get("order:cs_test_done_test")).sheet, "written");
+  assert.equal(gRows[1][W], "refunded");
+});
+
+test("without GOOGLE_SA_KEY the sync is off and nothing calls Google", async () => {
+  env.ALLOW_LIVE = "true";
+  await worker.fetch(signed(liveEv(paidSession("done.test"))), env);
+  assert.equal(gCalls.length + gTokenCalls.length, 0);
+  assert.equal(JSON.parse(env.ORDERS.m.get("order:cs_test_done_test")).sheet, "off");
 });

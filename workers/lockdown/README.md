@@ -53,6 +53,28 @@ Secrets (never in the repo, never in chat): `STRIPE_WEBHOOK_SECRET`, `RESEND_API
 
 Optional secret `BROWSER_TOKEN`: a Cloudflare API token with **Account > Browser Rendering > Edit**. With it, the report is attached as a one-page PDF (rendered by Cloudflare Browser Rendering for the account in `CF_ACCOUNT_ID`). Without it, or if a render fails, the same report is attached as an HTML file and the email tells the buyer to open it in a browser.
 
+### Lead Tracker sync (optional secret `GOOGLE_SA_KEY`)
+
+Every paid live order is written to the "Lead Tracker" tab of the NeonKey Accounts sheet (`LEAD_SHEET_ID`, `LEAD_SHEET_TAB`):
+
+- If a row already has this Stripe payment id in column Z, nothing changes (retries never duplicate).
+- Otherwise the buyer's existing row (same email in column D, no payment yet) is filled in. If there's no such row, a new row is added with Campaign "Inbound / Hot" and Offer "lockdown49 (Stripe)".
+- The Worker sets W = won, X = paid date (Alaska time), Y = amount, and Z = Stripe payment intent id.
+- When delivery was fully automatic, it also sets AA = 0 and AB = 0 (delivery and support hours). Orders a person has to finish leave AA and AB blank.
+- A full refund (`charge.refunded`) sets W = refunded and stops rechecks. Partial refunds are ignored.
+- Stripe test-mode orders, and buys paid with the `BCC_ADDRESS` email (the owner's own tests), are never written.
+- A failed write never holds up the buyer's email. The order is marked `pending`, and the daily cron writes it.
+
+One-time setup (Michael):
+
+1. In Google Cloud, create a service account (no roles) and download a JSON key for it.
+2. Enable the Google Sheets API on that project.
+3. Share only the NeonKey Accounts sheet with the service account's email, as Editor.
+4. Store the key with `wrangler secret put GOOGLE_SA_KEY`, or in Cloudflare under Worker > Settings > Variables as a Secret.
+5. In the Stripe webhook endpoint for this Worker, add the `charge.refunded` event.
+
+Without the key, the sync is off and nothing calls Google.
+
 ## Deploy (needs Michael's OK)
 
 ```sh

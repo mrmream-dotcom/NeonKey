@@ -5,6 +5,8 @@
 #   RESEND_API_KEY
 #   BROWSER_TOKEN          optional: Cloudflare API token with Account > Browser Rendering > Edit. Turns the report into a PDF;
 #                          without it the report is attached as an HTML file instead.
+#   GOOGLE_SA_KEY          optional: Google service account JSON key. Writes each paid order (and refunds) to the
+#                          Lead Tracker tab. Share ONLY that sheet with the service account's email as Editor.
 name = "neonkey-lockdown"
 main = "src/index.js"
 compatibility_date = "2025-10-01"
@@ -24,6 +26,9 @@ ALLOW_LIVE = "true"
 CUSTOMER_EMAILS = "send"
 # Cloudflare account that renders the PDF report (Browser Rendering). Not a secret.
 CF_ACCOUNT_ID = "13d2e240576e100fbd65b2499bd6c048"
+# Lead Tracker sync target: Google Sheet "NeonKey Accounts", tab "Lead Tracker". Not secrets.
+LEAD_SHEET_ID = "1C1TR4aB0QyEiSR84fBFHbRxUeplDcJSnw-LJnBfR9yg"
+LEAD_SHEET_TAB = "Lead Tracker"
 
 # Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 180 days (covers the card-dispute window).
 # KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).
