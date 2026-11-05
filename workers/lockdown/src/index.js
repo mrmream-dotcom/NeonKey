@@ -6,24 +6,30 @@
 //   cron (daily)   rechecks open orders on day 2, 5 and 10: "locked down" email when everything passes, one friendly
 //                  reminder on day 5, and an ACTION NEEDED notice to Michael if it's still open on day 10.
 //   GET  /health   { ok, live, customerEmails }
-// Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET (this endpoint's own whsec_), RESEND_API_KEY.
+// Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET (this endpoint's own whsec_), RESEND_API_KEY,
+//   BROWSER_TOKEN (optional: Cloudflare API token with Browser Rendering Edit; without it the report is sent as HTML).
 // No Stripe API key: everything needed is in the signed webhook event.
 import { verifyStripeEvent } from "./verify.js";
 import { audit, cleanDomain, openItems } from "./audit.js";
 import { reportEmail, doneEmail, reminderEmail, noticeEmail } from "./email.js";
 import { renderReport, checks } from "./report.js";
+import { renderPdf } from "./pdf.js";
 
 const passingCount = (a) => checks(a).filter((c) => c.status === "ok").length;
 
-// The branded report rides along as an HTML attachment (opens in any browser, prints to PDF).
+// The branded report rides along as a PDF (Cloudflare Browser Rendering). If that isn't set up or fails,
+// it falls back to the same report as an HTML file, which opens in any browser and prints to PDF.
 function b64utf8(str) {
   const bytes = new TextEncoder().encode(str);
   let bin = "";
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(bin);
 }
-export function reportAttachment(a, order) {
-  return [{ filename: `NeonKey-Email-Report-${a.domain}.html`, content: b64utf8(renderReport({ a, order })) }];
+export async function reportAttachment(env, a, order) {
+  const html = renderReport({ a, order });
+  const pdf = await renderPdf(env, html);
+  if (pdf) return { pdf: true, attachments: [{ filename: `NeonKey-Email-Report-${a.domain}.pdf`, content: pdf }] };
+  return { pdf: false, attachments: [{ filename: `NeonKey-Email-Report-${a.domain}.html`, content: b64utf8(html) }] };
 }
 
 const DAY = 86400000;
@@ -117,8 +123,9 @@ export async function handleOrder(env, s, livemode) {
 
   const audited = Boolean(order.domain && a.mx);
   if (audited) order.before = passingCount(a);
-  const mail = reportEmail({ name: order.name, a });
-  if (audited && (a.fixes.length || a.buyerSteps.length || a.locked)) mail.attachments = reportAttachment(a, order);
+  const att = audited && (a.fixes.length || a.buyerSteps.length || a.locked) ? await reportAttachment(env, a, order) : null;
+  const mail = reportEmail({ name: order.name, a, pdf: att?.pdf });
+  if (att) mail.attachments = att.attachments;
   const sentBuyer = await sendCustomer(env, order, mail, `lockdown-report-${order.id}`);
   if (!sentBuyer) return false;
   const sentNotice = await sendNotice(env, "new", order, a);
@@ -166,15 +173,17 @@ export async function recheckOne(env, key, order, now = Date.now()) {
   let result = "quiet";
 
   if (a.locked) {
-    const mail = doneEmail({ name: order.name, a, before: order.before });
-    mail.attachments = reportAttachment(a, order);
+    const att = await reportAttachment(env, a, order);
+    const mail = doneEmail({ name: order.name, a, before: order.before, pdf: att.pdf });
+    mail.attachments = att.attachments;
     await sendCustomer(env, order, mail, `lockdown-done-${order.id}`);
     await sendNotice(env, "done", order, a);
     order.status = "done";
     result = "done";
   } else if (RECHECK_DAYS[i] === 5) {
-    const mail = reminderEmail({ name: order.name, a, passing: passingCount(a) });
-    mail.attachments = reportAttachment(a, order);
+    const att = await reportAttachment(env, a, order);
+    const mail = reminderEmail({ name: order.name, a, passing: passingCount(a), pdf: att.pdf });
+    mail.attachments = att.attachments;
     await sendCustomer(env, order, mail, `lockdown-remind-${order.id}`);
     await sendNotice(env, "reminder", order, a);
     result = "reminded";
