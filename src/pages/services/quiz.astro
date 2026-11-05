@@ -270,7 +270,9 @@ const total = QUESTIONS.length;
         const res = await fetch(API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), answers, newsletter, website: String(fd.get('website') || '') }),
+          // Bridge (Nov 5 2026): the live Worker still requires the retired q9; 'D' = "doesn't apply" (remote). The
+          // updated Worker ignores it. Remove once workers/quiz is redeployed.
+          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), answers: { ...answers, q9: 'D' }, newsletter, website: String(fd.get('website') || '') }),
         });
         const out = await res.json().catch(() => ({}));
         if (res.ok && out.ok) {
