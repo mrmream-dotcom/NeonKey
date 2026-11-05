@@ -4,7 +4,8 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
 // Where Stripe Checkout and Payment Links send customers after paying (workers/payments/scripts/).
-// No conversion tag here on purpose: payment links come from invoices and emails, not ads.
+// Google Ads purchase conversion: public/js/conv-lockdown.js fires only for the Email Lockdown Payment Link
+// redirect (?offer=email-lockdown&session_id=cs_...), never for invoice payments or plain visits.
 ---
 <Base title="Payment received" description="Thanks for your payment to NeonKey." noindex>
   <PageHeader width="narrow" align="center" eyebrow="Payment · Thank you" crumbs={[{ href: '/', label: 'Home' }, { label: 'Payment received' }]} class="status-head">
@@ -16,4 +17,6 @@ import Icon from '../../components/Icon.astro';
     <div class="callout" style="margin-bottom:1.25rem"><strong>Bought the Email Lockdown?</strong> Answer five quick questions so we can start: <a href={url('/pay/email-lockdown/')} data-umami-event="lockdown-intake-link" data-umami-event-location="pay-thanks">Email Lockdown questions</a>. No passwords needed.</div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/learn/')}>Browse Learn</a></p>
   </div>
+  <!-- Google Ads "Lockdown purchase" conversion. External file: no inline scripts. -->
+  <script is:inline src={url('/js/conv-lockdown.js')}></script>
 </Base>
