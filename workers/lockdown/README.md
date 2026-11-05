@@ -51,6 +51,8 @@ Every entry expires after 60 days. No payment details. Re-delivered Stripe event
 
 Secrets (never in the repo, never in chat): `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`. No Stripe API key is needed.
 
+Optional secret `BROWSER_TOKEN`: a Cloudflare API token with **Account > Browser Rendering > Edit**. With it, the report is attached as a one-page PDF (rendered by Cloudflare Browser Rendering for the account in `CF_ACCOUNT_ID`). Without it, or if a render fails, the same report is attached as an HTML file and the email tells the buyer to open it in a browser.
+
 ## Deploy (needs Michael's OK)
 
 ```sh

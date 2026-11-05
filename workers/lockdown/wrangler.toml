@@ -3,6 +3,8 @@
 # Secrets (set with `wrangler secret put`, never committed, never pasted in chat):
 #   STRIPE_WEBHOOK_SECRET  whsec_... from THIS endpoint in Stripe (not the payments Worker's)
 #   RESEND_API_KEY
+#   BROWSER_TOKEN          optional: Cloudflare API token with Account > Browser Rendering > Edit. Turns the report into a PDF;
+#                          without it the report is attached as an HTML file instead.
 name = "neonkey-lockdown"
 main = "src/index.js"
 compatibility_date = "2025-10-01"
@@ -20,6 +22,8 @@ LOCKDOWN_PAYMENT_LINK = "plink_1UXuPCCRxS1tvAi22FJy7HTk"
 ALLOW_LIVE = "true"
 # "shadow": buyer emails go to hello@ only (Michael reads them first). "send": they go to the buyer.
 CUSTOMER_EMAILS = "send"
+# Cloudflare account that renders the PDF report (Browser Rendering). Not a secret.
+CF_ACCOUNT_ID = "13d2e240576e100fbd65b2499bd6c048"
 
 # Orders (Stripe session id, buyer email and name, domain, recheck count). Expire after 60 days.
 # KV namespace "neonkey-lockdown-orders" (created Nov 5 2026).

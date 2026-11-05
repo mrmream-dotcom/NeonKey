@@ -44,6 +44,7 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
         <a class="btn btn-ghost btn-sm" href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a>
         <p class="el-small"><strong>{lockdownCredit}</strong></p>
         <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
+        <p class="muted el-small">Your report is sent right after checkout, so sales are final once it's delivered. If we can't deliver it or something in it is wrong, we'll fix it or refund you. <a href={url('/terms/#email-lockdown-refunds')}>Refund policy</a>.</p>
         <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>
       </aside>
     </div>

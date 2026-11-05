@@ -42,6 +42,8 @@ function setZones() {
 const nx = new Set(["typo.test"]);
 
 let sent = [];
+let pdfCalls = [];
+let pdfMode = "ok";
 globalThis.fetch = async (url, init = {}) => {
   const u = new URL(url);
   if (u.hostname === "cloudflare-dns.com") {
@@ -50,6 +52,11 @@ globalThis.fetch = async (url, init = {}) => {
     if (nx.has(name)) return Response.json({ Status: 3, Answer: [] });
     const data = zone[name]?.[type] || [];
     return Response.json({ Status: 0, Answer: data.map((d) => ({ name, type: T[type], data: d })) });
+  }
+  if (u.hostname === "api.cloudflare.com" && u.pathname.endsWith("/browser-rendering/pdf")) {
+    pdfCalls.push({ auth: init.headers.Authorization, body: JSON.parse(init.body) });
+    if (pdfMode === "fail") return new Response("{}", { status: 500, headers: { "content-type": "application/json" } });
+    return new Response(new TextEncoder().encode("%PDF-1.7\n" + "x".repeat(800)), { headers: { "content-type": "application/pdf" } });
   }
   if (u.hostname === "api.resend.com") {
     sent.push({ body: JSON.parse(init.body), headers: init.headers });
@@ -72,6 +79,8 @@ let env;
 beforeEach(() => {
   setZones();
   sent = [];
+  pdfCalls = [];
+  pdfMode = "ok";
   env = { STRIPE_WEBHOOK_SECRET: SECRET, RESEND_API_KEY: "re_fake", FROM_ADDRESS: "NeonKey 🔑 <hello@neonkey.tech>", NOTIFY_TO: "hello@neonkey.tech", REPLY_TO: "hello@neonkey.tech", BCC_ADDRESS: "bcc@example.com", LOCKDOWN_PAYMENT_LINK: PLINK, ALLOW_LIVE: "false", CUSTOMER_EMAILS: "send", ORDERS: kv() };
 });
 
@@ -343,4 +352,34 @@ test("buyer-supplied text is escaped in the HTML email", () => {
   const m = reportEmail({ name: "<b>x</b>", a: { domain: "a.test", provider: null, dnsHost: { label: null }, fixes: [{ id: "spf", type: "TXT", host: "@", value: "<img src=x>", action: "add", why: "w" }], buyerSteps: [], human: [], notes: [], locked: false } });
   assert.doesNotMatch(m.html, /<img src=x>/);
   assert.doesNotMatch(m.html, /<b>x<\/b>/);
+});
+
+test("with BROWSER_TOKEN set, the report goes out as a PDF and the email says so", async () => {
+  env.BROWSER_TOKEN = "cf_fake";
+  env.CF_ACCOUNT_ID = "acct123";
+  const r = await worker.fetch(signed(ev(session("bare.test"))), env);
+  assert.equal(r.status, 200);
+  assert.equal(pdfCalls.length, 1);
+  assert.equal(pdfCalls[0].auth, "Bearer cf_fake");
+  assert.match(pdfCalls[0].body.html, /Recommended changes/);
+  const buyer = sent[0].body;
+  assert.match(buyer.attachments[0].filename, /NeonKey-Email-Report-bare\.test\.pdf$/);
+  assert.match(Buffer.from(buyer.attachments[0].content, "base64").toString("latin1"), /^%PDF/);
+});
+
+test("if the PDF render fails, the buyer still gets the report as HTML", async () => {
+  env.BROWSER_TOKEN = "cf_fake";
+  env.CF_ACCOUNT_ID = "acct123";
+  pdfMode = "fail";
+  const r = await worker.fetch(signed(ev(session("bare.test"))), env);
+  assert.equal(r.status, 200);
+  assert.equal(pdfCalls.length, 1);
+  assert.match(sent[0].body.attachments[0].filename, /\.html$/);
+});
+
+test("the already-protected email names the PDF when one is attached", () => {
+  const a = { domain: "ok.test", provider: { label: "Google Workspace" }, mx: ["x"], dkim: ["google"], fixes: [], buyerSteps: [], human: [], notes: [], locked: true, dmarc: { policy: "quarantine" } };
+  assert.match(reportEmail({ name: "Pat", a, pdf: true }).html, /attached as a PDF/);
+  assert.doesNotMatch(reportEmail({ name: "Pat", a, pdf: true }).html, /monitor mode/);
+  assert.match(reportEmail({ name: "Pat", a }).html, /Open it in any browser/);
 });

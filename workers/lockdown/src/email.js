@@ -111,18 +111,18 @@ function scoreLine(passing, a) {
 }
 const doneForYou = (a) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in your $49. No passwords shared.`, "font-size:15px;");
 
-const ATTACH_NOTE = "Your full report is attached. Open it in any browser, and save or print it as a PDF for your records.";
+const attachNote = (pdf) => pdf ? "Your full report is attached as a PDF to keep for your records." : "Your full report is attached. Open it in any browser, and save or print it as a PDF for your records.";
 
 // 1. First email, right after payment.
-export function reportEmail({ name, a }) {
+export function reportEmail({ name, a, pdf = false }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
   const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
   const personal = a.human.length > 0;
 
   if (a.locked && !personal) {
     const subject = `🔑 Your Email Lockdown report for ${a.domain}: records already in place`;
-    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${ATTACH_NOTE}`)}${a.dmarc?.policy === "none" ? p("Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail.", "font-size:15px;") : ""}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
-    return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${ATTACH_NOTE}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
+    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${attachNote(pdf)}`)}${a.dmarc?.policy === "none" ? p("Reply if you'd like a hand moving DMARC from monitor mode to blocking fake mail.", "font-size:15px;") : ""}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
+    return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${attachNote(pdf)}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   if (!a.fixes.length && !a.buyerSteps.length) {
