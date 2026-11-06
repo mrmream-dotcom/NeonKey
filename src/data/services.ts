@@ -258,6 +258,18 @@ export const emailLockdown: Offer = {
   buyUrl: 'https://buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01',
 };
 
+/**
+ * Self-serve digital guide (DRAFT, not launched). Page: /guides/ai-automation-setup/ (noindex, unlinked, in DRAFT_PAGES).
+ * Price $97 requested by Michael Nov 6 2026. No comparison "value" price: the guide has never sold at a higher price.
+ * buyUrl stays empty (button shows "Opens soon") until Michael approves a live Stripe Payment Link.
+ */
+export const setupGuide = {
+  name: 'Setting Up Your AI-Automation Business',
+  price: 97,
+  priceLabel: 'Launch price',
+  buyUrl: '',
+};
+
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
