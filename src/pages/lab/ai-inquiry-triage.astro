@@ -18,7 +18,7 @@ const fields: [string, string][] = [['name', 'Name'], ['business', 'Business'], 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles' });
 const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['examples', 'Real results'], ['build', 'Build notes'], ['related', 'Related']];
 ---
-<Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a human to review. Plus how it's built and what it costs.">
+<Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a person to review. Plus how it's built.">
   <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: labProject.title }]}>
     <Fragment slot="title">AI inquiry triage, <span class="glow-c">working demo.</span></Fragment>
     <p class="lede">Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of workflow we build, running for real. The simplest version is <a href={url('/services/#quick-win')}>Website Inquiry Capture &amp; Alerts</a>.</p>

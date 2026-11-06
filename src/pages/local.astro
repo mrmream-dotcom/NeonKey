@@ -44,7 +44,7 @@ const jsonLd = {
 };
 const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
-<Base title="Office Tech Tune-Up in Fairbanks and North Pole" description="On-site Office Tech Tune-Up for small offices in Fairbanks, North Pole and the Fairbanks North Star Borough, Alaska: Wi-Fi, backups, passwords, email security and printers in one visit, with a written report. $249 founding rate.">
+<Base schema={false} title="Office Tech Tune-Up in Fairbanks and North Pole" description="On-site Office Tech Tune-Up for small offices in Fairbanks, North Pole and the Fairbanks North Star Borough, Alaska: Wi-Fi, backups, passwords, email security and printers in one visit, with a written report. $249 founding rate.">
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <PageHeader eyebrow="Local · Fairbanks North Star Borough" title="Office Tech Tune-Up" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Office Tech Tune-Up' }]}>
     <p class="lede">Your office tech, checked and fixed in one visit. On-site help for small offices in Fairbanks, North Pole and across the Fairbanks North Star Borough, with evening and Saturday times available.</p>

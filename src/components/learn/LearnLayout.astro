@@ -6,6 +6,9 @@ import Icon from '../Icon.astro';
 import { url } from '../../config';
 import { learnMinutes } from '../../lib/reading';
 import type { IconName } from '../../lib/ui';
+import { tutorialCards } from '../../data/learn-guides';
+import track from '../../data/security-plus/track.json';
+import { isLearnPathLive } from '../../lib/schedule.mjs';
 const { frontmatter } = Astro.props;
 // `noindex: true` in frontmatter keeps a draft page out of search engines (pair it with DRAFT_PAGES in astro.config.mjs).
 const { title, description, kicker = 'Learn', back, noindex = false } = frontmatter;
@@ -17,6 +20,21 @@ const isTrack = Astro.url.pathname.includes('/security-plus/');
 const icon: IconName = isTrack ? 'book' : /automation|\bai\b/i.test(String(kicker)) ? 'spark' : /network|wi-?fi/i.test(String(kicker)) ? 'wifi' : /practical it/i.test(String(kicker)) ? 'wrench' : 'shield';
 const mins = learnMinutes(Astro.url.pathname);
 const kind = isTrack ? 'Study guide' : 'Tutorial';
+// Internal links at the foot of each page, so every guide links on to related guides (not only back to the hub).
+const here = Astro.url.pathname.replace(/^.*\/learn\//, '/learn/');
+const trackPages = [
+  ...track.domains.map((d) => ({ href: `/learn/security-plus/${d.slug}/`, title: `Domain ${d.n}: ${d.title}` })),
+  { href: '/learn/security-plus/acronyms/', title: 'Security+ acronym list' },
+];
+const trackIdx = trackPages.findIndex((p) => p.href === here);
+const prevPage = trackIdx > 0 ? trackPages[trackIdx - 1] : undefined;
+const nextPage = trackIdx >= 0 && trackIdx < trackPages.length - 1 ? trackPages[trackIdx + 1] : undefined;
+const self = tutorialCards.find((c) => c.href === here);
+const related = self
+  ? [...tutorialCards.filter((c) => c.topic === self.topic), ...tutorialCards.filter((c) => c.topic !== self.topic)]
+      .filter((c) => c.href !== here && isLearnPathLive(c.href))
+      .slice(0, 3)
+  : [];
 ---
 <Base title={title} description={description} noindex={noindex}>
   <article class="narrow page-head prose guide-page">
@@ -34,6 +52,20 @@ const kind = isTrack ? 'Study guide' : 'Tutorial';
       {mins && mins >= 3 && <span class="muted"><span class="meta-sep" aria-hidden="true">·</span> {mins} min read</span>}
     </div>
     <slot />
+    {(prevPage || nextPage) && (
+      <nav class="guide-pager" aria-label="Security+ guide pages">
+        {prevPage && <a href={url(prevPage.href)} rel="prev"><span class="muted">Previous</span> {prevPage.title}</a>}
+        {nextPage && <a href={url(nextPage.href)} rel="next"><span class="muted">Next</span> {nextPage.title}</a>}
+      </nav>
+    )}
+    {related.length > 0 && (
+      <section class="more-guides" aria-labelledby="more-guides">
+        <h2 id="more-guides">More guides</h2>
+        <ul>
+          {related.map((c) => <li><a href={url(c.href)}>{c.title}</a></li>)}
+        </ul>
+      </section>
+    )}
     {back && <p><a href={url(back.href)}>← {back.label}</a></p>}
   </article>
 </Base>

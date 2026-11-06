@@ -12,7 +12,7 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
 // DNS host, or add them ourselves if they invite us as a collaborator/delegate. DKIM keys come from the email
 // provider's admin console, so the buyer (or their admin) may need to generate one.
 ---
-<Base title="Email Lockdown" description={`Email Lockdown, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC email security records checked and fixed, so it's harder for scammers to fake your address. Buy online, no call needed.`}>
+<Base title="Email Lockdown" description={`Email Lockdown, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC records checked and fixed, so it's harder for scammers to fake your address. Buy online, no call needed.`}>
   <PageHeader eyebrow="Services · Buy online" title="Email Lockdown" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Email Lockdown' }]}>
     <p class="lede">Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes. {usd(emailLockdown.from)} flat, no call needed.</p>
   </PageHeader>

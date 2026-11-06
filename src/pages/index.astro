@@ -135,7 +135,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description="Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides, Lab demos and a weekly email.">
+<Base title="Home" description="Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides and a weekly email.">
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="hero hero-bg">
     <div class="hero-art" aria-hidden="true">
@@ -160,9 +160,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="lockdown-cta" data-umami-event-offer={emailLockdown.name} data-umami-event-location="home-hero">Lock down my email · {usd(emailLockdown.from)}</a>
       </div>
       <span class="kicker">Unlock tech, whatever your level</span>
-      <h1 data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></h1>
+      <h1><span data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></span><span data-ab="hero:b">Fewer missed leads. <span class="glow">Faster answers for customers.</span><br /> <span class="glow-m">Keep the office running.</span></span></h1>
       <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. Done remotely, anywhere in the US.</p>
-      <h1 data-ab="hero:b">Fewer missed leads. <span class="glow">Faster answers for customers.</span><br /> <span class="glow-m">Keep the office running.</span></h1>
       <p class="lead" data-ab="hero:b">Lead follow-up, AI intake and office IT for small businesses, set up on accounts you own, with a written quote before any work. Done remotely, anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a written quote</a>

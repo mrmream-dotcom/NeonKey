@@ -9,7 +9,7 @@ const project = labProjects.find((p) => p.slug === 'review-reply')!;
 const stack = ['Astro (static page)', 'Cloudflare Workers (free plan)', 'Durable Objects (rate-limit counters only)', 'Google Gemini API (free tier)', 'JSON-schema structured output'];
 const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does'], ['why', 'Why bother'], ['how', 'How it works'], ['rules', 'Reply rules'], ['cost', 'What it costs'], ['limits', 'Limitations'], ['related', 'Related']];
 ---
-<Base title={project.title} description="A working review reply demo: paste a customer review and an AI reads the mood, flags anything risky, says how fast to respond and drafts a public reply for a person to edit and post.">
+<Base title={project.title} description="A working review reply demo: paste a customer review and AI reads the mood, flags anything risky and drafts a public reply for a person to edit and post.">
   <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: project.title }]}>
     <Fragment slot="title">Review reply helper, <span class="glow-c">working demo.</span></Fragment>
     <p class="lede">Paste a Google, Yelp or Facebook review. An AI reads the mood, flags anything risky, tells you how fast to respond and drafts a public reply. You still read it, fix it and post it yourself. It's one of the builds on the <a href={url('/services/#automation-menu')}>"What can we automate?" menu</a>, running for real.</p>

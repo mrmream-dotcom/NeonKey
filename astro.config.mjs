@@ -29,7 +29,7 @@ export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   trailingSlash: 'ignore',
-  build: { format: 'directory', inlineStylesheets: 'never' },
+  build: { format: 'directory', inlineStylesheets: 'auto' },
   vite: { build: { assetsInlineLimit: 0 } },
   // Fetch internal pages in the background when a visitor hovers or taps a link, so the next page opens almost instantly.
   // Prefetch only downloads the HTML; no scripts run, so analytics are not affected.

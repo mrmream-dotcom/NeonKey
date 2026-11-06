@@ -11,7 +11,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
 // Personalized links for a lead: ?type=home&biz=Acme%20Plumbing&owner=Pat&domain=acmeplumbing.com
 // (build them with `node scripts/demo-link.mjs`). Values are cleaned in the browser and only ever set as text.
 ---
-<Base title={project.title} description="Click through the front office NeonKey builds for a small business: every inquiry in one tracker, FAQ answers after hours, routing, replies you approve, follow-ups that stop when the customer answers, and email security.">
+<Base title={project.title} description="Click through the front office NeonKey builds for a small business: one inquiry tracker, after-hours FAQ answers, routing, replies you approve and follow-ups.">
   <PageHeader eyebrow="Lab · Automation · AI · Interactive demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: project.title }]}>
     <Fragment slot="title">This is what we'll build for <span class="glow-c" id="fo-for">your business.</span></Fragment>
     <p class="lede">A front office that catches every inquiry, answers the easy questions, sends the rest to the right person and remembers to follow up. The assistant only gives answers you approved in advance, and a person sends every quote reply and follow-up. Pick a business like yours and click through it.</p>

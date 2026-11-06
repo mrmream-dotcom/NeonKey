@@ -5,6 +5,7 @@ import Logo from '../components/Logo.astro';
 import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, absoluteUrl } from '../config';
 import SocialLinks from '../components/SocialLinks.astro';
 import { abTests } from '../data/ab-tests';
+import { articles } from '../data/articles';
 interface Props {
   title: string;
   description?: string;
@@ -13,8 +14,10 @@ interface Props {
   /** Force noindex for this page even in live mode (e.g. 404). */
   noindex?: boolean;
   type?: 'website' | 'article';
+  /** Set false when the page prints its own JSON-LD (home, /local/). */
+  schema?: boolean;
 }
-const { title, description = DEFAULT_DESCRIPTION, image = '/og-default.png', noindex = false, type = 'website' } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, image = '/og-default.png', noindex = false, type = 'website', schema = true } = Astro.props;
 
 // Current path relative to the base, e.g. "/lab/" for /NeonKey/lab/.
 const baseNoSlash = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -28,12 +31,50 @@ const nav = [
   { href: '/newsletter/', label: 'Newsletter' },
 ];
 const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
-const fullTitle = title === 'Home' ? 'NeonKey: Office IT Setup and AI Automation for Small Businesses' : `${title} | NeonKey`;
+// Search results cut titles at about 60 characters, so long page titles drop the " | NeonKey" suffix.
+const fullTitle = title === 'Home' ? 'NeonKey: Office IT Setup and AI Automation for Small Businesses' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 const ogImage = absoluteUrl(image, Astro.site);
 const abIds = abTests.map((t) => t.id);
 const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
+
+// Structured data (schema.org JSON-LD) for every indexable page: a WebPage (or Article) linked to the
+// Organization and WebSite defined on the home page, plus a breadcrumb trail built from the URL.
+const home = absoluteUrl('/', Astro.site);
+const orgId = `${home}#organization`;
+const crumbLabels: Record<string, string> = { 'security-plus': 'Security+ guide', lab: 'Lab', learn: 'Learn', articles: 'Articles', services: 'Services', newsletter: 'Newsletter', contact: 'Contact', pay: 'Pay' };
+const segs = canonicalPath.split('/').filter(Boolean);
+const crumbs = [{ name: 'Home', item: home }, ...segs.map((seg, i) => ({
+  name: i === segs.length - 1 ? title : crumbLabels[seg] || seg.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()),
+  item: absoluteUrl('/' + segs.slice(0, i + 1).join('/') + '/', Astro.site),
+}))];
+const article = type === 'article' ? articles.find((a) => canonicalPath === `/articles/${a.slug}/`) : undefined;
+const pageNode: Record<string, unknown> = {
+  '@type': type === 'article' ? 'Article' : 'WebPage',
+  '@id': `${canonical}#webpage`,
+  url: canonical,
+  name: title,
+  description,
+  inLanguage: 'en',
+  isPartOf: { '@id': `${home}#website` },
+  publisher: { '@id': orgId },
+  primaryImageOfPage: { '@type': 'ImageObject', url: ogImage },
+  breadcrumb: { '@id': `${canonical}#breadcrumb` },
+};
+if (type === 'article') {
+  pageNode.headline = title.length > 110 ? title.slice(0, 107) + '...' : title;
+  pageNode.image = ogImage;
+  pageNode.mainEntityOfPage = canonical;
+  pageNode.author = article?.author && article.author !== 'NeonKey' ? { '@type': 'Person', name: article.author, url: absoluteUrl('/about/', Astro.site) } : { '@id': orgId };
+  if (article?.date) { pageNode.datePublished = article.date; pageNode.dateModified = article.date; }
+}
+const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
+  ? JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+      pageNode,
+      { '@type': 'BreadcrumbList', '@id': `${canonical}#breadcrumb`, itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: c.item })) },
+    ] }).replace(/</g, '\\u003c')
+  : '';
 ---
 <!doctype html>
 <html lang="en">
@@ -112,6 +153,7 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    {pageJsonLd && <script type="application/ld+json" is:inline set:html={pageJsonLd}></script>}
 
     {UMAMI.websiteId && (
       <script is:inline defer src={UMAMI.src} data-website-id={UMAMI.websiteId} data-domains={UMAMI.domains || undefined}></script>
