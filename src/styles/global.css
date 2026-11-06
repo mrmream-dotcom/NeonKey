@@ -547,3 +547,10 @@ body { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-are
 .social-links a:hover, .social-links a:focus-visible { color: var(--cyan); border-color: var(--line); background: rgba(34, 211, 238, .06); }
 .footer-brand .social-links { margin: .6rem 0 0 -.45rem; }
 .panel .social-links, .prose .social-links { margin-left: -.45rem; }
+
+/* Learn guide footer links: Security+ previous/next and "More guides" (LearnLayout.astro). */
+.guide-pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin: 2.5rem 0 1rem; }
+.guide-pager a { display: flex; flex-direction: column; gap: .15rem; flex: 1 1 14rem; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); text-decoration: none; }
+.guide-pager a[rel="next"] { text-align: right; }
+.guide-pager .muted { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+.more-guides { margin-top: 2.5rem; }
