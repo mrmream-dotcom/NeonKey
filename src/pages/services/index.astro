@@ -20,12 +20,12 @@ import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fo
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const smallJobs = [
   { o: emailLockdown, price: `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online and get the exact fixes by email, usually within minutes. No call or passwords needed.', href: emailLockdown.buyUrl!, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
-  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
+  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request, so none sit unseen.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
 ---
-<Base title="Services" description="Remote help for small businesses: quote and inquiry follow-up for $999, or office email, Wi-Fi, backups and passwords from $299. Written scope first.">
-  <PageHeader eyebrow="Services" title="Losing quote requests, or need IT set up?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
+<Base title="Lead Follow-Up and Office IT Services" description="Stop losing quote requests to slow replies: lead follow-up setup for $999, or office email, Wi-Fi and backups from $299. Remote, written scope first.">
+  <PageHeader eyebrow="Services" title="Losing leads to slow replies, or need IT set up?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
     <p class="lede">Pick one. You get a written scope and price before any work starts.</p>
   </PageHeader>
 
@@ -34,9 +34,9 @@ const smallJobs = [
       <h2 id="pick-h" class="sr-only">Two ways to start</h2>
       <div class="choices">
         <div class="card topline accent-magenta choice">
-          <span class="kicker">Lead follow-up · remote</span>
-          <strong>Keep quote requests and follow-ups in one place</strong>
-          <span class="muted">Requests from your website form or shared inbox land on one list. Your team sees who's handling each one and when to follow up.</span>
+          <span class="kicker">Speed to lead · follow-up · remote</span>
+          <strong>Reply faster and follow up on every quote</strong>
+          <span class="muted">Requests from your website form or shared inbox land on one list, and the right person gets an alert. Quotes that go quiet get a reminder on day 1, 3 and 7.</span>
           <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
           <div class="btn-row choice-btns">
             <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Get a written quote</a>
@@ -84,7 +84,7 @@ const smallJobs = [
             <span class="kicker">Remote · fixed price after scoping</span>
             <h2 id="fop-h" class="offer-h2"><OfferTitle offer={fop} /></h2>
             <OfferNameLabel offer={fop} />
-            <p class="offer-outcome">Keep quote requests and follow-ups in one place. For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups.</p>
+            <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold. For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups.</p>
             <h3 class="incl-h">What the setup includes</h3>
             <ul>
               <li>Requests from your website form and shared inbox in one list, with who's handling each one and when to follow up</li>
@@ -93,6 +93,7 @@ const smallJobs = [
               <li>Business email security set up (SPF, DKIM and DMARC), so it's harder to fake your address</li>
               <li>Three months of the Monthly Remote Support Plan, so small changes are covered while it beds in</li>
             </ul>
+            <p class="muted side-note">Want to win back old quotes and past customers too? We can add a win-back follow-up list with drafts for you to send, quoted on the scoping call.</p>
             <p class="muted side-note">Phone calls aren't part of this setup. They still need a person or a separate phone setup, which we can quote.</p>
           </div>
           <div class="offer-featured-side">
@@ -185,6 +186,12 @@ const smallJobs = [
   <section aria-labelledby="faq-h">
     <div class="container faq">
       <SectionHeading id="faq-h" eyebrow="Questions" title="A few things to know before booking" />
+      <details class="offer-details faq-item">
+        <summary>How do I know if I'm losing leads?</summary>
+        <div class="offer-details-body">
+          <p>Look back at last month and check three things: how long it took to send the first reply to each new inquiry, how many quotes got no follow-up after the first message, and how many past customers you haven't contacted in a year. If any answer surprises you, that's the place to start. Tell us what you find and we'll suggest the smallest fix that helps.</p>
+        </div>
+      </details>
       <details class="offer-details faq-item">
         <summary>Does anything reply to my customers without me?</summary>
         <div class="offer-details-body">

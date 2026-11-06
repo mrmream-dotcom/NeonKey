@@ -10,9 +10,9 @@ export interface Offer {
   /** Business outcome in everyday words, shown first on the home and services cards. */
   outcome?: string;
   /**
-   * Short outcome-first card heading (copy test started Nov 2026): the result the client gets.
-   * The service `name` is shown under it as a small label, and stays the name used in tracking,
-   * pay links and the contact form.
+   * Short outcome-first card heading: the result the client gets, framed around revenue they stop losing
+   * (repositioning Nov 6 2026). The service `name` is shown under it as a small label, and stays the name
+   * used in tracking, pay links and the contact form.
    */
   headline?: string;
   items: string[];
@@ -154,7 +154,7 @@ export const automationOffers: Offer[] = [
   {
     slug: 'quick-win',
     name: 'Website Inquiry Capture & Alerts',
-    headline: 'One repetitive task, off your plate',
+    headline: 'Know the minute a website inquiry comes in',
     kicker: 'Start here',
     from: 99,
     outcome: 'New requests stop getting lost: your website form feeds one shared list, and one person gets an alert for each new request',
@@ -201,7 +201,7 @@ export const automationOffers: Offer[] = [
       ],
       note: 'AI usage and any tool subscriptions are billed to you directly by those providers. AI answers can be wrong, so the assistant is set up to hand off to a person, and you should review it regularly.',
     }, },
-  { slug: 'lead-routing', headline: 'Every lead followed up, on time', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person and follow up on time, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], demo: { label: 'See it working', href: '/lab/front-office/', example: 'Front office demo' }, details: {
+  { slug: 'lead-routing', headline: 'Quiet quotes followed up, not forgotten', name: 'Lead-Routing & Follow-Up System', from: 799, standard: 999, outcome: "Get every new lead to the right person fast and follow up on quotes that go quiet, so fewer slip away", for: 'Send new leads to the right place and follow up on time', items: ['Form, email or chat intake', 'Routing rules to the right person or sheet', 'Follow-up reminders and templates', 'Simple tracking view'], demo: { label: 'See it working', href: '/lab/front-office/', example: 'Front office demo' }, details: {
       who: "For businesses where new leads arrive from several places (website forms, email, booking tools) and some get missed or answered late. It collects them in one place, sends each to the right person and reminds you to follow up.",
       included: [
       'Intake from your sources, for example your website form, a shared inbox or a booking tool',
@@ -210,6 +210,7 @@ export const automationOffers: Offer[] = [
       'Follow-up reminders for you, plus email templates for the first few replies',
       'A simple tracking view, for example a Google Sheet or a sales pipeline in your customer database (CRM), showing every lead and its status',
       'Duplicate checks and an alert if a step fails',
+      'Optional win-back follow-up: a list of old quotes and past customers, with follow-up drafts for you to send (scoped and quoted on the call)',
       'A walkthrough video and notes covering how to change rules and templates yourself',
       ],
       steps: [
@@ -284,12 +285,12 @@ export const showPackageValue = false;
 export const frontOfficePackage: Offer & { value: number; separately: number; parts: { name: string; value: string }[] } = {
   slug: 'front-office-package',
   name: 'Front Office Package',
-  headline: 'Your whole front office, handled',
+  headline: 'Faster replies. Every quote followed up.',
   kicker: 'Start-Up Deal · All-inclusive',
   from: 999,
   value: 2000,
   separately: 2164,
-  outcome: "Answer customer questions, catch every new lead, follow up on time and lock down your business email, set up together as one system with three months of support",
+  outcome: "Reply to new inquiries faster, follow up on every quote that goes quiet, answer common questions and lock down your business email, set up as one system with three months of support",
   for: 'The all-in-one option for small businesses that want their front office handled in one project instead of four',
   parts: [
     { name: 'AI Intake & FAQ Assistant', value: 'standard rate from $699' },
