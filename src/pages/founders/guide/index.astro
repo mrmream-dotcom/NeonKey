@@ -42,11 +42,23 @@ const canBuy = setupGuide.buyUrl !== '';
           <li><strong>AI as your operations hub:</strong> how we run the business with Claude Projects, written rules, memory and guardrails</li>
           <li><strong>A security baseline, a 4-week build plan</strong> and copy-paste templates</li>
         </ul>
+        <h2 class="sg-h">Look inside</h2>
+        <p class="muted">The contents page and the first two chapters, exactly as they appear in the PDF.</p>
+        <div class="sg-samples">
+          {[1, 2, 3].map((n) => (
+            <a href={url(`/images/founder-stack-sample-${n}.webp`)} target="_blank" rel="noopener" data-umami-event="guide-sample" data-umami-event-page={String(n)} data-umami-event-track="founders">
+              <img src={url(`/images/founder-stack-sample-${n}.webp`)} alt={['Contents page of The Founder Stack', 'Chapter 1: the stack at a glance', 'Chapter 2: domain, business email and DNS'][n - 1]} width="800" height="1035" loading="lazy" />
+            </a>
+          ))}
+        </div>
+        <h2 class="sg-h">How the included Email Lockdown works</h2>
+        <p class="muted">Enter your domain at checkout, or reply to your delivery email with it. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>
         <h2 class="sg-h">Good to know</h2>
+
         <ul class="muted">
           <li>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</li>
           <li>It's a PDF of about 18 pages, first edition, November 2026. We email your copy after checkout.</li>
-          <li>It names the tools we really use and has no affiliate links. Their prices change, so check before you sign up.</li>
+          <li>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the {usd(setupGuide.price)}. Check each tool's current pricing.</li>
           <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
         </ul>
         <p class="muted">Not sure where your domain stands? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight</a> first.</p>
@@ -74,6 +86,9 @@ const canBuy = setupGuide.buyUrl !== '';
   .sg-grid ul { padding-left: 1.1rem; }
   .sg-grid li { margin-bottom: .45rem; }
   .sg-why { margin-bottom: 1.25rem; }
+  .sg-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .25rem 0 1.25rem; }
+  .sg-samples img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; }
+  @media (max-width: 560px) { .sg-samples { grid-template-columns: 1fr; } }
   .sg-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 5rem; }
   .sg-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
   .sg-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
