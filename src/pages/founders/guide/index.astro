@@ -1,0 +1,74 @@
+---
+import { url } from '../../../config';
+import Base from '../../../layouts/Base.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import { setupGuide, emailLockdown, usd } from '../../../data/services';
+// Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
+// Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
+// The buy button stays off until setupGuide.buyUrl holds the live Payment Link.
+// Copy rules: no income claims or implied results, no comparison "value" price, no invented reviews.
+const canBuy = setupGuide.buyUrl !== '';
+---
+<Base image="/og-founder-stack.png" title={`${setupGuide.name}: a setup guide for founders`} description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}>
+  <PageHeader eyebrow="Guide for founders · PDF" title={setupGuide.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: setupGuide.name }]}>
+    <p class="lede">{setupGuide.subtitle}. Every piece is running at NeonKey today, written up step by step so you can build your own: email that lands, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails, and a lead tracker that shows what's actually happening.</p>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container sg-grid">
+      <div class="panel topline">
+        <img class="sg-cover" src={url('/images/founder-stack-3d.webp')} alt={`${setupGuide.name} guide cover`} width="1200" height="900" loading="eager" />
+        <h2 class="sg-h">Who it's for</h2>
+        <p class="muted">Solo founders and small teams who want a lean backend they own, instead of stitching together a tool for every job. You don't need to be a developer. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>
+        <h2 class="sg-h">What's inside</h2>
+        <ul>
+          <li><strong>The stack at a glance:</strong> how the pieces connect, and why each one does a single job</li>
+          <li><strong>Domain and email:</strong> SPF, DKIM, DMARC and CAA set up before you send anything, so your launch email isn't the thing that burns your domain</li>
+          <li><strong>The website:</strong> a fast static site on GitHub Pages, a security policy kept in one file, and the checks to run after every deploy</li>
+          <li><strong>Forms and Workers:</strong> lead capture with honeypots, origin locks and rate limits, using small Cloudflare Workers</li>
+          <li><strong>Stripe:</strong> which payment tool fits which offer, payment links with a Terms checkbox, and verified webhooks</li>
+          <li><strong>A product that delivers itself:</strong> how our Email Lockdown goes from checkout to delivered report with no manual step, and how to build your own version</li>
+          <li><strong>Outreach:</strong> sending caps, a warm-up schedule, bounce rules and inbox placement tests</li>
+          <li><strong>The lead tracker and Friday scoreboard:</strong> the spreadsheet tabs and columns that record replies, objections, quotes and payments</li>
+          <li><strong>AI as your operations hub:</strong> how we run the business with Claude Projects, written rules, memory and guardrails</li>
+          <li><strong>A security baseline, a 4-week build plan</strong> and copy-paste templates</li>
+          <li><strong>Included: an Email Lockdown for your own domain</strong> ({usd(emailLockdown.from)} on its own), so chapter 2 starts with your records already checked</li>
+        </ul>
+        <h2 class="sg-h">Good to know</h2>
+        <ul class="muted">
+          <li>This is a setup guide, not an income plan. NeonKey is a young business, and the guide shows how the systems are built, not what they will earn. We make no promises about results.</li>
+          <li>It's a PDF of about 18 pages, first edition, November 2026. We email your copy after checkout.</li>
+          <li>It names the tools we really use and has no affiliate links. Their prices change, so check before you sign up.</li>
+          <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
+        </ul>
+        <p class="muted">Not sure where your domain stands? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight</a> first.</p>
+      </div>
+      <aside class="panel topline accent-magenta sg-buy">
+        <span class="kicker">Guide for founders · PDF</span>
+        <p class="price">{usd(setupGuide.price)}<small>One-time. First edition, November 2026.</small></p>
+        {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Lockdown for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
+        {canBuy
+          ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
+          : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
+        <p class="muted sg-small">Secure checkout by Stripe. Your copy arrives by email, usually the same day.</p>
+        <p class="muted sg-small">Questions first? <a href={url('/contact/')}>Send a message</a>.</p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sg-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 820px) { .sg-grid { grid-template-columns: 1fr; } }
+  .sg-cover { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1rem; }
+  .sg-h { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .sg-h + ul { margin-top: 0; }
+  .sg-grid ul { padding-left: 1.1rem; }
+  .sg-grid li { margin-bottom: .45rem; }
+  .sg-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 5rem; }
+  .sg-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
+  .sg-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
+  .sg-buy .btn { align-self: flex-start; }
+  .sg-buy .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .sg-small { font-size: .88rem; margin: 0; }
+</style>

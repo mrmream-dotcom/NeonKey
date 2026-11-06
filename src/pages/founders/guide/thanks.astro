@@ -1,0 +1,21 @@
+---
+import { url, CONTACT_EMAIL } from '../../../config';
+import Base from '../../../layouts/Base.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import Icon from '../../../components/Icon.astro';
+import { setupGuide, emailLockdown, usd } from '../../../data/services';
+// Where the Founder Stack Payment Link sends buyers after paying. noindex and in DRAFT_PAGES (out of the sitemap).
+// Delivery v1 is by email from hello@neonkey.tech (the payments Worker notifies hello@ of each sale), so the PDF is
+// never published at a public URL. No ad conversion fires here yet.
+---
+<Base title="Thanks for buying the guide" description={`Thanks for buying ${setupGuide.name}.`} noindex>
+  <PageHeader width="narrow" align="center" eyebrow="Guide · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: 'Thank you' }]} class="status-head">
+    <span class="status-mark" slot="title-before"><Icon name="check" /></span>
+    <Fragment slot="title">Thanks, your payment went through.</Fragment>
+    <p class="lede">Stripe emails your receipt now. Your copy of {setupGuide.name} comes by email from {CONTACT_EMAIL}, usually the same day. If it hasn't arrived within one business day, check spam, then email us.</p>
+  </PageHeader>
+  <div class="narrow status-body">
+    <div class="callout" style="margin-bottom:1.25rem"><strong>Your included Email Lockdown</strong> ({usd(emailLockdown.from)} on its own): the email with your guide also has a link to claim it for your domain. Want a head start? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight-thanks" data-umami-event-track="founders">Launch Preflight</a> now.</div>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/founders/')}>Back to Founders</a> <a class="btn" href={`mailto:${CONTACT_EMAIL}`}>Email us</a></p>
+  </div>
+</Base>

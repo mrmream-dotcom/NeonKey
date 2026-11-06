@@ -258,6 +258,22 @@ export const emailLockdown: Offer = {
   buyUrl: 'https://buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01',
 };
 
+/**
+ * Self-serve digital guide for founders. Pages: /founders/guide/ (sales) and /founders/guide/thanks/ (after checkout).
+ * Price $97 requested by Michael Nov 6 2026. No comparison "value" price: the guide has never sold at a higher price.
+ * Retitled for founders Nov 6 2026 (Michael: "the guide for founders should be targeted to sell the guide").
+ * buyUrl is the live Stripe Payment Link; the page only goes live when Michael says ship.
+ */
+export const setupGuide = {
+  name: 'The Founder Stack',
+  subtitle: 'Set up the lean, automated backend NeonKey runs on',
+  price: 97,
+  // No dated increase (Nov 6 2026): $97 until the first 10 sales, then raise it for real.
+  // Real standalone price of the included Lockdown (emailLockdown.from).
+  includesLockdown: true,
+  buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
+};
+
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
