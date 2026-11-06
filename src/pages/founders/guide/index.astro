@@ -11,15 +11,24 @@ const canBuy = setupGuide.buyUrl !== '';
 ---
 <Base image="/og-founder-stack.png" title={`${setupGuide.name}: a setup guide for founders`} description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}>
   <PageHeader eyebrow="Guide for founders · PDF" title={setupGuide.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: setupGuide.name }]}>
-    <p class="lede">{setupGuide.subtitle}. Every piece is running at NeonKey today, written up step by step so you can build your own: email that lands, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails, and a lead tracker that shows what's actually happening.</p>
+    <p class="lede">The complete setup guide to the production backend NeonKey runs on: business email that inboxes trust, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails and a lead tracker that shows what's actually happening. Every step comes from a system running today, with the exact settings.</p>
   </PageHeader>
 
   <section style="padding-top:0">
     <div class="container sg-grid">
       <div class="panel topline">
         <img class="sg-cover" src={url('/images/founder-stack-3d.webp')} alt={`${setupGuide.name} guide cover`} width="1200" height="900" loading="eager" />
+        <h2 class="sg-h">Why founders buy it</h2>
+        <ul class="sg-why">
+          <li><strong>Skip the trial and error.</strong> It isn't a list of tools. It's the working setup, in order, with the settings and the reasons behind each choice.</li>
+          <li><strong>Protect your domain before you send.</strong> Email authentication done in the right order, before your launch email or first outreach goes out, so a new domain doesn't start life in the spam folder.</li>
+          <li><strong>Own your stack.</strong> A static site, small serverless Workers and Stripe payment links you control, instead of a separate subscription for every job.</li>
+          <li><strong>Automate delivery.</strong> The pattern we use to turn a Stripe payment into a delivered product with no manual step, ready to adapt to your own offer.</li>
+          <li><strong>Start fast.</strong> A 4-week build plan and copy-paste templates: a CLAUDE.md, a memory file, a Worker README, a deploy checklist and the lead tracker columns.</li>
+          <li><strong>Your domain checked for you.</strong> An Email Lockdown is included ({usd(emailLockdown.from)} on its own): your SPF, DKIM and DMARC reviewed, with a report of the exact records to add.</li>
+        </ul>
         <h2 class="sg-h">Who it's for</h2>
-        <p class="muted">Solo founders and small teams who want a lean backend they own, instead of stitching together a tool for every job. You don't need to be a developer. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>
+        <p class="muted">Solo founders and small teams who want a lean, dependable backend they own. You don't need to be a developer. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>
         <h2 class="sg-h">What's inside</h2>
         <ul>
           <li><strong>The stack at a glance:</strong> how the pieces connect, and why each one does a single job</li>
@@ -32,11 +41,10 @@ const canBuy = setupGuide.buyUrl !== '';
           <li><strong>The lead tracker and Friday scoreboard:</strong> the spreadsheet tabs and columns that record replies, objections, quotes and payments</li>
           <li><strong>AI as your operations hub:</strong> how we run the business with Claude Projects, written rules, memory and guardrails</li>
           <li><strong>A security baseline, a 4-week build plan</strong> and copy-paste templates</li>
-          <li><strong>Included: an Email Lockdown for your own domain</strong> ({usd(emailLockdown.from)} on its own), so chapter 2 starts with your records already checked</li>
         </ul>
         <h2 class="sg-h">Good to know</h2>
         <ul class="muted">
-          <li>This is a setup guide, not an income plan. NeonKey is a young business, and the guide shows how the systems are built, not what they will earn. We make no promises about results.</li>
+          <li>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</li>
           <li>It's a PDF of about 18 pages, first edition, November 2026. We email your copy after checkout.</li>
           <li>It names the tools we really use and has no affiliate links. Their prices change, so check before you sign up.</li>
           <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
@@ -65,6 +73,7 @@ const canBuy = setupGuide.buyUrl !== '';
   .sg-h + ul { margin-top: 0; }
   .sg-grid ul { padding-left: 1.1rem; }
   .sg-grid li { margin-bottom: .45rem; }
+  .sg-why { margin-bottom: 1.25rem; }
   .sg-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 5rem; }
   .sg-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
   .sg-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
