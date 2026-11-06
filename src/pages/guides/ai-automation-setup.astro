@@ -2,7 +2,7 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { setupGuide, usd } from '../../data/services';
+import { setupGuide, emailLockdown, usd } from '../../data/services';
 // DRAFT sales page for the self-serve setup guide (Michael's request, Nov 6 2026). Not launched:
 // noindex, listed in DRAFT_PAGES (kept out of the sitemap) and not linked from any page.
 // The buy button stays disabled until setupGuide.buyUrl holds a Payment Link Michael has approved.
@@ -29,6 +29,7 @@ const canBuy = setupGuide.buyUrl !== '';
           <li><strong>The lead tracker:</strong> the spreadsheet tabs and columns that record replies, objections, quotes and payments</li>
           <li><strong>Content and operations:</strong> the two files that run our content, and how we use Claude Projects with written rules, memory and guardrails</li>
           <li><strong>A security baseline, a 4-week build plan</strong> and copy-paste templates</li>
+          <li><strong>Bonus: an Email Lockdown for your own domain</strong> ({usd(emailLockdown.from)} on its own), so chapter 2 starts with your records already checked</li>
         </ul>
         <h2 class="sg-h">Who it's for</h2>
         <p class="muted">Solo founders and small teams starting a tech, IT or automation service who want a lean backend they own. You don't need to be a developer, but you'll copy commands into a terminal and edit text files.</p>
@@ -42,7 +43,8 @@ const canBuy = setupGuide.buyUrl !== '';
       </div>
       <aside class="panel topline accent-magenta sg-buy">
         <span class="kicker">Self-serve guide · PDF</span>
-        <p class="price">{usd(setupGuide.price)}<small>{setupGuide.priceLabel}</small></p>
+        <p class="price">{usd(setupGuide.price)}<small>Launch price through {setupGuide.launchEnds}, then {usd(setupGuide.priceAfter)}</small></p>
+        {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Lockdown for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
         {canBuy
           ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page">Buy the guide · {usd(setupGuide.price)}</a>
           : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}

@@ -265,7 +265,12 @@ export const emailLockdown: Offer = {
 export const setupGuide = {
   name: 'Setting Up Your AI-Automation Business',
   price: 97,
-  priceLabel: 'Launch price',
+  // Michael chose (Nov 6 2026) a dated launch price plus a bundled Email Lockdown. The date and the later
+  // price are placeholders until he confirms them, and the price MUST really go up on that date.
+  launchEnds: 'November 30, 2026',
+  priceAfter: 149,
+  // Real standalone price of the included Lockdown (emailLockdown.from).
+  includesLockdown: true,
   buyUrl: '',
 };
 
