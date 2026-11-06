@@ -259,20 +259,22 @@ export const emailLockdown: Offer = {
 };
 
 /**
- * Self-serve digital guide (DRAFT, not launched). Page: /guides/ai-automation-setup/ (noindex, unlinked, in DRAFT_PAGES).
+ * Self-serve digital guide for founders. Pages: /founders/guide/ (sales) and /founders/guide/thanks/ (after checkout).
  * Price $97 requested by Michael Nov 6 2026. No comparison "value" price: the guide has never sold at a higher price.
- * buyUrl stays empty (button shows "Opens soon") until Michael approves a live Stripe Payment Link.
+ * Retitled for founders Nov 6 2026 (Michael: "the guide for founders should be targeted to sell the guide").
+ * buyUrl is the live Stripe Payment Link; the page only goes live when Michael says ship.
  */
 export const setupGuide = {
-  name: 'Setting Up Your AI-Automation Business',
+  name: 'The Founder Stack',
+  subtitle: 'Set up the lean, automated backend NeonKey runs on',
   price: 97,
-  // Michael chose (Nov 6 2026) a dated launch price plus a bundled Email Lockdown. The date and the later
-  // price are placeholders until he confirms them, and the price MUST really go up on that date.
+  // Michael chose (Nov 6 2026) a dated launch price plus a bundled Email Lockdown. The price MUST really go up on
+  // launchEnds: change price to priceAfter (and the Stripe link) that day, or remove the line.
   launchEnds: 'November 30, 2026',
   priceAfter: 149,
   // Real standalone price of the included Lockdown (emailLockdown.from).
   includesLockdown: true,
-  buyUrl: '',
+  buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
 };
 
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */

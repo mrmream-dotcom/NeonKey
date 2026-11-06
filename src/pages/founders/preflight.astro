@@ -1,0 +1,240 @@
+---
+// Free Launch Preflight for founders: checks a domain's public DNS (email authentication, inbox readiness, basic
+// domain hygiene) right in the browser through Cloudflare's public DNS-over-HTTPS resolver. Nothing is stored or
+// sent to NeonKey; the only request leaves the browser for cloudflare-dns.com (allowed in public/_headers).
+// Founders track (Nov 6 2026): kept apart from the small-business pages, linked only from /founders/ and the footer.
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { setupGuide, emailLockdown, usd } from '../../data/services';
+---
+<Base title="Free Launch Preflight for founders" description="Free check for founders: see if your domain's email will land before you send a launch email or cold outreach. SPF, DKIM, DMARC, MX and more, in seconds. Nothing is stored.">
+  <PageHeader eyebrow="Free tool · For founders" title="Launch Preflight" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: 'Launch Preflight' }]}>
+    <p class="lede">Before your launch email or first cold outreach goes out, check that your domain is set up so inboxes trust it. Type your domain and get a plain report with what to fix first.</p>
+    <Fragment slot="meta">
+      <li><span>Free</span></li>
+      <li><span>No signup</span></li>
+      <li><span>Runs in your browser</span></li>
+    </Fragment>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container narrow-ish">
+      <form class="panel topline pf-form" data-pf-form novalidate>
+        <label for="pf-domain" class="pf-label">Your domain</label>
+        <div class="pf-row">
+          <input id="pf-domain" name="domain" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourstartup.com" maxlength="253" required />
+          <button type="submit" class="btn btn-primary" data-umami-event="preflight-run" data-umami-event-track="founders">Run the check</button>
+        </div>
+        <p class="form-note">We only read public DNS records, the same ones every mail server looks up. Nothing is changed, stored or sent to NeonKey.</p>
+        <p class="form-note pf-status" data-pf-status role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="pf-results" data-pf-results hidden>
+        <div class="panel topline pf-summary" data-pf-summary></div>
+        <ol class="pf-list" data-pf-list></ol>
+        <div class="panel topline accent-magenta pf-next">
+          <h2 class="pf-h">What to do next</h2>
+          <p><strong>Want it fixed for you?</strong> The <a href={url('/services/email-lockdown/')} data-umami-event="preflight-cta" data-umami-event-target="lockdown" data-umami-event-track="founders">Email Lockdown</a> ({usd(emailLockdown.from)}) checks your records and hands you the exact ones to add, with a PDF report.</p>
+          <p><strong>Want to build the whole backend yourself?</strong> <a href={url('/founders/guide/')} data-umami-event="preflight-cta" data-umami-event-target="guide" data-umami-event-track="founders">{setupGuide.name}</a> is the step-by-step guide to the stack NeonKey runs on: domain and email, website, Stripe, a product that delivers itself, outreach and lead tracking. An Email Lockdown is included.</p>
+        </div>
+      </div>
+
+      <div class="panel pf-about">
+        <h2 class="pf-h">What this checks</h2>
+        <ul>
+          <li><strong>MX:</strong> whether your domain can receive mail, and which provider handles it.</li>
+          <li><strong>SPF:</strong> the public list of services allowed to send as you, and whether it stays under the 10-lookup limit.</li>
+          <li><strong>DKIM:</strong> a signing key for common providers (Google, Microsoft, Resend and others). We can only test well-known selector names, so a miss here isn't proof you have none.</li>
+          <li><strong>DMARC:</strong> the policy that tells Gmail, Yahoo and Microsoft what to do with mail that fails, and whether you get reports.</li>
+          <li><strong>Extras:</strong> MTA-STS, TLS reporting and CAA, the small records that harden a domain.</li>
+        </ul>
+        <p class="muted">Passing all of these doesn't guarantee the inbox. Content, volume, sending reputation and each provider's own filters matter too. It does remove the most common setup reasons mail gets filtered.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const DOH = 'https://cloudflare-dns.com/dns-query';
+  const SELECTORS = ['google', 'selector1', 'selector2', 'resend', 'default', 'k1', 'k2', 's1', 's2', 'mail', 'dkim', 'smtp', 'zoho', 'protonmail', 'fm1', 'mxvault', 'sig1', 'mandrill', 'pm'];
+  const TYPES: Record<string, number> = { TXT: 16, MX: 15, CNAME: 5, CAA: 257, A: 1, AAAA: 28 };
+
+  type Status = 'ok' | 'warn' | 'bad' | 'info';
+  interface Finding { status: Status; title: string; detail: string; fix?: string }
+
+  const form = document.querySelector<HTMLFormElement>('[data-pf-form]');
+  const input = document.querySelector<HTMLInputElement>('#pf-domain');
+  const statusEl = document.querySelector<HTMLElement>('[data-pf-status]');
+  const results = document.querySelector<HTMLElement>('[data-pf-results]');
+  const summary = document.querySelector<HTMLElement>('[data-pf-summary]');
+  const list = document.querySelector<HTMLElement>('[data-pf-list]');
+
+  function clean(raw: string): string | null {
+    let d = raw.trim().toLowerCase();
+    d = d.replace(/^[a-z]+:\/\//, '').replace(/^[^@\/]*@/, '').split(/[\/?#:]/)[0].replace(/\.$/, '').replace(/^www\./, '');
+    return /^(?=.{3,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(d) ? d : null;
+  }
+
+  async function q(name: string, type: string): Promise<string[]> {
+    const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`, { headers: { accept: 'application/dns-json' } });
+    if (!r.ok) throw new Error('lookup failed');
+    const data = await r.json();
+    return (data.Answer || []).filter((a: { type: number }) => a.type === TYPES[type]).map((a: { data: string }) => a.data);
+  }
+  async function txt(name: string): Promise<string[]> {
+    const raw = await q(name, 'TXT');
+    return raw.map((d) => { const parts = d.match(/"((?:[^"\\]|\\.)*)"/g); return parts ? parts.map((p) => p.slice(1, -1)).join('') : d; });
+  }
+
+  function provider(mx: string[]): string {
+    const s = mx.join(' ').toLowerCase();
+    const known: [string, string][] = [['google', 'Google Workspace'], ['outlook', 'Microsoft 365'], ['zoho', 'Zoho Mail'], ['protonmail', 'Proton Mail'], ['secureserver', 'GoDaddy email'], ['mxroute', 'MXroute'], ['messagingengine', 'Fastmail'], ['cloudflare', 'Cloudflare Email Routing'], ['porkbun', 'Porkbun forwarding'], ['titan', 'Titan Email'], ['icloud', 'iCloud Mail'], ['hostinger', 'Hostinger email'], ['improvmx', 'ImprovMX forwarding']];
+    for (const [k, label] of known) if (s.includes(k)) return label;
+    return 'an email host we did not recognize';
+  }
+
+  async function spfLookups(record: string, depth = 0, seen = new Set<string>()): Promise<number> {
+    let n = 0;
+    for (const term of record.split(/\s+/).slice(1)) {
+      const t = term.replace(/^[+\-~?]/, '').toLowerCase();
+      if (t.startsWith('include:') || t.startsWith('redirect=')) {
+        n += 1;
+        const dom = t.split(/[:=]/)[1];
+        if (dom && !seen.has(dom) && depth < 4) {
+          seen.add(dom);
+          const sub = (await txt(dom).catch(() => [])).find((r) => r.toLowerCase().startsWith('v=spf1'));
+          if (sub) n += await spfLookups(sub, depth + 1, seen);
+        }
+      } else if (/^(a|mx|ptr|exists:)/.test(t) && t !== 'all') n += 1;
+    }
+    return n;
+  }
+
+  async function run(domain: string): Promise<Finding[]> {
+    const f: Finding[] = [];
+    const [mx, rootTxt, dmarcTxt, stsTxt, tlsTxt, caa, a] = await Promise.all([
+      q(domain, 'MX'), txt(domain), txt(`_dmarc.${domain}`), txt(`_mta-sts.${domain}`).catch(() => []), txt(`_smtp._tls.${domain}`).catch(() => []), q(domain, 'CAA').catch(() => []), q(domain, 'A').catch(() => []),
+    ]);
+    const prov = mx.length ? provider(mx) : '';
+
+    if (mx.length === 1 && /^0\s+\.?$/.test(mx[0].trim())) f.push({ status: 'warn', title: 'Your domain says it takes no email (null MX)', detail: `${domain} publishes a null MX record, so mail to it is refused, including replies to anything you send.`, fix: 'If you plan to send from this domain, replace the null MX with your email provider\'s MX records.' });
+    else if (mx.length) f.push({ status: 'ok', title: 'Your domain can receive email', detail: `Mail for ${domain} goes to ${prov}.` });
+    else f.push({ status: 'bad', title: 'No mail server found', detail: `Nothing is set up to receive email at ${domain}, so replies to your launch email or outreach may bounce.`, fix: 'Add the MX records your email provider gives you in your DNS settings.' });
+
+    const spf = rootTxt.filter((r) => r.toLowerCase().startsWith('v=spf1'));
+    if (!spf.length) f.push({ status: 'bad', title: 'No SPF record', detail: 'SPF is the public list of services allowed to send email as you. Without it, Gmail, Yahoo and Microsoft are more likely to filter your mail, and your address is easier to fake.', fix: `Add one TXT record at the root of your domain that starts with v=spf1 and lists your email provider${prov ? ` (${prov})` : ''} plus any sending tool you use, ending in ~all or -all. If your sending tool uses its own subdomain (Resend does), its SPF lives there.` });
+    else if (spf.length > 1) f.push({ status: 'bad', title: 'More than one SPF record', detail: 'Mail servers treat two SPF records as an error, which can count as a fail.', fix: 'Merge them into a single v=spf1 record.' });
+    else {
+      const rec = spf[0];
+      const n = await spfLookups(rec);
+      const ending = (rec.match(/[~\-?+]all\b/i) || [''])[0];
+      if (n > 10) f.push({ status: 'bad', title: `SPF needs about ${n} DNS lookups (limit is 10)`, detail: 'Past 10 lookups, SPF fails even for mail you really sent.', fix: 'Remove include: entries for tools you no longer use, or move a sending tool to its own subdomain.' });
+      else if (ending === '+all' || ending === '?all' || !ending) f.push({ status: 'warn', title: 'SPF is present but too loose', detail: `Your record ends with "${ending || 'nothing'}", which doesn't tell receivers to reject other senders.`, fix: 'End the record with ~all (soft fail) or -all (hard fail).' });
+      else f.push({ status: 'ok', title: 'SPF is set up', detail: `One record, about ${n} of 10 lookups used, ending in ${ending}.` });
+    }
+
+    const dmarc = dmarcTxt.find((r) => r.toLowerCase().startsWith('v=dmarc1'));
+    if (!dmarc) f.push({ status: 'bad', title: 'No DMARC record', detail: 'Since 2024, Gmail and Yahoo require DMARC from anyone sending in volume, and it is the record that stops other people sending as your domain.', fix: `Start with a TXT record at _dmarc.${domain}: v=DMARC1; p=none; rua=mailto:you@${domain}. Read the reports for a couple of weeks, then move to p=quarantine.` });
+    else {
+      const p = (dmarc.match(/;\s*p\s*=\s*(\w+)/i) || [])[1]?.toLowerCase() || '';
+      const rua = /rua\s*=/i.test(dmarc);
+      if (p === 'none') f.push({ status: 'warn', title: 'DMARC is in watch-only mode (p=none)', detail: 'Good first step: you get reports, but mail that fails is still delivered, so spoofed mail still gets through.', fix: 'Once your reports look clean, move to p=quarantine, then p=reject.' });
+      else if (p === 'quarantine' || p === 'reject') f.push({ status: 'ok', title: `DMARC is enforcing (p=${p})`, detail: rua ? 'You also receive aggregate reports.' : 'Mail that fails is filtered.' });
+      else f.push({ status: 'warn', title: 'DMARC record looks malformed', detail: 'We found a DMARC record but could not read its policy.', fix: 'Check that it includes p=none, p=quarantine or p=reject.' });
+      if (!rua) f.push({ status: 'warn', title: 'DMARC reports are off', detail: 'Without a rua= address you never see who is sending as your domain, or what is failing.', fix: `Add rua=mailto:reports@${domain} (any address you actually read) to the DMARC record.` });
+    }
+
+    const probe = async (s: string) => {
+      const name = `${s}._domainkey.${domain}`;
+      const [t, c] = await Promise.all([txt(name).catch(() => []), q(name, 'CNAME').catch(() => [])]);
+      return t.some((r) => /p=/i.test(r)) || c.length > 0;
+    };
+    // A wildcard DNS record answers every name, which would make every selector look like a hit.
+    const wildcard = await probe(`nk-probe-${Math.random().toString(36).slice(2, 10)}`);
+    const dkimHits = wildcard ? [] : (await Promise.all(SELECTORS.map(async (s) => ((await probe(s)) ? s : null)))).filter(Boolean);
+    if (wildcard) f.push({ status: 'info', title: 'DKIM could not be checked', detail: 'Your DNS answers every name (a wildcard record), so we cannot tell a real DKIM key from the wildcard. Check DKIM in your email provider\'s admin settings.' });
+    else if (dkimHits.length) f.push({ status: 'ok', title: 'DKIM signing key found', detail: `Selector${dkimHits.length > 1 ? 's' : ''}: ${dkimHits.join(', ')}.` });
+    else f.push({ status: 'warn', title: 'No DKIM key found at common selectors', detail: 'DKIM signs your mail so receivers can tell it really came from you. Your provider may use a selector name we cannot guess, so check before changing anything.', fix: `Turn on DKIM in your email provider's admin settings${prov ? ` (${prov})` : ''} and add the record it gives you. Do the same in any tool that sends for you.` });
+
+    f.push(stsTxt.some((r) => r.toLowerCase().startsWith('v=stsv1'))
+      ? { status: 'ok', title: 'MTA-STS is on', detail: 'Mail sent to you must use an encrypted connection.' }
+      : { status: 'info', title: 'MTA-STS is off (optional)', detail: 'It forces encrypted delivery of mail sent to you. Nice to have, not urgent for a launch.' });
+    f.push(tlsTxt.some((r) => r.toLowerCase().startsWith('v=tlsrptv1'))
+      ? { status: 'ok', title: 'TLS reporting is on', detail: 'You get reports when encrypted delivery to you fails.' }
+      : { status: 'info', title: 'TLS reporting is off (optional)', detail: 'A TXT record at _smtp._tls that sends you delivery-encryption reports. Pairs with MTA-STS.' });
+    f.push(caa.length
+      ? { status: 'ok', title: 'CAA is set', detail: 'Only the certificate authorities you chose can issue certificates for your domain.' }
+      : { status: 'info', title: 'No CAA record (optional)', detail: 'CAA limits which companies can issue HTTPS certificates for your domain. Takes one record.' });
+    if (!a.length) f.push({ status: 'info', title: 'No website address at the root domain', detail: `${domain} has no A record. That's fine if your site lives on www, but links to the bare domain won't load.` });
+    return f;
+  }
+
+  function render(domain: string, f: Finding[]) {
+    if (!summary || !list || !results) return;
+    const bad = f.filter((x) => x.status === 'bad').length;
+    const warn = f.filter((x) => x.status === 'warn').length;
+    const verdict = bad ? 'Fix these before you send' : warn ? 'Close, with a few things to tighten' : 'Ready on the setup side';
+    summary.replaceChildren();
+    const h = document.createElement('h2'); h.className = 'pf-h'; h.textContent = `${domain}: ${verdict}`;
+    const p = document.createElement('p'); p.className = 'muted';
+    p.textContent = `${bad} to fix, ${warn} to tighten, ${f.filter((x) => x.status === 'ok').length} passing. Checked ${new Date().toLocaleString()}.`;
+    summary.append(h, p);
+    list.replaceChildren();
+    const order: Status[] = ['bad', 'warn', 'ok', 'info'];
+    const labels: Record<Status, string> = { bad: 'Fix', warn: 'Tighten', ok: 'Pass', info: 'Optional' };
+    for (const x of [...f].sort((m, n) => order.indexOf(m.status) - order.indexOf(n.status))) {
+      const li = document.createElement('li'); li.className = `pf-item pf-${x.status}`;
+      const tag = document.createElement('span'); tag.className = 'pf-tag'; tag.textContent = labels[x.status];
+      const t = document.createElement('strong'); t.textContent = x.title;
+      const d = document.createElement('p'); d.textContent = x.detail;
+      li.append(tag, t, d);
+      if (x.fix) { const fx = document.createElement('p'); fx.className = 'pf-fix'; fx.textContent = `How to fix: ${x.fix}`; li.append(fx); }
+      list.append(li);
+    }
+    results.hidden = false;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const domain = clean(input?.value || '');
+    if (!domain) { if (statusEl) statusEl.textContent = 'Enter a domain like yourstartup.com.'; return; }
+    const btn = form.querySelector<HTMLButtonElement>('button');
+    if (btn) btn.disabled = true;
+    if (statusEl) statusEl.textContent = `Checking ${domain}...`;
+    try {
+      render(domain, await run(domain));
+      if (statusEl) statusEl.textContent = '';
+      results?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      if (statusEl) statusEl.textContent = 'The DNS lookup did not go through. Check your connection or any content blocker, then try again.';
+    } finally { if (btn) btn.disabled = false; }
+  });
+
+  const pre = new URLSearchParams(location.search).get('domain');
+  if (pre && input) { input.value = pre; form?.requestSubmit(); }
+</script>
+
+<style is:global>
+  /* global: the result items are created by the script, so scoped styles would not reach them (all classes are pf- prefixed) */
+  .narrow-ish { max-width: 820px; }
+  .pf-form { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.25rem; }
+  .pf-label { font-weight: 700; }
+  .pf-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .pf-row input { flex: 1 1 240px; min-width: 0; }
+  .pf-h { font-size: 1.15rem; margin: 0 0 .4rem; }
+  .pf-results { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem; }
+  .pf-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .6rem; }
+  .pf-item { border: 1px solid var(--line); border-left-width: 4px; border-radius: 10px; padding: .75rem .9rem; }
+  .pf-item p { margin: .3rem 0 0; }
+  .pf-item strong { margin-left: .4rem; }
+  .pf-tag { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: .1rem .45rem; border-radius: 999px; background: var(--panel); }
+  .pf-bad { border-left-color: #ff4d6d; } .pf-bad .pf-tag { color: #ff4d6d; }
+  .pf-warn { border-left-color: #ffb020; } .pf-warn .pf-tag { color: #ffb020; }
+  .pf-ok { border-left-color: #2ee6a6; } .pf-ok .pf-tag { color: #2ee6a6; }
+  .pf-info { border-left-color: var(--muted, #8a93a6); } .pf-info .pf-tag { color: var(--muted, #8a93a6); }
+  .pf-fix { font-size: .92rem; color: var(--muted); }
+  .pf-next p { margin: .4rem 0; }
+  .pf-about ul { padding-left: 1.1rem; }
+  .pf-about li { margin-bottom: .4rem; }
+</style>

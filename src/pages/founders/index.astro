@@ -1,0 +1,38 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { setupGuide, usd } from '../../data/services';
+// Founders track (Nov 6 2026): tools and guides for startup founders, kept apart from the small-business pages.
+// Linked from the footer only; the main nav stays aimed at small businesses. Umami events carry track=founders.
+---
+<Base title="Tools for founders" description="Free and paid tools for founders from NeonKey: check that your launch email will land, and set up the lean, automated backend NeonKey runs on.">
+  <PageHeader eyebrow="NeonKey · For founders" title="Tools for founders" crumbs={[{ href: '/', label: 'Home' }, { label: 'Founders' }]}>
+    <p class="lede">NeonKey runs on a small, automated backend: a static website, email that passes authentication, Stripe checkout, a product that delivers itself and a lead tracker that records what actually happened. These are the tools and write-ups behind it, for founders building their own.</p>
+  </PageHeader>
+  <section style="padding-top:0">
+    <div class="container fd-grid">
+      <a class="panel topline fd-card" href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">
+        <span class="kicker">Free tool</span>
+        <h2>Launch Preflight</h2>
+        <p class="muted">Type your domain and see whether inboxes will trust your launch email or outreach: MX, SPF, DKIM, DMARC and more, with what to fix first. No signup.</p>
+        <span class="fd-go">Run the check</span>
+      </a>
+      <a class="panel topline accent-magenta fd-card" href={url('/founders/guide/')} data-umami-event="founders-nav" data-umami-event-target="guide" data-umami-event-track="founders">
+        <span class="kicker">Guide · PDF · {usd(setupGuide.price)}</span>
+        <h2>{setupGuide.name}</h2>
+        <p class="muted">{setupGuide.subtitle}, step by step: domain and email, website, Stripe, a self-delivering product, outreach and lead tracking. Includes an Email Lockdown.</p>
+        <span class="fd-go">See what's inside</span>
+      </a>
+    </div>
+    <div class="container"><p class="muted fd-note">Run a small business rather than a startup? Start at <a href={url('/services/')}>Services</a> instead.</p></div>
+  </section>
+</Base>
+<style>
+  .fd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+  .fd-card { display: flex; flex-direction: column; gap: .5rem; text-decoration: none; color: inherit; }
+  .fd-card h2 { font-size: 1.35rem; margin: 0; }
+  .fd-card p { margin: 0; }
+  .fd-go { margin-top: auto; font-weight: 700; color: var(--accent); }
+  .fd-note { margin-top: 1.25rem; }
+</style>
