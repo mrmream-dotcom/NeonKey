@@ -45,7 +45,7 @@ const canBuy = setupGuide.buyUrl !== '';
       </div>
       <aside class="panel topline accent-magenta sg-buy">
         <span class="kicker">Guide for founders · PDF</span>
-        <p class="price">{usd(setupGuide.price)}<small>Launch price through {setupGuide.launchEnds}, then {usd(setupGuide.priceAfter)}</small></p>
+        <p class="price">{usd(setupGuide.price)}<small>One-time. First edition, November 2026.</small></p>
         {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Lockdown for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
         {canBuy
           ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>

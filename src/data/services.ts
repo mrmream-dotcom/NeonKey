@@ -268,10 +268,7 @@ export const setupGuide = {
   name: 'The Founder Stack',
   subtitle: 'Set up the lean, automated backend NeonKey runs on',
   price: 97,
-  // Michael chose (Nov 6 2026) a dated launch price plus a bundled Email Lockdown. The price MUST really go up on
-  // launchEnds: change price to priceAfter (and the Stripe link) that day, or remove the line.
-  launchEnds: 'November 30, 2026',
-  priceAfter: 149,
+  // No dated increase (Nov 6 2026): $97 until the first 10 sales, then raise it for real.
   // Real standalone price of the included Lockdown (emailLockdown.from).
   includesLockdown: true,
   buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
