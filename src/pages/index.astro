@@ -18,7 +18,7 @@ const leadStory = latestArticles.find((a) => a.date);
 const moreStories = latestArticles.filter((a) => a !== leadStory).slice(0, 3);
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const pillars = [
-  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Practical automations and remote small-office IT setup for small businesses. Clear setup and handoff.',
+  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Lead follow-up systems and remote small-office IT for small businesses, so fewer inquiries slip away. Clear setup and handoff.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
   { cls: 'm', title: 'Unlock Deals', href: '/reviews/', link: 'Read reviews', text: 'Honest takes on gear and software worth your money, with pros, cons and a plain verdict.',
     icon: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>' },
@@ -78,15 +78,15 @@ const jsonLd = {
       description: 'NeonKey helps beginners and builders get more out of tech through practical AI automations, remote small-office IT services, honest gear picks, hands-on tutorials and a weekly email.',
       founder: { '@type': 'Person', name: 'Michael Ream', url: abs('/about/') },
       areaServed: usArea,
-      knowsAbout: ['AI automation', 'Small-office IT setup', 'Cybersecurity basics', 'Technology tutorials', 'Computer hardware and software'],
+      knowsAbout: ['Lead follow-up systems', 'Speed to lead', 'Customer reactivation', 'AI automation', 'Small-office IT setup', 'Cybersecurity basics', 'Technology tutorials', 'Computer hardware and software'],
     },
     {
       '@type': 'WebPage',
       '@id': `${home}#webpage`,
       url: home,
-      name: 'NeonKey: Office IT Setup and AI Automation for Small Businesses',
-      headline: 'Office IT and practical AI for small businesses.',
-      description: 'Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides, Lab demos and a weekly email.',
+      name: 'NeonKey | Lead Follow-Up and Office IT for Small Businesses',
+      headline: 'Stop losing leads to slow replies and forgotten follow-ups.',
+      description: 'Lead follow-up systems and office IT for small businesses: faster replies to new inquiries, follow-up on quiet quotes, and secure business email. Done remotely anywhere in the US.',
       inLanguage: 'en',
       isPartOf: { '@id': `${home}#website` },
       about: { '@id': orgId },
@@ -135,7 +135,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description="Office IT setup, security basics and practical AI automation for small businesses, done remotely anywhere in the US. Plus free guides and a weekly email.">
+<Base title="Home" description="Stop losing leads to slow replies and forgotten follow-ups. Lead follow-up systems and office IT for small businesses, set up remotely anywhere in the US.">
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="hero hero-bg">
     <div class="hero-art" aria-hidden="true">
@@ -159,10 +159,9 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <p><strong>Start with your email.</strong><span class="hl-more"> {emailLockdown.name}: {usd(emailLockdown.from)} flat, done remotely, buy online with no call.</span></p>
         <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="lockdown-cta" data-umami-event-offer={emailLockdown.name} data-umami-event-location="home-hero">Lock down my email · {usd(emailLockdown.from)}</a>
       </div>
-      <span class="kicker">Unlock tech, whatever your level</span>
-      <h1><span data-ab="hero:a">Office IT and <span class="glow">practical AI</span><br /> for <span class="glow-m">small businesses.</span></span><span data-ab="hero:b">Fewer missed leads. <span class="glow">Faster answers for customers.</span><br /> <span class="glow-m">Keep the office running.</span></span></h1>
-      <p class="lead" data-ab="hero:a">Fixed-scope setups, security basics and AI intake tools, built on accounts you own. Done remotely, anywhere in the US.</p>
-      <p class="lead" data-ab="hero:b">Lead follow-up, AI intake and office IT for small businesses, set up on accounts you own, with a written quote before any work. Done remotely, anywhere in the US.</p>
+      <span class="kicker">Lead follow-up and office IT for small businesses</span>
+      <h1><span data-ab="hero:a">Stop losing leads to <span class="glow">slow replies</span><br /> and <span class="glow-m">forgotten follow-ups.</span></span><span data-ab="hero:b">How many inquiries went <span class="glow">unanswered</span><br /> <span class="glow-m">last month?</span></span></h1>
+      <p class="lead">We set up a system that puts every website and email inquiry on one list, alerts the right person, and reminds you when a quote goes quiet. Written quote first, accounts you own, done remotely anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a written quote</a>
         <a class="btn btn-alt" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
@@ -174,16 +173,16 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Two ways we help" intro="Pick the one that sounds like you. Every project is scoped with you and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <SectionHeading id="svc-h" eyebrow="Services" title="Fix the leaks that cost you customers" intro="Pick the one that sounds like you. Every project is scoped with you and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-2 home-offers">
         <article class="card offer-featured topline accent-magenta" id="front-office">
-          <span class="kicker">Lead follow-up · Remote · {usd(fop.from)}</span>
+          <span class="kicker">Speed to lead · Follow-up · Remote · {usd(fop.from)}</span>
           <h3><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
           <OfferNameLabel offer={fop} />
-          <p class="offer-outcome">Keep quote requests and follow-ups in one place.</p>
+          <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold.</p>
           <ul class="home-offer-list">
-            <li>Requests from your website form or shared inbox land on one list</li>
-            <li>Your team sees who's handling each request and when to follow up</li>
+            <li>Requests from your website form or shared inbox land on one list, and the right person gets an alert</li>
+            <li>Follow-up reminders on day 1, 3 and 7 for quotes that go quiet, with a draft ready</li>
             <li>Reply drafts from your templates; a person sends every quote reply and follow-up</li>
             <li>Business email security set up, plus three months of support</li>
           </ul>
@@ -197,7 +196,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           <span class="kicker">Office IT · Remote · From {usd(remoteIt.from)}</span>
           <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it"><OfferTitle offer={remoteIt} /></a></h3>
           <OfferNameLabel offer={remoteIt} />
-          <p class="offer-outcome">Get your office tech set up properly, all done over screen share.</p>
+          <p class="offer-outcome">Help your emails reach inboxes, not spam, and keep the office running. All done over screen share.</p>
           <ul class="home-offer-list">
             <li>A professional email address with your business name (you@yourbusiness.com)</li>
             <li>Settings that help your emails stay out of spam and stop scammers pretending to be you</li>
@@ -217,7 +216,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
         <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
       </div>
-      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Smaller jobs, like a one-task automation from {usd(quickWin.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Smaller jobs, like website inquiry alerts from {usd(quickWin.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>
 
@@ -317,7 +316,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       <div class="callout final-cta">
         <h2 id="lip-h" style="font-size:1.35rem">Built and documented in the open</h2>
         <p>I'm Michael Ream, and NeonKey is where I build, test and document as I go: homelab projects, AI automations and small-office IT setups. You'll see the results and lessons, including what I'd do differently. <a href={url('/about/')}>More about NeonKey →</a></p>
-        <p style="margin-bottom:0">Have a tech task you'd like off your plate? Tell us what's going on and we'll send a free quote.</p>
+        <p style="margin-bottom:0">Losing track of inquiries or quotes? Tell us where they come in and we'll send a free written quote.</p>
         <div class="btn-row" style="margin-top:1rem">
           <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-final">Get a written quote</a>
           <a class="btn btn-ghost" href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="home-final">Follow {INSTAGRAM_HANDLE}</a>

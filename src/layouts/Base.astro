@@ -32,7 +32,7 @@ const nav = [
 ];
 const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
 // Search results cut titles at about 60 characters, so long page titles drop the " | NeonKey" suffix.
-const fullTitle = title === 'Home' ? 'NeonKey: Office IT Setup and AI Automation for Small Businesses' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
+const fullTitle = title === 'Home' ? 'NeonKey | Lead Follow-Up and Office IT for Small Businesses' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 const ogImage = absoluteUrl(image, Astro.site);
