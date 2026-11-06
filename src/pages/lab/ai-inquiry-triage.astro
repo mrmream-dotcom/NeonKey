@@ -21,7 +21,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does
 <Base title={project.title} description="A working AI inquiry triage demo: sort a customer message, flag urgency, pull out key details and draft a reply for a human to review. Plus how it's built and what it costs.">
   <PageHeader eyebrow="Lab · AI · Automation · Live demo" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: labProject.title }]}>
     <Fragment slot="title">AI inquiry triage, <span class="glow-c">working demo.</span></Fragment>
-    <p class="lede">Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of one-workflow build in the <a href={url('/services/#quick-win')}>Quick Win</a>, running for real.</p>
+    <p class="lede">Paste a customer message and an AI sorts it, flags how urgent it is, pulls out the key details and drafts a friendly reply. A person still reads the draft and decides what to send. This is the kind of workflow we build, running for real. The simplest version is <a href={url('/services/#quick-win')}>Website Inquiry Capture &amp; Alerts</a>.</p>
     <Fragment slot="meta">
       <li><span>Level: <strong>{labProject.level}</strong></span></li>
       <li><span>{labProject.tags.join(' · ')}</span></li>
@@ -158,7 +158,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What it does
     <div class="lab-related">
       <div class="panel">
         <span class="kicker">Related service</span>
-        <h3 style="margin-top:.4rem">Quick Win</h3>
+        <h3 style="margin-top:.4rem">Website Inquiry Capture &amp; Alerts</h3>
         <p class="muted">Want something like this hooked into your own inbox, form or spreadsheet? Each build starts with a short scoping call to decide what's worth automating and what should stay manual.</p>
         <div class="btn-row">
           <a class="btn btn-primary btn-sm" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="lab-ai-inquiry-triage">See services</a>
