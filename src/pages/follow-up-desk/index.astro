@@ -1,0 +1,111 @@
+---
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { followUpDesk as fd, frontOfficePackage as fop, usd } from '../../data/services';
+// Follow-Up Desk: the self-serve product (Michael, Nov 7 2026). Buy, set up and run it with no call.
+// Everything after checkout is done by the neonkey-followup-desk Worker (workers/followup-desk).
+// The Buy button appears only once fd.buyUrl is set (Michael approves the $250/mo Stripe product first).
+const sample = [
+  { day: 'Day 3', subject: 'Your estimate for the kitchen remodel', body: 'Just checking that the estimate for the kitchen remodel reached you. Happy to answer any questions or adjust anything.' },
+  { day: 'Day 7', subject: 'Re: Your estimate for the kitchen remodel', body: 'Following up on the estimate for the kitchen remodel. If the timing or scope needs to change, just reply and let me know what would work better.' },
+  { day: 'Day 14', subject: 'Should I close out your estimate?', body: "I haven't heard back about the kitchen remodel, so I'll close out the estimate for now. If you'd still like to go ahead, just reply and we'll pick it right back up." },
+];
+---
+<Base title="Follow-Up Desk: Estimate Follow-Up" description={`Follow-Up Desk, ${usd(fd.from)}/month: add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}>
+  <PageHeader eyebrow="Self-serve · monthly" title="Stop letting estimates go quiet" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Follow-Up Desk' }]}>
+    <p class="lede">Add the estimates you've sent. The Follow-Up Desk checks in with each customer for you, under your business name, and stops the moment they reply. You set it up yourself in about five minutes. No call needed.</p>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container fd-grid">
+      <div>
+        <div class="panel topline">
+          <h2 class="fd-h">How it works</h2>
+          <ol class="fd-steps">
+            <li><strong>Sign up.</strong> You get a private link to your dashboard by email. There's no password to remember.</li>
+            <li><strong>Add your details.</strong> Your business name, the email replies should go to, and how you sign off. The three messages are written for you, and you can change every word.</li>
+            <li><strong>Add the estimates you've sent.</strong> One at a time, or paste a list exported from QuickBooks, Jobber or a spreadsheet.</li>
+            <li><strong>That's it.</strong> Follow-ups go out on weekday mornings, your time. When a customer replies, their reply lands in your inbox and that job's follow-ups stop on their own.</li>
+          </ol>
+        </div>
+
+        <div class="panel topline">
+          <h2 class="fd-h">What your customer gets</h2>
+          <p class="muted">Short, plain notes that read like they came from you. These are the defaults for an estimate; there are matching sets for unpaid invoices and new inquiries.</p>
+          <div class="fd-mails">
+            {sample.map((m) => (
+              <div class="fd-mail">
+                <span class="fd-day">{m.day}</span>
+                <strong>{m.subject}</strong>
+                <p>Hi Jane,</p>
+                <p>{m.body}</p>
+                <p class="muted">Pat, Sample Roofing Co</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="panel topline">
+          <h2 class="fd-h">Why not just use QuickBooks or Jobber reminders?</h2>
+          <p class="muted">Those tools can send reminders too, and if they already do the job for you, keep using them. The Follow-Up Desk is for estimates that go quiet over email, and it's built around one rule: <strong>the moment a customer answers, the follow-ups stop</strong> and the answer comes to you. Out-of-office replies don't count as an answer, a bad email address shows up in your Monday report, and anyone can ask to stop with one click.</p>
+        </div>
+
+        <div class="panel topline">
+          <h2 class="fd-h">Good to know</h2>
+          <ul class="muted">
+            <li>Follow-ups go out Monday to Friday, between 9 AM and noon in your time zone, at most 60 a day.</li>
+            <li>You pick the days (3, 7 and 14 by default) and write your own wording. Send yourself a preview anytime.</li>
+            <li>Emails come from your business name at a NeonKey sending address, and replies reach your own inbox. You can get a copy of every follow-up.</li>
+            <li>Only add people who asked you for an estimate or are already your customers. It isn't for cold email or bought lists.</li>
+            <li>It doesn't connect to QuickBooks yet. You add estimates on the dashboard or paste an export.</li>
+            <li>More follow-ups don't guarantee more jobs. What it does is make sure nobody slips through because you were busy.</li>
+            <li>Cancel anytime from the billing link on your dashboard. Follow-ups stop when your subscription ends, and your list is deleted 30 days later.</li>
+          </ul>
+        </div>
+
+        <div class="panel topline">
+          <h2 class="fd-h">Want it set up for you instead?</h2>
+          <p class="muted">The Follow-Up Desk is do-it-yourself. If you'd rather have new requests from your website and inbox routed, answered with drafts and tracked on one list, that's the <a href={url('/services/#front-office-package')}>{fop.name}</a>, a custom setup done with you.</p>
+        </div>
+      </div>
+
+      <aside class="panel topline accent-magenta fd-buy">
+        <span class="kicker">{fd.kicker}</span>
+        <p class="price">{usd(fd.from)}<small>per month · cancel anytime</small></p>
+        <ul class="fd-list">
+          {fd.items.map((i) => <li>{i}</li>)}
+        </ul>
+        {fd.buyUrl
+          ? <a class="btn btn-primary" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start now · {usd(fd.from)}/mo</a>
+          : <a class="btn btn-primary" href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Ask about it</a>}
+        {fd.buyUrl
+          ? <p class="muted fd-small">Secure checkout by Stripe. Your dashboard link arrives by email within a few minutes.</p>
+          : <p class="muted fd-small">Online signup opens soon. Send a message and you'll hear back by email.</p>}
+        <p class="muted fd-small">Already signed up? <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">Get your dashboard link</a>.</p>
+        <p class="muted fd-small">See the <a href={url('/terms/#follow-up-desk')}>terms</a> and <a href={url('/privacy/#follow-up-desk')}>what we keep</a>.</p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .fd-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 820px) { .fd-grid { grid-template-columns: 1fr; } .fd-buy { order: -1; } }
+  .fd-grid > div > .panel { margin-bottom: 1.25rem; }
+  .fd-h { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .fd-steps { padding-left: 1.2rem; margin: 0; }
+  .fd-steps li, .fd-grid ul li { margin-bottom: .5rem; }
+  .fd-grid ul { padding-left: 1.1rem; }
+  .fd-mails { display: grid; gap: .75rem; }
+  .fd-mail { border: 1px solid var(--line, #262b52); border-radius: 12px; padding: .8rem 1rem; }
+  .fd-mail p { margin: .35rem 0; }
+  .fd-day { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--cyan, #22d3ee); }
+  .fd-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 1rem; }
+  @media (max-width: 820px) { .fd-buy { position: static; } }
+  .fd-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
+  .fd-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
+  .fd-buy .btn { align-self: flex-start; }
+  .fd-list { margin: 0; padding-left: 1.1rem; font-size: .92rem; }
+  .fd-small { font-size: .88rem; margin: 0; }
+</style>

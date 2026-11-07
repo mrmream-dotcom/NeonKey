@@ -1,0 +1,42 @@
+# NeonKey Follow-Up Desk Worker: the self-serve $250/mo product. Stripe signup -> private dashboard -> follow-ups
+# sent under the customer's business name -> a customer reply stops them and lands in the owner's inbox.
+# Shares nothing with the other workers (its own Stripe webhook endpoint and secret, its own KV, its own sending domain).
+# Secrets (set with `wrangler secret put`, never committed, never pasted in chat):
+#   STRIPE_WEBHOOK_SECRET  whsec_... from THIS Worker's own Stripe endpoint (/stripe)
+#   RESEND_API_KEY         Resend key that can send from DESK_DOMAIN and neonkey.tech
+#   RESEND_WEBHOOK_SECRET  whsec_... from the Resend webhook pointed at /resend (email.bounced, email.complained)
+name = "neonkey-followup-desk"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# Where dashboard links point. Change to a custom domain later if one is added.
+APP_URL = "https://neonkey-followup-desk.mr-mream.workers.dev"
+# Follow-ups are sent from followups@DESK_DOMAIN and replies come back to r-...@DESK_DOMAIN.
+# Its own subdomain, so customer follow-ups never affect neonkey.tech's sending reputation.
+# Needs: the domain verified in Resend, and Cloudflare Email Routing on it with a catch-all sent to this Worker.
+DESK_DOMAIN = "desk.neonkey.tech"
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+NOTIFY_TO = "hello@neonkey.tech"
+REPLY_TO = "hello@neonkey.tech"
+# NeonKey's own emails (welcome, links, reports, notices) are BCC'd here. Follow-ups and reply forwards are not.
+BCC_ADDRESS = "mr.mream@gmail.com"
+# Only checkouts from this Payment Link create accounts. EMPTY until Michael approves the $250/mo Stripe product.
+DESK_PAYMENT_LINK = ""
+# Stripe customer portal login link (billing and cancel). Set when the portal is turned on in Stripe.
+PORTAL_URL = ""
+ALLOW_LIVE = "false"
+
+# Accounts, sign-in token hashes and stop markers. Create with: npx wrangler kv namespace create neonkey-desk
+[[kv_namespaces]]
+binding = "DESK"
+id = "REPLACE_AT_DEPLOY"
+
+# Hourly: each account sends only on weekdays 9 AM to noon in its own time zone; Monday 8 AM report.
+[triggers]
+crons = ["5 * * * *"]
+
+[observability]
+enabled = false
