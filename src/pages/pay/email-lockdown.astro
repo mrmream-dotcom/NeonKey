@@ -2,18 +2,18 @@
 import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-// Email Lockdown intake for PAID orders. Unlisted and noindex: linked only from /pay/thanks/ (Stripe's after-payment page).
+// Email Authentication Setup intake for PAID orders. Unlisted and noindex: linked only from /pay/thanks/ (Stripe's after-payment page).
 // Answers go to hello@ via web3forms; match them to the Stripe payment notice by checkout email before doing any work.
 ---
-<Base title="Email Lockdown questions" description="Five quick questions for your Email Lockdown order." noindex>
-  <PageHeader width="narrow" eyebrow="Email Lockdown · Paid order" title="Five quick questions" crumbs={[{ href: '/', label: 'Home' }, { label: 'Email Lockdown questions' }]}>
+<Base title="Email Authentication Setup questions" description="Five quick questions for your Email Authentication Setup order." noindex>
+  <PageHeader width="narrow" eyebrow="Email Authentication Setup · Paid order" title="Five quick questions" crumbs={[{ href: '/', label: 'Home' }, { label: 'Email Authentication Setup questions' }]}>
     <p class="lede">Thanks for your order. Your report is already on its way by email, usually within a few minutes. These questions are optional: they help us tailor anything that needs a closer look.</p>
   </PageHeader>
   <section style="padding-top:0">
     <div class="container narrow">
       <form class="panel" action="https://api.web3forms.com/submit" method="post">
         <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
-        <input type="hidden" name="subject" value="Email Lockdown intake (paid order)" />
+        <input type="hidden" name="subject" value="Email Authentication Setup intake (paid order)" />
         <input type="hidden" name="from_name" value="NeonKey website" />
         <input type="hidden" name="redirect" value="https://neonkey.tech/contact/thanks/" />
         <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />

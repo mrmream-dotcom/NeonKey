@@ -248,7 +248,7 @@ test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with
   assert.equal(buyer.from, env.FROM_ADDRESS);
   assert.deepEqual(buyer.bcc, ["bcc@example.com"]);
   assert.equal(buyer.reply_to, "hello@neonkey.tech");
-  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Lockdown report for bare\.test/);
+  assert.match(buyer.subject, /^\[TEST\] 🔑 Your Email Authentication Setup report for bare\.test/);
   assert.match(buyer.html, /1 of 4 checks passing/);
   assert.equal(buyer.attachments.length, 1);
   assert.match(buyer.attachments[0].filename, /NeonKey-Email-Report-bare\.test\.html/);

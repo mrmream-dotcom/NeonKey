@@ -20,7 +20,7 @@ export function priceLine(o: Offer): string {
 }
 const QW_UPSELL = `Want more than one form handled, or your whole office set up? That\'s what the ${remoteIt.name} (starting at ${usd(remoteIt.from)}) and the ${frontOfficePackage.name} are for.`;
 // F and L results point at the Front Office Package: the $499/$799 parts are quoted on request, not listed (Nov 4 2026).
-const PACKAGE_PRICE = () => `This is part of the ${frontOfficePackage.name}: ${usd(frontOfficePackage.from)} flat for the assistant, lead routing, an email lockdown and three months of support. Need only this one piece? Ask, and we'll quote it on its own.`;
+const PACKAGE_PRICE = () => `This is part of the ${frontOfficePackage.name}: ${usd(frontOfficePackage.from)} flat for the assistant, lead routing, email authentication setup and three months of support. Need only this one piece? Ask, and we'll quote it on its own.`;
 export const PRICE_DISCLAIMER = `Pricing is a starting point, not a quote. ${introPricing.label} apply to the first 10 clients.`;
 
 // ------------------------------------------------------------------ questions
@@ -356,7 +356,7 @@ function addPicks(v: PlanView, p: Plan) {
     const f = frontOfficePackage;
     v.packagePick = {
       name: f.name, price: showPackageValue ? `${usd(f.from)}, ${usd(f.value)}+ value` : usd(f.from), href: f.href!,
-      text: `Both repeat questions and missed inquiries came up in your answers. The ${f.name} (the Start-Up Deal) bundles the ${aiFaq.name}, the ${leadRouting.name}, an email security lockdown and three months of the ${remoteSupportPlan.name} as one connected system.`,
+      text: `Both repeat questions and missed inquiries came up in your answers. The ${f.name} (the Start-Up Deal) bundles the ${aiFaq.name}, the ${leadRouting.name}, email authentication setup and three months of the ${remoteSupportPlan.name} as one connected system.`,
     };
   }
 
@@ -371,9 +371,9 @@ function addPicks(v: PlanView, p: Plan) {
       case 'L': return a.q6 === 'B' || a.q3 === 'E' ? 'Fits: inquiries arrive in several places and some get missed.' : 'For businesses losing leads between inboxes. Did not come up in your answers.';
       case 'T': return p.local ? 'Fits: you are in Fairbanks or North Pole, so the basics can be checked and fixed in person.' : 'On-site only, in Fairbanks and North Pole, Alaska. Not available where you are; the remote setup covers the same ground.';
       case 'P': return p.packageFit ? 'Fits: both repeat questions and missed inquiries came up. All four parts as one system.'
-        : pick === 'F' ? `${fit('F')} The FAQ assistant, lead routing, email lockdown and three months of support as one project.`
-        : pick === 'L' ? `${fit('L')} Lead routing, the FAQ assistant, email lockdown and three months of support as one project.`
-        : 'The FAQ assistant, lead routing, email lockdown and three months of support as one project. Best when repeat questions or missed inquiries are a problem.';
+        : pick === 'F' ? `${fit('F')} The FAQ assistant, lead routing, email authentication setup and three months of support as one project.`
+        : pick === 'L' ? `${fit('L')} Lead routing, the FAQ assistant, email authentication setup and three months of support as one project.`
+        : 'The FAQ assistant, lead routing, email authentication setup and three months of support as one project. Best when repeat questions or missed inquiries are a problem.';
     }
   };
   v.allOptions = [

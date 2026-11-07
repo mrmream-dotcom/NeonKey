@@ -40,7 +40,7 @@ export const OFFERS = [
   { key: "nk_lead_routing", name: bySlug["lead-routing"].name, amount: bySlug["lead-routing"].from, slug: "lead-routing" },
   { key: "nk_front_office", name: frontOfficePackage.name, amount: frontOfficePackage.from, slug: frontOfficePackage.slug },
   { key: "nk_onsite_tuneup", name: "Office Tech Tune-Up (on-site, Fairbanks and North Pole)", amount: tuneUp, slug: "local-tune-up" },
-  { key: "nk_email_lockdown", name: "Email Lockdown (SPF, DKIM and DMARC checked and fixed)", amount: lockdown, slug: "email-lockdown" },
+  { key: "nk_email_lockdown", name: "Email Authentication Setup (SPF, DKIM and DMARC checked and fixed)", amount: lockdown, slug: "email-lockdown" },
 ].map((o) => ({ ...o, taxCode: SERVICES }));
 
 for (const o of OFFERS) {

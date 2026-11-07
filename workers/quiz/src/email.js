@@ -305,13 +305,13 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, need, mailingAdd
 
 /** Which NeonKey offer fits a kit lead's answer, for the internal copy only. */
 const KIT_FIT = {
-  email: "Remote Small-Office IT Setup or the $49 Email Lockdown",
+  email: "Remote Small-Office IT Setup or the $49 Email Authentication Setup",
   passwords: "Remote Small-Office IT Setup (password manager + 2FA)",
   backups: "Remote Small-Office IT Setup (backups)",
   devices: "Remote Small-Office IT Setup",
   leads: "Front Office Package or Lead-Routing",
   ai: "AI Intake & FAQ Assistant or the Front Office Package",
-  unsure: "Remote Small-Office IT Setup or a Quick Win (one form to a shared list)",
+  unsure: "Remote Small-Office IT Setup or Website Inquiry Capture & Alerts (one form to a shared list)",
 };
 
 /** Internal lead copy for a free kit download. */

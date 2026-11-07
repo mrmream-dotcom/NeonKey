@@ -1,12 +1,12 @@
 ---
-// $49 Email Lockdown entry offer: buy online, no call. The $49 is credited toward any larger package or setup
+// $49 Email Authentication Setup entry offer: buy online, no call. The $49 is credited toward any larger package or setup
 // (Michael, Nov 4 2026 8:19 PM AKST: "we'll take the 49 off any package"). Shown on the homepage and services page.
 import { url } from '../config';
 import { emailLockdown, lockdownCredit, usd } from '../data/services';
 interface Props { location: string }
 const { location } = Astro.props;
 ---
-<aside class="card topline accent-magenta lockdown-strip" aria-label="Email Lockdown">
+<aside class="card topline accent-magenta lockdown-strip" aria-label="Email Authentication Setup">
   <div class="ls-text">
     <span class="kicker">Start small · buy online · no call</span>
     <p class="ls-title"><strong>{emailLockdown.name}, {usd(emailLockdown.from)} flat.</strong> Make it harder for scammers to send email pretending to be you.</p>
