@@ -16,6 +16,13 @@ NOTIFY_TO = "hello@neonkey.tech"
 BCC_ADDRESS = "mr.mream@gmail.com"
 # Live-mode events are ignored unless this is "true". Michael approved live on Nov 4 2026.
 ALLOW_LIVE = "true"
+# Founder Stack Payment Link. Paid checkouts from it (or with metadata offer=nk_founder_stack_guide) get the PDF emailed.
+FOUNDER_STACK_LINK = "plink_1UYvrICRxS1tvAi2komKzvTp"
+
+# Private product files (the Founder Stack PDF). Never in the repo or on the site; no route serves it.
+[[kv_namespaces]]
+binding = "PRODUCTS"
+id = "d078b508b3954a908d17fe7bc72c8a65"
 
 [observability]
 enabled = false
