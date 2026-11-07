@@ -201,7 +201,7 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
   T.push(ask, note, "", "NeonKey · neonkey.tech · hello@neonkey.tech", "");
 
   const footer = [
-    "Prices on neonkey.tech are starting points, not quotes. You get a fixed quote after a short scoping call. Results depend on your business, your tools and your data, so no specific outcomes are promised.",
+    "Prices on neonkey.tech are starting points, not quotes. You get a fixed written quote before any work starts. Results depend on your business, your tools and your data, so no specific outcomes are promised.",
     `You're getting this because you asked for your plan on neonkey.tech. This is a one-time email${newsletter ? ", and you also asked for Unlock the Week: Kit will send a separate email to confirm that" : ""}. <a href="https://neonkey.tech/privacy/" style="color:${C.muted};text-decoration:underline;">Privacy</a>`,
   ];
   T.push("--", footer[0], footer[1].replace(/ <a .*$/, " Privacy: https://neonkey.tech/privacy/"));
