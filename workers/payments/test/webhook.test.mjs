@@ -147,7 +147,9 @@ test("Founder Stack matched by Payment Link id alone; no domain asks for a reply
 test("names and domains are escaped or rejected in the email", async () => {
   sent = [];
   await worker.fetch(signed(ev("checkout.session.completed", fsSession({ customer_details: { email: "a@example.com", name: "<b>x</b>" }, custom_fields: [{ key: "domain", text: { value: "<script>alert(1)</script>" } }] }))), fsEnv);
-  assert.doesNotMatch(sent[0].body.html, /<b>x<\/b>|<script>/);
+  const h = sent[0].body.html.toLowerCase();
+  assert.ok(!h.includes("<b>x</b>") && !h.includes("<script") && !h.includes("alert(1)"));
+  assert.ok(h.includes("&lt;b&gt;x&lt;/b&gt;"));
   assert.match(sent[0].body.text, /Reply to this email with the domain/);
 });
 
