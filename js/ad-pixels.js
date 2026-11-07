@@ -3,7 +3,7 @@
 // so Meta and Reddit can optimize ads for signups instead of clicks.
 // Pixel IDs are public identifiers, not secrets. An empty ID turns that pixel off.
 (function () {
-  var META_PIXEL_ID = '';
+  var META_PIXEL_ID = '1627095555828891';
   var REDDIT_PIXEL_ID = 'a2_jz9e1v2lgz8e';
   if (window.__nkAdPixels) return;
   window.__nkAdPixels = true;
