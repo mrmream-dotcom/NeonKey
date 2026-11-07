@@ -8,9 +8,9 @@ import PageHeader from '../components/PageHeader.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 ---
-<Base title="Unlock the Week: one-minute fixes for small businesses" description="Unlock the Week by NeonKey: one short email every Wednesday with a one-minute fix for your business tech or customer follow-up, plus a free guide from Learn. Unsubscribe anytime.">
+<Base title="Unlock the Week: a one-minute tech fix every Wednesday" description="Unlock the Week by NeonKey: one short email every Wednesday with a one-minute fix for your tech or your customer follow-up, plus a free guide from Learn. For small businesses, people starting one, and anyone who wants their tech to behave.">
   <PageHeader eyebrow="Newsletter · Every Wednesday" title="Unlock the Week" crumbs={[{ href: '/', label: 'Home' }, { label: 'Newsletter' }]} class="nl-head">
-    <p class="lede">One short email every Wednesday with one fix you can do in a few minutes: keep your tech secure, or catch more of the customers who reach out. Plus a free guide from Learn. Built for small business owners, useful for anyone.</p>
+    <p class="lede">One short email every Wednesday with one fix you can do in a few minutes: keep your tech secure, or catch more of the customers who reach out. Plus a free guide from Learn. Written with small businesses in mind, and useful whether you run one, are starting one, or just want your own tech to behave.</p>
     <Fragment slot="meta">
       <li><span>Every Wednesday</span></li>
       <li><span>About a one-minute read</span></li>
@@ -27,7 +27,7 @@ import Icon from '../components/Icon.astro';
     <div class="container">
       <SectionHeading id="get-h" eyebrow="Inside every issue" title="What you get" />
       <div class="grid grid-2 nl-get">
-        <div class="card topline accent-cyan"><div class="panel-head"><span class="icon-chip"><Icon name="shield" /></span><h3>Tech tips that keep you secure</h3></div><p>Small, practical fixes for the accounts, email, backups and Wi-Fi your business runs on, explained step by step without jargon.</p></div>
+        <div class="card topline accent-cyan"><div class="panel-head"><span class="icon-chip"><Icon name="shield" /></span><h3>Tech tips that keep you secure</h3></div><p>Small, practical fixes for the accounts, email, backups and Wi-Fi your business runs on, explained step by step without jargon. Most work just as well at home.</p></div>
         <div class="card topline accent-magenta"><div class="panel-head"><span class="icon-chip"><Icon name="spark" /></span><h3>Catch more customers</h3></div><p>Simple habits for the inquiries you already get: faster replies, missed calls, quotes that went quiet and reviews. No ads to buy, no new software required.</p></div>
         <div class="card topline accent-violet"><div class="panel-head"><span class="icon-chip"><Icon name="wrench" /></span><h3>A free guide from Learn</h3></div><p>When it fits the topic, each issue points to a free guide in <a href={url('/learn/')}>Learn</a> so you can go deeper at your own pace.</p></div>
         <div class="card topline accent-amber"><div class="panel-head"><span class="icon-chip"><Icon name="clock" /></span><h3>Short, and easy to leave</h3></div><p>One email a week, readable in about a minute. Your email is used only to send the newsletter and is never sold. Signups are handled by Kit; see the <a href={url('/privacy/')}>privacy policy</a>.</p></div>
@@ -37,10 +37,11 @@ import Icon from '../components/Icon.astro';
 
   <section class="alt" aria-labelledby="who-h">
     <div class="container">
-      <SectionHeading id="who-h" eyebrow="Who it's for" title="Made for the person who wears every hat" />
-      <div class="grid grid-2">
+      <SectionHeading id="who-h" eyebrow="Who it's for" title="One fix a week, whoever you are" />
+      <div class="grid grid-3">
         <div class="card"><h3>Small business owners and office managers</h3><p>You run the shop, answer the phone and keep the computers working. Each issue is one thing you can fix between jobs, often before lunch.</p></div>
-        <div class="card"><h3>Anyone who wants their tech to behave</h3><p>Most fixes work just as well at home: two-step login, backups, scam emails and Wi-Fi. If you're here for the tips and Learn guides, you're in the right place.</p></div>
+        <div class="card"><h3>People starting something</h3><p>Setting up a new business, side project or freelance gig? Get the basics right from day one: a secure email, a contact form that works, backups and a simple way to follow up.</p></div>
+        <div class="card"><h3>Anyone who wants their tech to behave</h3><p>Two-step login, backups, scam emails and Wi-Fi work the same at home. If you're here for the tips and Learn guides, you're in the right place.</p></div>
       </div>
     </div>
   </section>
