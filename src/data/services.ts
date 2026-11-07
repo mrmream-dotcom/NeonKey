@@ -279,7 +279,8 @@ export const setupGuide = {
  * info in and run with. the 999 is more for custom detailed set ups"). $250/month, cancel anytime. Runs on the
  * neonkey-followup-desk Worker (workers/followup-desk): Stripe checkout -> private dashboard link by email -> the owner
  * adds estimates -> follow-ups go out under their business name and stop when the customer replies.
- * buyUrl stays empty until Michael approves the $250/mo Stripe product; while empty the page shows "Ask about it".
+ * Live Nov 7 2026 (Michael: "yes on the free trial but make sure they add payment beforehand"): 14-day free trial,
+ * card required at checkout, then $250/month. While buyUrl is empty the page shows "Ask about it".
  */
 export const followUpDesk: Offer = {
   slug: 'follow-up-desk',
@@ -292,8 +293,11 @@ export const followUpDesk: Offer = {
   for: 'For contractors and service businesses that send estimates by email',
   items: ['Up to three follow-ups per estimate, written in your words', 'Sent under your business name on weekday mornings', 'Stops on its own when your customer replies, and the reply comes to your inbox', 'Mark jobs Won, Lost or Stop with one click', 'A short report every Monday', 'Paste a list from QuickBooks or a spreadsheet'],
   href: '/follow-up-desk/',
-  buyUrl: '',
+  buyUrl: 'https://buy.stripe.com/7sY4gydNsbIQ00TcgQb3q03',
 };
+
+/** Free trial on the Follow-Up Desk Payment Link (Stripe subscription_data.trial_period_days). Card required. */
+export const followUpDeskTrialDays = 14;
 
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {

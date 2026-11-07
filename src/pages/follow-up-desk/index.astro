@@ -2,7 +2,7 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { followUpDesk as fd, frontOfficePackage as fop, usd } from '../../data/services';
+import { followUpDesk as fd, followUpDeskTrialDays as trial, frontOfficePackage as fop, usd } from '../../data/services';
 // Follow-Up Desk: the self-serve product (Michael, Nov 7 2026). Buy, set up and run it with no call.
 // Everything after checkout is done by the neonkey-followup-desk Worker (workers/followup-desk).
 // The Buy button appears only once fd.buyUrl is set (Michael approves the $250/mo Stripe product first).
@@ -12,7 +12,7 @@ const sample = [
   { day: 'Day 14', subject: 'Should I close out your estimate?', body: "I haven't heard back about the kitchen remodel, so I'll close out the estimate for now. If you'd still like to go ahead, just reply and we'll pick it right back up." },
 ];
 ---
-<Base title="Follow-Up Desk: Estimate Follow-Up" description={`Follow-Up Desk, ${usd(fd.from)}/month: add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}>
+<Base title="Follow-Up Desk: Estimate Follow-Up" description={`Follow-Up Desk: ${trial} days free, then ${usd(fd.from)}/month. Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}>
   <PageHeader eyebrow="Self-serve · monthly" title="Stop letting estimates go quiet" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Follow-Up Desk' }]}>
     <p class="lede">Add the estimates you've sent. The Follow-Up Desk checks in with each customer for you, under your business name, and stops the moment they reply. You set it up yourself in about five minutes. No call needed.</p>
   </PageHeader>
@@ -23,7 +23,7 @@ const sample = [
         <div class="panel topline">
           <h2 class="fd-h">How it works</h2>
           <ol class="fd-steps">
-            <li><strong>Sign up.</strong> You get a private link to your dashboard by email. There's no password to remember.</li>
+            <li><strong>Start your free trial.</strong> {trial} days free, card required, cancel anytime. You get a private link to your dashboard by email. There's no password to remember.</li>
             <li><strong>Add your details.</strong> Your business name, the email replies should go to, and how you sign off. The three messages are written for you, and you can change every word.</li>
             <li><strong>Add the estimates you've sent.</strong> One at a time, or paste a list exported from QuickBooks, Jobber or a spreadsheet.</li>
             <li><strong>That's it.</strong> Follow-ups go out on weekday mornings, your time. When a customer replies, their reply lands in your inbox and that job's follow-ups stop on their own.</li>
@@ -68,7 +68,7 @@ const sample = [
             <li><strong>Slipping through the cracks is common.</strong> When Harvard Business Review researchers sent a web inquiry to 2,241 US companies, 23% never answered at all. Usually that's because people are busy, not because they don't care.</li>
             <li><strong>Unpaid invoices hurt cash flow.</strong> In Intuit QuickBooks' 2025 survey of 2,487 US small businesses, 56% were owed money on unpaid invoices, about $17,500 on average. Businesses with overdue invoices were more likely to report cash-flow problems (50% vs 34%). The Desk has a polite reminder set for invoices, too.</li>
             <li><strong>It gives you time back.</strong> No more digging through sent mail to see who you haven't heard from. Follow-ups go out on their own, and you only step in when someone answers.</li>
-            <li><strong>Low risk.</strong> Monthly, cancel anytime, set up in minutes, no call or contract.</li>
+            <li><strong>Low risk.</strong> Try it free for {trial} days. After that it's monthly, cancel anytime, with no call or contract.</li>
           </ul>
           <p class="muted fd-small">Sources: <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review, "The Short Life of Online Sales Leads" (2011)</a>; <a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2025/" rel="noopener">Intuit QuickBooks 2025 Small Business Late Payments Report</a>. The $1,250 figure is an example, not an average. Results depend on your business, and follow-ups can't promise replies, jobs or payments.</p>
         </div>
@@ -87,7 +87,7 @@ const sample = [
             <li>Only add people who asked you for an estimate or are already your customers. It isn't for cold email or bought lists.</li>
             <li>It doesn't connect to QuickBooks yet. You add estimates on the dashboard or paste an export.</li>
             <li>More follow-ups don't guarantee more jobs. What it does is make sure nobody slips through because you were busy.</li>
-            <li>Cancel anytime from the billing link on your dashboard. Follow-ups stop when your subscription ends, and your list is deleted 30 days later.</li>
+            <li>The first {trial} days are free. Cancel before day {trial + 1} and you won't be charged. After that, cancel anytime from the billing link on your dashboard. Follow-ups stop when your subscription ends, and your list is deleted 30 days later.</li>
           </ul>
         </div>
 
@@ -99,15 +99,15 @@ const sample = [
 
       <aside class="panel topline accent-magenta fd-buy">
         <span class="kicker">{fd.kicker}</span>
-        <p class="price">{usd(fd.from)}<small>per month · cancel anytime</small></p>
+        <p class="price">{trial} days free<small>then {usd(fd.from)} per month · cancel anytime</small></p>
         <ul class="fd-list">
           {fd.items.map((i) => <li>{i}</li>)}
         </ul>
         {fd.buyUrl
-          ? <a class="btn btn-primary" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start now · {usd(fd.from)}/mo</a>
+          ? <a class="btn btn-primary" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start your free trial</a>
           : <a class="btn btn-primary" href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Ask about it</a>}
         {fd.buyUrl
-          ? <p class="muted fd-small">Secure checkout by Stripe. Your dashboard link arrives by email within a few minutes.</p>
+          ? <p class="muted fd-small">A card is required to start. You won't be charged until day {trial + 1}, and you can cancel before then from your dashboard. Secure checkout by Stripe; your dashboard link arrives by email within a few minutes.</p>
           : <p class="muted fd-small">Online signup opens soon. Send a message and you'll hear back by email.</p>}
         <p class="muted fd-small">Already signed up? <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">Get your dashboard link</a>.</p>
         <p class="muted fd-small">See the <a href={url('/terms/#follow-up-desk')}>terms</a> and <a href={url('/privacy/#follow-up-desk')}>what we keep</a>.</p>

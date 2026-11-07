@@ -10,7 +10,7 @@ import Icon from '../../components/Icon.astro';
   <PageHeader width="narrow" align="center" eyebrow="Follow-Up Desk · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/follow-up-desk/', label: 'Follow-Up Desk' }, { label: 'Signed up' }]} class="status-head">
     <span class="status-mark" slot="title-before"><Icon name="check" /></span>
     <Fragment slot="title">You're in. Check your email.</Fragment>
-    <p class="lede">Your private dashboard link is on its way, usually within a few minutes. Setup takes about five minutes. Stripe emails your receipt separately.</p>
+    <p class="lede">Your private dashboard link is on its way, usually within a few minutes. Setup takes about five minutes. Your 14 days free start today, and Stripe emails you a receipt for the trial.</p>
   </PageHeader>
   <div class="narrow status-body">
     <div class="callout" style="margin-bottom:1.25rem"><strong>No email after 10 minutes?</strong> Check spam for "Your Follow-Up Desk is ready", or <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">get a new link</a> with the email you paid with. Still stuck? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</div>

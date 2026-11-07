@@ -23,16 +23,17 @@ NOTIFY_TO = "hello@neonkey.tech"
 REPLY_TO = "hello@neonkey.tech"
 # NeonKey's own emails (welcome, links, reports, notices) are BCC'd here. Follow-ups and reply forwards are not.
 BCC_ADDRESS = "mr.mream@gmail.com"
-# Only checkouts from this Payment Link create accounts. EMPTY until Michael approves the $250/mo Stripe product.
-DESK_PAYMENT_LINK = ""
+# Only checkouts from this Payment Link create accounts: live $250/mo, 14-day trial, card required (Nov 7 2026).
+# https://buy.stripe.com/7sY4gydNsbIQ00TcgQb3q03
+DESK_PAYMENT_LINK = "plink_1UZIxSCRxS1tvAi2q5QXLAXL"
 # Stripe customer portal login link (billing and cancel). Set when the portal is turned on in Stripe.
-PORTAL_URL = ""
-ALLOW_LIVE = "false"
+PORTAL_URL = "https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00"
+ALLOW_LIVE = "true"
 
-# Accounts, sign-in token hashes and stop markers. Create with: npx wrangler kv namespace create neonkey-desk
+# Accounts, sign-in token hashes and stop markers. KV namespace "neonkey-desk" (created Nov 7 2026).
 [[kv_namespaces]]
 binding = "DESK"
-id = "REPLACE_AT_DEPLOY"
+id = "98344cfedd524151abd33b1a1810d4b3"
 
 # Hourly: each account sends only on weekdays 9 AM to noon in its own time zone; Monday 8 AM report.
 [triggers]
