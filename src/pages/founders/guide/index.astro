@@ -75,6 +75,8 @@ const canBuy = setupGuide.buyUrl !== '';
       </aside>
     </div>
   </section>
+  <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
+  <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>
 
 <style>
