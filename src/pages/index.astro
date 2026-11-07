@@ -155,18 +155,14 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </svg>
     </div>
     <div class="container hero-content">
-      <div class="hero-lockdown">
-        <p><strong>Start with your email.</strong><span class="hl-more"> {emailLockdown.name}: {usd(emailLockdown.from)} flat, done remotely, buy online with no call.</span></p>
-        <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="lockdown-cta" data-umami-event-offer={emailLockdown.name} data-umami-event-location="home-hero">Lock down my email · {usd(emailLockdown.from)}</a>
-      </div>
       <span class="kicker">Lead follow-up and office IT for small businesses</span>
-      <h1><span data-ab="hero:a">Stop losing leads to <span class="glow">slow replies</span><br /> and <span class="glow-m">forgotten follow-ups.</span></span><span data-ab="hero:b">How many inquiries went <span class="glow">unanswered</span><br /> <span class="glow-m">last month?</span></span></h1>
+      <h1><span data-ab="hero:a">Stop losing leads to <span class="hl">slow replies</span> and forgotten follow-ups.</span><span data-ab="hero:b">How many inquiries went <span class="hl">unanswered</span> last month?</span></h1>
       <p class="lead">We set up a system that puts every website and email inquiry on one list, alerts the right person, and reminds you when a quote goes quiet. Written quote first, accounts you own, done remotely anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a written quote</a>
-        <a class="btn btn-alt" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
+        <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
       </div>
-      <p class="hero-proof">Certificate-trained technician (CIAT) · Written quote before any work · You keep every login · <a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home-hero">Live demos in the Lab</a></p>
+      <p class="hero-proof">Most of my adult career in IT · Written quote before any work · You keep every login · <a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home-hero">Live demos in the Lab</a></p>
       <p class="hero-sub-links"><strong>Not ready for a quote?</strong> <a href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="home-hero">Get one free tech fix every Wednesday →</a> Or browse <a href={url('/learn/')}>free guides</a> and <a href={url('/lab/')}>Lab demos</a>.</p>
     </div>
   </section>
@@ -292,7 +288,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
         <div>
           <span class="kicker eyebrow">Who does the work</span>
           <h2 id="who-h" style="font-size:1.35rem;margin:.3rem 0 .5rem">Michael Ream</h2>
-          <p>NeonKey is run by me, Michael Ream, and I do the client work myself. I've spent years working hands-on in tech, setting up, maintaining and troubleshooting networks and communication systems. I hold a Computer Installation and Repair Technician certificate from the California Institute of Applied Technology, and I'm now pursuing an Applied Bachelor's Degree in Cybersecurity there, earning an associate degree in Computer Information Systems along the way. I've also worked hands-on in Microsoft Azure, building virtual machines and virtual networks and organizing resource groups.</p>
+          <p>NeonKey is run by me, Michael Ream, and I do the client work myself. I've worked in the IT industry for most of my adult career, setting up, maintaining and troubleshooting networks and communication systems. I'm now pursuing an Applied Bachelor's Degree in Cybersecurity, earning an associate degree in Computer Information Systems along the way. I've also worked hands-on in Microsoft Azure, building virtual machines and virtual networks and organizing resource groups.</p>
           <p style="margin-bottom:0">For clients, that means small-office setups done properly: business email that's less likely to land in spam and harder for scammers to fake, Wi-Fi, backups and passwords locked down, and small automations you fully own. <a href={url('/about/')}>More about me →</a></p>
         </div>
       </article>
@@ -337,10 +333,6 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   .fop-strip-side { display: grid; gap: .6rem; justify-items: start; }
   .fop-strip .price small { display: block; font-size: .85rem; }
   @media (max-width: 760px) { .fop-strip { grid-template-columns: 1fr; } }
-  .hero-lockdown { margin: 0 0 1.4rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem 1rem; padding: .7rem 1rem; border: 1px solid rgba(244,114,182,.45); border-radius: 12px; background: rgba(11,13,23,.6); max-width: 46rem; }
-  .hero-lockdown p { margin: 0; color: #c9cde6; font-size: .95rem; }
-  .hero-lockdown strong { color: var(--text); }
-  @media (max-width: 640px) { .hero-lockdown { max-width: 420px; width: 100%; margin-bottom: 1rem; padding: .6rem .8rem; } .hero-lockdown .btn { width: 100%; } }
   .hero-proof { margin: .9rem 0 0; font-size: .92rem; color: var(--muted); }
   .hero-proof a { color: inherit; text-decoration: underline; }
   .who-card { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.5rem; align-items: start; }
