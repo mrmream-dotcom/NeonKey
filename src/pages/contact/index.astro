@@ -31,7 +31,7 @@ import Icon from '../../components/Icon.astro';
       </div>
       <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" placeholder="What needs fixing, and what tools do you use now?" required></textarea></div>
       <div class="field"><label for="c-ref">Referred by <span class="muted">(optional)</span></label><input id="c-ref" name="referred_by" maxlength="80" placeholder="Name or code, like NK-SMITH" /></div>
-      <button class="btn btn-primary" type="submit" data-umami-event="contact-submit">Send message</button>
+      <button class="btn btn-primary" type="submit" data-umami-submit="contact-submit">Send message</button>
       <p class="form-note">Your message goes straight to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a> for how form messages are handled.</p>
     </form>
     </div>
