@@ -46,7 +46,7 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
 
   const bullets = [
     "One short email every Wednesday, about a one-minute read.",
-    "One fix you can do in a few minutes: keeping your business tech secure, or catching more of the customers who reach out.",
+    "One fix you can do in a few minutes: keeping your tech secure, or catching more of the customers who reach out.",
     "A free guide from Learn when it fits the topic.",
     "A P.S. with a question. Hit reply anytime; a person reads it.",
   ];
@@ -94,7 +94,7 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
         <p style="margin:0 0 8px 0;font-family:${font};font-size:13px;line-height:1.4;letter-spacing:1.5px;text-transform:uppercase;color:${C.accent};font-weight:600;">Unlock the Week</p>
         <h1 style="margin:0 0 24px 0;font-family:${font};font-size:26px;line-height:1.3;color:${C.text};font-weight:700;">Welcome aboard</h1>
         <p style="${p}">${escapeHtml(greeting)}</p>
-        <p style="${p}">Thanks for confirming. You're officially on the list for <strong style="color:${C.text};">Unlock the Week</strong>, the weekly NeonKey email with one small fix for your tech and your customer follow-up, whatever your level.</p>
+        <p style="${p}">Thanks for confirming. You're officially on the list for <strong style="color:${C.text};">Unlock the Week</strong>, the weekly NeonKey email with one small fix for your tech and your customer follow-up. It's written with small businesses in mind, and it works just as well if you're starting one or just want your own tech to behave.</p>
         <p style="margin:24px 0 12px 0;font-family:${font};font-size:18px;line-height:1.4;color:${C.text};font-weight:700;">What to expect</p>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
 ${bulletRows}
@@ -135,7 +135,7 @@ ${bulletRows}
 
   const text = `${greeting}
 
-Thanks for confirming. You're officially on the list for Unlock the Week, the weekly NeonKey email with one small fix for your tech and your customer follow-up, whatever your level.
+Thanks for confirming. You're officially on the list for Unlock the Week, the weekly NeonKey email with one small fix for your tech and your customer follow-up. It's written with small businesses in mind, and it works just as well if you're starting one or just want your own tech to behave.
 
 WHAT TO EXPECT
 ${bullets.map((b) => `- ${b}`).join("\n")}
