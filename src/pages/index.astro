@@ -10,7 +10,6 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import LockdownStrip from '../components/LockdownStrip.astro';
-import FollowUpDeskStrip from '../components/FollowUpDeskStrip.astro';
 import { publishedLabProjects } from '../data/lab';
 import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, followUpDesk, followUpDeskTrialDays, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
@@ -19,7 +18,7 @@ const leadStory = latestArticles.find((a) => a.date);
 const moreStories = latestArticles.filter((a) => a !== leadStory).slice(0, 3);
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const pillars = [
-  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Lead follow-up systems and remote small-office IT for small businesses, so fewer inquiries slip away. Clear setup and handoff.',
+  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Self-serve estimate follow-up and custom lead follow-up systems for small businesses, so fewer inquiries slip away.',
     icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
   { cls: 'm', title: 'Unlock Deals', href: '/reviews/', link: 'Read reviews', text: 'Honest takes on gear and software worth your money, with pros, cons and a plain verdict.',
     icon: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>' },
@@ -137,7 +136,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description="Stop losing leads to slow replies and forgotten follow-ups. Lead follow-up systems and office IT for small businesses, set up remotely anywhere in the US.">
+<Base title="Home" description="Stop losing leads to slow replies and forgotten follow-ups. Self-serve estimate follow-up with 14 days free, or a custom follow-up system set up remotely anywhere in the US.">
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="hero hero-bg">
     <div class="hero-art" aria-hidden="true">
@@ -158,9 +157,9 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     </div>
     <div class="container hero-content">
       <a class="hero-new" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-hero-new"><span class="hero-new-tag">New</span> {followUpDesk.name}: estimate follow-ups that run themselves · {followUpDeskTrialDays} days free →</a>
-      <span class="kicker">Follow-up software, remote IT and email security for small businesses</span>
-      <h1>Small-business tech, <span class="hl">set up right</span> and kept running.</h1>
-      <p class="lead">NeonKey sets up and supports the tech behind your business: email and security, office IT, and follow-up on every inquiry and quote. Start the {followUpDesk.name} yourself today, or get a written quote and we set it up for you, remotely, anywhere in the US.</p>
+      <span class="kicker">Lead and estimate follow-up for small businesses</span>
+      <h1>Stop losing customers to <span class="hl">slow replies</span> and quiet quotes.</h1>
+      <p class="lead">New inquiries get answered, and estimates get followed up until the customer replies. Start the {followUpDesk.name} yourself today, or get a written quote and we build a custom system for you, remotely, anywhere in the US.</p>
       <div class="btn-row hero-ctas">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a written quote</a>
         <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
@@ -172,10 +171,10 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
   <section class="alt" aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Fix the leaks that cost you customers" intro="Pick the one that sounds like you. Every project is scoped with you and quoted in writing before any work begins." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <SectionHeading id="svc-h" eyebrow="Services" title="Fix the leaks that cost you customers" intro="Have it set up for you with a written quote first, or start the self-serve version today." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-2 home-offers">
         <article class="card offer-featured topline accent-magenta" id="front-office">
-          <span class="kicker">Speed to lead · Follow-up · Remote · {usd(fop.from)}</span>
+          <span class="kicker">Done for you · Custom setup · {usd(fop.from)}</span>
           <h3><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
           <OfferNameLabel offer={fop} />
           <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold.</p>
@@ -191,32 +190,31 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
             <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Try a sample request</a>
           </div>
         </article>
-        <article class="card topline accent-cyan">
-          <span class="kicker">Office IT · Remote · From {usd(remoteIt.from)}</span>
-          <h3><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it"><OfferTitle offer={remoteIt} /></a></h3>
-          <OfferNameLabel offer={remoteIt} />
-          <p class="offer-outcome">Help your emails reach inboxes, not spam, and keep the office running. All done over screen share.</p>
+        <article class="card topline accent-violet" id="follow-up-desk">
+          <span class="kicker">Do it yourself · Start today · {usd(followUpDesk.from)}/mo</span>
+          <h3><a href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud"><OfferTitle offer={followUpDesk} /></a></h3>
+          <OfferNameLabel offer={followUpDesk} />
+          <p class="offer-outcome">{followUpDesk.outcome}.</p>
           <ul class="home-offer-list">
-            <li>A professional email address with your business name (you@yourbusiness.com)</li>
-            <li>Settings that help your emails stay out of spam and stop scammers pretending to be you</li>
-            <li>Safer Wi-Fi, tested backups and a password manager for your team</li>
-            <li>Simple checklists for new laptops and phones, and for when someone leaves</li>
+            <li>Add the estimates you sent, or paste a list from QuickBooks or a spreadsheet</li>
+            <li>Up to three polite follow-ups, sent under your business name on weekday mornings</li>
+            <li>Stops on its own when your customer replies, and the reply comes to your inbox</li>
+            <li>Set it up yourself in minutes. No setup call</li>
           </ul>
-          <p class="price" style="margin:.4rem 0 .8rem">From {usd(remoteIt.from)}<small>Price depends on how many people and devices · fixed quote first</small></p>
+          <p class="price" style="margin:.4rem 0 .8rem">{usd(followUpDesk.from)}<small>a month · {followUpDeskTrialDays} days free · card required, cancel anytime</small></p>
           <div class="btn-row">
-            <a class="btn btn-primary btn-sm" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="home-remote-it">Get a written quote</a>
-            <a class="btn btn-ghost btn-sm" href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="home-remote-it-details">What's included</a>
+            <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud">Start free trial</a>
+            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud-details">How it works</a>
           </div>
         </article>
       </div>
-      <FollowUpDeskStrip location="home-fud-strip" />
       <LockdownStrip location="home-lockdown-strip" />
       <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
       <div class="btn-row">
         <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
         <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
       </div>
-      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Smaller jobs, like website inquiry alerts from {usd(quickWin.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Prices are starting points; every project is scoped first. Smaller jobs, like website inquiry alerts from {usd(quickWin.from)}, office IT setup from {usd(remoteIt.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
     </div>
   </section>
 
