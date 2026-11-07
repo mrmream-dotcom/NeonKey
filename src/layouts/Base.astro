@@ -108,7 +108,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
               if (ever[id]) tag[id] = v[id];
             });
             try { localStorage.setItem(ek, JSON.stringify(ever)); } catch (e) {}
-            document.querySelectorAll('[data-umami-event]').forEach(function (el) {
+            document.querySelectorAll('[data-umami-event], [data-umami-submit]').forEach(function (el) {
               Object.keys(tag).forEach(function (id) { el.setAttribute('data-umami-event-ab-' + id, tag[id]); });
             });
             if (!Object.keys(seen).length) return;
@@ -228,6 +228,19 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
           if (note) note.textContent = 'This form is not connected yet, so nothing was sent. Please email instead.';
         });
       });
+      // Lead forms: a submit button marked data-umami-submit="<event>" is counted when the form is actually
+      // submitted (the browser has already checked the required fields), not on every click. A click on an
+      // empty form used to count as a submit. Extra data-umami-event-* attributes (like the A/B tags) go along.
+      document.addEventListener('submit', (e) => {
+        const btn = ((e as SubmitEvent).submitter || (e.target as HTMLElement | null)?.querySelector('[data-umami-submit]')) as HTMLElement | null;
+        const name = btn?.dataset.umamiSubmit;
+        if (!btn || !name) return;
+        const props: Record<string, string> = {};
+        for (const a of Array.from(btn.attributes)) {
+          if (a.name.startsWith('data-umami-event-')) props[a.name.slice('data-umami-event-'.length)] = a.value;
+        }
+        (window as any).umami?.track?.(name, props);
+      }, true);
       // Newsletter (Kit): count a "newsletter-signup" only when a signup form is actually submitted
       // (the browser has already validated the email). Works for our own form and for Kit's JS embed,
       // which renders a form.formkit-form inside [data-nl-embed]. Confirmed subscribers are counted in Kit.
