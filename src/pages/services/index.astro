@@ -6,7 +6,7 @@ import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
 // Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
 //   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
 //   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
@@ -20,22 +20,33 @@ import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fo
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const smallJobs = [
   { o: emailLockdown, price: `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online and get the exact fixes by email, usually within minutes. No call or passwords needed.', href: emailLockdown.buyUrl!, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
-  { o: followUpDesk, price: `${usd(followUpDesk.from)}/mo`, line: 'Self-serve: add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. 14 days free (card required), no setup call, cancel anytime.', href: followUpDesk.buyUrl || '/follow-up-desk/', cta: followUpDesk.buyUrl ? 'Start free trial' : 'See how it works', buy: Boolean(followUpDesk.buyUrl), more: '/follow-up-desk/' },
   { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request, so none sit unseen.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
 ---
-<Base title="Lead Follow-Up and Office IT Services" description="Stop losing quote requests to slow replies: lead follow-up setup for $999, or office email, Wi-Fi and backups from $299. Remote, written scope first.">
+<Base title="Lead Follow-Up and Office IT Services" description="Stop losing quote requests to slow replies: start the self-serve Follow-Up Desk with 14 days free, have lead follow-up set up for you, or get office email, Wi-Fi and backups set up. Remote.">
   <PageHeader eyebrow="Services" title="Losing leads to slow replies, or need IT set up?" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
-    <p class="lede">Pick one. You get a written scope and price before any work starts.</p>
+    <p class="lede">Start the {followUpDesk.name} yourself today with {followUpDeskTrialDays} days free, or have it done for you with a written scope and price before any work starts.</p>
   </PageHeader>
 
   <section style="padding-top:0;padding-bottom:1rem" aria-labelledby="pick-h">
     <div class="container">
-      <h2 id="pick-h" class="sr-only">Two ways to start</h2>
+      <h2 id="pick-h" class="sr-only">Three ways to start</h2>
       <div class="choices">
+        <div class="card topline accent-violet choice" id={followUpDesk.slug}>
+          <span class="kicker">Do it yourself · start today</span>
+          <strong><OfferTitle offer={followUpDesk} /></strong>
+          <span class="choice-name">{followUpDesk.name}</span>
+          <span class="muted">Add the estimates you sent, or paste a list from QuickBooks. Polite follow-ups go out under your business name and stop the moment your customer replies.</span>
+          <span class="choice-price">{usd(followUpDesk.from)} <small>a month</small></span>
+          <span class="choice-trial">{followUpDeskTrialDays} days free. Card required, cancel anytime.</span>
+          <div class="btn-row choice-btns">
+            <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">Start free trial</a>
+            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</a>
+          </div>
+        </div>
         <div class="card topline accent-magenta choice">
-          <span class="kicker">Speed to lead · follow-up · remote</span>
+          <span class="kicker">Done for you · custom setup · remote</span>
           <strong><OfferTitle offer={fop} /></strong>
           <span class="choice-name">{fop.name}</span>
           <span class="muted">Requests from your website form or shared inbox land on one list, and the right person gets an alert. Quotes that go quiet get a reminder on day 1, 3 and 7.</span>
@@ -243,8 +254,8 @@ const smallJobs = [
 </script>
 
 <style>
-  .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  @media (max-width: 760px) { .choices { grid-template-columns: 1fr; } }
+  .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 980px) { .choices { grid-template-columns: 1fr; } }
   .choice { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: inherit; height: 100%; }
   .choice strong { font-size: 1.3rem; color: var(--text); line-height: 1.25; }
   .choice .muted { font-size: .98rem; }
@@ -252,6 +263,7 @@ const smallJobs = [
   .choice-price { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-top: .3rem; font-variant-numeric: tabular-nums; }
   .choice-price small { font-size: .9rem; font-weight: 500; color: var(--muted); }
   .choice-btns { margin-top: auto; padding-top: .4rem; }
+  .choice-trial { font-size: .92rem; font-weight: 600; color: var(--cyan); margin-top: -.3rem; }
   .anchor { display: block; scroll-margin-top: 90px; }
   .small-note { margin: 1rem 0 0; font-size: .92rem; }
   .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }

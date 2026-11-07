@@ -1,0 +1,27 @@
+---
+// Self-serve Follow-Up Desk ($250/mo, 14-day trial, card required). Live Nov 7 2026. Shown on the homepage.
+// Michael, Nov 7 2026: "now we gotta update the hero and the services page for all this".
+import { url } from '../config';
+import { followUpDesk, followUpDeskTrialDays, usd } from '../data/services';
+interface Props { location: string }
+const { location } = Astro.props;
+---
+<aside class="card topline accent-cyan fud-strip" aria-label={followUpDesk.name}>
+  <div class="fud-text">
+    <span class="kicker">New · do it yourself · start today</span>
+    <p class="fud-title"><strong>{followUpDesk.name}: {followUpDesk.headline.toLowerCase()}.</strong> Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies.</p>
+    <p class="muted fud-note">{followUpDeskTrialDays} days free, then {usd(followUpDesk.from)} a month. Card required to start, cancel anytime. No setup call.</p>
+  </div>
+  <div class="btn-row fud-btns">
+    <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location={location}>Start free trial</a>
+    <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location={location}>How it works</a>
+  </div>
+</aside>
+
+<style>
+  .fud-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; }
+  .fud-text { flex: 1 1 22rem; min-width: 0; }
+  .fud-title { margin: .25rem 0; color: var(--text); }
+  .fud-note { margin: 0; font-size: .9rem; }
+  .fud-btns { flex: 0 0 auto; margin: 0; }
+</style>
