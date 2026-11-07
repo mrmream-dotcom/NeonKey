@@ -6,7 +6,7 @@ import Icon from '../../../components/Icon.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Where the Founder Stack Payment Link sends buyers after paying. noindex and in DRAFT_PAGES (out of the sitemap).
 // Delivery v1 is by email from hello@neonkey.tech (the payments Worker notifies hello@ of each sale), so the PDF is
-// never published at a public URL. Meta and Reddit Purchase events fire here via /js/ad-pixels.js only with offer=founder-stack and a cs_ session id.
+// never published at a public URL. Google Ads (conv-founder.js) and Meta and Reddit Purchase events fire here via /js/ad-pixels.js only with offer=founder-stack and a cs_ session id.
 ---
 <Base title="Thanks for buying the guide" description={`Thanks for buying ${setupGuide.name}.`} noindex>
   <PageHeader width="narrow" align="center" eyebrow="Guide · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: 'Thank you' }]} class="status-head">
@@ -18,6 +18,8 @@ import { setupGuide, emailLockdown, usd } from '../../../data/services';
     <div class="callout" style="margin-bottom:1.25rem"><strong>Your included Email Lockdown</strong> ({usd(emailLockdown.from)} on its own): the email with your guide also has a link to claim it for your domain. Want a head start? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight-thanks" data-umami-event-track="founders">Launch Preflight</a> now.</div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/founders/')}>Back to Founders</a> <a class="btn" href={`mailto:${CONTACT_EMAIL}`}>Email us</a></p>
   </div>
+  <!-- Google Ads "Founder guide purchase" conversion. External file: no inline scripts. -->
+  <script is:inline src={url('/js/conv-founder.js')}></script>
   <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>
