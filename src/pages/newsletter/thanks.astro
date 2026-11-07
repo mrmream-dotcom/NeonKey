@@ -21,7 +21,7 @@ import Icon from '../../components/Icon.astro';
     </div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/')} data-umami-event="nl-thanks-home">Back to NeonKey</a> <a class="btn btn-ghost" href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="nl-thanks">Follow us on Instagram</a></p>
   </div>
-  <!-- Google Ads "Submit lead form" conversion (newsletter signup). External file: no inline scripts. -->
+  <!-- Google Ads "Sign-up" conversion (newsletter signup), only after a real submit in this tab. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-newsletter.js')}></script>
   <!-- Meta and Reddit pixels: Lead / SignUp event for the newsletter ad test. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>
