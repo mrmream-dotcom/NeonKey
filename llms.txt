@@ -45,9 +45,9 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
   One website form connected to a shared list, with an alert to one person on each new request, starting at $99.
 
 - [Front Office Package](https://neonkey.tech/services/#front-office-package)  
-  An AI assistant that answers common questions from your own FAQ, lead routing with follow-up reminders, an email security lockdown and three months of remote support, as one project. $999 founding rate.
+  An AI assistant that answers common questions from your own FAQ, lead routing with follow-up reminders, email authentication setup and three months of remote support, as one project. $999 founding rate.
 
-- [Email Lockdown](https://neonkey.tech/services/email-lockdown/)  
+- [Email Authentication Setup](https://neonkey.tech/services/email-lockdown/)  
   Your domain's SPF, DKIM and DMARC email records checked and fixed, $49 flat. Buy online; no passwords needed.
 
 - [All Builds & Projects](https://neonkey.tech/lab/)  
