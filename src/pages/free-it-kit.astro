@@ -34,7 +34,7 @@ import SectionHeading from '../components/SectionHeading.astro';
         </div>
         <p class="form-note" style="margin-top:-.4rem">Tell us your biggest headache and we'll add a tip on where to start.</p>
         <div class="kit-hp" aria-hidden="true"><label for="fk-website">Website</label><input id="fk-website" name="website" tabindex="-1" autocomplete="off" /></div>
-        <label class="kit-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, NeonKey's free weekly email (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
+        <label class="kit-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, NeonKey's free one-minute fix every Wednesday (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
         <button type="submit" class="btn btn-primary" data-send data-umami-event="free-kit-submit">Email me the kit</button>
         <p class="form-note kit-status" data-status role="status" aria-live="polite"></p>
         <p class="form-note" id="fk-consent">We email the link to you once, and a copy of your details comes to NeonKey so we can follow up about the kit. You're only added to the newsletter if you tick the box. See the <a href={url('/privacy/#free-it-kit')}>privacy policy</a>.</p>
@@ -67,7 +67,7 @@ import SectionHeading from '../components/SectionHeading.astro';
       <SectionHeading id="next-h" eyebrow="After the kit" title="Where to go next" />
       <div class="grid grid-3">
         <div class="card"><h3>Learn it yourself</h3><p>Free guides that explain the basics step by step, from passwords to backups.</p><a href={url('/learn/')} data-umami-event="free-kit-next" data-umami-event-to="learn">Browse Learn →</a></div>
-        <div class="card"><h3>Stay in the loop</h3><p>Unlock the Week: one tech story explained simply and one tip you can try, every week.</p><a href={url('/newsletter/')} data-umami-event="free-kit-next" data-umami-event-to="newsletter">See the newsletter →</a></div>
+        <div class="card"><h3>Stay in the loop</h3><p>Unlock the Week: one short fix for your tech or your customer follow-up, plus a free Learn guide, every Wednesday.</p><a href={url('/newsletter/')} data-umami-event="free-kit-next" data-umami-event-to="newsletter">See the newsletter →</a></div>
         <div class="card"><h3>Want a hand?</h3><p>If your list shows more red than you'd like, NeonKey can fix it with you remotely.</p><a href={url('/services/')} data-umami-event="free-kit-next" data-umami-event-to="services">See services →</a></div>
       </div>
       <div class="callout kit-cta-bottom">

@@ -8,33 +8,44 @@ import PageHeader from '../components/PageHeader.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 ---
-<Base title="Unlock the Week" description="Unlock the Week by NeonKey: a free weekly email with one tech story explained simply, a practical tip, gear picks and something to learn. Unsubscribe anytime.">
-  <PageHeader eyebrow="Newsletter · Weekly" title="Unlock the Week" crumbs={[{ href: '/', label: 'Home' }, { label: 'Newsletter' }]} class="nl-head">
-    <p class="lede">A short weekly email: one tech story in everyday language, one skill you can try, gear picks from NeonKey's reviews and something to learn. Skimmable, about a three-minute read, free.</p>
+<Base title="Unlock the Week: one-minute fixes for small businesses" description="Unlock the Week by NeonKey: one short email every Wednesday with a one-minute fix for your business tech or customer follow-up, plus a free guide from Learn. Unsubscribe anytime.">
+  <PageHeader eyebrow="Newsletter · Every Wednesday" title="Unlock the Week" crumbs={[{ href: '/', label: 'Home' }, { label: 'Newsletter' }]} class="nl-head">
+    <p class="lede">One short email every Wednesday with one fix you can do in a few minutes: keep your tech secure, or catch more of the customers who reach out. Plus a free guide from Learn. Built for small business owners, useful for anyone.</p>
     <Fragment slot="meta">
-      <li><span>One email a week</span></li>
-      <li><span>About a three-minute read</span></li>
+      <li><span>Every Wednesday</span></li>
+      <li><span>About a one-minute read</span></li>
       <li><span>Free</span></li>
       <li><span>One-click unsubscribe</span></li>
     </Fragment>
     <div class="nl-box topline nl-subscribe" slot="after">
       <h2 style="font-size:1.4rem">Subscribe</h2>
       <NewsletterForm id="page-nl" />
+      <p class="form-note" style="margin-top:.6rem">After you confirm, reply "yes" to the welcome email and we'll send the One-Minute Fix List: 12 fixes on one page.</p>
     </div>
   </PageHeader>
   <section style="padding-top:1rem" aria-labelledby="get-h">
     <div class="container">
       <SectionHeading id="get-h" eyebrow="Inside every issue" title="What you get" />
       <div class="grid grid-2 nl-get">
-        <div class="card topline accent-cyan"><div class="panel-head"><span class="icon-chip"><Icon name="spark" /></span><h3>Tech, explained</h3></div><p>One tech story worth knowing that week, with a jargon-free takeaway and a link to the original source.</p></div>
-        <div class="card topline accent-magenta"><div class="panel-head"><span class="icon-chip"><Icon name="wrench" /></span><h3>Skills and gear</h3></div><p>A small tip you can try in a few minutes, plus gear picks from NeonKey's own reviews, with the honest downsides included.</p></div>
-        <div class="card topline accent-violet"><div class="panel-head"><span class="icon-chip"><Icon name="clock" /></span><h3>Cadence</h3></div><p>One email a week. No daily blasts and no extra promo sends.</p></div>
-        <div class="card topline accent-amber"><div class="panel-head"><span class="icon-chip"><Icon name="shield" /></span><h3>Privacy</h3></div><p>Your email is used only to send the newsletter. It's never sold. Every issue has a one-click unsubscribe. Signups are handled by Kit; see the <a href={url('/privacy/')}>privacy policy</a>.</p></div>
+        <div class="card topline accent-cyan"><div class="panel-head"><span class="icon-chip"><Icon name="shield" /></span><h3>Tech tips that keep you secure</h3></div><p>Small, practical fixes for the accounts, email, backups and Wi-Fi your business runs on, explained step by step without jargon.</p></div>
+        <div class="card topline accent-magenta"><div class="panel-head"><span class="icon-chip"><Icon name="spark" /></span><h3>Catch more customers</h3></div><p>Simple habits for the inquiries you already get: faster replies, missed calls, quotes that went quiet and reviews. No ads to buy, no new software required.</p></div>
+        <div class="card topline accent-violet"><div class="panel-head"><span class="icon-chip"><Icon name="wrench" /></span><h3>A free guide from Learn</h3></div><p>When it fits the topic, each issue points to a free guide in <a href={url('/learn/')}>Learn</a> so you can go deeper at your own pace.</p></div>
+        <div class="card topline accent-amber"><div class="panel-head"><span class="icon-chip"><Icon name="clock" /></span><h3>Short, and easy to leave</h3></div><p>One email a week, readable in about a minute. Your email is used only to send the newsletter and is never sold. Signups are handled by Kit; see the <a href={url('/privacy/')}>privacy policy</a>.</p></div>
       </div>
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="format-h">
+  <section class="alt" aria-labelledby="who-h">
+    <div class="container">
+      <SectionHeading id="who-h" eyebrow="Who it's for" title="Made for the person who wears every hat" />
+      <div class="grid grid-2">
+        <div class="card"><h3>Small business owners and office managers</h3><p>You run the shop, answer the phone and keep the computers working. Each issue is one thing you can fix between jobs, often before lunch.</p></div>
+        <div class="card"><h3>Anyone who wants their tech to behave</h3><p>Most fixes work just as well at home: two-step login, backups, scam emails and Wi-Fi. If you're here for the tips and Learn guides, you're in the right place.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="format-h">
     <div class="container">
       <SectionHeading id="format-h" eyebrow="Issue format" title="What an issue looks like" />
       <article class="card issue-format topline">
@@ -42,19 +53,17 @@ import Icon from '../components/Icon.astro';
           <span class="issue-brand">Unlock the Week</span>
           <span class="kicker">Issue format</span>
         </header>
-        <h3>Unlock the Week: one issue a week, numbered and dated</h3>
+        <h3>Unlock the Week #2: Fill out your own contact form tonight</h3>
         <ol class="step-cards issue-sections">
-          <li><strong>Welcome:</strong> a short intro to the issue.</li>
-          <li><strong>Tech news:</strong> one story worth knowing, with a clear takeaway and a link to the source.</li>
-          <li><strong>Skill tip:</strong> a short how-to you can try in a few minutes.</li>
-          <li><strong>Deals &amp; gear:</strong> picks from NeonKey's reviews, with who they suit and the honest downsides.</li>
-          <li><strong>Learn spotlight:</strong> a study guide or tutorial from the Learn hub.</li>
-          <li><strong>Try it:</strong> a tool or demo you can use right away, like the services quiz or a Lab demo.</li>
-          <li><strong>Hit reply:</strong> tell us what tech problem to cover next. Every reply gets read.</li>
+          <li><strong>One line up top:</strong> the idea in a sentence, like "The fastest reply usually wins the job."</li>
+          <li><strong>This week's one-minute fix:</strong> one problem, why it matters, and the exact steps. Under 200 words.</li>
+          <li><strong>One link:</strong> a Lab demo, a service or a guide that fits the fix.</li>
+          <li><strong>From Learn:</strong> a free guide when it fits.</li>
+          <li><strong>P.S.:</strong> a question for you. Hit reply anytime; every reply gets read.</li>
         </ol>
-        <p class="muted" style="margin:.6rem 0 0;font-size:.92rem">This shows the issue layout{NEWSLETTER.mode === 'off' ? '; signups open soon' : ''}.</p>
+        <p class="muted" style="margin:.6rem 0 0;font-size:.92rem">Coming up: missed calls, quotes that went quiet, emails landing in spam, holiday payment scams, backups and a ten-minute Wi-Fi checkup.{NEWSLETTER.mode === 'off' ? ' Signups open soon.' : ''}</p>
       </article>
     </div>
   </section>
-  <Bridge location="newsletter" text="Every issue pulls from the rest of NeonKey: a Lab demo you can try, a Learn guide, and the services behind them." links={[{ href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/learn/', label: 'Browse Learn' }, { href: '/services/', label: 'See services', event: 'services-cta' }]} />
+  <Bridge location="newsletter" text="Every issue connects to the rest of NeonKey: a free Learn guide, a Lab demo you can try, and the services behind them." links={[{ href: '/learn/', label: 'Browse Learn' }, { href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/free-it-kit/', label: 'Get the free IT kit' }]} />
 </Base>

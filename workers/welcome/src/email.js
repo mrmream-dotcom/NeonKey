@@ -13,9 +13,9 @@ const C = {
 export const SUBJECT = "Welcome to Unlock the Week";
 
 // Reply call-to-action: replies help engagement and inbox placement on a new domain.
-const REPLY_ASK = "Hit reply and tell me the one tech thing you're stuck on right now.";
-const REPLY_MAILTO = "mailto:hello@neonkey.tech?subject=Hi%20NeonKey";
-const REPLY_NOTE = "AI tools, home Wi-Fi, a messy inbox, an automation you can't get working: a sentence or two is plenty. I read every reply, and it shapes what goes into Unlock the Week.";
+const REPLY_ASK = "One more thing: reply \"yes\" to this email.";
+const REPLY_MAILTO = "mailto:hello@neonkey.tech?subject=Yes%2C%20send%20the%20Fix%20List&body=Yes";
+const REPLY_NOTE = "We'll send you the One-Minute Fix List: 12 small fixes for your business tech and customer follow-up, on one page. If there's one tech thing you're stuck on, add a line about it too. We read every reply, and it shapes what goes into Unlock the Week.";
 
 export function escapeHtml(s) {
   return String(s)
@@ -45,11 +45,10 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
   const u = escapeHtml(unsubscribeUrl);
 
   const bullets = [
-    "One email a week, about a three-minute read.",
-    "One tech story worth knowing, with a plain-English takeaway.",
-    "One skill tip you can try in a few minutes.",
-    "Gear picks from NeonKey's reviews.",
-    "A Learn spotlight, plus a tool or demo to try.",
+    "One short email every Wednesday, about a one-minute read.",
+    "One fix you can do in a few minutes: keeping your business tech secure, or catching more of the customers who reach out.",
+    "A free guide from Learn when it fits the topic.",
+    "A P.S. with a question. Hit reply anytime; a person reads it.",
   ];
 
   const bulletRows = bullets
@@ -95,7 +94,7 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
         <p style="margin:0 0 8px 0;font-family:${font};font-size:13px;line-height:1.4;letter-spacing:1.5px;text-transform:uppercase;color:${C.accent};font-weight:600;">Unlock the Week</p>
         <h1 style="margin:0 0 24px 0;font-family:${font};font-size:26px;line-height:1.3;color:${C.text};font-weight:700;">Welcome aboard</h1>
         <p style="${p}">${escapeHtml(greeting)}</p>
-        <p style="${p}">Thanks for confirming. You're officially on the list for <strong style="color:${C.text};">Unlock the Week</strong>, the weekly NeonKey email that helps you get more out of tech, whatever your level.</p>
+        <p style="${p}">Thanks for confirming. You're officially on the list for <strong style="color:${C.text};">Unlock the Week</strong>, the weekly NeonKey email with one small fix for your tech and your customer follow-up, whatever your level.</p>
         <p style="margin:24px 0 12px 0;font-family:${font};font-size:18px;line-height:1.4;color:${C.text};font-weight:700;">What to expect</p>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
 ${bulletRows}
@@ -107,7 +106,7 @@ ${bulletRows}
               <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:${C.muted};">${escapeHtml(REPLY_NOTE)}</p>
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 0 0;"><tr>
                 <td align="center" bgcolor="${C.accent}" style="border-radius:8px;background-color:${C.accent};background-image:linear-gradient(90deg,${C.accent},${C.pink});">
-                  <a href="${REPLY_MAILTO}" style="display:inline-block;padding:12px 24px;font-family:${font};font-size:15px;line-height:1.2;font-weight:700;color:#0b0d17;text-decoration:none;border-radius:8px;">Reply to NeonKey</a>
+                  <a href="${REPLY_MAILTO}" style="display:inline-block;padding:12px 24px;font-family:${font};font-size:15px;line-height:1.2;font-weight:700;color:#0b0d17;text-decoration:none;border-radius:8px;">Reply &quot;yes&quot;</a>
                 </td>
               </tr></table>
             </td>
@@ -136,7 +135,7 @@ ${bulletRows}
 
   const text = `${greeting}
 
-Thanks for confirming. You're officially on the list for Unlock the Week, the weekly NeonKey email that helps you get more out of tech, whatever your level.
+Thanks for confirming. You're officially on the list for Unlock the Week, the weekly NeonKey email with one small fix for your tech and your customer follow-up, whatever your level.
 
 WHAT TO EXPECT
 ${bullets.map((b) => `- ${b}`).join("\n")}

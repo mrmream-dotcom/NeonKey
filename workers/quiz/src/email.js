@@ -285,13 +285,13 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, need, mailingAdd
   H.push(
     `<p style="${p}">Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.</p>`,
     `<p style="${p}">If the list shows more red than you'd like, we can work through it with you remotely. <a href="${SITE}/services/" style="color:${C.accent};">See what NeonKey does</a>. And for simple, free guides, there's <a href="${SITE}/learn/" style="color:${C.accent};">Learn</a>.</p>`,
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Reply and tell us: what's the one tech thing at work that bugs you most?</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">A line is plenty. We read every reply.</p></td></tr></table>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px 0;"><tr><td bgcolor="${C.card}" style="background-color:${C.card};border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:16px 18px;"><p style="margin:0 0 6px 0;font-family:${FONT};font-size:16px;line-height:1.5;color:${C.text};font-weight:700;">Want a bonus? Reply &quot;yes&quot; to this email.</p><p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.6;color:${C.muted};">We'll send you the One-Minute Fix List: 12 small fixes for your business tech and customer follow-up, on one page. And if one tech thing at work bugs you most, add a line about it. We read every reply.</p></td></tr></table>`,
   );
   T.push(
     "Please don't type passwords into the file. Just note where each one is stored, ideally in a password manager.", "",
     `If the list shows more red than you'd like, we can work through it with you remotely: ${SITE}/services/`,
     `Free guides: ${SITE}/learn/`, "",
-    "Reply and tell us: what's the one tech thing at work that bugs you most? A line is plenty. We read every reply.", "",
+    "Want a bonus? Reply \"yes\" to this email and we'll send you the One-Minute Fix List: 12 small fixes for your business tech and customer follow-up, on one page. And if one tech thing at work bugs you most, add a line about it. We read every reply.", "",
   );
   const footer = [
     "The kit is a template to help you stay organized. It doesn't change any settings for you.",
