@@ -249,6 +249,13 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         const host = form?.closest('[data-nl-form], [data-nl-embed]') as HTMLElement | null;
         if (!host) return;
         (window as any).umami?.track?.('newsletter-signup', { form: host.dataset.form || '', provider: 'kit' });
+        // Mark this tab as having just submitted a signup. /js/conv-newsletter.js on /newsletter/thanks/ fires the
+        // Google Ads conversion only when this mark exists (Kit redirects there only after it accepts the email),
+        // then clears it, so a direct visit or a reload of the thanks page never counts.
+        try {
+          const rnd = (crypto as any)?.randomUUID?.() || String(Date.now()) + Math.random().toString(36).slice(2);
+          sessionStorage.setItem('nk_nl_submit', JSON.stringify({ id: 'nl-' + rnd, t: Date.now() }));
+        } catch {}
       }, true);
     </script>
   </body>
