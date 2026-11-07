@@ -503,7 +503,7 @@ function buildPlanBase(p: Plan): PlanView {
   const freeLinks: PlanView['freeLinks'] = [
     { label: 'Learn', href: '/learn/', text: 'Plain-language guides on security, networking, automation and practical IT. The first track is a CompTIA Security+ study guide, with more tutorials on the way.' },
     { label: 'The Lab', href: '/lab/', text: 'Hands-on builds, including what broke, and a working AI inquiry triage demo.' },
-    { label: 'Unlock the Week', href: '/newsletter/', text: 'One short email a week with tech and AI reads worth your time.' },
+    { label: 'Unlock the Week', href: '/newsletter/', text: 'One short email every Wednesday with a one-minute tech or customer follow-up fix, plus a free Learn guide.' },
   ];
 
   if (p.type === 'LEARN') {
