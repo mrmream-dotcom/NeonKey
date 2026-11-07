@@ -31,7 +31,7 @@ One folder per Worker in `workers/`, each with its own README, `package.json` an
 - "NeonKey" is one word. Public byline is "Michael Ream", never "Mike".
 - American spelling. Never the phrase "plain English". Beginner-friendly, apolitical.
 - No guarantees, no invented numbers, quotes, reviews or clients.
-- Credential wording: "Computer Installation and Repair Technician certificate from the California Institute of Applied Technology (CIAT)". Never claim Security+ or Network+.
+- Experience wording: Michael "has worked in the IT industry for most of his adult career" (first person: "I've worked in the IT industry for most of my adult career"). Don't mention the CIAT certificate (Michael, Nov 6 2026). Never claim Security+ or Network+.
 - Never position NeonKey as a marketing agency. Never mention military service. No headshots.
 - Prices live in `src/pages/` and `src/data/`; changing one needs Michael's explicit OK in the PR.
 
