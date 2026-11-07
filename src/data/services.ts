@@ -237,7 +237,7 @@ export const automationOffers: Offer[] = [
 ];
 
 /**
- * Email Lockdown: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
+ * Email Authentication Setup: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
  * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
  */
 /** Michael, Nov 4 2026: the $49 Lockdown is a bridge into bigger work; its price comes off any larger package or setup. */
@@ -245,7 +245,7 @@ export const lockdownCredit = 'Want more later? Your $49 comes off any larger pa
 
 export const emailLockdown: Offer = {
   slug: 'email-lockdown',
-  name: 'Email Lockdown',
+  name: 'Email Authentication Setup',
   headline: 'Stop scammers faking your email address',
   kicker: 'Remote · fixed price',
   from: 49,
@@ -311,7 +311,7 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
   parts: [
     { name: 'AI Intake & FAQ Assistant', value: 'standard rate from $699' },
     { name: 'Lead-Routing & Follow-Up System', value: 'standard rate from $999' },
-    { name: 'Email lockdown (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $79' },
+    { name: 'Email authentication setup (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $79' },
     { name: '3 months of the Monthly Remote Support Plan', value: 'standard rate $129/mo' },
   ],
   items: [
@@ -328,13 +328,13 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
       'AI Intake & FAQ Assistant: set up on your own FAQ, policies and service info, on your website, email or both, with a clear handoff to a person',
       'Lead-Routing & Follow-Up System: intake from your forms, inbox or booking tool, routing rules, follow-up reminders, reply templates and a simple tracking view',
       'The assistant and the lead routing connected, so inquiries the assistant captures go straight into your lead tracking',
-      'Email lockdown: your domain\'s email security records (SPF, DKIM and DMARC) checked and fixed, with DMARC started in report-only mode (monitor mode)',
+      'Email authentication setup: your domain\'s email security records (SPF, DKIM and DMARC) checked and fixed, with DMARC started in report-only mode (monitor mode)',
       'Three months of the Monthly Remote Support Plan, starting at go-live: small changes, tuning and how-to questions by email',
       'One walkthrough video and written notes covering the whole system, and admin access that stays with you',
     ],
     steps: [
       { h: 'Scoping call', p: 'We map where questions and leads come from, who handles what and what should always go to a person. You get a fixed quote before work starts.' },
-      { h: 'Email lockdown first', p: 'I check and fix your email security records early, because domain changes can take a day or two to settle.' },
+      { h: 'Email authentication first', p: 'I check and fix your email security records early, because domain changes can take a day or two to settle.' },
       { h: 'Build and connect', p: 'I set up the assistant and the lead routing, connect them, and test with real example questions and leads. You review before anything goes live.' },
       { h: 'Go live, then three months of support', p: 'We check the first real conversations and leads together, then the support plan covers tuning and small changes for three months. After that, keep the plan or cancel; it\'s up to you.' },
     ],

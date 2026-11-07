@@ -77,7 +77,7 @@ function upsell(a) {
     title: "Your $49 counts toward any NeonKey package",
     html: ws
       ? `Since you're on <strong>${esc(ws)}</strong>, these records are only part of the picture. The <a href="https://neonkey.tech/services/remote-it/?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">Remote Small-Office IT Setup</a> also covers 2-step sign-in, a password manager and backups: from $299, or from $250 with your $49 credit. Want every new lead answered and followed up too? The <a href="https://neonkey.tech/services/?utm_source=lockdown&utm_medium=email#front-office-package" style="color:${C.cyan};font-weight:700;text-decoration:none;">Front Office Package</a> is $950 after your credit.`
-      : `Going further, like a full remote IT setup (from $250 after your credit) or the Front Office Package ($950 after your credit)? We take the $49 you paid for this Lockdown off the price. <a href="${SERVICES}?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">See the packages</a>.`,
+      : `Going further, like a full remote IT setup (from $250 after your credit) or the Front Office Package ($950 after your credit)? We take the $49 you paid for this setup off the price. <a href="${SERVICES}?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">See the packages</a>.`,
     text: ws
       ? `Your $49 counts toward any NeonKey package. Since you're on ${ws}, these records are only part of the picture: the Remote Small-Office IT Setup also covers 2-step sign-in, a password manager and backups (from $299, or from $250 with your $49 credit): https://neonkey.tech/services/remote-it/ . The Front Office Package is $950 after your credit.`
       : `Your $49 counts toward any NeonKey package: a full remote IT setup is from $250 after your credit, the Front Office Package $950. ${SERVICES}`,
@@ -128,20 +128,20 @@ export function reportEmail({ name, a, pdf = false }) {
   const personal = a.human.length > 0;
 
   if (a.locked && !personal) {
-    const subject = `🔑 Your Email Lockdown report for ${a.domain}: records already in place`;
+    const subject = `🔑 Your Email Authentication Setup report for ${a.domain}: records already in place`;
     const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${attachNote(pdf)}`)}${extrasLine(a) ? p(extrasLine(a), "font-size:15px;") : ""}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
     return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${attachNote(pdf)}${extrasLine(a) ? `\n\n${extrasLine(a)}` : ""}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   if (!a.fixes.length && !a.buyerSteps.length) {
-    const subject = `🔑 Your Email Lockdown order for ${a.domain}: one quick check`;
+    const subject = `🔑 Your Email Authentication Setup order for ${a.domain}: one quick check`;
     const body = `${p(hi)}${p(`Thanks for your order. We started checking <strong>${esc(a.domain)}</strong> and found something we want a person to look at before we send records, so nothing goes in wrong.`)}${p("We'll email you within 1 business day. If the domain you typed at checkout has a typo, just reply with the right one.")}${p("NeonKey", `color:${C.muted};`)}`;
     return { subject, html: shell("A person is taking a quick look at your setup.", body), text: `${hiT}\n\nThanks for your order. We started checking ${a.domain} and want a person to look at something before we send records. We'll email you within 1 business day. If the domain you typed at checkout has a typo, just reply with the right one.\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   const total = a.fixes.length + a.buyerSteps.length;
   const passing = checks(a).filter((c) => c.status === "ok").length;
-  const subject = `🔑 Your Email Lockdown report for ${a.domain}`;
+  const subject = `🔑 Your Email Authentication Setup report for ${a.domain}`;
   let body = p(hi) + p(`Thanks for your order. Here's where <strong>${esc(a.domain)}</strong> stands. Your full report is attached.`);
   body += scoreLine(passing, a);
   body += h2(`${total} ${total === 1 ? "change" : "changes"} to make`) + changeList(a);
@@ -172,7 +172,7 @@ export function reminderEmail({ name, a, passing }) {
   const subject = `🔑 ${a.domain} is at ${passing} of 4. Want us to finish it?`;
   const host = a.dnsHost?.label || "your domain host";
   let body = p(hi) + p(`We rechecked <strong>${esc(a.domain)}</strong> today. It's at <strong>${passing} of 4</strong> checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.`);
-  body += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 16px 0;background:${C.panel};border:1px solid ${C.violet};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};"><p style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:${C.text};">Rather not deal with ${esc(host)}${a.provider ? ` and ${esc(a.provider.label)}` : ""}?</p><p style="margin:0;font-size:15px;line-height:1.55;color:${C.muted};">Reply <strong style="color:${C.text};">DO IT</strong>. We'll walk you through a quick helper invite (no passwords shared) and finish your Email Lockdown for you, at no extra cost.</p></td></tr></table>`;
+  body += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 16px 0;background:${C.panel};border:1px solid ${C.violet};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};"><p style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:${C.text};">Rather not deal with ${esc(host)}${a.provider ? ` and ${esc(a.provider.label)}` : ""}?</p><p style="margin:0;font-size:15px;line-height:1.55;color:${C.muted};">Reply <strong style="color:${C.text};">DO IT</strong>. We'll walk you through a quick helper invite (no passwords shared) and finish your Email Authentication Setup for you, at no extra cost.</p></td></tr></table>`;
   body += h2("Still open") + changeList(a);
   body += p("Just added something? New records can take an hour or two to show up.", `font-size:14px;color:${C.muted};`) + creditBlock(a) + p("NeonKey", `color:${C.muted};`);
   const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${changeText(a)}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;

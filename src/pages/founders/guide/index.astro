@@ -25,7 +25,7 @@ const canBuy = setupGuide.buyUrl !== '';
           <li><strong>Own your stack.</strong> A static site, small serverless Workers and Stripe payment links you control, instead of a separate subscription for every job.</li>
           <li><strong>Automate delivery.</strong> The pattern we use to turn a Stripe payment into a delivered product with no manual step, ready to adapt to your own offer.</li>
           <li><strong>Start fast.</strong> A 4-week build plan and copy-paste templates: a CLAUDE.md, a memory file, a Worker README, a deploy checklist and the lead tracker columns.</li>
-          <li><strong>Your domain checked for you.</strong> An Email Lockdown is included ({usd(emailLockdown.from)} on its own): your SPF, DKIM and DMARC reviewed, with a report of the exact records to add.</li>
+          <li><strong>Your domain checked for you.</strong> An Email Authentication Setup is included ({usd(emailLockdown.from)} on its own): your SPF, DKIM and DMARC reviewed, with a report of the exact records to add.</li>
         </ul>
         <h2 class="sg-h">Who it's for</h2>
         <p class="muted">Solo founders and small teams who want a lean, dependable backend they own. You don't need to be a developer. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>
@@ -36,7 +36,7 @@ const canBuy = setupGuide.buyUrl !== '';
           <li><strong>The website:</strong> a fast static site on GitHub Pages, a security policy kept in one file, and the checks to run after every deploy</li>
           <li><strong>Forms and Workers:</strong> lead capture with honeypots, origin locks and rate limits, using small Cloudflare Workers</li>
           <li><strong>Stripe:</strong> which payment tool fits which offer, payment links with a Terms checkbox, and verified webhooks</li>
-          <li><strong>A product that delivers itself:</strong> how our Email Lockdown goes from checkout to delivered report with no manual step, and how to build your own version</li>
+          <li><strong>A product that delivers itself:</strong> how our Email Authentication Setup goes from checkout to delivered report with no manual step, and how to build your own version</li>
           <li><strong>Outreach:</strong> sending caps, a warm-up schedule, bounce rules and inbox placement tests</li>
           <li><strong>The lead tracker and Friday scoreboard:</strong> the spreadsheet tabs and columns that record replies, objections, quotes and payments</li>
           <li><strong>AI as your operations hub:</strong> how we run the business with Claude Projects, written rules, memory and guardrails</li>
@@ -51,7 +51,7 @@ const canBuy = setupGuide.buyUrl !== '';
             </a>
           ))}
         </div>
-        <h2 class="sg-h">How the included Email Lockdown works</h2>
+        <h2 class="sg-h">How the included Email Authentication Setup works</h2>
         <p class="muted">Enter your domain at checkout, or reply to the email your guide arrives in. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>
         <h2 class="sg-h">Good to know</h2>
 
@@ -66,7 +66,7 @@ const canBuy = setupGuide.buyUrl !== '';
       <aside class="panel topline accent-magenta sg-buy">
         <span class="kicker">Guide for founders · PDF</span>
         <p class="price">{usd(setupGuide.price)}<small>One-time. First edition, November 2026.</small></p>
-        {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Lockdown for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
+        {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Authentication Setup for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
         {canBuy
           ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
           : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}

@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/services';
-// Email Lockdown: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
+// Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
 // from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
 // checkout, checks it and emails the buyer the exact records, usually within minutes (Nov 4 2026).
@@ -12,9 +12,10 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
 // DNS host, or add them ourselves if they invite us as a collaborator/delegate. DKIM keys come from the email
 // provider's admin console, so the buyer (or their admin) may need to generate one.
 ---
-<Base title="Email Lockdown" description={`Email Lockdown, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC records checked and fixed, so it's harder for scammers to fake your address. Buy online, no call needed.`}>
-  <PageHeader eyebrow="Services · Buy online" title="Email Lockdown" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Email Lockdown' }]}>
+<Base title="Email Authentication Setup" description={`Email Authentication Setup, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC records checked and fixed, so it's harder for scammers to fake your address. Buy online, no call needed.`}>
+  <PageHeader eyebrow="Services · Buy online" title="Email Authentication Setup" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Email Authentication Setup' }]}>
     <p class="lede">Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes. {usd(emailLockdown.from)} flat, no call needed.</p>
+    <p class="muted" style="font-size:.92rem">Formerly called Email Lockdown. Same service, same price.</p>
   </PageHeader>
 
   <section style="padding-top:0">
