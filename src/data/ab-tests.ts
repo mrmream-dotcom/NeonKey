@@ -27,4 +27,10 @@ export const abTests: AbTest[] = [
     b: 'Home hero: question-first ("How many inquiries went unanswered last month?")',
     started: 'on ship (restarted Nov 2026)',
   },
+  {
+    id: 'nl',
+    a: '/newsletter/: original page ("Unlock the Week" title, long intro, pills, subscribe card)',
+    b: '/newsletter/: calmer page ("One small tech fix, every Wednesday.", visible email label, form on the first phone screen, fix topics, form again)',
+    started: 'on ship (Nov 2026)',
+  },
 ];

@@ -9,6 +9,8 @@ import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 ---
 <Base title="Unlock the Week: a one-minute tech fix every Wednesday" description="Unlock the Week by NeonKey: one short email every Wednesday with a one-minute fix for your tech or your customer follow-up, plus a free guide from Learn. For small businesses, people starting one, and anyone who wants their tech to behave.">
+  <!-- Variant A (control) of the `nl` A/B test: the original page. -->
+  <div data-ab="nl:a">
   <PageHeader eyebrow="Newsletter · Every Wednesday" title="Unlock the Week" crumbs={[{ href: '/', label: 'Home' }, { label: 'Newsletter' }]} class="nl-head">
     <p class="lede">One short email every Wednesday with one fix you can do in a few minutes: keep your tech secure, or catch more of the customers who reach out. Plus a free guide from Learn. Written with small businesses in mind, and useful whether you run one, are starting one, or just want your own tech to behave.</p>
     <Fragment slot="meta">
@@ -67,6 +69,46 @@ import Icon from '../components/Icon.astro';
     </div>
   </section>
   <Bridge location="newsletter" text="Every issue connects to the rest of NeonKey: a free Learn guide, a Lab demo you can try, and the services behind them." links={[{ href: '/learn/', label: 'Browse Learn' }, { href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/free-it-kit/', label: 'Get the free IT kit' }]} />
+  </div>
+  <!-- Variant B of the `nl` A/B test (src/data/ab-tests.ts): short promise, form on the first phone screen, fix topics, then the form again. -->
+  <div data-ab="nl:b" class="nlb">
+    <section class="nlb-hero" aria-labelledby="nlb-h">
+      <div class="container nlb-wrap">
+        <p class="kicker">Unlock the Week · Free Wednesday email</p>
+        <h1 id="nlb-h">One small tech fix, every Wednesday.</h1>
+        <p class="nlb-lede">A short, free email with one practical step to keep your tech secure or catch more of the customers who reach out.</p>
+        <NewsletterForm id="nlb-top" label="Email address" button="Get the free weekly email" note="Free, about a one-minute read, unsubscribe anytime. You'll get one email to confirm." />
+      </div>
+    </section>
+    <section class="nlb-sec" aria-labelledby="nlb-fixes-h">
+      <div class="container nlb-wrap">
+        <h2 id="nlb-fixes-h">A few of the fixes</h2>
+        <ul class="nlb-fixes">
+          <li>Fill out your own contact form tonight</li>
+          <li>Protect the one account that resets all the others</li>
+          <li>What happens to the calls you miss?</li>
+          <li>Are your emails landing in spam?</li>
+          <li>The quote that went quiet</li>
+          <li>The "new bank details" email</li>
+        </ul>
+        <p class="nlb-note">Each one is a single problem, why it matters and the exact steps, in under 200 words. When it fits, there's a free guide from <a href={url('/learn/')}>Learn</a> to go deeper.</p>
+      </div>
+    </section>
+    <section class="nlb-sec" aria-labelledby="nlb-who-h">
+      <div class="container nlb-wrap">
+        <h2 id="nlb-who-h">Who writes it</h2>
+        <p>Michael Ream, who runs NeonKey and holds a Computer Installation and Repair Technician certificate from the California Institute of Applied Technology (CIAT). Hit reply anytime; every reply gets read.</p>
+        <p class="nlb-note">Your email is used only to send the newsletter and is never sold. Signups are handled by Kit; see the <a href={url('/privacy/')}>privacy policy</a>.</p>
+      </div>
+    </section>
+    <section class="nlb-sec" aria-labelledby="nlb-again-h">
+      <div class="container nlb-wrap">
+        <h2 id="nlb-again-h">Get next Wednesday's fix</h2>
+        <NewsletterForm id="nlb-bottom" label="Email address" button="Get the free weekly email" note="Free, about a one-minute read, unsubscribe anytime. You'll get one email to confirm." />
+        <p class="nlb-note">Bonus: after you confirm, reply "yes" to the welcome email and we'll send the One-Minute Fix List, 12 fixes on one page.</p>
+      </div>
+    </section>
+  </div>
   <!-- Meta and Reddit pixels (PageView) for the newsletter ad test. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>

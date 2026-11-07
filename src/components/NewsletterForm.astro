@@ -7,16 +7,18 @@
 //   off   = clearly labeled "coming soon" state with the form disabled (no fake success).
 // The "newsletter-signup" Umami event is sent from Base.astro on a real submit in both form and embed modes.
 import { NEWSLETTER } from '../config';
-interface Props { compact?: boolean; id?: string }
-const { compact = false, id = 'nl' } = Astro.props;
+// Optional (used by the /newsletter/ B test): `label` shows a visible field label, `button` and `note`
+// replace the default button text and note. Leaving them out keeps the original markup exactly.
+interface Props { compact?: boolean; id?: string; label?: string; button?: string; note?: string }
+const { compact = false, id = 'nl', label, button = 'Subscribe', note } = Astro.props;
 const { mode } = NEWSLETTER;
 ---
 {mode === 'form' && (
   <form class:list={['nl-form', { compact }]} action={NEWSLETTER.kitFormAction} method="post" data-nl-form data-form={id}>
-    <label for={`${id}-email`} class="sr-only">Email address</label>
+    <label for={`${id}-email`} class={label ? 'nl-label' : 'sr-only'}>{label || 'Email address'}</label>
     <input id={`${id}-email`} name="email_address" type="email" placeholder="you@example.com" autocomplete="email" required />
-    <button type="submit" class="btn btn-primary">Subscribe</button>
-    <p class="form-note" aria-live="polite">Signups are handled by Kit. You'll get an email to confirm. Unsubscribe anytime.</p>
+    <button type="submit" class="btn btn-primary">{button}</button>
+    <p class="form-note" aria-live="polite">{note || <Fragment>Signups are handled by Kit. You'll get an email to confirm. Unsubscribe anytime.</Fragment>}</p>
   </form>
 )}
 {mode === 'embed' && (

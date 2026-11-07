@@ -397,6 +397,31 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }
 /* A/B tests (src/data/ab-tests.ts): show only the visitor's variant; "a" is the default without JS. */
 html:not([data-ab-hero="b"]) [data-ab="hero:b"], html[data-ab-hero="b"] [data-ab="hero:a"] { display: none !important; }
+html:not([data-ab-nl="b"]) [data-ab="nl:b"], html[data-ab-nl="b"] [data-ab="nl:a"] { display: none !important; }
+/* /newsletter/ variant B: calm, no glow, one cyan action, form on the first phone screen. */
+.nlb-wrap { max-width: 680px; }
+.nlb-hero { padding: clamp(1.75rem, 5vw, 3.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
+.nlb-hero .kicker { margin: 0 0 .75rem; }
+.nlb-hero h1 { font-size: clamp(2.125rem, 6vw, 3rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 1rem; text-wrap: balance; }
+.nlb-lede { font-size: 1.0625rem; color: #c9cde6; max-width: 46ch; margin: 0 0 1.25rem; }
+.nlb .nl-form { margin-top: 0; gap: .75rem; }
+.nlb .nl-label { flex-basis: 100%; font-weight: 600; font-size: 1rem; margin-bottom: -.25rem; }
+.nlb .nl-form input { height: 52px; font-size: 1rem; border-radius: 8px; }
+.nlb .nl-form .btn { height: 52px; border-radius: 8px; }
+.nlb .nl-form .btn:hover { box-shadow: none; }
+.nlb .form-note { font-size: .875rem; color: var(--muted); }
+.nlb-sec { padding: clamp(2.5rem, 6vw, 4rem) 0; border-top: 1px solid var(--line); }
+.nlb-sec h2 { font-size: clamp(1.5rem, 3.5vw, 1.9rem); margin: 0 0 1rem; }
+.nlb-sec p { color: #c9cde6; max-width: 62ch; }
+.nlb-fixes { list-style: none; margin: 0 0 1rem; padding: 0; border-top: 1px solid var(--line); }
+.nlb-fixes li { padding: .7rem 0 .7rem 1.6rem; border-bottom: 1px solid var(--line); position: relative; font-weight: 600; }
+.nlb-fixes li::before { content: "✓"; position: absolute; left: 0; color: var(--cyan); font-weight: 700; }
+.nlb .nlb-note { font-size: .95rem; color: var(--muted); margin: 0; }
+.nlb .nl-form + .nlb-note { margin-top: .75rem; }
+@media (max-width: 640px) {
+  .nlb .nl-form { flex-direction: column; }
+  .nlb .nl-form input, .nlb .nl-form .btn { flex: none; width: 100%; }
+}
 .card p.offer-name { font-size: .85rem; font-weight: 600; color: var(--muted); margin: .1rem 0 .4rem; }
 .card p.offer-outcome { color: var(--text); font-weight: 600; margin: .35rem 0 .5rem; }
 .offer-upsell { font-size: .92rem; color: var(--muted); margin: .2rem 0 .9rem; }
