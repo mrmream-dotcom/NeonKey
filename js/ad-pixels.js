@@ -4,7 +4,7 @@
 // Pixel IDs are public identifiers, not secrets. An empty ID turns that pixel off.
 (function () {
   var META_PIXEL_ID = '';
-  var REDDIT_PIXEL_ID = '';
+  var REDDIT_PIXEL_ID = 'a2_jz9e1v2lgz8e';
   if (window.__nkAdPixels) return;
   window.__nkAdPixels = true;
   var isSignup = /\/newsletter\/thanks\/?$/.test(location.pathname);
