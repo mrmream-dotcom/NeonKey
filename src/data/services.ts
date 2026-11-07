@@ -91,8 +91,8 @@ export const remoteIt: Offer = {
       'A list of the people, mailboxes and devices to include',
       'Someone at the office who can join a video call and follow along on the router and devices',
     ],
-    tools: 'Google Workspace or Microsoft 365, common business password managers (for example Bitwarden or 1Password), mainstream cloud backup tools, and consumer or prosumer routers you already own. Other tools are checked on the scoping call.',
-    turnaround: 'Usually 1 to 2 weeks from the scoping call, depending on scope and how quickly sessions can be booked. Your quote gives the plan.',
+    tools: 'Google Workspace or Microsoft 365, common business password managers (for example Bitwarden or 1Password), mainstream cloud backup tools, and consumer or prosumer routers you already own. Other tools are checked before you get your quote.',
+    turnaround: 'Usually 1 to 2 weeks from when you approve the quote, depending on scope and how quickly sessions can be booked. Your quote gives the plan.',
     priceFactors: [
       'How many people, mailboxes and devices are included',
       'Moving existing email from another provider',
@@ -106,7 +106,7 @@ export const remoteIt: Offer = {
 export const remoteSupportPlan: Offer = {
   slug: 'remote-support-plan',
   name: 'Monthly Remote Support Plan',
-  headline: 'IT help on call, without hiring IT',
+  headline: 'Ongoing remote IT help, without hiring IT',
   from: 99,
   standard: 129,
   unit: '/mo',
@@ -192,7 +192,7 @@ export const automationOffers: Offer[] = [
         'An AI provider account in your name, which I can help you set up',
       ],
       tools: 'Google Workspace or Microsoft 365 email, Google Sheets or Excel, and websites where you can add a custom code snippet (most website builders allow this, sometimes only on paid plans). AI models from mainstream providers, for example Google Gemini or OpenAI, on a paid tier.',
-      turnaround: 'Usually 1 to 3 weeks from the scoping call, depending mostly on how ready your FAQ content is. Your quote gives the plan.',
+      turnaround: 'Usually 1 to 3 weeks from when you approve the quote, depending mostly on how ready your FAQ content is. Your quote gives the plan.',
       priceFactors: [
         'How much FAQ content there is and how organized it is',
         'Where it runs: website, email, or both',
@@ -214,7 +214,7 @@ export const automationOffers: Offer[] = [
       'A walkthrough video and notes covering how to change rules and templates yourself',
       ],
       steps: [
-        { h: 'Map it out', p: 'On a scoping call we list where leads come from, who should get them and what a good follow-up looks like. You get a fixed quote before work starts.' },
+        { h: 'Map it out', p: 'By email (or a short call, if you prefer) we list where leads come from, who should get them and what a good follow-up looks like. You get a fixed quote in writing before work starts.' },
         { h: 'Build', p: 'I connect your intake sources, set up the routing rules, the tracking view and the reminder and template steps.' },
         { h: 'Test with real examples', p: 'We send test leads through every path, check they land in the right place and fix anything that misfires.' },
         { h: 'Go live and hand off', p: 'It goes live, we check the first real leads together, and you get a walkthrough, notes and ownership of every account.' },
@@ -224,8 +224,8 @@ export const automationOffers: Offer[] = [
         'Admin access to the forms, inbox and any CRM involved',
         'The replies you send now, so templates match how you write',
       ],
-      tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form tools (for example Google Forms, Microsoft Forms, Jotform or Typeform), Slack or Teams for alerts, and customer databases (CRMs) such as HubSpot that can connect to other apps (a standard integration or API). Built with mainstream automation tools (for example Zapier, Make or n8n) or Google Apps Script, Google\'s built-in automation scripting. Anything else is checked on the scoping call.',
-      turnaround: 'Usually 2 to 4 weeks from the scoping call, depending on how many sources and tools are involved. Your quote gives the plan.',
+      tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form tools (for example Google Forms, Microsoft Forms, Jotform or Typeform), Slack or Teams for alerts, and customer databases (CRMs) such as HubSpot that can connect to other apps (a standard integration or API). Built with mainstream automation tools (for example Zapier, Make or n8n) or Google Apps Script, Google\'s built-in automation scripting. Anything else is checked before you get your quote.',
+      turnaround: 'Usually 2 to 4 weeks from when you approve the quote, depending on how many sources and tools are involved. Your quote gives the plan.',
       priceFactors: [
         'How many intake sources and tools need connecting',
         'How many routing rules and follow-up steps there are',
@@ -344,8 +344,8 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
       'Admin access to your website editor, inbox, forms and the company that manages your domain settings (DNS)',
       'An AI provider account in your name, which I can help you set up',
     ],
-    tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form and booking tools, websites where you can add a custom code snippet, and mainstream automation tools (for example Zapier, Make or n8n). AI models from mainstream providers on a paid tier. Anything else is checked on the scoping call.',
-    turnaround: 'Usually 3 to 5 weeks from the scoping call, depending on how ready your FAQ content is and how many lead sources are involved. Your quote gives the plan.',
+    tools: 'Google Workspace or Microsoft 365, Google Sheets or Excel, common form and booking tools, websites where you can add a custom code snippet, and mainstream automation tools (for example Zapier, Make or n8n). AI models from mainstream providers on a paid tier. Anything else is checked before you get your quote.',
+    turnaround: 'Usually 3 to 5 weeks from when you approve the quote, depending on how ready your FAQ content is and how many lead sources are involved. Your quote gives the plan.',
     priceFactors: [
       'How much FAQ content there is and how organized it is',
       'How many lead sources and tools need connecting',

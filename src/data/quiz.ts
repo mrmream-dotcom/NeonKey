@@ -348,7 +348,7 @@ function addPicks(v: PlanView, p: Plan) {
     v.localPick = {
       name: t.name, price: `${usd(t.from)}, one visit`, href: t.href!,
       text: pick === 'R'
-        ? `You are in Fairbanks or North Pole, so the same basics (Wi-Fi, backups, 2-step sign-in, email security, printers) can be checked and fixed in person in one visit instead of remotely. Pick whichever you prefer; the scoping call is the same.`
+        ? `You are in Fairbanks or North Pole, so the same basics (Wi-Fi, backups, 2-step sign-in, email security, printers) can be checked and fixed in person in one visit instead of remotely. Pick whichever you prefer; the written quote works the same way.`
         : `You are in Fairbanks or North Pole, so an on-site visit is an option too: Wi-Fi, backups, 2-step sign-in, email security and printers checked and fixed in person, with a one-page report.`,
     };
   }
@@ -399,7 +399,7 @@ function buildPlanBase(p: Plan): PlanView {
       ...base, resultName: remoteIt.name, kicker, heading: remoteIt.name,
       intro: `You told me ${pain}. The fixes your answers point to are the basics this setup covers: email, passwords, Wi-Fi and backups, done remotely by video call and screen share, on accounts you own.`,
       items: { title: p.healthCheck ? 'Start with a quick health check' : 'Based on your answers, start with', list },
-      price: `Starting at ${usd(remoteIt.from)}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed quote after a short scoping call. ${PRICE_DISCLAIMER}`,
+      price: `Starting at ${usd(remoteIt.from)}. The final price depends on how many people, accounts and items are in scope. With ${people} and ${n} ${n === 1 ? 'item' : 'items'}, you get a fixed written quote before any work starts. ${PRICE_DISCLAIMER}`,
       youGet: 'What you get either way: clear notes on every change, admin access that stays with you, and a short recorded walkthrough where it helps.',
       footnote: "Handle regulated data (for example HIPAA or PCI), or need someone onsite? That\'s outside this setup. Mention it and I\'ll say so up front and point you somewhere better.",
       links: [
@@ -582,7 +582,7 @@ function addExtras(v: PlanView, p: Plan) {
 const cap = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
 const SCOPING = [
   "Reply to this email (or use the button below) with any questions.",
-  "We have a short scoping call by video to confirm exactly what's in scope.",
+  "We confirm exactly what's in scope by email (or a short call, if you prefer).",
   "You get a fixed quote before any work starts.",
 ];
 
@@ -639,7 +639,7 @@ function addDetail(v: PlanView, p: Plan) {
   } else if (p.type === 'LEARN-BIZ') {
     v.startPrice = `${quickWin.name}: starting at ${usd(quickWin.from)}`;
     v.scope = { title: 'Good places to start', list: ['Free guides in Learn and the Lab', 'Unlock the Week, one short weekly email', `Optional: ${quickWin.name}`] };
-    v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about ${quickWin.name}.`, 'You get a fixed quote after a short scoping call before any work starts.'];
+    v.nextSteps = ['Browse the free guides when you have a few minutes.', `If a repetitive task comes to mind, reply and ask about ${quickWin.name}.`, 'You get a fixed written quote before any work starts.'];
   } else {
     v.scope = v.includes ? { title: v.includes.title, list: v.includes.list } : undefined;
     v.nextSteps = ['Reply to this email with roughly how many people you have and what\'s bugging you most.', 'I\'ll tell you honestly whether it\'s something I can help with, and point you somewhere better if not.'];

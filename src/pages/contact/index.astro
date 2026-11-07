@@ -8,16 +8,13 @@ import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
 ---
 <Base title="Contact" description="Contact NeonKey about remote small-office IT setup, automation services, a tutorial, a review or the Unlock the Week newsletter.">
-  <PageHeader eyebrow="Contact" title="Contact" crumbs={[{ href: '/', label: 'Home' }, { label: 'Contact' }]}>
-    <p class="lede">Questions about services, a tutorial or a review? Email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
-    <Fragment slot="meta">
-      <li><span>Replies by email</span></li>
-      <li><span>Services · Tutorials · Reviews · Newsletter</span></li>
-    </Fragment>
+  <PageHeader eyebrow="Contact" title="Get a written quote" crumbs={[{ href: '/', label: 'Home' }, { label: 'Contact' }]}>
+    <p class="lede">Tell Michael what isn't working and what you'd like to improve, or just ask a question. You'll get a reply by email with any questions and, when it fits, a written quote. No call needed. You can also email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
   </PageHeader>
   <div class="container split contact-split">
     <div class="contact-form-col">
       <p class="section-label"><span class="pulse" aria-hidden="true"></span>Send a message</p>
+      <p class="contact-next">Michael Ream reads every message and aims to reply within 1 business day.</p>
     <form class="panel" action="https://api.web3forms.com/submit" method="post">
       <input type="hidden" name="access_key" value="52c99f86-4c5d-4a75-b20d-63c66d18dcaf" />
       <input type="hidden" name="subject" value="New NeonKey contact form message" />
@@ -30,10 +27,10 @@ import Icon from '../../components/Icon.astro';
       <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
       <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
       <div class="field"><label for="c-topic">Topic</label>
-        <select id="c-topic" name="topic"><option>Remote small-office IT setup</option><option>Email Lockdown ($49)</option><option>Monthly remote support plan</option><option>Automation services</option><option>Front Office Package (all-inclusive)</option><option>Tutorials or reviews</option><option>Newsletter</option><option>I was referred by a client</option><option>Something else</option></select>
+        <select id="c-topic" name="topic"><option value="">Choose a topic</option><option>Front Office Package (all-inclusive)</option><option>Remote small-office IT setup</option><option>Email Lockdown ($49)</option><option>Monthly remote support plan</option><option>Automation services</option><option>Tutorials or reviews</option><option>Newsletter</option><option>I was referred by a client</option><option>Something else</option></select>
       </div>
+      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" placeholder="What needs fixing, and what tools do you use now?" required></textarea></div>
       <div class="field"><label for="c-ref">Referred by <span class="muted">(optional)</span></label><input id="c-ref" name="referred_by" maxlength="80" placeholder="Name or code, like NK-SMITH" /></div>
-      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required></textarea></div>
       <button class="btn btn-primary" type="submit" data-umami-submit="contact-submit">Send message</button>
       <p class="form-note">Your message goes straight to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a> for how form messages are handled.</p>
     </form>
@@ -45,7 +42,7 @@ import Icon from '../../components/Icon.astro';
       </div>
       <div class="panel topline accent-violet">
         <div class="panel-head"><span class="icon-chip"><Icon name="chat" /></span><h2 class="panel-title">What happens next</h2></div>
-        <p class="muted" style="margin:0">Michael Ream reads every message and will reply by email. We aim to reply within 1 business day. Remote, anywhere in the US.</p>
+        <p class="muted" style="margin:0">You get a reply by email, with questions if anything is unclear and a fixed written quote before any work starts. Remote, anywhere in the US.</p>
       </div>
       <div class="panel topline accent-magenta">
         <div class="panel-head"><span class="icon-chip"><Icon name="chat" /></span><h2 class="panel-title">Follow along</h2></div>
@@ -105,3 +102,7 @@ import Icon from '../../components/Icon.astro';
       : "Hi Michael, I took the service quiz on neonkey.tech and I'd like to talk it through.\n\n";
   }
 </script>
+
+<style>
+  .contact-next { margin: 0 0 .9rem; color: var(--muted); font-size: .95rem; }
+</style>
