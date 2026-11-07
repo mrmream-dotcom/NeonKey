@@ -31,6 +31,21 @@ const sample = [
         </div>
 
         <div class="panel topline">
+          <h2 class="fd-h">Your dashboard</h2>
+          <p class="muted">Everything is on one page, with a short checklist the first time you sign in.</p>
+          <img class="fd-shot" src={url('/images/follow-up-desk/sample-dashboard.webp')} width="1600" height="1216" alt="Sample Follow-Up Desk dashboard with made-up customers: tool buttons along the top, counts of open follow-ups, replies and wins, and forms to add one or paste a list." loading="lazy" />
+          <p class="muted fd-small">Sample with made-up customers.</p>
+          <ul class="fd-tools">
+            <li><strong>Add one or paste a list.</strong> Type in an estimate, or paste rows from QuickBooks, Jobber or a spreadsheet.</li>
+            <li><strong>Your messages.</strong> Three short follow-ups are written for you. Change any word, or the days they go out.</li>
+            <li><strong>Won, Lost, Stop.</strong> One click when you hear back some other way, so nobody gets an extra email.</li>
+            <li><strong>Send me a preview.</strong> See exactly what your customers get, then reply to it to test the reply flow.</li>
+            <li><strong>Pause.</strong> Slammed or on vacation? One button holds everything.</li>
+            <li><strong>Monday report.</strong> A short email: what went out, who replied, what needs a look.</li>
+          </ul>
+        </div>
+
+        <div class="panel topline">
           <h2 class="fd-h">What your customer gets</h2>
           <p class="muted">Short, plain notes that read like they came from you. These are the defaults for an estimate; there are matching sets for unpaid invoices and new inquiries.</p>
           <div class="fd-mails">
@@ -108,4 +123,6 @@ const sample = [
   .fd-buy .btn { align-self: flex-start; }
   .fd-list { margin: 0; padding-left: 1.1rem; font-size: .92rem; }
   .fd-small { font-size: .88rem; margin: 0; }
+  .fd-shot { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); margin: .5rem 0 .35rem; }
+  .fd-tools { margin: .9rem 0 0; }
 </style>

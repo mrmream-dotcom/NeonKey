@@ -282,7 +282,10 @@ async function dashboard(request, env, token, action) {
   const portalUrl = env.PORTAL_URL || "";
   if (request.method === "GET") {
     const msg = new URL(request.url).searchParams.get("m") || "";
-    if (action === "settings") return html(settingsPage({ acct, base, msg }));
+    if (action === "settings") {
+      if (!acct.messagesSeen) { acct.messagesSeen = Date.now(); await putAccount(env, acct); }
+      return html(settingsPage({ acct, base, msg }));
+    }
     if (action) return redirect(base);
     return html(dashboardPage({ acct, base, msg, portalUrl }));
   }
@@ -391,6 +394,7 @@ export async function act(env, acct, action, form, now = Date.now()) {
   if (action === "test") {
     const sample = { id: "test", kind: "estimate", name: "Jane", email: s.replyTo, job: "the kitchen remodel", step: 0 };
     const ok = await sendFollowUp(env, acct, sample, { test: true });
+    if (ok && !acct.previewSent) { acct.previewSent = now; await putAccount(env, acct); }
     return ok ? "test" : "testfail";
   }
   return "bad";

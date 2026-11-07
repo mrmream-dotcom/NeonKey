@@ -41,19 +41,31 @@ export function welcomeEmail({ name, link }) {
   const steps = [
     "Add your business name, the email replies should go to, and how you sign off.",
     "Add the estimates you've sent: one at a time, or paste a list from QuickBooks or a spreadsheet.",
-    "That's it. Follow-ups go out on weekday mornings, and they stop the moment your customer replies.",
+    "Send yourself a preview. Reply to it and watch the reply come back to you.",
   ];
+  const tools = [
+    ["Add one / Paste a list", "Put in the estimates you're waiting on. We skip anyone already on your list."],
+    ["Your messages", "Three short follow-ups are written for you. Change any word, or the days they go out."],
+    ["Won, Lost, Stop", "One click when you hear back some other way, so nobody gets an extra email."],
+    ["Send me a preview", "See exactly what your customers get, any time."],
+    ["Pause", "Going on vacation or slammed? Pause everything with one button."],
+    ["Monday report", "A short email each week: what went out, who replied, what needs a look."],
+  ];
+  const toolRows = tools.map(([t, d]) => `<tr><td valign="top" style="padding:8px 12px 8px 0;font-family:${FONT};font-size:15px;font-weight:700;color:${C.text};white-space:nowrap;">${esc(t)}</td><td style="padding:8px 0;font-family:${FONT};font-size:14px;line-height:1.5;color:${C.muted};">${esc(d)}</td></tr>`).join("");
   const html = shell("Your Follow-Up Desk is ready. Here's your private link.", [
     p(hi),
     p("Thanks for signing up. Your Follow-Up Desk is ready, and setup takes about five minutes."),
     button(link, "Open my Follow-Up Desk"),
-    h2("Three steps"),
+    h2("Get started in three steps"),
     steps.map((s, i) => p(`<strong style="color:${C.cyan};">${i + 1}.</strong> ${esc(s)}`, "margin-bottom:10px;")).join(""),
+    h2("Your tools", C.violet),
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px 0;background:${C.panel};border:1px solid ${C.line};border-radius:12px;"><tr><td style="padding:8px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${toolRows}</table></td></tr></table>`,
+    p("The best part runs on its own: <strong>when a customer replies, their follow-ups stop</strong> and the reply lands in your inbox.", "font-size:15px;"),
     h2("Good to know", C.violet),
     p("This link is your login. There's no password. Bookmark it, and if you lose it, ask for a new one at the sign-in page using the email you paid with.", `font-size:14px;color:${C.muted};`),
     p("Questions? Just reply to this email.", `font-size:14px;color:${C.muted};`),
   ].join(""));
-  const text = `${hi.replace(/<[^>]+>/g, "")}\n\nThanks for signing up. Your Follow-Up Desk is ready, and setup takes about five minutes.\n\nOpen it here (this link is your login, don't forward it):\n${link}\n\n${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nQuestions? Just reply.\n\nNeonKey`;
+  const text = `${hi.replace(/<[^>]+>/g, "")}\n\nThanks for signing up. Your Follow-Up Desk is ready, and setup takes about five minutes.\n\nOpen it here (this link is your login, don't forward it):\n${link}\n\nGet started:\n${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nYour tools:\n${tools.map(([t, d]) => `- ${t}: ${d}`).join("\n")}\n\nWhen a customer replies, their follow-ups stop and the reply lands in your inbox.\n\nQuestions? Just reply.\n\nNeonKey`;
   return { subject: "Your Follow-Up Desk is ready", html, text };
 }
 

@@ -150,7 +150,7 @@ test("dashboard: bad token 404s, setup, add, duplicate, import, escaping", async
   const page = await get(link);
   assert.equal(page.status, 200);
   assert.match(page.headers.get("Content-Security-Policy"), /default-src 'none'/);
-  assert.match(await page.text(), /Set up your Desk/);
+  assert.match(await page.text(), /get your Desk running/);
   await setup(link);
   let r = await post(`${link}/add`, { name: '<img src=x onerror=alert(1)>', email: "jane@ex.test", kind: "estimate", job: "Deck", date: "2026-11-02" });
   assert.match(r.headers.get("Location"), /m=added/);
@@ -338,4 +338,18 @@ test("sign-in link: same page either way, rate limited", async () => {
 
 test("stripQuoted keeps only the new text", () => {
   assert.equal(stripQuoted("Sounds good\n\nOn Tue, Nov 10, 2026, Smith Roofing <x@y> wrote:\n> old"), "Sounds good");
+});
+
+test("getting-started checklist tracks progress and disappears when done", async () => {
+  const { link, id } = await signup();
+  await setup(link);
+  let body = await (await get(link)).text();
+  assert.match(body, /Getting started/);
+  assert.match(body, /1 of 4 done/);
+  await post(`${link}/add`, { name: "Jane", email: "jane@ex.test", kind: "estimate", job: "Deck", date: "" });
+  await post(`${link}/test`, {});
+  assert.ok((await getAccount(env, id)).previewSent);
+  body = await (await get(link)).text();
+  assert.ok(!body.includes("Getting started"));
+  assert.match(body, /Paste a list/);
 });

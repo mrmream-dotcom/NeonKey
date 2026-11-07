@@ -22,6 +22,7 @@ mkdirSync(out, { recursive: true });
 const withCss = (h) => h.replace('<link rel="stylesheet" href="/app.css">', `<style>${CSS}</style>`);
 writeFileSync(new URL("dashboard.html", out), withCss(dashboardPage({ acct, base: "/d/sample", msg: "", portalUrl: "https://billing.stripe.com/p/login/sample" })));
 writeFileSync(new URL("setup.html", out), withCss(dashboardPage({ acct: { ...acct, setupDone: false, items: [] }, base: "/d/sample", msg: "" })));
+writeFileSync(new URL("start.html", out), withCss(dashboardPage({ acct: { ...acct, items: [], previewSent: false }, base: "/d/sample", msg: "setup", portalUrl: "https://billing.stripe.com/p/login/sample" })));
 writeFileSync(new URL("settings.html", out), withCss(settingsPage({ acct, base: "/d/sample", msg: "" })));
 writeFileSync(new URL("login.html", out), withCss(loginPage(false)));
 writeFileSync(new URL("email-welcome.html", out), welcomeEmail({ name: "Pat", link: "https://example.com/d/sample" }).html);
