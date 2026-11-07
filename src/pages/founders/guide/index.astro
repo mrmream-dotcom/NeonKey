@@ -52,12 +52,12 @@ const canBuy = setupGuide.buyUrl !== '';
           ))}
         </div>
         <h2 class="sg-h">How the included Email Lockdown works</h2>
-        <p class="muted">Enter your domain at checkout, or reply to your delivery email with it. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>
+        <p class="muted">Enter your domain at checkout, or reply to the email your guide arrives in. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>
         <h2 class="sg-h">Good to know</h2>
 
         <ul class="muted">
           <li>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</li>
-          <li>It's a PDF of about 18 pages, first edition, November 2026. We email your copy after checkout.</li>
+          <li>It's a PDF of about 18 pages, first edition, November 2026. Your copy is emailed to you automatically right after checkout, usually within a few minutes.</li>
           <li>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the {usd(setupGuide.price)}. Check each tool's current pricing.</li>
           <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
         </ul>
@@ -70,7 +70,7 @@ const canBuy = setupGuide.buyUrl !== '';
         {canBuy
           ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
           : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
-        <p class="muted sg-small">Secure checkout by Stripe. Your copy arrives by email, usually the same day.</p>
+        <p class="muted sg-small">Secure checkout by Stripe. Your copy is emailed to you automatically, usually within a few minutes.</p>
         <p class="muted sg-small">Questions first? <a href={url('/contact/')}>Send a message</a>.</p>
       </aside>
     </div>

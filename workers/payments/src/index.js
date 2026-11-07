@@ -2,10 +2,12 @@
 //   POST /webhook   Stripe events (signature checked with STRIPE_WEBHOOK_SECRET before anything else)
 //   GET  /health    { ok: true, live }
 // Stripe itself emails customers their invoices and receipts (Dashboard > Settings > Customer emails),
-// so this Worker only notifies NeonKey (hello@, BCC Michael). It stores nothing.
+// so this Worker notifies NeonKey (hello@, BCC Michael) and emails Founder Stack buyers their PDF (src/deliver.js).
+// It stores nothing; the PDF is read from the private PRODUCTS KV namespace.
 // Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET, RESEND_API_KEY. No Stripe API key is needed here.
 import { describeEvent } from "./events.js";
 import { verifyStripeEvent } from "./verify.js";
+import { isFounderStackPaid, deliverFounderStack } from "./deliver.js";
 
 export default {
   async fetch(request, env) {
@@ -38,6 +40,10 @@ export default {
       console.log("payments: live event ignored (ALLOW_LIVE is off)", event.type);
       return json(200, { ok: true, ignored: "live" });
     }
+
+    // Founder Stack: email the buyer the PDF from private KV. A failure returns 500 so Stripe retries;
+    // the Idempotency-Key stops a retry or a duplicate event from sending a second copy within 24 h.
+    if (isFounderStackPaid(event, env) && !(await deliverFounderStack(env, event))) return json(500, { ok: false });
 
     const notice = describeEvent(event);
     if (!notice) return json(200, { ok: true, ignored: event.type });

@@ -69,5 +69,8 @@ for (const page of ['contact', 'newsletter', 'services/quiz', 'free-it-kit']) {
 const thanks = join(distDir, 'newsletter', 'thanks', 'index.html');
 if (!existsSync(thanks) || !read(thanks).includes('conv-newsletter.js')) fail('/newsletter/thanks/ no longer loads conv-newsletter.js');
 
+// 7. Paid products never ship on the site. The Founder Stack PDF is delivered only by email from private KV.
+for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.test(relative(distDir, f))) fail(`paid product file in the build: ${relative(distDir, f)}`);
+
 console.log(`release checks: ${pages.length} pages, ${links} internal links, ${failures.length} failure(s)`);
 if (failures.length) { for (const m of failures) console.log(`::error::${m}`); process.exit(1); }

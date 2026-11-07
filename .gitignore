@@ -43,3 +43,8 @@ Thumbs.db
 
 # Client Room skill working files
 .client-room/
+
+# Paid products are delivered by the payments Worker from private KV. Never commit them.
+*founder-stack*.pdf
+the-founder-stack*
+products/

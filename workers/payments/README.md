@@ -66,6 +66,20 @@ idempotency key per event stops duplicate emails when Stripe retries. If the ema
 returns 500 so Stripe retries. Live-mode events are ignored while `ALLOW_LIVE = "false"`.
 It needs no Stripe API key and stores nothing.
 
+### Founder Stack auto-delivery (`src/deliver.js`)
+
+A paid `checkout.session.completed` (or `async_payment_succeeded`) from the Founder Stack Payment Link
+(`FOUNDER_STACK_LINK`, or metadata `offer=nk_founder_stack_guide`) emails the buyer the PDF as an attachment,
+From hello@, BCC `BCC_ADDRESS`, with the Lockdown domain from the checkout's `domain` field (or a "reply with
+your domain" line). Idempotency key `founder-stack-<session id>` stops duplicates. If the PDF is missing or
+Resend fails it returns 500 so Stripe retries; a checkout with no buyer email alerts `NOTIFY_TO` instead.
+
+The PDF lives only in the private KV namespace `neonkey-products` (binding `PRODUCTS`, key
+`founder-stack/the-founder-stack-neonkey.pdf`). It is never committed, never on the site, and the Worker has
+no route that serves it. To ship a new edition, overwrite that key:
+`npx wrangler kv key put --namespace-id d078b508b3954a908d17fe7bc72c8a65 founder-stack/the-founder-stack-neonkey.pdf --path ./the-founder-stack-neonkey.pdf --remote`.
+The included Email Lockdown is still run by hand from the BCC copy.
+
 Deploy (test mode):
 
 ```sh

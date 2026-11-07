@@ -112,3 +112,89 @@ test("HTML in Stripe fields is escaped in the notice", async () => {
   await worker.fetch(signed(ev("invoice.paid", { id: "in_x", amount_paid: 100, currency: "usd", customer_name: "<img src=x onerror=alert(1)>" })), env);
   assert.doesNotMatch(sent[0].body.html, /<img/);
 });
+
+// Founder Stack auto-delivery
+const PDF = new Uint8Array([37, 80, 68, 70, 45, 49, 46, 55]); // "%PDF-1.7"
+const kv = (bytes) => ({ get: async (key, type) => (key === "founder-stack/the-founder-stack-neonkey.pdf" && type === "arrayBuffer" && bytes ? bytes.buffer : null) });
+const fsEnv = { ...env, FOUNDER_STACK_LINK: "plink_fs", PRODUCTS: kv(PDF) };
+const fsSession = (extra = {}) => ({ id: "cs_test_1", mode: "payment", payment_status: "paid", amount_total: 9700, currency: "usd", invoice: "in_9", payment_link: "plink_fs", metadata: { offer: "nk_founder_stack_guide" }, customer_details: { email: "founder@example.com", name: "Ada Lovelace" }, custom_fields: [{ key: "domain", text: { value: "https://www.Example.com/" } }], ...extra });
+
+test("paid Founder Stack checkout emails the buyer the PDF, BCC, idempotent, with the Lockdown domain", async () => {
+  sent = [];
+  const r = await worker.fetch(signed(ev("checkout.session.completed", fsSession())), fsEnv);
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 1);
+  const b = sent[0].body;
+  assert.deepEqual(b.to, ["founder@example.com"]);
+  assert.deepEqual(b.bcc, ["bcc@example.com"]);
+  assert.equal(b.from, env.FROM_ADDRESS);
+  assert.equal(b.reply_to, "hello@neonkey.tech");
+  assert.equal(sent[0].headers["Idempotency-Key"], "founder-stack-cs_test_1");
+  assert.equal(b.attachments[0].filename, "The-Founder-Stack-NeonKey.pdf");
+  assert.equal(Buffer.from(b.attachments[0].content, "base64").toString(), "%PDF-1.7");
+  assert.match(b.text, /Hi Ada,/);
+  assert.match(b.text, /your domain, example\.com,/);
+  assert.match(b.subject, /^\[TEST\] Your copy of The Founder Stack/);
+});
+
+test("Founder Stack matched by Payment Link id alone; no domain asks for a reply", async () => {
+  sent = [];
+  await worker.fetch(signed(ev("checkout.session.completed", fsSession({ metadata: {}, custom_fields: [] }))), fsEnv);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0].body.text, /Reply to this email with the domain/);
+});
+
+test("names and domains are escaped or rejected in the email", async () => {
+  sent = [];
+  await worker.fetch(signed(ev("checkout.session.completed", fsSession({ customer_details: { email: "a@example.com", name: "<b>x</b>" }, custom_fields: [{ key: "domain", text: { value: "<script>alert(1)</script>" } }] }))), fsEnv);
+  const h = sent[0].body.html.toLowerCase();
+  assert.ok(!h.includes("<b>x</b>") && !h.includes("<script") && !h.includes("alert(1)"));
+  assert.ok(h.includes("&lt;b&gt;x&lt;/b&gt;"));
+  assert.match(sent[0].body.text, /Reply to this email with the domain/);
+});
+
+test("unpaid Founder Stack checkout sends nothing until async_payment_succeeded", async () => {
+  sent = [];
+  await worker.fetch(signed(ev("checkout.session.completed", fsSession({ payment_status: "unpaid" }))), fsEnv);
+  assert.equal(sent.length, 0);
+  await worker.fetch(signed(ev("checkout.session.async_payment_succeeded", fsSession())), fsEnv);
+  assert.equal(sent.length, 1);
+});
+
+test("other checkouts never get the guide", async () => {
+  sent = [];
+  await worker.fetch(signed(ev("checkout.session.completed", fsSession({ payment_link: "plink_other", metadata: { offer: "email_lockdown" }, invoice: null, amount_total: 4900 }))), fsEnv);
+  assert.equal(sent.length, 1);
+  assert.deepEqual(sent[0].body.to, ["hello@neonkey.tech"]);
+  assert.equal(sent[0].body.attachments, undefined);
+});
+
+test("missing PDF returns 500 so Stripe retries, and sends nothing", async () => {
+  sent = [];
+  const r = await worker.fetch(signed(ev("checkout.session.completed", fsSession())), { ...fsEnv, PRODUCTS: kv(null) });
+  assert.equal(r.status, 500);
+  assert.equal(sent.length, 0);
+});
+
+test("Resend failure returns 500 so Stripe retries", async () => {
+  const real = globalThis.fetch;
+  globalThis.fetch = async () => new Response("no", { status: 500 });
+  const r = await worker.fetch(signed(ev("checkout.session.completed", fsSession())), fsEnv);
+  globalThis.fetch = real;
+  assert.equal(r.status, 500);
+});
+
+test("no buyer email alerts hello@ instead of retrying", async () => {
+  sent = [];
+  const r = await worker.fetch(signed(ev("checkout.session.completed", fsSession({ customer_details: {} }))), fsEnv);
+  assert.equal(r.status, 200);
+  assert.deepEqual(sent[0].body.to, ["hello@neonkey.tech"]);
+  assert.match(sent[0].body.subject, /ACTION NEEDED/);
+});
+
+test("the Worker has no route that serves the PDF", async () => {
+  for (const p of ["/", "/founder-stack/the-founder-stack-neonkey.pdf", "/download", "/webhook"]) {
+    const r = await worker.fetch(new Request("https://w.example" + p), fsEnv);
+    assert.ok([404, 405].includes(r.status), p);
+  }
+});
