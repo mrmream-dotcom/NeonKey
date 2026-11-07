@@ -104,7 +104,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
         <div>
           <span class="kicker">{fop.name}</span>
           <h2 style="margin:.3rem 0">All of this, set up as one system</h2>
-          <p class="muted" style="margin:0">{fop.parts.map((p) => p.name.replace(/ \(.*\)$/, '')).join(', ')}. Fixed quote after a short scoping call.</p>
+          <p class="muted" style="margin:0">{fop.parts.map((p) => p.name.replace(/ \(.*\)$/, '')).join(', ')}. Fixed written quote before any work starts.</p>
         </div>
         <div class="fo-cta-side">
           <p class="price" style="margin:0">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Start-Up Deal · founding-client rate</small></p>
@@ -151,7 +151,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
       <li>This page is a simulation that runs in your browser. The real version runs on your own tools, so it will look like your inbox and sheet, not this page.</li>
       <li>AI drafts can be wrong. That's why a person approves every message and the assistant hands off when unsure.</li>
       <li>It doesn't replace answering the phone. Calls still need a person or a separate phone setup.</li>
-      <li>Some tools need a paid plan at higher volume. Those subscriptions are billed to you by the provider, and we check that on the scoping call.</li>
+      <li>Some tools need a paid plan at higher volume. Those subscriptions are billed to you by the provider, and we check that before quoting.</li>
     </ul>
 
     <h2 id="related">Related</h2>
@@ -159,7 +159,7 @@ const sections: [string, string][] = [['demo', 'Try it'], ['what', 'What gets bu
       <div class="panel">
         <span class="kicker">Related service</span>
         <h3 style="margin-top:.4rem">{fop.name}</h3>
-        <p class="muted">Want this for your business? Start with a short scoping call. Or pick just the part you need, like the Lead-Routing &amp; Follow-Up System.</p>
+        <p class="muted">Want this for your business? Start by asking for a written quote. Or pick just the part you need, like the Lead-Routing &amp; Follow-Up System.</p>
         <div class="btn-row">
           <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-location="lab-front-office-related">Ask about this</a>
           <a class="btn btn-ghost btn-sm" href={url('/services/#lead-routing')} data-umami-event="services-cta" data-umami-event-location="lab-front-office-related">See Lead-Routing</a>

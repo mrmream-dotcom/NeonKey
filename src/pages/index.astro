@@ -51,7 +51,7 @@ const serviceNode = (o: typeof remoteIt, offerPath: string, monthly = false) => 
       minPrice: o.from,
       priceCurrency: 'USD',
       ...(monthly ? { unitCode: 'MON', unitText: 'month' } : {}),
-      description: monthly ? 'Starting monthly price; final price agreed before you start' : 'Starting price; fixed quote after a scoping call',
+      description: monthly ? 'Starting monthly price; final price agreed before you start' : 'Starting price; fixed written quote before work starts',
     },
   },
 });
