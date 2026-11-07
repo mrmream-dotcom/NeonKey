@@ -416,6 +416,9 @@ html:not([data-ab-nl="b"]) [data-ab="nl:b"], html[data-ab-nl="b"] [data-ab="nl:a
 .nlb-fixes li::before { content: "✓"; position: absolute; left: 0; color: var(--cyan); font-weight: 700; }
 .nlb .nlb-note { font-size: .95rem; color: var(--muted); margin: 0; }
 .nlb .nl-form + .nlb-note { margin-top: .75rem; }
+/* "Free with signup" Starter IT Kit line under the newsletter forms (both nl variants). */
+.nl-kit-promise { margin: .75rem 0 0; padding: .6rem .8rem; border-left: 3px solid var(--cyan); background: rgba(34,211,238,.07); border-radius: 6px; font-size: .95rem; color: var(--text); }
+.nlb .nl-kit-promise + .nlb-note { margin-top: .75rem; }
 @media (max-width: 640px) {
   .nlb .nl-form { flex-direction: column; }
   .nlb .nl-form input, .nlb .nl-form .btn { flex: none; width: 100%; }

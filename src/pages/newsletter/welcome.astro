@@ -1,5 +1,5 @@
 ---
-import { url, CONTACT_EMAIL } from '../../config';
+import { url, CONTACT_EMAIL, FREE_KIT_FILE } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
@@ -21,11 +21,16 @@ import Icon from '../../components/Icon.astro';
       </ul>
       <p style="margin-bottom:0">No spam, and you can unsubscribe anytime from the link at the bottom of any email.</p>
     </div>
+    <div class="panel topline accent-cyan">
+      <h2 class="panel-title">Your free Starter IT Kit</h2>
+      <p>If you didn't grab it when you signed up, here it is: our free IT setup guide in one spreadsheet, with five quick wins, an accounts list and a 10-minute monthly checkup. Excel or Google Sheets.</p>
+      <p style="margin-bottom:0"><a class="btn btn-primary" href={url(FREE_KIT_FILE)} download data-umami-event="nl-welcome-kit">Download the free IT kit</a></p>
+    </div>
     <div class="panel topline accent-magenta">
-      <h2 class="panel-title">Your bonus: the One-Minute Fix List</h2>
+      <h2 class="panel-title">Another bonus: the One-Minute Fix List</h2>
       <p style="margin-bottom:0">Watch for the welcome email from NeonKey and reply "yes" to it. We'll send the One-Minute Fix List: 12 small fixes for your business tech and customer follow-up, on one page. Or email <a href={`mailto:${CONTACT_EMAIL}?subject=Yes%2C%20send%20the%20Fix%20List&body=Yes`} data-umami-event="nl-welcome-reply">{CONTACT_EMAIL}</a> with "yes".</p>
       <p class="muted" style="margin-top:.75rem;margin-bottom:0">NeonKey</p>
     </div>
-    <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Explore NeonKey</a></p>
+    <p class="status-actions"><a class="btn btn-ghost" href={url('/')}>Explore NeonKey</a></p>
   </div>
 </Base>
