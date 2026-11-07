@@ -66,4 +66,6 @@ import Icon from '../components/Icon.astro';
     </div>
   </section>
   <Bridge location="newsletter" text="Every issue connects to the rest of NeonKey: a free Learn guide, a Lab demo you can try, and the services behind them." links={[{ href: '/learn/', label: 'Browse Learn' }, { href: '/lab/', label: 'Try a Lab demo', event: 'lab-cta' }, { href: '/free-it-kit/', label: 'Get the free IT kit' }]} />
+  <!-- Meta and Reddit pixels (PageView) for the newsletter ad test. -->
+  <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>
