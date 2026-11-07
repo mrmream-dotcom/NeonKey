@@ -231,9 +231,16 @@ export function normAmount(s) {
 }
 
 // ---------- ids and tokens ----------
-export function randomId(bytes = 9) {
-  const b = crypto.getRandomValues(new Uint8Array(bytes));
-  return [...b].map((x) => "abcdefghijklmnopqrstuvwxyz0123456789"[x % 36]).join("");
+// Rejection sampling: bytes 252-255 are thrown away so each of the 36 characters is equally likely (252 = 7 x 36).
+export function randomId(length = 9) {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let out = "";
+  while (out.length < length) {
+    for (const x of crypto.getRandomValues(new Uint8Array(length * 2))) {
+      if (x < 252 && out.length < length) out += chars[x % 36];
+    }
+  }
+  return out;
 }
 export function randomToken() {
   const b = crypto.getRandomValues(new Uint8Array(32));

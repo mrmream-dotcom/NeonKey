@@ -353,3 +353,17 @@ test("getting-started checklist tracks progress and disappears when done", async
   assert.ok(!body.includes("Getting started"));
   assert.match(body, /Paste a list/);
 });
+
+test("HTML-only replies become plain text with no markup left", async () => {
+  const { htmlToText } = await import("../src/index.js");
+  const t = htmlToText('<style>p{x}</style><p>Yes &amp; thanks</p><script>alert(1)</script><<script>x</script>b>done<br>ok');
+  assert.ok(!t.includes("<") && !t.includes(">"));
+  assert.match(t, /Yes & thanks/);
+  assert.ok(!t.includes("alert"));
+  assert.match(htmlToText("<".repeat(50000)), /^$/);
+});
+
+test("ids use only the 36 allowed characters at the right length", async () => {
+  const { randomId } = await import("../src/engine.js");
+  for (let i = 0; i < 200; i++) assert.match(randomId(12), /^[a-z0-9]{12}$/);
+});

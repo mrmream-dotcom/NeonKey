@@ -37,7 +37,8 @@ function shell(preheader, body) {
 
 // ---------- NeonKey -> owner ----------
 export function welcomeEmail({ name, link }) {
-  const hi = firstName(name) === "there" ? "Hi," : `Hi ${esc(firstName(name))},`;
+  const hiText = firstName(name) === "there" ? "Hi," : `Hi ${firstName(name)},`;
+  const hi = esc(hiText);
   const steps = [
     "Add your business name, the email replies should go to, and how you sign off.",
     "Add the estimates you've sent: one at a time, or paste a list from QuickBooks or a spreadsheet.",
@@ -65,7 +66,7 @@ export function welcomeEmail({ name, link }) {
     p("This link is your login. There's no password. Bookmark it, and if you lose it, ask for a new one at the sign-in page using the email you paid with.", `font-size:14px;color:${C.muted};`),
     p("Questions? Just reply to this email.", `font-size:14px;color:${C.muted};`),
   ].join(""));
-  const text = `${hi.replace(/<[^>]+>/g, "")}\n\nThanks for signing up. Your Follow-Up Desk is ready, and setup takes about five minutes.\n\nOpen it here (this link is your login, don't forward it):\n${link}\n\nGet started:\n${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nYour tools:\n${tools.map(([t, d]) => `- ${t}: ${d}`).join("\n")}\n\nWhen a customer replies, their follow-ups stop and the reply lands in your inbox.\n\nQuestions? Just reply.\n\nNeonKey`;
+  const text = `${hiText}\n\nThanks for signing up. Your Follow-Up Desk is ready, and setup takes about five minutes.\n\nOpen it here (this link is your login, don't forward it):\n${link}\n\nGet started:\n${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\nYour tools:\n${tools.map(([t, d]) => `- ${t}: ${d}`).join("\n")}\n\nWhen a customer replies, their follow-ups stop and the reply lands in your inbox.\n\nQuestions? Just reply.\n\nNeonKey`;
   return { subject: "Your Follow-Up Desk is ready", html, text };
 }
 
@@ -107,13 +108,19 @@ export function forwardEmail({ item, from, subject, text, auto, unsubscribe }) {
     : auto
       ? `${who} sent an automatic reply (like an out-of-office). Follow-ups are <strong>still running</strong>, since a person hasn't answered yet.`
       : `${who} replied. Follow-ups for this job are stopped.`;
+  const whoText = item ? `${item.name || item.email}${item.job ? ` about ${item.job}` : ""}` : String(from || "");
+  const leadText = unsubscribe
+    ? `${whoText} asked not to get more follow-ups. They're stopped.`
+    : auto
+      ? `${whoText} sent an automatic reply (like an out-of-office). Follow-ups are still running, since a person hasn't answered yet.`
+      : `${whoText} replied. Follow-ups for this job are stopped.`;
   const quoted = String(text || "(no text in the message)").slice(0, 20000);
   const html = shell(`${item?.name || from} replied`, [
     p(lead),
     unsubscribe ? "" : p("Hit Reply to answer them directly.", `color:${C.muted};font-size:14px;`),
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;background:${C.panel};border:1px solid ${C.line};border-left:3px solid ${C.cyan};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};font-size:15px;line-height:1.55;color:${C.text};white-space:pre-wrap;">${esc(from)}<br>${esc(subject)}<br><br>${esc(quoted)}</td></tr></table>`,
   ].join(""));
-  const plain = `${lead.replace(/<[^>]+>/g, "")}\n${unsubscribe ? "" : "Hit Reply to answer them directly.\n"}\nFrom: ${from}\nSubject: ${subject}\n\n${quoted}`;
+  const plain = `${leadText}\n${unsubscribe ? "" : "Hit Reply to answer them directly.\n"}\nFrom: ${from}\nSubject: ${subject}\n\n${quoted}`;
   const subj = unsubscribe ? `Stopped: ${item?.name || from} asked for no more follow-ups` : `${auto ? "Auto-reply" : "Reply"} from ${item?.name || from}: ${subject || "(no subject)"}`;
   return { subject: subj.slice(0, 180), html, text: plain };
 }

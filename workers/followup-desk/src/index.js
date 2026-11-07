@@ -221,7 +221,7 @@ export async function inbound(message, env) {
     size += bytes.length;
     attachments.push({ filename: oneLine(a.filename || "attachment", 100), content: b64(bytes) });
   }
-  const text = parsed.text || (parsed.html ? parsed.html.replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, " ").replace(/\s+\n/g, "\n") : "");
+  const text = parsed.text || htmlToText(parsed.html || "");
   const mail = forwardEmail({ item, from, subject, text: stripQuoted(text), auto, unsubscribe });
   await sendOwner(env, acct, mail, undefined, { replyTo: isEmail(fromAddr) ? fromAddr : undefined, bcc: false, attachments });
   return auto ? "auto" : unsubscribe ? "unsubscribed" : "replied";
@@ -233,6 +233,33 @@ function b64(bytes) {
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(bin);
 }
+// Plain text from an HTML-only reply. A linear scan, no regex: drops tags and the contents of <style>/<script>,
+// and the result is escaped again wherever it is shown. Never produces a "<", so nothing in it can become markup.
+export function htmlToText(html) {
+  const src = String(html).slice(0, 500000);
+  let out = "";
+  let i = 0;
+  while (i < src.length) {
+    const lt = src.indexOf("<", i);
+    if (lt < 0) { out += src.slice(i); break; }
+    out += src.slice(i, lt);
+    const gt = src.indexOf(">", lt);
+    if (gt < 0) break;
+    const tag = src.slice(lt + 1, gt).trim().toLowerCase();
+    const name = tag.split(/[\s/]/)[0];
+    if (name === "style" || name === "script") {
+      const end = src.toLowerCase().indexOf(`</${name}`, gt);
+      i = end < 0 ? src.length : src.indexOf(">", end) + 1 || src.length;
+      continue;
+    }
+    if (["br", "p", "/p", "div", "/div", "li", "tr"].includes(name)) out += "\n";
+    else out += " ";
+    i = gt + 1;
+  }
+  out = out.replace(/&nbsp;/g, " ").replace(/&lt;/g, "‹").replace(/&gt;/g, "›").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+  return out.split("<").join("‹").split(">").join("›").split("\n").map((l) => l.trim()).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
 // Drop the quoted copy of our own follow-up under the customer's answer ("On Mon, ... wrote:").
 export function stripQuoted(text) {
   const lines = String(text || "").split(/\r?\n/);
