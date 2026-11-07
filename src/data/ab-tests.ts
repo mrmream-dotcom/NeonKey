@@ -6,7 +6,7 @@
 //
 // Measuring (Umami): on any page that shows a test, Umami gets one `ab-view` event with the variants
 // shown (e.g. { hero: "b" }). Once a visitor has seen a test, every tracked click on any page (including
-// `contact-submit` on /contact/) gets an `ab-<id>` property. Compare clicks and submits per `ab-view`. Preview a variant with ?ab=hero:b (not saved).
+// `contact-submit` on /contact/) gets an `ab-<id>` property. Compare clicks and submits per `ab-view`. Submit events count only real submits (data-umami-submit, see Base.astro). Preview a variant with ?ab=hero:b (not saved).
 //
 // To end a test: keep the winner's markup, delete the loser's and the data-ab attributes, remove the
 // id here and its CSS rule. Results and dates live in /mnt/project-files/site-tests/ab-log.md.

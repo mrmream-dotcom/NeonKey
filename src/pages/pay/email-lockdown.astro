@@ -31,7 +31,7 @@ import PageHeader from '../../components/PageHeader.astro';
           <select id="el-how" name="how" required><option value="">Choose one</option><option>Send me the exact records and steps, I'll paste them in</option><option>I'll invite you as a collaborator or delegate so you can add them</option><option>Not sure, tell me what's easiest</option></select>
         </div>
         <div class="field"><label for="el-msg">Anything else? <span class="muted">(optional)</span></label><textarea id="el-msg" name="message" rows="3" maxlength="1000"></textarea></div>
-        <button class="btn btn-primary" type="submit" data-umami-event="lockdown-intake-submit">Send my answers</button>
+        <button class="btn btn-primary" type="submit" data-umami-submit="lockdown-intake-submit">Send my answers</button>
         <p class="form-note">We match your answers to your Stripe payment by the checkout email before any work starts. If we can't find a payment, we'll reply with the payment link. Never send a password here or by email. Your answers go to {CONTACT_EMAIL}. See the <a href={url('/privacy/')}>privacy page</a>.</p>
       </form>
       <p class="muted" style="font-size:.9rem;margin-top:1rem">What happens next: we check your domain's public records and email you the exact records and steps, usually within a few minutes (up to 1 business day if your setup needs a closer look). If you chose to invite us, we'll reply to set a time to add them. See <a href={url('/services/email-lockdown/')}>what's included</a>.</p>
