@@ -36,9 +36,20 @@ ALLOW_LIVE = "true"
 binding = "DESK"
 id = "98344cfedd524151abd33b1a1810d4b3"
 
+# Nightly backup of the DESK namespace (src/ops.js), kept 7 days. Create once before the next deploy:
+#   npx wrangler r2 bucket create neonkey-desk-backup
+[[r2_buckets]]
+binding = "BACKUP"
+bucket_name = "neonkey-desk-backup"
+
 # Hourly: each account sends only on weekdays 9 AM to noon in its own time zone; Monday 8 AM report.
 [triggers]
 crons = ["5 * * * *"]
 
+# Workers Logs: keeps this Worker's console.log lines (errors, failed sends) for 3 days in the Cloudflare dashboard.
+# Invocation logs are off so request URLs (which can carry a private dashboard link) are never stored.
 [observability]
-enabled = false
+enabled = true
+
+[observability.logs]
+invocation_logs = false

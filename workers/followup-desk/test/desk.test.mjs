@@ -2,7 +2,8 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
-import worker, { runAccount, inbound, handleDeliveryEvent, stripQuoted } from "../src/index.js";
+import worker, { runAccount, hourly, inbound, handleDeliveryEvent, stripQuoted } from "../src/index.js";
+import { backup, BACKUP_HOUR_UTC } from "../src/ops.js";
 import { parseList, nextDue, isDue, fill, message, parseDate, validDays, inSendWindow, DAY, DAILY_CAP } from "../src/engine.js";
 import { fromAddress, followUpEmail } from "../src/mail.js";
 import { getAccount } from "../src/store.js";
@@ -376,4 +377,102 @@ test("HTML-only replies become plain text with no markup left", async () => {
 test("ids use only the 36 allowed characters at the right length", async () => {
   const { randomId } = await import("../src/engine.js");
   for (let i = 0; i < 200; i++) assert.match(randomId(12), /^[a-z0-9]{12}$/);
+});
+
+// ---- ops: alerts, heartbeat, backup ----
+class R2 {
+  constructor() { this.m = new Map(); }
+  async put(k, v, opts) { this.m.set(k, { body: String(v), opts }); }
+  async delete(k) { this.m.delete(k); }
+  async list({ prefix = "" } = {}) { return { objects: [...this.m.keys()].filter((k) => k.startsWith(prefix)).map((key) => ({ key })), truncated: false }; }
+}
+const health = async () => { const r = await get("/health"); return { status: r.status, body: await r.json() }; };
+
+test("/health is 503 until the hourly run has run, then 200", async () => {
+  let h = await health();
+  assert.equal(h.status, 503);
+  assert.deepEqual(h.body.problems, ["no hourly run recorded yet"]);
+  const now = Date.now();
+  await hourly(env, now);
+  h = await health();
+  assert.equal(h.status, 200);
+  assert.equal(h.body.ok, true);
+  assert.equal(sent.length, 0, "a clean run sends no alert");
+});
+
+test("/health goes 503 when the hourly run is late", async () => {
+  await hourly(env, Date.now() - 3 * 3600000);
+  const h = await health();
+  assert.equal(h.status, 503);
+  assert.deepEqual(h.body.problems, ["hourly run is late"]);
+});
+
+test("a follow-up Resend refuses: alert to NOTIFY_TO, retried next hour, /health 503", async () => {
+  const { acct } = await readyAccount();
+  globalThis.fetch = async (url, init) => {
+    const body = JSON.parse(init.body);
+    sent.push(body);
+    return new Response("{}", { status: body.to[0] === "jane@ex.test" ? 500 : 200 });
+  };
+  const totals = await hourly(env, TUE_10AM);
+  assert.equal(totals.sendFailures, 1);
+  const alerts = sent.filter((m) => m.to[0] === "hello@neonkey.tech");
+  assert.equal(alerts.length, 1);
+  assert.match(alerts[0].subject, /URGENT.*Follow-Up Desk problem/);
+  assert.match(alerts[0].text, /1 email\(s\) not sent/);
+  assert.match(alerts[0].text, new RegExp(acct.id));
+  assert.ok(!alerts[0].text.includes("jane@ex.test"), "alert names the account, not the customer's client");
+  const after = await getAccount(env, acct.id);
+  assert.equal(after.items[0].step || 0, 0, "not counted as sent, so it retries");
+  const h = await health();
+  assert.equal(h.status, 503);
+  assert.deepEqual(h.body.problems, ["last hourly run had failures"]);
+});
+
+test("a request that throws alerts NOTIFY_TO without the private link in it", async () => {
+  const { link } = await readyAccount();
+  env.DESK.get = async () => { throw new Error("KV down"); };
+  const r = await get(link);
+  assert.equal(r.status, 500);
+  const a = sent.find((m) => m.to[0] === "hello@neonkey.tech");
+  assert.ok(a);
+  assert.match(a.text, /GET \/d\/<link> failed/);
+  assert.match(a.text, /KV down/);
+  assert.ok(!a.text.includes(link.slice(3)), "token not in the alert");
+});
+
+test("nightly backup: every key except ops:, in wrangler bulk format, old copies pruned", async () => {
+  env.BACKUP = new R2();
+  const { id } = await readyAccount();
+  await env.BACKUP.put("desk/2026-10-01.json", "[]");
+  await env.BACKUP.put("desk/2026-11-04.json", "[]");
+  const at = Date.UTC(2026, 10, 10, BACKUP_HOUR_UTC, 5);
+  await hourly(env, at);
+  const obj = env.BACKUP.m.get("desk/2026-11-10.json");
+  assert.ok(obj, "tonight's backup written");
+  const entries = JSON.parse(obj.body);
+  const keys = entries.map((e) => e.key);
+  assert.ok(keys.includes(`acct:${id}`));
+  assert.ok(keys.includes("email:owner@roofing.test"));
+  assert.ok(keys.some((k) => k.startsWith("tok:")));
+  assert.ok(!keys.some((k) => k.startsWith("ops:")));
+  assert.ok(entries.every((e) => typeof e.value === "string"));
+  assert.equal(JSON.parse(entries.find((e) => e.key === `acct:${id}`).value).id, id);
+  assert.ok(!env.BACKUP.m.has("desk/2026-10-01.json"), "older than 7 days removed");
+  assert.ok(env.BACKUP.m.has("desk/2026-11-04.json"), "6 days old kept");
+  const b = await env.DESK.get("ops:lastBackup", "json");
+  assert.equal(b.keys, entries.length);
+});
+
+test("no backup outside the backup hour, and /health flags a missing backup", async () => {
+  env.BACKUP = new R2();
+  const now = Date.now();
+  const hour = new Date(now).getUTCHours();
+  await hourly(env, hour === BACKUP_HOUR_UTC ? now - 3600000 : now);
+  if (hour !== BACKUP_HOUR_UTC) assert.equal(env.BACKUP.m.size, 0);
+  const h = await health();
+  assert.ok(h.body.problems.includes("nightly backup is late"));
+  await backup(env, now);
+  const h2 = await health();
+  assert.ok(!h2.body.problems.includes("nightly backup is late"));
 });

@@ -34,12 +34,42 @@ Shares nothing with the other workers (its own Stripe endpoint and secret, its o
 Every status change (reply, Won/Lost/Stop, bounce) is also written to its own `stop:` key and checked right before
 each send, so a cron run holding an older copy of the account can't send one more follow-up after a reply.
 
+## When something breaks
+
+- **Alert email.** If the hourly run can't send a follow-up or a report, hits an error, or the nightly backup fails,
+  one "🚨 URGENT · Follow-Up Desk problem" email goes to `NOTIFY_TO` (at most one an hour). Same for a request or an
+  incoming reply that throws. Alerts name the account id, never the customer's clients, and never the dashboard link.
+  Failed follow-ups aren't counted as sent, so they retry the next hour.
+- **`GET /health`** returns 200 only when the hourly run ran in the last ~2 hours with no failures and (with `BACKUP`
+  bound) the nightly backup is less than 26 hours old. Otherwise 503 with a `problems` list. Point a free uptime
+  monitor at `<APP_URL>/health` so a page reaches Michael even when email is the thing that's broken. Right after a
+  deploy it reads 503 ("no hourly run recorded yet") until the next :05 run.
+- **Logs.** Workers Logs is on, invocation logs off (request URLs carry dashboard tokens). Only the `desk:` lines are
+  kept, for 3 days: Cloudflare dashboard > Workers > neonkey-followup-desk > Logs.
+
+## Backups and restore
+
+At the 11:05 UTC run (2:05 AM AKST) every KV key except `ops:` is written to R2 `neonkey-desk-backup` as
+`desk/<date>.json`, in the format `wrangler kv bulk put` reads. Seven days are kept, so a deleted account is gone
+from backups 7 days after it leaves KV (the privacy page says so). To restore:
+
+```
+npx wrangler r2 object get neonkey-desk-backup/desk/<date>.json --file backup.json --remote
+node scripts/restore-prep.mjs backup.json > restore.json
+npx wrangler kv bulk put restore.json --binding DESK --remote
+```
+
+Delete both files afterward (they hold customer data). One account is one KV record today; a dashboard save and an
+hourly send landing in the same second can still overwrite each other (stop-on-reply has its own `stop:` keys so that
+part is safe). Plan: move accounts to D1 or a Durable Object around 10 paying accounts, before that race matters.
+
 ## Privacy
 
 - Michael (BCC_ADDRESS) is copied on NeonKey's own emails: welcome, sign-in links, Monday reports, notices.
 - He is **not** copied on follow-ups or reply forwards. Those are the customer's own correspondence with their
   clients. This is a deliberate exception to the "BCC every outbound email" rule; it's called out in the PR.
-- Reply contents are passed through and not stored. Closed jobs are dropped after 90 days.
+- Reply contents are passed through and not stored. Closed jobs are dropped after 90 days. Nightly backups are kept
+  7 days.
 
 ## Settings (`wrangler.toml`)
 
@@ -61,8 +91,8 @@ Secrets (never in the repo or chat): `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, 
    customer portal (cancel at period end) and copy its login link to `PORTAL_URL`.
 2. Resend: add and verify `desk.neonkey.tech` (DNS records in Cloudflare). Add a webhook to `<APP_URL>/resend` for
    `email.bounced` and `email.complained`; its secret goes in `RESEND_WEBHOOK_SECRET`.
-3. Cloudflare: `npx wrangler kv namespace create neonkey-desk` and put the id in `wrangler.toml`; deploy; set the
-   three secrets; Email Routing on `desk.neonkey.tech` with a catch-all rule sent to this Worker.
+3. Cloudflare: `npx wrangler kv namespace create neonkey-desk` and put the id in `wrangler.toml`;
+   `npx wrangler r2 bucket create neonkey-desk-backup` (deploy fails without it); deploy; set the three secrets; Email Routing on `desk.neonkey.tech` with a catch-all rule sent to this Worker.
 4. Stripe webhook to `<APP_URL>/stripe` with `checkout.session.completed`, `customer.subscription.updated`,
    `customer.subscription.deleted`; set `DESK_PAYMENT_LINK`, then `ALLOW_LIVE = "true"`.
 5. Put the Payment Link in `followUpDesk.buyUrl` (`src/data/services.ts`) so the site shows "Start now".

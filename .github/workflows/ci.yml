@@ -39,3 +39,27 @@ jobs:
           if find dist \( -name '*.map' -o -name '.env*' -o -name '.dev.vars' \) | grep -q .; then
             echo "::error::dist contains source maps or env files"; exit 1
           fi
+
+  # Worker unit tests (fake KV, stubbed Resend, signed fake events; no network, no secrets).
+  # Add a Worker here when it gets a test/ folder.
+  workers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        worker: [followup-desk, lockdown, payments]
+    defaults:
+      run:
+        working-directory: workers/${{ matrix.worker }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: workers/${{ matrix.worker }}/package-lock.json
+      - run: npm ci
+      - run: npm test
