@@ -315,7 +315,7 @@ export const followUpDeskSale = {
   annualPerYear: 891,
   annualPercentOff: 25,
   endsAt: '2026-11-30T23:59:59-09:00',
-  endsLabel: 'Nov 30 at 11:59 PM Alaska time',
+  endsLabel: 'Nov 30',
   regularFrom: 'Dec 1',
   monthlyUrl: 'https://buy.stripe.com/cNi7sK8t84go00Tgx6b3q04', // plink_1UZKjgCRxS1tvAi25df43qlY
   annualUrl: 'https://buy.stripe.com/dRmcN46l05ks5ldft2b3q05', // plink_1UZKjgCRxS1tvAi2KvfIpf80
