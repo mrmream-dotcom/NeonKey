@@ -48,7 +48,7 @@ export interface OfferDetails {
 export const introPricing = {
   label: 'Founding-client rates',
   short: 'Founding-client rate: first 10 clients',
-  note: 'Intro pricing for the first 10 clients. Rates go up after that, and your quoted price stays locked in for your project.',
+  note: 'Intro pricing on custom setups and fixed-price jobs for the first 10 clients. Rates go up after that, and your quoted price stays locked in for your project. The Follow-Up Desk subscription is priced separately.',
 };
 
 /** Format a price like $1,200. */
@@ -63,7 +63,7 @@ export const remoteIt: Offer = {
   for: 'Get email, Wi-Fi, backups and passwords set up properly for a small office or solo business, fully remote',
   items: [
     'Business email on your own domain (Google Workspace or Microsoft 365)',
-    'Email security settings that stop scammers faking your address (SPF, DKIM, DMARC)',
+    'Email security settings that make it harder for scammers to fake your address (SPF, DKIM, DMARC)',
     'Wi-Fi and router security walkthrough',
     'Backups, password manager rollout and device checklists',
   ],
@@ -246,7 +246,7 @@ export const lockdownCredit = 'Want more later? Your $49 comes off any larger pa
 export const emailLockdown: Offer = {
   slug: 'email-lockdown',
   name: 'Email Authentication Setup',
-  headline: 'Stop scammers faking your email address',
+  headline: 'Make it harder for scammers to fake your email address',
   kicker: 'Remote · fixed price',
   from: 49,
   standard: 79,
