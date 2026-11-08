@@ -82,7 +82,7 @@ async function stripeWebhook(request, env) {
   const o = event.data?.object || {};
 
   if (event.type === "checkout.session.completed" && o.object === "checkout.session") {
-    if (o.payment_link !== env.DESK_PAYMENT_LINK) return json(200, { ok: true, ignored: "other_offer" });
+    if (!deskLinks(env).includes(o.payment_link)) return json(200, { ok: true, ignored: "other_offer" });
     if (o.status !== "complete") return json(200, { ok: true, ignored: "incomplete" });
     const r = await handleSignup(env, o, event.livemode);
     return r ? json(200, { ok: true }) : json(500, { ok: false }); // 500 -> Stripe retries
@@ -92,6 +92,11 @@ async function stripeWebhook(request, env) {
     return json(200, { ok: true, subscription: r });
   }
   return json(200, { ok: true, ignored: event.type });
+}
+
+/** DESK_PAYMENT_LINK may list several Payment Link ids, comma-separated (regular, founding monthly, founding yearly). */
+export function deskLinks(env) {
+  return String(env.DESK_PAYMENT_LINK || "").split(",").map((x) => x.trim()).filter(Boolean);
 }
 
 export async function handleSignup(env, s, livemode) {

@@ -1,0 +1,78 @@
+---
+// Follow-Up Desk founding sale: $99/mo (14 days free) or $891/yr prepaid (no trial), until Nov 30 11:59 PM AKST.
+// Shows only while followUpDeskSaleLive is true at build time. The countdown counts down to one fixed date for every
+// visitor (nothing resets on reload); at the deadline the script hides [data-sale] and shows [data-sale-after], which
+// holds the regular $250/mo offer. See followUpDeskSale in src/data/services.ts.
+import { followUpDesk as fd, followUpDeskSale as sale, followUpDeskTrialDays as trial, usd } from '../data/services';
+interface Props { location: string; variant?: 'box' | 'card' | 'line' }
+const { location, variant = 'card' } = Astro.props;
+const monthlyTotal = sale.monthly * 12;
+---
+{variant === 'line'
+  ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>{usd(sale.monthly)}/mo founding price · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
+  : <div class={`ds ds-${variant}`} data-sale-ends={sale.endsAt}>
+      <div data-sale>
+        <p class="ds-tag">Founding price · ends Nov 30</p>
+        <p class="ds-count" aria-live="off"><span data-countdown>Ends {sale.endsLabel}</span></p>
+        <p class="ds-price">{usd(sale.monthly)}<small>/month</small></p>
+        <p class="ds-note">Goes to {usd(fd.from)}/month for new signups on {sale.regularFrom}. Join by the deadline and keep {usd(sale.monthly)}/month for as long as you stay subscribed.</p>
+        <div class="btn-row ds-btns">
+          <a class="btn btn-primary btn-sm" href={sale.monthlyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} monthly ${sale.monthly}`} data-umami-event-location={location}>Start {trial} days free</a>
+        </div>
+        <p class="ds-small">{trial} days free, then {usd(sale.monthly)}/month. Card required, cancel anytime.</p>
+        {variant === 'box' && (
+          <div class="ds-annual">
+            <p class="ds-annual-h"><strong>Or pay for a year: {usd(sale.annualPerYear)}</strong> <span class="ds-off">{sale.annualPercentOff}% off</span></p>
+            <p class="ds-small">{usd(sale.annualPerYear)} today instead of {usd(monthlyTotal)} over 12 months. No free trial on the yearly plan, but a full refund if you ask within {sale.refundDays} days.</p>
+            <a class="btn btn-ghost btn-sm" href={sale.annualUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} annual ${sale.annualPerYear}`} data-umami-event-location={location}>Pay yearly · {usd(sale.annualPerYear)}</a>
+          </div>
+        )}
+      </div>
+      <div data-sale-after hidden>
+        <p class="ds-price">{usd(fd.from)}<small>/month</small></p>
+        <div class="btn-row ds-btns">
+          <a class="btn btn-primary btn-sm" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
+        </div>
+        <p class="ds-small">{trial} days free, then {usd(fd.from)}/month. Card required, cancel anytime.</p>
+      </div>
+    </div>}
+
+<script>
+  // One fixed deadline for everyone (data-sale-ends). Ticks once a second; at zero, swaps to the regular offer.
+  const boxes = Array.from(document.querySelectorAll<HTMLElement>('[data-sale-ends]'));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  function tick() {
+    const now = Date.now();
+    for (const box of boxes) {
+      const left = Date.parse(box.dataset.saleEnds || '') - now;
+      if (!(left > 0)) {
+        box.querySelectorAll<HTMLElement>('[data-sale]').forEach((el) => { el.hidden = true; });
+        box.querySelectorAll<HTMLElement>('[data-sale-after]').forEach((el) => { el.hidden = false; });
+        continue;
+      }
+      const s = Math.floor(left / 1000);
+      const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+      const text = `${d}d ${pad(h)}h ${pad(m)}m ${pad(s % 60)}s left`;
+      box.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => { el.textContent = text; });
+    }
+  }
+  if (boxes.length) { tick(); setInterval(tick, 1000); }
+</script>
+
+<style>
+  [data-sale][hidden], [data-sale-after][hidden] { display: none !important; }
+  .ds p { margin: 0; }
+  .ds { display: flex; flex-direction: column; gap: .5rem; }
+  .ds > div { display: flex; flex-direction: column; gap: .5rem; }
+  .ds-tag { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--magenta); }
+  .ds-count { display: inline-block; align-self: flex-start; padding: .3rem .7rem; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); font-size: .95rem; }
+  .ds-price { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .ds-price small { font-size: .95rem; font-weight: 500; color: var(--muted); margin-left: .2rem; }
+  .ds-note { font-size: .92rem; color: var(--text); }
+  .ds-small { font-size: .85rem; color: var(--muted); }
+  .ds-btns { margin: .2rem 0 0; }
+  .ds-annual { margin-top: .6rem; padding-top: .8rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
+  .ds-annual-h { color: var(--text); }
+  .ds-off { display: inline-block; margin-left: .3rem; padding: .05rem .5rem; border-radius: 999px; background: var(--cyan); color: var(--bg); font-size: .78rem; font-weight: 800; }
+  .ds-line { font-variant-numeric: tabular-nums; }
+</style>

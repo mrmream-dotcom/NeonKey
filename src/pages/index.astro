@@ -10,8 +10,9 @@ import LabCard from '../components/LabCard.astro';
 import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import LockdownStrip from '../components/LockdownStrip.astro';
+import DeskSale from '../components/DeskSale.astro';
 import { publishedLabProjects } from '../data/lab';
-import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, followUpDesk, followUpDeskTrialDays, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
+import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, followUpDeskSale, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
 const latestArticles = sortByDate(articlesIn());
 const leadStory = latestArticles.find((a) => a.date);
@@ -118,7 +119,7 @@ const jsonLd = {
     // AI Intake and Lead-Routing are sold inside the Front Office Package, not listed on their own (Nov 4 2026).
     serviceNode(fop, '/services/#front-office-package'),
     serviceNode(emailLockdown, '/services/email-lockdown/'),
-    serviceNode(followUpDesk, '/follow-up-desk/', true),
+    serviceNode(followUpDeskSaleLive ? { ...followUpDesk, from: followUpDeskSale.monthly } : followUpDesk, '/follow-up-desk/', true),
     {
       '@type': 'SoftwareApplication',
       '@id': `${home}#ai-inquiry-triage`,
@@ -156,7 +157,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </svg>
     </div>
     <div class="container hero-content">
-      <a class="hero-new" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-hero-new"><span class="hero-new-tag">New</span> {followUpDesk.name}: estimate follow-ups that run themselves · {followUpDeskTrialDays} days free →</a>
+      <a class="hero-new" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-hero-new"><span class="hero-new-tag">New</span> {followUpDeskSaleLive ? <Fragment>{followUpDesk.name} · <DeskSale variant="line" location="home-hero-new" /></Fragment> : `${followUpDesk.name}: estimate follow-ups that run themselves · ${followUpDeskTrialDays} days free`} →</a>
       <span class="kicker">Lead and estimate follow-up for small businesses</span>
       <h1>Stop losing customers to <span class="hl">slow replies</span> and quiet quotes.</h1>
       <p class="lead">New inquiries get answered, and estimates get followed up until the customer replies. Start the {followUpDesk.name} yourself today, or get a written quote and we build a custom system for you, remotely, anywhere in the US.</p>
@@ -191,7 +192,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           </div>
         </article>
         <article class="card topline accent-violet" id="follow-up-desk">
-          <span class="kicker">Do it yourself · Start today · {usd(followUpDesk.from)}/mo</span>
+          <span class="kicker">Do it yourself · Start today · {usd(followUpDeskSaleLive ? followUpDeskSale.monthly : followUpDesk.from)}/mo</span>
           <h3><a href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud"><OfferTitle offer={followUpDesk} /></a></h3>
           <OfferNameLabel offer={followUpDesk} />
           <p class="offer-outcome">{followUpDesk.outcome}.</p>
@@ -201,11 +202,16 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
             <li>Stops on its own when your customer replies, and the reply comes to your inbox</li>
             <li>Set it up yourself in minutes. No setup call</li>
           </ul>
-          <p class="price" style="margin:.4rem 0 .8rem">{usd(followUpDesk.from)}<small>a month · {followUpDeskTrialDays} days free · card required, cancel anytime</small></p>
-          <div class="btn-row">
+          {followUpDeskSaleLive
+            ? <Fragment><DeskSale location="home-fud" />
+              <div class="btn-row" style="margin-top:.6rem">
+            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud-details">How it works</a>
+              </div></Fragment>
+            : <Fragment><p class="price" style="margin:.4rem 0 .8rem">{usd(followUpDesk.from)}<small>a month · {followUpDeskTrialDays} days free · card required, cancel anytime</small></p>
+              <div class="btn-row">
             <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud">Start free trial</a>
             <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud-details">How it works</a>
-          </div>
+              </div></Fragment>}
         </article>
       </div>
       <LockdownStrip location="home-lockdown-strip" />

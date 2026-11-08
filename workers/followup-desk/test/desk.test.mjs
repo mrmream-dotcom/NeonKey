@@ -135,6 +135,16 @@ test("checkout creates an account and emails a private link, once", async () => 
   assert.equal(sent.length, n, "re-delivered event does nothing");
 });
 
+test("any listed payment link creates an account (founding monthly and yearly links)", async () => {
+  const multi = { ...env, DESK_PAYMENT_LINK: `plink_regular, ${PLINK} ,plink_yearly` };
+  const r = await worker.fetch(stripeReq(checkout({ id: "cs_multi", payment_link: "plink_yearly" })), multi, ctx);
+  assert.equal(r.status, 200);
+  assert.equal((await r.json()).ignored, undefined);
+  assert.ok(sent.some((m) => m.to[0] === "owner@roofing.test"), "welcome email sent");
+  const none = await worker.fetch(stripeReq(checkout({ id: "cs_none", payment_link: "plink_yearly" })), { ...env, DESK_PAYMENT_LINK: "" }, ctx);
+  assert.equal((await none.json()).ignored, "other_offer");
+});
+
 test("other payment links and bad signatures are ignored", async () => {
   const r = await worker.fetch(stripeReq(checkout({ payment_link: "plink_other" })), env, ctx);
   assert.equal((await r.json()).ignored, "other_offer");
