@@ -6,7 +6,8 @@ import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
+import DeskSale from '../../components/DeskSale.astro';
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
 // Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
 //   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
 //   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
@@ -49,12 +50,17 @@ const smallJobs = [
           <strong><OfferTitle offer={followUpDesk} /></strong>
           <span class="choice-name">{followUpDesk.name}</span>
           <span class="muted">Add the estimates you sent, or paste a list from QuickBooks. Polite follow-ups go out under your business name and stop the moment your customer replies.</span>
-          <span class="choice-price">{usd(followUpDesk.from)} <small>a month</small></span>
-          <span class="choice-trial">{followUpDeskTrialDays} days free. Card required, cancel anytime.</span>
-          <div class="btn-row choice-btns">
+          {followUpDeskSaleLive
+            ? <Fragment><DeskSale location="services-choice-fud" />
+              <div class="btn-row choice-btns">
+            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</a>
+              </div></Fragment>
+            : <Fragment><span class="choice-price">{usd(followUpDesk.from)} <small>a month</small></span>
+              <span class="choice-trial">{followUpDeskTrialDays} days free. Card required, cancel anytime.</span>
+              <div class="btn-row choice-btns">
             <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">Start free trial</a>
             <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</a>
-          </div>
+              </div></Fragment>}
         </div>
       </div>
       <LockdownStrip location="services-lockdown-strip" />

@@ -24,8 +24,9 @@ REPLY_TO = "hello@neonkey.tech"
 # NeonKey's own emails (welcome, links, reports, notices) are BCC'd here. Follow-ups and reply forwards are not.
 BCC_ADDRESS = "mr.mream@gmail.com"
 # Only checkouts from this Payment Link create accounts: live $250/mo, 14-day trial, card required (Nov 7 2026).
+# Comma-separated list allowed: add the founding $99/mo and $891/yr links here when they are created (Nov 2026 sale).
 # https://buy.stripe.com/7sY4gydNsbIQ00TcgQb3q03
-DESK_PAYMENT_LINK = "plink_1UZIxSCRxS1tvAi2q5QXLAXL"
+DESK_PAYMENT_LINK = "plink_1UZIxSCRxS1tvAi2q5QXLAXL,plink_1UZKjgCRxS1tvAi25df43qlY,plink_1UZKjgCRxS1tvAi2KvfIpf80"
 # Stripe customer portal login link (billing and cancel). Set when the portal is turned on in Stripe.
 PORTAL_URL = "https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00"
 ALLOW_LIVE = "true"

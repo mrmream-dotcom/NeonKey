@@ -47,7 +47,7 @@ each send, so a cron run holding an older copy of the account can't send one mor
 | --- | --- |
 | `APP_URL` | Base URL in dashboard links (workers.dev for now). |
 | `DESK_DOMAIN` | Sending + reply domain (`desk.neonkey.tech`), kept apart from neonkey.tech's reputation. |
-| `DESK_PAYMENT_LINK` | The $250/mo Payment Link id. Empty = no checkout creates accounts. |
+| `DESK_PAYMENT_LINK` | Payment Link ids that create accounts, comma-separated (regular $250/mo, founding $99/mo, founding $891/yr). Empty = none. |
 | `PORTAL_URL` | Stripe customer portal login link, shown as "Billing and cancel". |
 | `ALLOW_LIVE` | Live-mode Stripe events are ignored unless `"true"`. |
 | `FROM_ADDRESS`, `NOTIFY_TO`, `REPLY_TO`, `BCC_ADDRESS` | NeonKey 🔑 From, notices to hello@, BCC Michael. |

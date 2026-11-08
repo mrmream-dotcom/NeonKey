@@ -299,6 +299,31 @@ export const followUpDesk: Offer = {
 /** Free trial on the Follow-Up Desk Payment Link (Stripe subscription_data.trial_period_days). Card required. */
 export const followUpDeskTrialDays = 14;
 
+/**
+ * Follow-Up Desk founding sale (Michael, Nov 8 2026: "$99 a month as the intro sale until the end of November have a
+ * live counter on the site and also 25% more off if they get it right now prepaid annually (no 14 day demo for that)").
+ * Honest framing: $250 is shown as the price from Dec 1, never as a crossed-out "was" price (it was only listed a few
+ * hours and nobody paid it). Founders keep $99/mo for as long as they stay subscribed.
+ * Annual = $99 x 12 x 0.75 = $891/yr, no trial, full refund within 30 days.
+ * The sale shows only while the build time is before endsAt AND the visitor's clock is before endsAt (the countdown
+ * script swaps in the regular $250 box at the deadline). On Dec 1: deactivate both sale Payment Links in Stripe and
+ * rebuild the site.
+ * Stripe prices price_1UZKjMCRxS1tvAi2WftSf363 ($99/mo) and price_1UZKjNCRxS1tvAi2aOqx2Q0k ($891/yr), created Nov 8 2026.
+ */
+export const followUpDeskSale = {
+  monthly: 99,
+  annualPerYear: 891,
+  annualPercentOff: 25,
+  endsAt: '2026-11-30T23:59:59-09:00',
+  endsLabel: 'Nov 30 at 11:59 PM Alaska time',
+  regularFrom: 'Dec 1',
+  monthlyUrl: 'https://buy.stripe.com/cNi7sK8t84go00Tgx6b3q04', // plink_1UZKjgCRxS1tvAi25df43qlY
+  annualUrl: 'https://buy.stripe.com/dRmcN46l05ks5ldft2b3q05', // plink_1UZKjgCRxS1tvAi2KvfIpf80
+  refundDays: 30,
+};
+/** True while the founding sale is configured and not yet over at build time. */
+export const followUpDeskSaleLive = Boolean(followUpDeskSale.monthlyUrl && followUpDeskSale.annualUrl) && Date.now() < Date.parse(followUpDeskSale.endsAt);
+
 /** On-site Office Tech Tune-Up for Fairbanks and North Pole (page: /local/). Founding rate $249 (Michael, Nov 3 2026). */
 export const officeTuneUp: Offer = {
   slug: 'tune-up',
