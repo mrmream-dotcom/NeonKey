@@ -9,13 +9,14 @@ const { location, variant = 'card' } = Astro.props;
 const monthlyTotal = sale.monthly * 12;
 ---
 {variant === 'line'
-  ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>{usd(sale.monthly)}/mo founding price · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
+  ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>Lock in {usd(sale.monthly)}/mo before it goes to {usd(fd.from)} · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
   : <div class={`ds ds-${variant}`} data-sale-ends={sale.endsAt}>
       <div data-sale>
-        <p class="ds-tag">Founding price · ends Nov 30</p>
+        <p class="ds-tag">Founding price · ends {sale.endsLabel}</p>
         <p class="ds-count" aria-live="off"><span data-countdown>Ends {sale.endsLabel}</span></p>
         <p class="ds-price">{usd(sale.monthly)}<small>/month</small></p>
-        <p class="ds-note">Goes to {usd(fd.from)}/month for new signups on {sale.regularFrom}. Join by the deadline and keep {usd(sale.monthly)}/month for as long as you stay subscribed.</p>
+        <p class="ds-lock"><strong>Your price never goes up.</strong> Get in before the clock hits zero and you pay {usd(sale.monthly)}/month for as long as you stay subscribed, even after the price rises.</p>
+        <p class="ds-note">On {sale.regularFrom}, new signups pay {usd(fd.from)}/month. That's {usd(fd.from - sale.monthly)} more every month for anyone who waits.</p>
         <div class="btn-row ds-btns">
           <a class="btn btn-primary btn-sm" href={sale.monthlyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} monthly ${sale.monthly}`} data-umami-event-location={location}>Start {trial} days free</a>
         </div>
@@ -23,7 +24,7 @@ const monthlyTotal = sale.monthly * 12;
         {variant === 'box' && (
           <div class="ds-annual">
             <p class="ds-annual-h"><strong>Or pay for a year: {usd(sale.annualPerYear)}</strong> <span class="ds-off">{sale.annualPercentOff}% off</span></p>
-            <p class="ds-small">{usd(sale.annualPerYear)} today instead of {usd(monthlyTotal)} over 12 months. No free trial on the yearly plan, but a full refund if you ask within {sale.refundDays} days.</p>
+            <p class="ds-small">{usd(sale.annualPerYear)} today instead of {usd(monthlyTotal)} over 12 months. Your founding price stays locked when it renews. No free trial on the yearly plan, but a full refund if you ask within {sale.refundDays} days.</p>
             <a class="btn btn-ghost btn-sm" href={sale.annualUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} annual ${sale.annualPerYear}`} data-umami-event-location={location}>Pay yearly · {usd(sale.annualPerYear)}</a>
           </div>
         )}
@@ -53,6 +54,8 @@ const monthlyTotal = sale.monthly * 12;
       const s = Math.floor(left / 1000);
       const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
       const text = `${d}d ${pad(h)}h ${pad(m)}m ${pad(s % 60)}s left`;
+      // Last 3 days: the countdown turns hot pink.
+      box.toggleAttribute('data-sale-urgent', left < 3 * 86400000);
       box.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => { el.textContent = text; });
     }
   }
@@ -69,6 +72,9 @@ const monthlyTotal = sale.monthly * 12;
   .ds-price { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.1; font-variant-numeric: tabular-nums; }
   .ds-price small { font-size: .95rem; font-weight: 500; color: var(--muted); margin-left: .2rem; }
   .ds-note { font-size: .92rem; color: var(--text); }
+  .ds-lock { padding: .55rem .75rem; border-left: 3px solid var(--cyan); background: var(--panel); border-radius: 6px; font-size: .95rem; color: var(--text); }
+  .ds-lock strong { color: var(--cyan); }
+  [data-sale-urgent] .ds-count { border-color: var(--magenta); color: var(--magenta); }
   .ds-small { font-size: .85rem; color: var(--muted); }
   .ds-btns { margin: .2rem 0 0; }
   .ds-annual { margin-top: .6rem; padding-top: .8rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
