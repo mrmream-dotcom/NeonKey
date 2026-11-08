@@ -7,7 +7,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import DeskSale from '../../components/DeskSale.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSale, followUpDeskSaleLive, automationMenu, introPricing, showPackageValue, usd } from '../../data/services';
 // Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
 //   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
 //   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
@@ -68,6 +68,35 @@ const smallJobs = [
     </div>
   </section>
 
+  {/* Audit Nov 7 2026 (A3): the two follow-up offers side by side, so a buyer can tell them apart without another page.
+      Keep every cell true to the Desk page and the package card. The Desk price uses DeskSale's [data-sale-ends] swap
+      (its script is on this page via the choice card), so it changes to the regular price at the deadline. */}
+  <section aria-labelledby="compare-h" id="compare" style="padding-top:1rem">
+    <div class="container">
+      <SectionHeading id="compare-h" eyebrow="Compare" title={`${fop.name} or ${followUpDesk.name}?`} intro="Both stop quotes from going quiet. The difference is who sends the follow-ups and where it runs." />
+      <div class="table-scroll">
+        <table class="vlan-table compare">
+          <thead><tr><th scope="col"><span class="sr-only">Question</span></th><th scope="col">{fop.name}</th><th scope="col">{followUpDesk.name}</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">What it handles</th><td data-label={fop.name}>New requests from your website form and shared inbox, who handles each one, reply drafts, follow-up reminders, an FAQ assistant and email security</td><td data-label={followUpDesk.name}>Follow-ups on estimates you've already sent</td></tr>
+            <tr><th scope="row">How work gets in</th><td data-label={fop.name}>Your website form and shared inbox feed one list on their own</td><td data-label={followUpDesk.name}>You add estimates, or paste a list from QuickBooks or a spreadsheet</td></tr>
+            <tr><th scope="row">Who sends follow-ups</th><td data-label={fop.name}>A person on your team, from your own inbox. You get a reminder with a draft ready</td><td data-label={followUpDesk.name}>The Desk sends them on weekday mornings, from your business name at a NeonKey sending address. Replies go to your inbox and stop that job's follow-ups</td></tr>
+            <tr><th scope="row">Where it runs</th><td data-label={fop.name}>In your own accounts and tools, set up for you</td><td data-label={followUpDesk.name}>On NeonKey's hosted service. You set it up yourself in about five minutes</td></tr>
+            <tr><th scope="row">If you stop paying NeonKey</th><td data-label={fop.name}>What we built stays in your accounts. Any third-party software fees continue with that provider</td><td data-label={followUpDesk.name}>Follow-ups stop when your subscription ends, and your list is deleted 30 days later</td></tr>
+            <tr><th scope="row">Getting started</th><td data-label={fop.name}>Written scope and fixed quote first. Nothing goes live until you approve it</td><td data-label={followUpDesk.name}>{followUpDeskTrialDays} days free, card required, no call</td></tr>
+            <tr><th scope="row">Price</th><td data-label={fop.name}>{usd(fop.from)} setup + 3 months of support. Software fees, if any, listed in your quote</td><td data-label={followUpDesk.name}>{followUpDeskSaleLive
+              ? <span data-sale-ends={followUpDeskSale.endsAt}><span data-sale>{usd(followUpDeskSale.monthly)}/month founding price if you start by {followUpDeskSale.endsLabel}, or {usd(followUpDeskSale.annualPerYear)}/year</span><span data-sale-after hidden>{usd(followUpDesk.from)}/month</span></span>
+              : <Fragment>{usd(followUpDesk.from)}/month</Fragment>}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <a class="btn btn-ghost btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-compare">Get a written quote</a>
+        <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-compare">How the {followUpDesk.name} works</a>
+      </div>
+    </div>
+  </section>
+
   <section class="alt" aria-labelledby="demo-h">
     <div class="container">
       <SectionHeading id="demo-h" eyebrow="See it first" title="What happens to a new quote request" intro="A sample request from the clickable demo (made-up business and customer). This is the flow we'd set up in your own inbox and spreadsheet." />
@@ -121,7 +150,7 @@ const smallJobs = [
 
   <section class="alt" aria-labelledby="how-h">
     <div class="container">
-      <SectionHeading id="how-h" eyebrow="How it works" title="You know what's changing before it goes live" />
+      <SectionHeading id="how-h" eyebrow="How custom setups work" title="You know what's changing before it goes live" intro={`For the ${fop.name} and other custom work. The ${followUpDesk.name} is self-serve, so none of this is needed.`} />
       <ol class="step-cards">
         <li><strong>Written scope and price.</strong> Tell us what you need by message (or a short call, if you prefer), then get a fixed quote in writing. If a simple app you already have does the job, I'll tell you.</li>
         <li><strong>Built after hours.</strong> After business hours or on weekends, tested with sample requests first, so the setup work stays out of your business day.</li>
@@ -204,7 +233,9 @@ const smallJobs = [
       <details class="offer-details faq-item">
         <summary>Does anything reply to my customers without me?</summary>
         <div class="offer-details-body">
-          <p>Only the FAQ assistant, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your team sends them.</p>
+          <p>It depends on which one you pick.</p>
+          <p><strong>{fop.name}:</strong> only the FAQ assistant replies on its own, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your team sends them.</p>
+          <p><strong>{followUpDesk.name}:</strong> yes, that's the point of it. Follow-ups on the estimates you add go out on their own, in wording you write and can edit, and they stop the moment the customer replies. You can send yourself a preview first and stop any job with one click. <a href="#compare">Compare the two</a>.</p>
         </div>
       </details>
       <details class="offer-details faq-item">
@@ -288,6 +319,20 @@ const smallJobs = [
   .menu-list li { margin-bottom: .35rem; }
   [id^="menu-"] { scroll-margin-top: 90px; }
   .faq .faq-item { max-width: 860px; }
+  .compare th[scope="row"] { color: var(--text); font-size: .92rem; text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: top; }
+  .compare td { vertical-align: top; }
+  .compare thead th { white-space: nowrap; }
+  /* Phones: each question becomes a small card with both answers stacked, so neither column scrolls out of view. */
+  @media (max-width: 640px) {
+    .table-scroll .compare { min-width: 0; }
+    .compare thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .compare, .compare tbody, .compare tr, .compare th, .compare td { display: block; }
+    .compare tr { border-bottom: 1px solid var(--line); padding: .6rem 0; }
+    .compare th[scope="row"], .compare td { border: 0; padding: .25rem 0; white-space: normal; }
+    .compare th[scope="row"] { font-size: 1rem; }
+    .compare td::before { content: attr(data-label); display: block; color: var(--violet); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+  }
+  #compare { scroll-margin-top: 90px; }
   .step-cards > li strong:first-child { display: inline; font-size: inherit; }
   .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
   .faq-item > summary { color: var(--text); font-size: 1.05rem; }

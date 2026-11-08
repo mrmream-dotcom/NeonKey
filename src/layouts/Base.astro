@@ -258,6 +258,20 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
           sessionStorage.setItem('nk_nl_submit', JSON.stringify({ id: 'nl-' + rnd, t: Date.now() }));
         } catch {}
       }, true);
+      // Contact form (Web3Forms): mark this tab when a contact form is actually submitted. Web3Forms redirects to
+      // /contact/thanks/ only after it accepts the message, and /js/conv-contact.js there counts one confirmed
+      // inquiry only when this mark exists, then clears it. So a submit attempt ("contact-submit"), a direct visit
+      // and a reload of the thanks page never count as an accepted inquiry (audit Nov 7 2026, A5).
+      document.addEventListener('submit', (e) => {
+        const form = e.target as HTMLFormElement | null;
+        const redirect = form?.querySelector<HTMLInputElement>('input[name="redirect"]')?.value || '';
+        if (!form || !/\/contact\/thanks\/?$/.test(redirect)) return;
+        try {
+          const rnd = (crypto as any)?.randomUUID?.() || String(Date.now()) + Math.random().toString(36).slice(2);
+          const topic = form.querySelector<HTMLSelectElement | HTMLInputElement>('[name="topic"]')?.value || '';
+          sessionStorage.setItem('nk_contact_submit', JSON.stringify({ id: 'ct-' + rnd, t: Date.now(), topic: topic.slice(0, 60) }));
+        } catch {}
+      }, true);
     </script>
   </body>
 </html>

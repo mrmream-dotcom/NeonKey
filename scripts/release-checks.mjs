@@ -68,6 +68,9 @@ for (const page of ['contact', 'newsletter', 'services/quiz', 'free-it-kit']) {
 // 6. /newsletter/thanks/ still loads its conversion script.
 const thanks = join(distDir, 'newsletter', 'thanks', 'index.html');
 if (!existsSync(thanks) || !read(thanks).includes('conv-newsletter.js')) fail('/newsletter/thanks/ no longer loads conv-newsletter.js');
+// 6b. /contact/thanks/ still loads its confirmed-inquiry script (audit Nov 7 2026, A5).
+const contactThanks = join(distDir, 'contact', 'thanks', 'index.html');
+if (!existsSync(contactThanks) || !read(contactThanks).includes('conv-contact.js')) fail('/contact/thanks/ no longer loads conv-contact.js');
 
 // 7. Paid products never ship on the site. The Founder Stack PDF is delivered only by email from private KV.
 for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.test(relative(distDir, f))) fail(`paid product file in the build: ${relative(distDir, f)}`);

@@ -5,7 +5,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import { QUESTIONS } from '../../data/quiz';
 const total = QUESTIONS.length;
 ---
-<Base title="What service do I need? A 2-minute quiz" description="Answer eight quick questions and see which NeonKey service fits: remote office IT setup, a small automation, an FAQ assistant or lead routing. No email needed.">
+<Base title="What service do I need? A 2-minute quiz" description="Answer eight quick questions and see which NeonKey service fits: office IT setup, estimate follow-ups, an FAQ assistant or lead routing. No email needed.">
   <PageHeader width="narrow" eyebrow="Services · 2-minute quiz" title="What service do I need?" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Quiz' }]}>
     <p class="lede">Not sure where to start? Answer {total} quick questions and I'll show you what I'd recommend right away, with no email needed. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
     <Fragment slot="meta">
@@ -224,7 +224,7 @@ const total = QUESTIONS.length;
     // The detail (what each item involves, order, prep, next steps) goes in the optional email.
     function render(v: PlanView): string {
       const h: string[] = [];
-      const service = ['R', 'Q', 'F', 'L'].includes(v.type);
+      const service = ['R', 'Q', 'F', 'L', 'D'].includes(v.type);
       h.push(`<div class="panel"><span class="kicker">${esc(v.kicker)}</span><h2>${esc(v.heading)}</h2>`);
       if (v.startPrice) h.push(`<p class="quiz-price" style="margin-top:0">${esc(v.startPrice)}</p>`);
       h.push(`<p class="muted">${esc(v.intro)}</p>`);
