@@ -114,7 +114,7 @@ export const remoteSupportPlan: Offer = {
   for: 'Optional add-on after setup: help by email, answered in writing rather than live (async), with a set response window',
   items: [
     'Up to 3 small requests a month (about 30 minutes each), unless your plan says otherwise',
-    'By email, with a first reply by the end of the next business day (Monday to Friday, Alaska time)',
+    'By email, with a first reply by the end of the next business day (Monday to Friday)',
     'Account adds and removes, settings changes, how-to questions',
     'Modular: add or change features as your needs change (advanced features may cost extra, always quoted first)',
     'No 24/7 or emergency cover; cancel anytime',
@@ -315,7 +315,7 @@ export const followUpDeskSale = {
   annualPerYear: 891,
   annualPercentOff: 25,
   endsAt: '2026-11-30T23:59:59-09:00',
-  endsLabel: 'Nov 30 at 11:59 PM Alaska time',
+  endsLabel: 'Nov 30',
   regularFrom: 'Dec 1',
   monthlyUrl: 'https://buy.stripe.com/cNi7sK8t84go00Tgx6b3q04', // plink_1UZKjgCRxS1tvAi25df43qlY
   annualUrl: 'https://buy.stripe.com/dRmcN46l05ks5ldft2b3q05', // plink_1UZKjgCRxS1tvAi2KvfIpf80

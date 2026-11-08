@@ -569,7 +569,7 @@ function addExtras(v: PlanView, p: Plan) {
     v.addon = {
       name: sp.name,
       reason: p.support === 'yes' ? "you said you\'d like someone to email for small changes" : 'optional, in case it helps later',
-      text: 'Optional add-on after setup: help by email, answered in writing. Up to 3 small requests a month, about 30 minutes each (account adds and removes, settings changes, how-to questions), with a first reply by the end of the next business day (Monday to Friday, Alaska time). Not for emergencies: for an outage or security problem, contact your provider (for example Google or Microsoft) first. Cancel anytime.',
+      text: 'Optional add-on after setup: help by email, answered in writing. Up to 3 small requests a month, about 30 minutes each (account adds and removes, settings changes, how-to questions), with a first reply by the end of the next business day (Monday to Friday). Not for emergencies: for an outage or security problem, contact your provider (for example Google or Microsoft) first. Cancel anytime.',
       price: priceLine(sp),
       href: sp.href!,
     };
