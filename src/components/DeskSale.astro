@@ -15,6 +15,7 @@ const monthlyTotal = sale.monthly * 12;
         <p class="ds-tag">Founding price · ends {sale.endsLabel}</p>
         <p class="ds-count" aria-live="off"><span data-countdown>Ends {sale.endsLabel}</span></p>
         <p class="ds-price">{usd(sale.monthly)}<small>/month</small></p>
+        {variant === 'box' && <p class="ds-value"><strong>One won estimate can cover months of it.</strong> <a href="#worth-it">See why</a></p>}
         <p class="ds-lock"><strong>Your price never goes up.</strong> Get in before the clock hits zero and you pay {usd(sale.monthly)}/month for as long as you stay subscribed, even after the price rises.</p>
         <p class="ds-note">On {sale.regularFrom}, new signups pay {usd(fd.from)}/month. That's {usd(fd.from - sale.monthly)} more every month for anyone who waits.</p>
         <div class="btn-row ds-btns">
@@ -31,6 +32,7 @@ const monthlyTotal = sale.monthly * 12;
       </div>
       <div data-sale-after hidden>
         <p class="ds-price">{usd(fd.from)}<small>/month</small></p>
+        {variant === 'box' && <p class="ds-value"><strong>One won estimate can cover months of it.</strong> <a href="#worth-it">See why</a></p>}
         <div class="btn-row ds-btns">
           <a class="btn btn-primary btn-sm" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
         </div>
@@ -80,5 +82,6 @@ const monthlyTotal = sale.monthly * 12;
   .ds-annual { margin-top: .6rem; padding-top: .8rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
   .ds-annual-h { color: var(--text); }
   .ds-off { display: inline-block; margin-left: .3rem; padding: .05rem .5rem; border-radius: 999px; background: var(--cyan); color: var(--bg); font-size: .78rem; font-weight: 800; }
+  .ds-value { color: var(--text); font-size: .95rem; }
   .ds-line { font-variant-numeric: tabular-nums; }
 </style>
