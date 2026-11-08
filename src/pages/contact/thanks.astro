@@ -13,4 +13,6 @@ import Icon from '../../components/Icon.astro';
   <div class="narrow status-body">
     <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/services/')}>See services</a></p>
   </div>
+  <!-- Confirmed inquiry (Umami "contact-confirmed" + GA4 "generate_lead"), only after a real submit in this tab. External file: no inline scripts. -->
+  <script is:inline src={url('/js/conv-contact.js')}></script>
 </Base>

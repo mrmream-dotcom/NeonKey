@@ -14,6 +14,7 @@ Preconditions: PR merged to `main`; Michael said "ship" (or the PR is covered by
    - Impact meta tag present and unchanged
    - forms: /contact/ (Web3Forms), /newsletter/ (Kit form 10118914), /services/quiz/ and /free-it-kit/ (neonkey-quiz Worker) markup unchanged
    - /newsletter/thanks/ still fires the newsletter conversion
+   - /contact/thanks/ still loads `conv-contact.js` (confirmed-inquiry event)
 7. Record: commit SHAs for `main` and `gh-pages`, check results, date and time (AKST) in the PR or the Decisions/Scoreboard tab as appropriate.
 
 If any check fails: do not re-run blindly. Report the failing check, the page, and the diff. Roll back by republishing the previous `gh-pages` commit only if the live site is broken for visitors.

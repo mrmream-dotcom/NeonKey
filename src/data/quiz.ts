@@ -2,16 +2,26 @@
 // Shared by the page (src/pages/services/quiz.astro, runs in the browser) and the plan-email
 // Worker (workers/quiz/), so the on-screen result and the email always match.
 // Names and prices come from ./services.ts only. Never add per-item prices or estimates here.
-import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, showPackageValue, introPricing, usd, type Offer } from './services';
+import { remoteIt, remoteSupportPlan, automationOffers, officeTuneUp, frontOfficePackage, followUpDesk, followUpDeskSale, followUpDeskTrialDays, showPackageValue, introPricing, usd, type Offer } from './services';
 
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const aiFaq = automationOffers.find((o) => o.slug === 'ai-faq')!;
 const leadRouting = automationOffers.find((o) => o.slug === 'lead-routing')!;
 
-export type ServiceKey = 'R' | 'Q' | 'F' | 'L';
-export const SERVICES: Record<ServiceKey | 'S', Offer> = { R: remoteIt, Q: quickWin, F: aiFaq, L: leadRouting, S: remoteSupportPlan };
-const SERVICE_HREF: Record<ServiceKey, string> = { R: '/services/remote-it/', Q: '/services/#quick-win', F: '/services/#front-office-package', L: '/services/#front-office-package' };
-export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it', S: 'support-plan', Q: 'quick-win', F: 'front-office-package', L: 'front-office-package' };
+// D = the self-serve Follow-Up Desk (audit Nov 7 2026, A4: the quiz could not recommend it). It is the pick when sent
+// estimates go quiet or reminders are sent by hand; L (inside the Front Office Package) stays the pick for intake/routing.
+export type ServiceKey = 'R' | 'Q' | 'F' | 'L' | 'D';
+export const SERVICES: Record<ServiceKey | 'S', Offer> = { R: remoteIt, Q: quickWin, F: aiFaq, L: leadRouting, D: followUpDesk, S: remoteSupportPlan };
+const SERVICE_HREF: Record<ServiceKey, string> = { R: '/services/remote-it/', Q: '/services/#quick-win', F: '/services/#front-office-package', L: '/services/#front-office-package', D: '/follow-up-desk/' };
+export const CONTACT_TOPIC: Record<ServiceKey | 'S', string> = { R: 'remote-it', S: 'support-plan', Q: 'quick-win', F: 'front-office-package', L: 'front-office-package', D: 'follow-up-desk' };
+
+/** Founding sale checked at call time (the quiz Worker can outlive a build), so the plan never shows an ended price. */
+const deskSaleLive = () => Boolean(followUpDeskSale.monthlyUrl && followUpDeskSale.annualUrl) && Date.now() < Date.parse(followUpDeskSale.endsAt);
+const deskMonthly = () => (deskSaleLive() ? followUpDeskSale.monthly : followUpDesk.from);
+// Never shown as a crossed-out "was" price: $250 is the price from Dec 1 (see followUpDeskSale in services.ts).
+const deskPriceLine = () => deskSaleLive()
+  ? `${followUpDeskTrialDays} days free, then ${usd(followUpDeskSale.monthly)}/month. That is the founding price for anyone who starts by ${followUpDeskSale.endsLabel}, and it stays ${usd(followUpDeskSale.monthly)} for as long as you stay subscribed. From ${followUpDeskSale.regularFrom}, new signups pay ${usd(followUpDesk.from)}/month. Card required to start, cancel anytime.`
+  : `${followUpDeskTrialDays} days free, then ${usd(followUpDesk.from)}/month. Card required to start, cancel anytime.`;
 
 export function priceLine(o: Offer): string {
   return o.unit
@@ -49,6 +59,7 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'C', label: 'I lose hours to the same repetitive task every week' },
     { v: 'D', label: 'I answer the same customer questions again and again' },
     { v: 'E', label: 'New inquiries or leads slip through the cracks, or follow-up is slow' },
+    { v: 'G', label: "Estimates or quotes I've already sent go quiet, and I chase them by hand (or never get to it)" },
     { v: 'F', label: "Nothing urgent. I\'m curious what\'s possible" },
   ] },
   { id: 'q4', text: 'What email do you use for work today?', options: [
@@ -136,10 +147,10 @@ export interface Plan {
   answers: Answers;
 }
 
-const TIE: ServiceKey[] = ['R', 'Q', 'F', 'L'];
+const TIE: ServiceKey[] = ['R', 'Q', 'F', 'L', 'D'];
 
 export function computePlan(a: Answers): Plan {
-  const s: Record<ServiceKey, number> = { R: 0, Q: 0, F: 0, L: 0 };
+  const s: Record<ServiceKey, number> = { R: 0, Q: 0, F: 0, L: 0, D: 0 };
   const items = new Set<ItemCode>();
   let wf: Plan['wf'] = null;
   const personal = a.q1 === 'D';
@@ -147,7 +158,7 @@ export function computePlan(a: Answers): Plan {
   const team = a.q2 === 'B' || a.q2 === 'C' || (a.q2 !== 'A' && a.q1 === 'B');
 
   if (a.q1 === 'A' || a.q1 === 'B') s.R += 1;
-  const q3Primary: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L' };
+  const q3Primary: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L', G: 'D' };
   if (q3Primary[a.q3]) s[q3Primary[a.q3]] += 3;
   if (a.q4 === 'A') { s.R += 2; items.add('R-EMAIL'); items.add('R-AUTH'); }
   if (a.q4 === 'B') { s.R += 2; items.add('R-AUTH'); }
@@ -157,7 +168,8 @@ export function computePlan(a: Answers): Plan {
   if (a.q6 === 'A') s.F += 2;
   if (a.q6 === 'B') s.L += 2;
   if (a.q6 === 'C') { s.Q += 2; wf = 'copy'; }
-  if (a.q6 === 'D') { s.Q += 2; wf = 'reminders'; }
+  // Reminders typed by hand are outgoing follow-up work: the Desk sends those. Inquiry capture (Q) only alerts on new requests.
+  if (a.q6 === 'D') { s.D += 2; wf = 'reminders'; }
 
   let type: ResultType;
   if (personal) type = 'LEARN';
@@ -169,7 +181,7 @@ export function computePlan(a: Answers): Plan {
   }
 
   let secondary: ServiceKey | null = null;
-  if (type === 'R' || type === 'Q' || type === 'F' || type === 'L') {
+  if (type === 'R' || type === 'Q' || type === 'F' || type === 'L' || type === 'D') {
     const others = TIE.filter((k) => k !== type && (k === 'R' ? s[k] >= 3 : s[k] >= 2));
     others.sort((x, y) => s[y] - s[x] || TIE.indexOf(x) - TIE.indexOf(y));
     secondary = others[0] ?? null;
@@ -296,6 +308,7 @@ function itemView(code: ItemCode, p: Plan): ItemView {
 
 /** F and L are sold inside the Front Office Package on the site, so they never show their own starting price. */
 function startLabel(k: ServiceKey): string {
+  if (k === 'D') return `${followUpDeskTrialDays} days free, then ${usd(deskMonthly())}/month${deskSaleLive() ? ` (founding price until ${followUpDeskSale.endsLabel})` : ''}`;
   return k === 'F' || k === 'L' ? `Part of the ${frontOfficePackage.name}, ${usd(frontOfficePackage.from)}` : `Starting at ${usd(SERVICES[k].from)}`;
 }
 
@@ -304,7 +317,8 @@ function secondaryView(k: ServiceKey, p: Plan): PlanView['secondary'] {
   const names = p.items.map((c) => itemView(c, p).name);
   const text = k === 'R'
     ? `Your answers flagged ${names.length} ${names.length === 1 ? 'basic' : 'basics'} to tighten up: ${names.join(', ')}. The setup covers them remotely, on accounts you own. Ask about them on the same call.`
-    : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so requests stop getting retyped or lost.` : p.wf === 'reminders' ? `You said you send the same emails or reminders by hand. ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so nobody has to chase new requests by hand.` : `You said a repetitive task eats your week. A ${quickWin.name} takes one task off your plate: one website form feeding a shared list, with an alert to one person.`)
+    : k === 'Q' ? (p.wf === 'copy' ? `You said you copy information between apps by hand. ${quickWin.name} starts small: one website form feeding a shared list, with an alert to one person, so requests stop getting retyped or lost.` : `You said a repetitive task eats your week. A ${quickWin.name} takes one task off your plate: one website form feeding a shared list, with an alert to one person.`)
+    : k === 'D' ? (p.answers.q6 === 'D' ? `You said you send the same emails or reminders by hand. If those are follow-ups on estimates or invoices you've sent, the ${followUpDesk.name} sends them for you and stops when the customer replies. You set it up yourself, no call needed.` : `You said estimates you've sent go quiet. The ${followUpDesk.name} follows up on them for you and stops when the customer replies. You set it up yourself, no call needed.`)
     : k === 'F' ? `You said people ask the same questions. The ${aiFaq.name} answers them from your own FAQ and captures the details of new inquiries.`
     : `You said inquiries slip through or follow-up is slow. The ${leadRouting.name} puts every lead in one flow with reminders so each one gets a reply.`;
   return { name: o.name, price: startLabel(k), text, href: SERVICE_HREF[k] };
@@ -325,6 +339,7 @@ const Q3_WHY: Record<string, string> = {
   C: 'you lose hours to the same repetitive task every week',
   D: 'you answer the same customer questions again and again',
   E: 'new inquiries slip through the cracks or follow-up is slow',
+  G: "estimates you've already sent go quiet and you chase them by hand",
   F: 'nothing is urgent and you are curious what is possible',
 };
 const SIZE: Record<string, string> = { A: 'just you', B: 'a team of 2–5', C: 'a team of 6–10', D: 'a team of 11 or more', E: 'no team setup needed' };
@@ -363,10 +378,13 @@ function addPicks(v: PlanView, p: Plan) {
   // When both FAQ and lead problems come up, the package is the recommendation and its parts are 'also'.
   const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? (p.packageFit ? 'also' : 'recommended') : k === p.secondary ? 'also' : null);
   const fit = (k: ServiceKey | 'S' | 'T' | 'P'): string => {
+    if (k === 'D') return a.q3 === 'G' ? 'Fits: estimates you sent go quiet. Self-serve: you add them, and the follow-ups send on their own and stop when the customer replies.'
+      : a.q6 === 'D' ? 'Fits: you send the same reminders by hand. Self-serve follow-ups on estimates or invoices you sent, which stop when the customer replies.'
+      : 'Self-serve follow-ups on estimates you already sent, which stop when the customer replies. Did not come up in your answers.';
     switch (k) {
       case 'R': return p.items.length ? `Covers the basics your answers flagged: ${p.items.map((c) => itemView(c, p).name).join(', ')}.` : 'Email on your own domain, email security, passwords, Wi-Fi and backups, set up remotely on accounts you own.';
       case 'S': return a.q7 === 'A' ? 'You said you would like someone to email for small changes; this is that, after a setup.' : 'Optional after a setup: small changes and how-to questions by email, a set number each month.';
-      case 'Q': return p.wf === 'copy' ? 'Fits: you copy information between apps by hand.' : p.wf === 'reminders' ? 'Fits: you send the same emails or reminders by hand.' : 'One website form connected to a shared list, with an alert to one person. The lightest first step.';
+      case 'Q': return p.wf === 'copy' ? 'Fits: you copy information between apps by hand.' : 'One website form connected to a shared list, with an alert to one person. The lightest first step.';
       case 'F': return a.q6 === 'A' || a.q3 === 'D' ? 'Fits: people ask you the same questions (hours, prices, how to book).' : 'For businesses that answer the same customer questions every day. Did not come up in your answers.';
       case 'L': return a.q6 === 'B' || a.q3 === 'E' ? 'Fits: inquiries arrive in several places and some get missed.' : 'For businesses losing leads between inboxes. Did not come up in your answers.';
       case 'T': return p.local ? 'Fits: you are in Fairbanks or North Pole, so the basics can be checked and fixed in person.' : 'On-site only, in Fairbanks and North Pole, Alaska. Not available where you are; the remote setup covers the same ground.';
@@ -381,6 +399,7 @@ function addPicks(v: PlanView, p: Plan) {
     { name: remoteSupportPlan.name, price: `from ${usd(remoteSupportPlan.from)}/mo`, line: fit('S'), href: remoteSupportPlan.href!, mark: p.support === 'yes' ? 'also' : null },
     { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },
     { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit || pick === 'F' || pick === 'L' ? 'recommended' : null },
+    { name: followUpDesk.name, price: `${usd(deskMonthly())}/mo${deskSaleLive() ? ' founding price' : ''}, ${followUpDeskTrialDays} days free`, line: fit('D'), href: followUpDesk.href!, mark: mark('D') },
   ];
 }
 
@@ -415,7 +434,6 @@ function buildPlanBase(p: Plan): PlanView {
 
   if (p.type === 'Q') {
     const focusText = p.wf === 'copy' ? 'Moving information between apps automatically, for example new form entries into a spreadsheet, or email requests onto your calendar.'
-      : p.wf === 'reminders' ? 'Sending the emails or reminders you currently type by hand, automatically and at the right time.'
       : "The task you repeat most. We\'ll pick it together on the call.";
     const apps = t === 'A' ? ' (for example Gmail, Google Sheets, Google Calendar)' : t === 'B' ? ' (for example Outlook, Excel, Teams)' : t === 'C' ? ', including any phone apps you use for it' : '';
     const v: PlanView = {
@@ -500,6 +518,32 @@ function buildPlanBase(p: Plan): PlanView {
     return v;
   }
 
+  if (p.type === 'D') {
+    const fd = followUpDesk;
+    const fop = frontOfficePackage;
+    const v: PlanView = {
+      ...base, resultName: fd.name, kicker, heading: fd.name,
+      intro: `Estimates you've sent are going quiet, and chasing them takes time you don't have. The ${fd.name} sends polite follow-ups on the estimates you add, under your business name, and stops the moment a customer replies. It's self-serve: you set it up yourself in about five minutes, with no call needed.`,
+      includes: { title: "What's included", list: [...fd.items] },
+      ready: [
+        'Your open estimates: customer name, email and the job (paste a list from QuickBooks or a spreadsheet, or add them one at a time)',
+        'How you like to word a follow-up (start from ours and edit it)',
+        'The inbox where customer replies should land',
+      ],
+      price: deskPriceLine(),
+      note: `Follow-ups come from your business name at a NeonKey sending address, and replies reach your own inbox. They go out Monday to Friday, between 9 AM and noon in your time zone, at most 60 a day.`,
+      setupNote: { text: `Would you rather a person on your team send every follow-up from your own inbox, or do new inquiries need capturing and routing too? That's the ${fop.name}, set up for you with a written quote first (${usd(fop.from)}).`, href: fop.href! },
+      links: [
+        { label: `See how the ${fd.name} works`, href: fd.href!, primary: true },
+        { label: 'Compare it with a custom setup', href: '/services/#compare' },
+      ],
+      subject: 'Your NeonKey plan: stop letting estimates go quiet',
+      preheader: `How the ${fd.name} would follow up on your estimates, and what to have ready.`,
+    };
+    addExtras(v, p);
+    return v;
+  }
+
   const freeLinks: PlanView['freeLinks'] = [
     { label: 'Learn', href: '/learn/', text: 'Plain-language guides on security, networking, automation and practical IT. The first track is a CompTIA Security+ study guide, with more tutorials on the way.' },
     { label: 'The Lab', href: '/lab/', text: 'Hands-on builds, including what broke, and a working AI inquiry triage demo.' },
@@ -547,7 +591,7 @@ function buildPlanBase(p: Plan): PlanView {
   }
 
   // TALK (11+ people)
-  const q3Map: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L' };
+  const q3Map: Record<string, ServiceKey> = { A: 'R', B: 'R', C: 'Q', D: 'F', E: 'L', G: 'D' };
   const named = q3Map[a.q3];
   const touched = TIE.filter((k) => p.scores[k] >= 2).map((k) => `${SERVICES[k].name} (${startLabel(k).toLowerCase()})`);
   return {
@@ -599,7 +643,7 @@ function addDetail(v: PlanView, p: Plan) {
     v.orderNote = "Why this order: email and its authentication come first because most other accounts sign in or reset through your email. Passwords and two-factor sign-in come next because they protect every other account. The network, backups and device checklists build on top of that.";
     v.nextSteps = [...SCOPING, "The work is done remotely by video call and screen share, on accounts you own, with jargon-free notes on every change."];
   } else if (p.type === 'Q') {
-    const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q6 === 'D' ? 'You said you send the same emails or reminders by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
+    const why = a.q6 === 'C' ? 'You said you copy information between apps by hand.' : a.q3 === 'C' ? 'You said you lose hours to the same repetitive task every week.' : 'Your answers pointed to a repetitive task worth automating.';
     v.startPrice = `Starting at ${usd(quickWin.from)}`;
     v.scope = { title: 'Based on your answers, your inquiry capture setup would cover', list: [...quickWin.items] };
     if (!v.footnote) v.footnote = QW_UPSELL;
@@ -633,6 +677,21 @@ function addDetail(v: PlanView, p: Plan) {
       { title: 'A simple tracking view', what: 'One place to see every lead and where it stands.', why: toolsWhy ? cap(toolsWhy) + ', so it can live in tools you already use.' : 'So you can see what needs a reply at a glance.', ready: [r[3]] },
     ];
     v.nextSteps = SCOPING;
+  } else if (p.type === 'D') {
+    const why = a.q3 === 'G' ? "You said estimates you've already sent go quiet." : 'You said you send the same emails or reminders by hand.';
+    v.startPrice = startLabel('D');
+    v.scope = { title: `What the ${followUpDesk.name} does for you`, list: v.includes!.list };
+    v.steps = [
+      { title: 'Start the free trial', what: `${followUpDeskTrialDays} days free, card required. Your private dashboard link arrives by email; there's no password to remember.`, why },
+      { title: 'Add your open estimates', what: 'Add them one at a time or paste a list. Each one gets up to three follow-ups.', why: 'The follow-ups only go to estimates you add, so nothing is sent to anyone you did not choose.', ready: [r[0]] },
+      { title: 'Check the wording and send yourself a preview', what: 'You pick the days and write your own wording. A preview shows exactly what your customers get.', why: 'So every follow-up sounds like you before anything goes out.', ready: [r[1], r[2]] },
+      { title: 'Let it run', what: 'When a customer replies, their reply lands in your inbox and that job\'s follow-ups stop on their own. Mark jobs Won, Lost or Stop with one click, and get a short report every Monday.', why: 'Slow or forgotten follow-up is where quotes usually go cold.' },
+    ];
+    v.nextSteps = [
+      `Open the ${followUpDesk.name} page and start the free trial when you're ready.`,
+      'Add a few open estimates and send yourself a preview.',
+      'Reply to this email if anything is unclear. A person reads every reply.',
+    ];
   } else if (p.type === 'LEARN') {
     v.scope = { title: 'Where to start (free)', list: ['Learn: plain-language guides', 'The Lab: hands-on builds and a working demo', 'Unlock the Week: one short weekly email'] };
     v.nextSteps = ['Pick one of the quick fixes above and do it this week.', 'Browse Learn or the Lab when you have a few minutes.', 'Reply to this email if you get stuck.'];
