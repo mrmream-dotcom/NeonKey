@@ -114,7 +114,7 @@ export const remoteSupportPlan: Offer = {
   for: 'Optional add-on after setup: help by email, answered in writing rather than live (async), with a set response window',
   items: [
     'Up to 3 small requests a month (about 30 minutes each), unless your plan says otherwise',
-    'By email, with a first reply by the end of the next business day (Monday to Friday, Alaska time)',
+    'By email, with a first reply by the end of the next business day (Monday to Friday)',
     'Account adds and removes, settings changes, how-to questions',
     'Modular: add or change features as your needs change (advanced features may cost extra, always quoted first)',
     'No 24/7 or emergency cover; cancel anytime',
