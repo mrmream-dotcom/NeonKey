@@ -24,5 +24,10 @@ FOUNDER_STACK_LINK = "plink_1UYvrICRxS1tvAi2komKzvTp"
 binding = "PRODUCTS"
 id = "d078b508b3954a908d17fe7bc72c8a65"
 
+# Workers Logs: keeps this Worker's console.log lines (errors, failed sends) for 3 days in the Cloudflare dashboard.
+# Invocation logs are off so request URLs (which can carry a private dashboard link) are never stored.
 [observability]
-enabled = false
+enabled = true
+
+[observability.logs]
+invocation_logs = false

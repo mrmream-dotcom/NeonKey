@@ -23,5 +23,7 @@
     "PER_IP_MINUTE": "5",
     "PER_IP_DAILY": "30",
     "GLOBAL_DAILY": "150"
-  }
+  },
+  // Workers Logs: keep console lines (errors only, never request content) for 3 days. No invocation logs.
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } }
 }

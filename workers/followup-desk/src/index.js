@@ -20,6 +20,7 @@ import {
 } from "./engine.js";
 import { getAccount, putAccount, setStatus, accountByToken, issueToken, createAccount, deleteAccount, prune } from "./store.js";
 import { welcomeEmail, linkEmail, reportEmail, forwardEmail, sendOwner, sendNotice, sendFollowUp } from "./mail.js";
+import { alert, health, hourly as runHourly } from "./ops.js";
 import { CSS, dashboardPage, settingsPage, loginPage, unsubPage, notFoundPage, deskState } from "./pages.js";
 
 const SECURITY_HEADERS = {
@@ -39,7 +40,7 @@ export default {
     const path = url.pathname;
     const method = request.method;
     try {
-      if (path === "/health") return json(200, { ok: true, live: env.ALLOW_LIVE === "true" });
+      if (path === "/health") { const h = await health(env); return json(h.ok ? 200 : 503, h); }
       if (path === "/robots.txt") return new Response("User-agent: *\nDisallow: /\n", { headers: { "Content-Type": "text/plain" } });
       if (path === "/app.css") return new Response(CSS, { headers: { "Content-Type": "text/css", "Cache-Control": "public, max-age=3600" } });
       if (path === "/" ) return redirect("/login");
@@ -52,17 +53,25 @@ export default {
       if (m) return await dashboard(request, env, m[1], m[2] || "");
       return html(notFoundPage(), 404);
     } catch (e) {
-      console.log("desk: error", path, String(e));
+      const where = path.replace(/^\/d\/[^/]+/, "/d/<link>"); // never log or email the private dashboard token
+      console.log("desk: error", method, where, String(e));
+      ctx.waitUntil(alert(env, `Request ${method} ${where} failed`, String(e)));
       return json(500, { ok: false });
     }
   },
 
   async scheduled(controller, env, ctx) {
-    ctx.waitUntil(runAll(env, controller.scheduledTime || Date.now()));
+    ctx.waitUntil(hourly(env, controller.scheduledTime || Date.now()));
   },
 
   async email(message, env) {
-    await inbound(message, env);
+    try {
+      await inbound(message, env);
+    } catch (e) {
+      console.log("desk: inbound failed", String(e));
+      await alert(env, "Incoming email failed (a reply may not have stopped its follow-ups)", String(e));
+      throw e;
+    }
   },
 };
 
@@ -433,27 +442,41 @@ export async function act(env, acct, action, form, now = Date.now()) {
 }
 
 // ---------- the hourly run ----------
+// Sends, reports and cleanup for every account, then (ops.js) the nightly backup, the heartbeat behind /health,
+// and one alert email to NOTIFY_TO if anything failed.
+export const hourly = (env, now = Date.now()) => runHourly(env, now, runAll);
+
+// Returns totals so the heartbeat and alert can say what happened.
 export async function runAll(env, now = Date.now()) {
+  const totals = { accounts: 0, sent: 0, sendFailures: 0, runFailures: 0, errors: [] };
   let cursor;
   do {
     const page = await env.DESK.list({ prefix: "acct:", cursor });
     for (const k of page.keys) {
       try {
         const acct = await getAccount(env, k.name.slice(5));
-        if (acct) await runAccount(env, acct, now);
+        if (!acct) continue;
+        totals.accounts++;
+        const out = await runAccount(env, acct, now);
+        totals.sent += out.sent;
+        totals.sendFailures += out.failed;
+        if (out.failed) totals.errors.push(`${acct.id}: ${out.failed} email(s) Resend did not accept`);
       } catch (e) {
+        totals.runFailures++;
+        totals.errors.push(`${k.name.slice(5)}: ${String(e)}`);
         console.log("desk: run failed", k.name, String(e));
       }
     }
     cursor = page.list_complete ? undefined : page.cursor;
   } while (cursor);
+  return totals;
 }
 
 export async function runAccount(env, acct, now = Date.now()) {
   const s = acct.settings;
   const local = localParts(now, s.timezone);
   let changed = false;
-  const out = { sent: 0, report: false, deleted: false };
+  const out = { sent: 0, failed: 0, report: false, deleted: false };
 
   if (acct.billing === "canceled" && acct.canceledAt && now - acct.canceledAt > 30 * DAY) {
     await deleteAccount(env, acct);
@@ -471,7 +494,7 @@ export async function runAccount(env, acct, now = Date.now()) {
       const stop = await env.DESK.get(`stop:${acct.id}:${item.id}`);
       if (stop) continue;
       const ok = await sendFollowUp(env, acct, item);
-      if (!ok) continue;
+      if (!ok) { out.failed++; continue; } // retried next hour; the hourly run alerts NOTIFY_TO
       item.step = (item.step || 0) + 1;
       item.lastSentAt = now;
       item.sends = [...(item.sends || []), now];
@@ -486,7 +509,7 @@ export async function runAccount(env, acct, now = Date.now()) {
   if (acct.setupDone && acct.billing !== "canceled" && local.weekday === "Mon" && local.hour === REPORT_HOUR && acct.reportDay !== local.date && acct.items.length) {
     // The report links to the sign-in page, not a fresh token: minting one every week would retire the owner's bookmark.
     const ok = await sendOwner(env, acct, reportEmail({ acct, link: `${env.APP_URL}/login`, now }), `desk-report-${acct.id}-${local.date}`);
-    if (ok) { acct.reportDay = local.date; out.report = true; changed = true; }
+    if (ok) { acct.reportDay = local.date; out.report = true; changed = true; } else out.failed++;
   }
 
   if (changed) await putAccount(env, acct);

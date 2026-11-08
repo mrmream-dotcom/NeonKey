@@ -20,5 +20,10 @@ REPLY_TO = "hello@neonkey.tech"
 binding = "WELCOME_SENT"
 id = "eaee8c0a233e4b26992050717e93ef77"
 
+# Workers Logs: keeps this Worker's console.log lines (errors, failed sends) for 3 days in the Cloudflare dashboard.
+# Invocation logs are off so request URLs (which can carry a private dashboard link) are never stored.
 [observability]
-enabled = false
+enabled = true
+
+[observability.logs]
+invocation_logs = false

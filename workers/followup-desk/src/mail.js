@@ -139,7 +139,8 @@ export function followUpEmail(item, settings, unsubUrl) {
 // ---------- notices to hello@ ----------
 export function noticeEmail(kind, acct, extra = "") {
   const titles = { new: "New Follow-Up Desk signup", canceled: "Follow-Up Desk canceled", billing: "Follow-Up Desk billing changed", error: "Follow-Up Desk problem" };
-  const lines = [
+  // No account (an alert from the hourly run or a failed request): just the details.
+  const lines = !acct ? String(extra).split("\n") : [
     `Account: ${acct?.id || "?"}`,
     `Buyer: ${acct?.name || ""} <${acct?.email || "?"}>`,
     `Business: ${acct?.settings?.business || "(not set yet)"}`,

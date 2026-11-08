@@ -40,5 +40,10 @@ id = "7629cb98c9ed42598f842af4426f491f"
 [triggers]
 crons = ["7 17 * * *"]
 
+# Workers Logs: keeps this Worker's console.log lines (errors, failed sends) for 3 days in the Cloudflare dashboard.
+# Invocation logs are off so request URLs (which can carry a private dashboard link) are never stored.
 [observability]
-enabled = false
+enabled = true
+
+[observability.logs]
+invocation_logs = false

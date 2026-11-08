@@ -29,5 +29,10 @@ KIT_GLOBAL_DAILY_LIMIT = "200"
 binding = "QUIZ_RL"
 id = "5fb0df1c3d8e41d3a158a62e4e1ce3be"
 
+# Workers Logs: keeps this Worker's console.log lines (errors, failed sends) for 3 days in the Cloudflare dashboard.
+# Invocation logs are off so request URLs (which can carry a private dashboard link) are never stored.
 [observability]
-enabled = false
+enabled = true
+
+[observability.logs]
+invocation_logs = false
