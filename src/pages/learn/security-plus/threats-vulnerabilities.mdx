@@ -1,7 +1,7 @@
 ---
 layout: ../../../components/learn/LearnLayout.astro
-title: "Domain 2: Threats, Vulnerabilities, and Mitigations"
-description: Plain-language Security+ notes on threat actors, attack vectors, common vulnerabilities, signs of compromise and mitigation techniques.
+title: "Domain 2: Threats, Vulnerabilities, and Attacks"
+description: Plain-language Security+ notes on threat actors, threat vectors, common vulnerabilities, signs of malicious activity and AI-related risks.
 kicker: Learn · Security+ · Domain 2 of 5
 back: { href: /learn/security-plus/, label: Back to the Security+ guide }
 ---
@@ -10,62 +10,70 @@ import Flashcards from '../../../components/learn/Flashcards.astro';
 import SelfCheck from '../../../components/learn/SelfCheck.astro';
 import StudyResources from '../../../components/learn/StudyResources.astro';
 
-<p class="lead">This domain is about the other side: who attacks, how they get in, what weaknesses they use, how you'd notice, and what reduces the risk. It's about 22% of SY0-701.</p>
+<p class="lead">This domain is about the other side: who attacks, how they get in, what weaknesses they use, how you'd notice, and the new risks that come with AI. It's about 24% of SY0-801.</p>
 
-<ExamVersionNote v8="V8 renames this domain 'Threats, Vulnerabilities, and Attacks' (about 24%) and adds a new objective on AI-related risks: models, prompts, privacy and data exposure. In CompTIA's V8 summary, mitigation is no longer its own objective here." />
+<ExamVersionNote changes="This domain was called 'Threats, Vulnerabilities, and Mitigations' in SY0-701 (about 22%). SY0-801 renames it 'Threats, Vulnerabilities, and Attacks' (about 24%), adds objective 2.1 on threat and vulnerability basics, and adds objective 2.6 on AI threats and vulnerabilities. Mitigation techniques moved to Domain 4 (objective 4.1)." />
 
-## Threat actors and motivations
+## Threats and threat actors
 
-Attackers differ in **resources**, **skill**, **access**, and **motive**. Look at capability and motivation separately.
+A **threat** is something that could cause harm. You judge it by **likelihood** and **impact**, and you learn about current threats from **threat feeds** and other **intelligence sources**.
 
-- **Nation-state / APT:** well-funded and patient. Often after strategic information (espionage).
-- **Organized crime:** in it for money, through ransomware, fraud and theft.
-- **Hacktivists:** driven by a cause or ideology.
-- **Insider threats:** people who already have access and misuse it, on purpose or by accident.
-- **Unskilled attackers:** rely on existing tools and scripts.
-- **Shadow IT:** well-meaning staff using unapproved tech, which creates unmanaged risk.
+Attackers differ in **resources/funding**, **sophistication**, and whether they're **internal or external**. Look at capability and motivation separately.
+
+- **State-sponsored:** well-funded and patient. Often after strategic information (espionage). Long, quiet campaigns are called **advanced persistent threats (APTs)**.
+- **Crime syndicates / organized crime:** in it for money, through ransomware, fraud, theft and extortion.
+- **Hacktivists:** driven by a cause, ideology or politics.
+- **Insiders:** people who already have access and misuse it on purpose. **Accidental/unintentional** insiders cause harm by mistake.
+- **Competitors** may be after intellectual property. **Terrorists** may want fear and chaos.
+- **Unskilled attackers:** rely on existing tools and scripts, sometimes just out of curiosity or for notoriety.
 
 ## Threat vectors and attack surface
 
 A **vector** is the path in. The **attack surface** is everything exposed: public services, accounts, devices, apps, vendors, and people.
 
-- **Phishing** (email), **vishing** (voice), and **smishing** (SMS) trick people into handing over access.
-- **Watering hole:** attackers compromise a site their targets already visit.
-- **Supply chain:** attackers get in through a trusted vendor, update or dependency.
-- **Removable media / baiting:** a USB stick left where someone will plug it in.
-
-Shrinking the attack surface means turning off what you don't need: unused services, open ports, old accounts.
+- **Message-based:** phishing by email, SMS, RCS, instant messaging and collaboration tools.
+- **Image-based:** malicious QR codes and embedded content. **Attachment-based:** macros, RTF documents and PDFs.
+- **Browser-based:** malicious extensions, JavaScript, and stolen cookies or session tokens.
+- **Remote access:** exposed remote desktop, VNC and VPNs. **Endpoint-based:** attackers using built-in, "living off the land" tools so they blend in.
+- **Supply chain:** attackers get in through a third-party, managed service, logistics or SaaS provider.
+- **Human-based:** impersonation, contractors and visitors, and **watering hole** sites the targets already visit.
+- **External media:** a malicious USB stick. **Signal-based:** Bluetooth, RF and NFC. Also **IoT** (cameras, sensors, printers), **OT**, and **physical** paths like locks, access vestibules and passes.
 
 ## Vulnerability types
 
-A **vulnerability** is a weakness. A **threat** is something that could exploit it.
+A **vulnerability** is a weakness. A **threat** is something that could exploit it. Public flaws get a **CVE** ID, and **CVSS** scores how severe they are, which helps with prioritization.
 
-- **SQL injection:** user input changes a database query. Fix it with parameterized queries.
-- **Cross-site scripting (XSS):** injected script runs in other users' browsers.
-- **CSRF:** tricks a logged-in browser into sending a request the user didn't intend.
-- **Buffer overflow:** writing past the end of a memory buffer.
-- **Race condition:** a bug that depends on the timing between operations.
+- **Unsupported, obsolete, unpatched or unmanaged systems:** no fixes are coming, or nobody is applying them.
+- **Open ports and services** that nobody needs.
+- **Application flaws:** **race conditions** (time-of-check vs. time-of-use), malicious updates, **hardcoded secrets**, and unsafe exception handling.
 - **Zero-day:** a flaw attackers know about before a fix exists.
-- **Misconfiguration:** a public storage bucket, default passwords, an open admin port.
+- **Cryptographic weaknesses** and **unmanaged or stale credentials**.
+- **Rogue devices** and **shadow IT:** tech nobody approved or is watching.
+- **Newer surfaces:** large language models (LLMs), identity providers, mobile devices, wireless and low-power links.
+- **Misconfiguration:** a public code repository with secrets in it, public object storage, default passwords, an open admin port.
 
 ## Indicators of malicious activity
 
 One odd event is a lead, not proof. Look for signs that line up:
 
-- **Beaconing:** regular check-ins to an outside server (command and control).
-- **Impossible travel:** logins from two places too far apart for the time between them.
-- **Privilege escalation** and **lateral movement:** an attacker gaining rights and spreading.
-- **Data exfiltration:** unusual outbound transfers.
-- New scheduled tasks or services, unexpected file changes, and account lockouts.
+- **Malware:** ransomware, trojans, worms, spyware, rootkits, keyloggers, logic bombs, and **fileless malware** that lives in memory.
+- **Network attacks:** DDoS, protocol downgrades, sniffing, spoofing, on-path attacks, and DNS attacks like cache poisoning.
+- **Application attacks:** injection (like SQL injection), buffer overflow, replay, privilege escalation, forgery and directory traversal.
+- **Credential attacks:** password spraying, brute force, user enumeration, and **MFA bypass**.
+- **Social engineering:** phishing, spear phishing, whaling, vishing, smishing, **quishing** (QR-code phishing) and **deepfakes**.
+- **Physical attacks:** tailgating, shoulder surfing, skimming and forced entry.
+- **Indicators of compromise:** known-bad hashes, IP addresses and domains, malicious processes, odd timestamps, log manipulation, excessive resource use, account lockouts, **impossible travel** and unexpected concurrent sessions.
 
-## Mitigation techniques
+## AI threats and vulnerabilities
 
-- **Segmentation:** limits where an attacker can move.
-- **Hardening:** removes unneeded services, defaults and access.
-- **Patching:** fixes known flaws, followed by a check that nothing broke.
-- **Application allowlisting:** only approved software can run.
-- **Least privilege**, **isolation/quarantine**, and **compensating controls** for systems you can't patch.
-- **Defense in depth:** layers of protection, so one failure isn't fatal.
+SY0-801 adds a full objective on the risks of using AI:
+
+- **Prompt injection:** hidden or crafted instructions trick an AI tool into ignoring its rules. **Jailbreaking** pushes a model past its safety limits.
+- **Poisoning:** bad data slipped into training so the model learns the wrong thing. **Model manipulation** and **evasion** change or fool a model's output.
+- **Data loss and privacy:** sensitive information pasted into an AI tool, or leaked by one.
+- **Hallucinations:** confident answers that are simply wrong. **Bias** and poor **explainability** make results hard to trust or check.
+- **Session hijacking** and **code execution:** AI tools connected to accounts or systems can be abused to act on an attacker's behalf.
+- **Ethical considerations:** whether AI should be used for a task at all, and how.
 
 <Flashcards domain={2} />
 <SelfCheck domain={2} />

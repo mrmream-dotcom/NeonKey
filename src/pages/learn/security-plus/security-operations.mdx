@@ -1,7 +1,7 @@
 ---
 layout: ../../../components/learn/LearnLayout.astro
 title: "Domain 4: Security Operations"
-description: "Plain-language Security+ notes on hardening, vulnerability management, monitoring, identity and access, automation and incident response."
+description: "Plain-language Security+ notes on mitigating controls, asset and vulnerability management, monitoring, identity and access, automation and incident response."
 kicker: Learn · Security+ · Domain 4 of 5
 back: { href: /learn/security-plus/, label: Back to the Security+ guide }
 ---
@@ -10,76 +10,89 @@ import Flashcards from '../../../components/learn/Flashcards.astro';
 import SelfCheck from '../../../components/learn/SelfCheck.astro';
 import StudyResources from '../../../components/learn/StudyResources.astro';
 
-<p class="lead">This is the biggest domain, at about 28% of SY0-701. It's the day-to-day work: keeping systems hardened, knowing what you own, finding and fixing weaknesses, watching for trouble, managing who has access, and handling incidents.</p>
+<p class="lead">This is the biggest domain, at about 27% of SY0-801. It's the day-to-day work: putting mitigating controls in place, knowing what you own, finding and fixing weaknesses, watching for trouble, managing who has access, and handling incidents.</p>
 
-<ExamVersionNote v8="Weight is about 27%. CompTIA's V8 summary lists eight objectives here. 'Enhancing enterprise capabilities' (secure protocols, email security and similar) no longer appears as its own objective, and automation now mentions AI-assisted workflows." />
+<ExamVersionNote changes="Weight dips slightly, from about 28% to about 27%. SY0-801 has eight objectives here instead of nine. Mitigation techniques moved in from Domain 2, and they now share objective 4.1 with the old 'enhancing enterprise security' topics (firewalls, email security and similar). Automation (4.6) now covers AI capabilities like agentic tools, chatbots and AI-augmented baselines." />
 
-## Securing computing resources
+## Mitigating controls and techniques
 
-Start every device from a **secure baseline**, then keep it there. Remove unused software, turn off unneeded services, patch, enable secure boot, and watch for **configuration drift**.
+Start every system from a **hardened** baseline, then layer controls so one failure isn't fatal.
 
-- **EDR** spots suspicious behavior on endpoints and helps you investigate and contain it.
-- **MDM/UEM** enforces policy on phones and laptops.
-- **Full-disk encryption** protects a lost or stolen device.
+- **Segmentation** limits where an attacker can move. **Access controls** and **application control** (allow lists and block lists) limit what can run and who can reach it.
 - **Sandboxing** runs untrusted code somewhere it can't do harm.
+- **Deception and disruption:** **honeypots** and **honeynets** are fake systems that lure attackers. **Honeyfiles**, **honeytokens** and **canary accounts** are fake data or accounts that raise an alarm when touched.
+- **Intrusion detection and prevention:** network-based (NIDS/NIPS), host-based (HIDS/HIPS), and wireless (WIPS). Detection alerts. Prevention sits inline and can block.
+- **Firewalls:** rule-based, Layer 4 or Layer 7, a **web application firewall (WAF)** for web apps, **unified threat management (UTM)** that combines several tools, and rate-limiting to slow down floods of requests.
+- **Endpoint security:** antivirus, **EDR** (spots suspicious behavior and helps you contain it) and **XDR** (the same idea across endpoints, network and cloud). **MDM** enforces policy on phones and laptops.
+- **Network access control (NAC):** checks a device's posture before it joins, using 802.1X or a captive portal.
+- **Data loss prevention (DLP):** agent-based on the device, or through a central proxy. **Content filters** block unwanted sites.
 
-## Asset management
+## Email, application and OS security
 
-You can't protect what you don't know you have. Track assets through their whole life: purchase, inventory, owner, classification, maintenance, and disposal. Watch for shadow IT and forgotten devices. Sanitize media before it's reused or thrown out, using overwriting, **cryptographic erase**, shredding or physical destruction, depending on the media.
-
-## Vulnerability management
-
-It's a loop: discover, scan, confirm, prioritize, fix or mitigate, then **rescan**.
-
-- **CVSS** scores how severe a flaw is technically, not your actual business risk. An exposed system with a known, actively used exploit can matter more than a higher score on an isolated lab box.
-- **Authenticated scans** log in to the system, so they see more.
-- **False positives** waste time. Confirm a finding before you act on it.
-- If you can't fix something, document a **risk exception** and add compensating controls.
-
-## Alerting and monitoring
-
-- **SIEM** collects and correlates logs from many sources.
-- **IDS** detects and alerts. **IPS** sits inline and can block.
-- **Tuning** balances missed attacks (false negatives) against alert overload (false positives).
-- Use accurate time sync (NTP) and set clear log-retention rules, or you won't be able to reconstruct what happened.
-
-## Enterprise security capabilities
-
-Replace cleartext protocols with secure ones: SSH instead of Telnet, HTTPS/TLS instead of HTTP. For email:
+These are also part of objective 4.1.
 
 - **SPF** lists the servers allowed to send mail for your domain.
 - **DKIM** signs messages cryptographically.
 - **DMARC** tells receiving servers what to do with mail that fails those checks, and where to send reports.
+- **BIMI** shows a verified brand logo next to mail that passes DMARC.
+- **Application security:** input validation, secure cookies, static code analysis, and **code signing**. Scan code **repositories** for leaked secrets.
+- **Operating system security:** Group Policy on Windows and **SELinux** on Linux enforce settings across many machines.
 
-**DNSSEC** proves DNS answers are genuine, but it does *not* encrypt them. **File integrity monitoring** flags unexpected changes to important files.
+## Asset management
+
+You can't protect what you don't know you have. Track assets through their whole life cycle: planning, acquisition (procurement), assignment to an owner, monitoring and tracking, and finally disposal or decommissioning. Watch for shadow IT and forgotten devices. Sanitize or destroy storage before it's reused or thrown out.
+
+## Vulnerability management
+
+It's a loop: identify, prioritize, remediate, verify, and report.
+
+- **Identification:** scanning, IP address management (IPAM) to know what's on the network, **cloud security posture management (CSPM)** for cloud settings, source code review, and reviewing penetration test reports.
+- **Prioritization:** a severity score like CVSS measures how bad a flaw is technically, not your actual business risk. An exposed system with a known, actively used exploit can matter more than a higher score on an isolated lab box.
+- **Verification:** after a fix, rescan or otherwise confirm it worked.
+- **Reporting:** internal reports, plus outside sources like **bug bounty programs** and **responsible disclosure policies** that tell researchers how to report flaws to you.
+
+## Alerting and monitoring
+
+- Monitor **systems, applications and infrastructure**. The activities are log aggregation, alerting, scanning, archiving and reporting.
+- **SIEM** collects and correlates logs from many sources. Agents or agentless collection feed it.
+- **Alert tuning** balances missed attacks (false negatives) against alert overload (false positives).
+- **Protocols and tools:** NetFlow (who talked to whom), SNMP and syslog (device events), **SCAP** (automated configuration checks against benchmarks), port mirroring, packet analyzers, vulnerability scanners and dashboards.
 
 ## Identity and access management
 
-- **Lifecycle:** provision access, update it when roles change, and remove it quickly when it's no longer needed.
-- **MFA** means factors from different categories: something you know, have, or are.
-- **SSO and federation** (SAML, OIDC) let one sign-in work across many apps.
-- **RBAC** grants access by role. **ABAC** decides based on attributes like department, device health and time.
-- **PAM** locks down and monitors admin accounts.
+- **Lifecycle:** provision accounts, check identity first (**identity proofing**), update access when roles change, and deprovision quickly when it's no longer needed. Review access regularly.
+- **Account types:** user, privileged, global, local, service, third-party, and emergency ("break glass") access.
+- **MFA** uses hard or soft tokens, biometrics, one-time passwords (OTP), or backup codes.
+- **SSO and federation** (SAML, OAuth, LDAP) let one sign-in work across many apps.
+- **Access control models:** rule-based, role-based, time-based, mandatory, discretionary, and **just-in-time** (access granted only for the moment it's needed).
+- **Passwords:** length beats complexity, don't reuse them, and watch for compromised credentials. **Passkeys** and passwordless sign-in remove the password altogether. Password managers help people keep unique ones.
 
 ## Automation and orchestration
 
-**Automation** handles single repeatable tasks. **Orchestration** chains tools into a workflow (SOAR is the security version). They save time but can spread mistakes fast, so add guardrails: limited service accounts, approval steps before anything destructive, logging, and testing.
+**Automation** handles single repeatable tasks, like user and resource provisioning, desired state management, anomaly detection and ticket management. **Orchestration** chains tools into a workflow, often in a CI/CD pipeline. The goals are saved time, enforced baselines, less downtime, and being more proactive.
+
+SY0-801 adds AI capabilities: **agentic** tools that take actions, **chatbots**, **predictive analysis**, and **AI-augmented baselines**. All of this can spread mistakes fast, so add **guardrails**: limited service accounts, approval steps before anything destructive, logging, and testing. Weigh the complexity, cost and process risk too.
 
 ## Incident response
 
-The phases: **preparation → detection and analysis → containment → eradication → recovery → lessons learned**. Preserve evidence and keep a **chain of custody** before you make destructive changes. Practice with tabletop exercises.
+- **Preparation:** training, playbooks, defined roles, and testing through tabletop exercises and simulations.
+- **Identification:** detection, internal and external advisories, and **threat hunting** (looking for attackers before an alert fires).
+- **Investigation:** digital forensics, e-discovery, evidence preservation, and a **chain of custody**.
+- **Containment:** quarantine or isolate affected systems. Sometimes negotiation (for example, in a ransomware case).
+- **Eradication and recovery**, then **notification and external reporting** to stakeholders, customers, law enforcement, or regulators when it's mandatory.
+- **Post-incident:** lessons learned, **root cause analysis**, and a post-incident report (PIR).
 
 ## Investigation data sources
 
 Pick the source that answers your question:
 
-- **Firewall and flow logs (NetFlow)** show who talked to whom.
-- **DNS logs** show name lookups.
-- **Authentication logs** show sign-ins.
-- **Endpoint telemetry** shows processes and file changes.
-- **Packet capture** shows full traffic content, when it isn't encrypted.
+- **Logs and traces:** access and accounting, authentication, device, server, application, endpoint, network, audit and communication logs, plus metadata.
+- **NetFlow/IPFIX** show who talked to whom.
+- **Packet captures** show full traffic content, when it isn't encrypted.
+- **Forensic copies:** system images, memory dumps, bit-level copies and snapshots.
+- Also vulnerability scans, automated reports, security tool dashboards, and surveillance footage.
 
-Line things up by timestamp, host and user, and hash evidence to show it hasn't been altered.
+Line things up by timestamp, host and user, and check file and log integrity to show evidence hasn't been altered. Bring in HR and legal when the case needs them.
 
 <Flashcards domain={4} />
 <SelfCheck domain={4} />

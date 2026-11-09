@@ -1,5 +1,5 @@
 {
- "_note": "Flip-style key terms per domain. Adapted from the original SEC+ // ACADEMY file (original wording). Render with <details>.",
+ "_note": "Flip-style key terms per domain, mapped to the SY0-801 (V8) exam objectives. Adapted from the original SEC+ // ACADEMY file (original wording). Render with <details>.",
  "cards": [
   {
    "domain": 1,
@@ -48,7 +48,7 @@
   },
   {
    "domain": 1,
-   "front": "Deterrent",
+   "front": "Deterring",
    "back": "Discourages an attacker from trying, like warning signs or visible cameras"
   },
   {
@@ -103,8 +103,8 @@
   },
   {
    "domain": 1,
-   "front": "Approval",
-   "back": "Authorized decision before implementation"
+   "front": "Change advisory board (CAB)",
+   "back": "Group that reviews and approves a change before it goes ahead"
   },
   {
    "domain": 1,
@@ -118,8 +118,8 @@
   },
   {
    "domain": 1,
-   "front": "Emergency change",
-   "back": "Urgent change with expedited review and retrospective"
+   "front": "Fail forward",
+   "back": "Push a fix ahead instead of rolling back, when undoing would cause more harm"
   },
   {
    "domain": 1,
@@ -162,8 +162,33 @@
    "back": "Unique random data added before password hashing to resist precomputed attacks"
   },
   {
+   "domain": 1,
+   "front": "Least privilege",
+   "back": "Restricts accounts to the minimum necessary access"
+  },
+  {
+   "domain": 1,
+   "front": "TLS",
+   "back": "Protects communications in transit"
+  },
+  {
+   "domain": 1,
+   "front": "Defense in depth",
+   "back": "Layers of protection so one failed control isn't fatal"
+  },
+  {
+   "domain": 1,
+   "front": "Wildcard certificate",
+   "back": "One certificate covering the subdomains at one level, like *.example.com"
+  },
+  {
+   "domain": 1,
+   "front": "Obfuscation",
+   "back": "Making data or code hard to read without true encryption"
+  },
+  {
    "domain": 2,
-   "front": "Nation-state",
+   "front": "State-sponsored",
    "back": "Government-backed actor often interested in strategic intelligence"
   },
   {
@@ -223,7 +248,7 @@
   },
   {
    "domain": 2,
-   "front": "USB baiting",
+   "front": "Malicious USB",
    "back": "Social engineering through attractive or planted removable media"
   },
   {
@@ -293,38 +318,48 @@
   },
   {
    "domain": 2,
-   "front": "Segmentation",
-   "back": "Separates traffic and limits lateral movement"
+   "front": "Prompt injection",
+   "back": "Crafted input that tricks an AI tool into ignoring its rules"
   },
   {
    "domain": 2,
-   "front": "Hardening",
-   "back": "Removes unnecessary services, default settings, and access"
+   "front": "Data poisoning",
+   "back": "Bad data slipped into training so a model learns the wrong thing"
   },
   {
    "domain": 2,
-   "front": "Patching",
-   "back": "Installs updates that remediate known flaws"
+   "front": "Hallucination",
+   "back": "An AI answer that sounds confident but is wrong"
   },
   {
    "domain": 2,
-   "front": "Application allowlisting",
-   "back": "Permits only approved executables or applications"
+   "front": "Jailbreaking",
+   "back": "Pushing an AI model past its safety limits"
   },
   {
    "domain": 2,
-   "front": "Least privilege",
-   "back": "Restricts accounts to the minimum necessary access"
+   "front": "Quishing",
+   "back": "Phishing through a malicious QR code"
   },
   {
    "domain": 2,
-   "front": "Quarantine",
-   "back": "Separates a potentially compromised asset for investigation"
+   "front": "Deepfake",
+   "back": "AI-generated audio or video that imitates a real person"
   },
   {
    "domain": 2,
-   "front": "Compensating mitigation",
-   "back": "Alternative risk reduction when direct remediation is infeasible"
+   "front": "Living off the land",
+   "back": "Attacking with tools already built into the system, to blend in"
+  },
+  {
+   "domain": 2,
+   "front": "Hardcoded secret",
+   "back": "A password or key written directly into code"
+  },
+  {
+   "domain": 2,
+   "front": "Password spraying",
+   "back": "Trying a few common passwords across many accounts"
   },
   {
    "domain": 3,
@@ -348,13 +383,13 @@
   },
   {
    "domain": 3,
-   "front": "Container",
-   "back": "OS-level isolation with shared kernel implications"
+   "front": "Air-gapped network",
+   "back": "Network with no connection to outside networks at all"
   },
   {
    "domain": 3,
-   "front": "OT/ICS",
-   "back": "Operational technology prioritizing safe, continuous physical processes"
+   "front": "Microservices",
+   "back": "An app built from many small services, which adds connections to secure"
   },
   {
    "domain": 3,
@@ -368,11 +403,6 @@
   },
   {
    "domain": 3,
-   "front": "NAC",
-   "back": "Controls network admission based on device or user posture"
-  },
-  {
-   "domain": 3,
    "front": "VPN",
    "back": "Encrypted tunnel across an untrusted network"
   },
@@ -383,13 +413,13 @@
   },
   {
    "domain": 3,
-   "front": "SDN",
-   "back": "Separates network control logic from forwarding for programmable management"
+   "front": "SSE",
+   "back": "Security Service Edge: cloud-delivered security between users and the apps they use"
   },
   {
    "domain": 3,
-   "front": "Jump server",
-   "back": "Controlled intermediary for privileged administration"
+   "front": "Out-of-band management",
+   "back": "Admin access over a separate path from normal user traffic"
   },
   {
    "domain": 3,
@@ -410,11 +440,6 @@
    "domain": 3,
    "front": "Data in use",
    "back": "Information actively processed in memory"
-  },
-  {
-   "domain": 3,
-   "front": "DLP",
-   "back": "Monitoring and blocking unauthorized sensitive-data movement"
   },
   {
    "domain": 3,
@@ -467,6 +492,66 @@
    "back": "Three copies, two media types, one off-site copy"
   },
   {
+   "domain": 3,
+   "front": "Data custodian",
+   "back": "Party responsible for day-to-day handling of data under policy"
+  },
+  {
+   "domain": 3,
+   "front": "Data sovereignty",
+   "back": "Data is subject to the laws of the country where it is stored"
+  },
+  {
+   "domain": 3,
+   "front": "gMSA",
+   "back": "Group managed service account: a Windows service account with auto-rotating passwords"
+  },
+  {
+   "domain": 3,
+   "front": "Privilege creep",
+   "back": "Access that piles up as people change roles and nobody removes the old rights"
+  },
+  {
+   "domain": 3,
+   "front": "Immutable backup",
+   "back": "A backup that can't be changed or deleted, which helps against ransomware"
+  },
+  {
+   "domain": 3,
+   "front": "Hot site",
+   "back": "Backup site that is ready to take over right away"
+  },
+  {
+   "domain": 4,
+   "front": "Segmentation",
+   "back": "Separates traffic and limits lateral movement"
+  },
+  {
+   "domain": 4,
+   "front": "Hardening",
+   "back": "Removes unnecessary services, default settings, and access"
+  },
+  {
+   "domain": 4,
+   "front": "Application allowlisting",
+   "back": "Permits only approved executables or applications"
+  },
+  {
+   "domain": 4,
+   "front": "Quarantine",
+   "back": "Separates a potentially compromised asset for investigation"
+  },
+  {
+   "domain": 4,
+   "front": "NAC",
+   "back": "Controls network admission based on device or user posture"
+  },
+  {
+   "domain": 4,
+   "front": "DLP",
+   "back": "Monitoring and blocking unauthorized sensitive-data movement"
+  },
+  {
    "domain": 4,
    "front": "EDR",
    "back": "Endpoint detection and response with investigation and containment"
@@ -505,11 +590,6 @@
    "domain": 4,
    "front": "Shadow IT",
    "back": "Unapproved technology in an organization"
-  },
-  {
-   "domain": 4,
-   "front": "Data custodian",
-   "back": "Party responsible for day-to-day handling of data under policy"
   },
   {
    "domain": 4,
@@ -593,8 +673,8 @@
   },
   {
    "domain": 4,
-   "front": "ABAC",
-   "back": "Access decision based on attributes of identity, resource, action, and context"
+   "front": "Just-in-time access",
+   "back": "Access granted only for the moment it is needed, then removed"
   },
   {
    "domain": 4,
@@ -623,16 +703,6 @@
   },
   {
    "domain": 4,
-   "front": "SSH",
-   "back": "Encrypted remote terminal and administration"
-  },
-  {
-   "domain": 4,
-   "front": "TLS",
-   "back": "Protects communications in transit"
-  },
-  {
-   "domain": 4,
    "front": "SPF",
    "back": "Specifies permitted sending hosts for a mail domain"
   },
@@ -645,11 +715,6 @@
    "domain": 4,
    "front": "DMARC",
    "back": "Email authentication alignment and domain policy"
-  },
-  {
-   "domain": 4,
-   "front": "DNSSEC",
-   "back": "Authenticates DNS data using digital signatures"
   },
   {
    "domain": 4,
@@ -670,11 +735,6 @@
    "domain": 4,
    "front": "Runbook",
    "back": "Operational steps for a specific repeatable procedure"
-  },
-  {
-   "domain": 4,
-   "front": "Idempotence",
-   "back": "Repeating an action produces the same intended state"
   },
   {
    "domain": 4,
@@ -740,6 +800,51 @@
    "domain": 4,
    "front": "Hash verification",
    "back": "Comparison of cryptographic digests for evidence integrity"
+  },
+  {
+   "domain": 4,
+   "front": "Tabletop exercise",
+   "back": "Discussion-based rehearsal of incident scenarios"
+  },
+  {
+   "domain": 4,
+   "front": "Honeytoken",
+   "back": "Fake data or credential that raises an alarm when anyone uses it"
+  },
+  {
+   "domain": 4,
+   "front": "Honeypot",
+   "back": "Decoy system that lures attackers so you can watch them"
+  },
+  {
+   "domain": 4,
+   "front": "WAF",
+   "back": "Web application firewall: filters web traffic to protect a web app"
+  },
+  {
+   "domain": 4,
+   "front": "BIMI",
+   "back": "Shows a verified brand logo on mail that passes DMARC"
+  },
+  {
+   "domain": 4,
+   "front": "CSPM",
+   "back": "Cloud security posture management: finds risky cloud settings"
+  },
+  {
+   "domain": 4,
+   "front": "Passkey",
+   "back": "Passwordless sign-in using a key pair stored on your device"
+  },
+  {
+   "domain": 4,
+   "front": "Threat hunting",
+   "back": "Searching for attackers before an alert fires"
+  },
+  {
+   "domain": 4,
+   "front": "Root cause analysis",
+   "back": "Finding the underlying reason an incident happened"
   },
   {
    "domain": 5,
@@ -853,8 +958,8 @@
   },
   {
    "domain": 5,
-   "front": "Data minimization",
-   "back": "Collect and retain only needed personal information"
+   "front": "Right to be forgotten",
+   "back": "A person's right to have their personal data erased"
   },
   {
    "domain": 5,
@@ -903,11 +1008,6 @@
   },
   {
    "domain": 5,
-   "front": "Tabletop exercise",
-   "back": "Discussion-based rehearsal of incident scenarios"
-  },
-  {
-   "domain": 5,
    "front": "Role-based training",
    "back": "Security instruction tailored to job responsibilities"
   },
@@ -925,6 +1025,31 @@
    "domain": 5,
    "front": "Security champion",
    "back": "Team member supporting good security practices locally"
+  },
+  {
+   "domain": 5,
+   "front": "Residual risk",
+   "back": "The risk left over after controls are applied"
+  },
+  {
+   "domain": 5,
+   "front": "Gap analysis",
+   "back": "Comparing where you are with where a standard says you should be"
+  },
+  {
+   "domain": 5,
+   "front": "MITRE ATT&CK",
+   "back": "Public catalog of attacker tactics and techniques"
+  },
+  {
+   "domain": 5,
+   "front": "Legal hold",
+   "back": "Requirement to keep certain data, overriding normal deletion"
+  },
+  {
+   "domain": 5,
+   "front": "RFP",
+   "back": "Request for proposal: asks vendors how they'd meet your needs"
   }
  ]
 }

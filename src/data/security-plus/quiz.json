@@ -1,6 +1,6 @@
 {
- "_note": "Short self-check per domain. Adapted from the original SEC+ // ACADEMY scenario questions: rewritten with plausible distractors, objective numbers checked against SY0-701. Practice only, not a predictor of exam results.",
- "version": "SY0-701",
+ "_note": "Short self-check per domain. Adapted from the original SEC+ // ACADEMY scenario questions: rewritten with plausible distractors, objective numbers checked against the SY0-801 (V8) exam objectives. Practice only, not a predictor of exam results.",
+ "version": "SY0-801",
  "questions": [
   {
    "id": "d1-1",
@@ -33,7 +33,7 @@
   {
    "id": "d1-3",
    "domain": 1,
-   "objective": "1.2",
+   "objective": "1.1",
    "q": "An employee signs in successfully but is blocked from opening payroll records. Which step blocked them?",
    "options": [
     "Authentication",
@@ -47,7 +47,7 @@
   {
    "id": "d1-4",
    "domain": 1,
-   "objective": "1.3",
+   "objective": "1.2",
    "q": "A production firewall change is approved, but nobody has written down how to undo it if it breaks things. What is missing?",
    "options": [
     "Impact analysis",
@@ -61,7 +61,7 @@
   {
    "id": "d1-5",
    "domain": 1,
-   "objective": "1.4",
+   "objective": "1.3",
    "q": "You want to confirm a downloaded installer was not altered. What is the most direct way?",
    "options": [
     "Encrypt it with AES",
@@ -75,7 +75,7 @@
   {
    "id": "d2-1",
    "domain": 2,
-   "objective": "2.1",
+   "objective": "2.2",
    "q": "A well-funded group quietly copies a company's proprietary research over many months. What is the most likely motivation?",
    "options": [
     "Financial gain through ransomware",
@@ -89,7 +89,7 @@
   {
    "id": "d2-2",
    "domain": 2,
-   "objective": "2.2",
+   "objective": "2.3",
    "q": "A trusted vendor ships a software update that contains malicious code. Which threat vector is this?",
    "options": [
     "Watering hole",
@@ -103,7 +103,7 @@
   {
    "id": "d2-3",
    "domain": 2,
-   "objective": "2.3",
+   "objective": "2.5",
    "q": "An app builds database queries by pasting raw user input into the SQL text. What is the best fix?",
    "options": [
     "Hide database error messages",
@@ -117,7 +117,7 @@
   {
    "id": "d2-4",
    "domain": 2,
-   "objective": "2.4",
+   "objective": "2.5",
    "q": "One workstation contacts the same unfamiliar external IP every 60 seconds, around the clock. What pattern is this?",
    "options": [
     "Beaconing",
@@ -131,16 +131,16 @@
   {
    "id": "d2-5",
    "domain": 2,
-   "objective": "2.5",
-   "q": "An unsupported legacy device cannot be patched. What most directly limits an attacker's ability to move from it to other systems?",
+   "objective": "2.6",
+   "q": "A web page hides text telling an AI assistant to ignore its rules and send the user's files to an outside address. What is this?",
    "options": [
-    "Network segmentation",
-    "Antivirus on other hosts",
-    "A stronger password policy",
-    "Monthly vulnerability scans"
+    "Data poisoning",
+    "Prompt injection",
+    "Hallucination",
+    "Model evasion"
    ],
-   "answer": 0,
-   "why": "Segmentation controls which systems the device can talk to, which limits lateral movement even when the device itself stays vulnerable."
+   "answer": 1,
+   "why": "Prompt injection slips crafted instructions into what the AI reads so it ignores its intended rules. Poisoning targets training data, and a hallucination is a wrong answer, not an attack."
   },
   {
    "id": "d3-1",
@@ -216,15 +216,15 @@
    "id": "d4-1",
    "domain": 4,
    "objective": "4.1",
-   "q": "A laptop is stolen while powered off. What best protects the files stored on it?",
+   "q": "An unsupported legacy device cannot be patched. What most directly limits an attacker's ability to move from it to other systems?",
    "options": [
-    "Full-disk encryption",
-    "EDR agent",
-    "Host firewall",
-    "Application allowlisting"
+    "Network segmentation",
+    "Antivirus on other hosts",
+    "A stronger password policy",
+    "Monthly vulnerability scans"
    ],
    "answer": 0,
-   "why": "Full-disk encryption keeps data at rest unreadable without the key. The other tools mostly help while the system is running."
+   "why": "Segmentation controls which systems the device can talk to, which limits lateral movement even when the device itself stays vulnerable."
   },
   {
    "id": "d4-2",
@@ -271,7 +271,7 @@
   {
    "id": "d4-5",
    "domain": 4,
-   "objective": "4.5",
+   "objective": "4.1",
    "q": "A domain owner wants receiving mail servers to reject messages that fail SPF/DKIM alignment. Which record does that?",
    "options": [
     "DMARC",
@@ -285,21 +285,21 @@
   {
    "id": "d4-6",
    "domain": 4,
-   "objective": "4.6",
-   "q": "Access depends on the user's department AND whether their device is compliant. Which access model fits best?",
+   "objective": "4.5",
+   "q": "An admin gets elevated rights only for a two-hour maintenance task, and the rights are removed automatically afterward. Which access approach is this?",
    "options": [
-    "ABAC",
-    "RBAC",
-    "DAC",
-    "MAC"
+    "Just-in-time access",
+    "Discretionary access control",
+    "Mandatory access control",
+    "Rule-based access control"
    ],
    "answer": 0,
-   "why": "Attribute-based access control looks at attributes of the user, the resource, and the context (like device health) to make each decision."
+   "why": "Just-in-time access grants privileges only when they're needed and removes them after, so standing admin rights don't sit around waiting to be abused."
   },
   {
    "id": "d4-7",
    "domain": 4,
-   "objective": "4.7",
+   "objective": "4.6",
    "q": "An automated workflow is about to disable hundreds of accounts after one noisy alert. What is the best safeguard?",
    "options": [
     "An approval gate and limits on scope",
@@ -313,7 +313,7 @@
   {
    "id": "d4-8",
    "domain": 4,
-   "objective": "4.8",
+   "objective": "4.7",
    "q": "The team isolates infected machines to stop the spread. Which incident response phase is this?",
    "options": [
     "Containment",
@@ -327,7 +327,7 @@
   {
    "id": "d4-9",
    "domain": 4,
-   "objective": "4.9",
+   "objective": "4.8",
    "q": "You need a list of which internal hosts talked to an external IP, without full packet contents. What is the best source?",
    "options": [
     "NetFlow / flow logs",
@@ -384,15 +384,15 @@
    "id": "d5-4",
    "domain": 5,
    "objective": "5.4",
-   "q": "A company wants to reduce its privacy exposure. Which practice fits best?",
+   "q": "A customer asks a company to erase all the personal data it holds about them. Which privacy right is this?",
    "options": [
-    "Data minimization",
-    "Longer retention periods",
-    "Wider internal sharing",
-    "Making more backup copies"
+    "Right to be forgotten",
+    "Legal hold",
+    "Opt-in consent",
+    "Data retention requirement"
    ],
    "answer": 0,
-   "why": "Collecting and keeping only the personal data you actually need reduces what can be exposed."
+   "why": "The right to be forgotten lets a person ask for their personal data to be erased. A legal hold works the other way: it forces data to be kept."
   },
   {
    "id": "d5-5",
