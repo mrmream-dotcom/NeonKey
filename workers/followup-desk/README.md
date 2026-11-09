@@ -26,9 +26,20 @@ Shares nothing with the other workers (its own Stripe endpoint and secret, its o
    them. If the owner replies to their own copy, they're told it didn't reach the customer.
 7. **Bounces and spam complaints** (`POST /resend`, Svix-signed Resend webhook): that job stops and shows as
    "Bad address" in the dashboard and the Monday report.
-8. **Monday report** at 8 AM owner time: sent, replies, won, still open, bad addresses.
-9. **Billing.** `customer.subscription.updated/deleted` set the billing state. Sending stops unless the subscription
-   is active or trialing. 30 days after cancel, the account and every key for it are deleted. Signing up again within
+8. **One-tap buttons** (on by default, Settings > "Buttons in your follow-ups"): each follow-up carries
+   "Yes, let's go ahead" (estimates; "Yes, let's set up a time" for inquiries; none for invoices) and "I have a
+   question", linking to `/a/<account>/<job>/<yes|ask>`. GET only shows a short form, so email link scanners can't
+   trigger anything; POST emails the owner right away (Reply-To the customer, text escaped), marks the job Replied
+   and writes its `stop:` key. One message per job every 10 minutes. Optional **payment link** (any https link the
+   owner pastes: Stripe, Square, PayPal, an invoicing app) adds "Pay the deposit" to estimates and "Pay the invoice" to
+   invoices; the link goes straight to the owner's own checkout, so no money passes through NeonKey. These customer
+   pages are light and plain, since they belong to the owner's business.
+9. **Trial nudges**: on day 1, 3 and 10 after signup, while the account has no follow-ups yet, one short email
+   (9 AM to 5 PM owner time) with a fresh dashboard link: finish setup / add your first estimate. Only the latest
+   due nudge goes out, never a backlog. Nothing once a follow-up exists.
+10. **Monday report** at 8 AM owner time: sent, replies, won, still open, bad addresses.
+11. **Billing.** `customer.subscription.updated/deleted` set the billing state. Sending stops unless the subscription
+    is active or trialing. 30 days after cancel, the account and every key for it are deleted. Signing up again within
    30 days brings the list back. Cancel/billing is the Stripe customer portal (`PORTAL_URL`).
 
 Every status change (reply, Won/Lost/Stop, bounce) is also written to its own `stop:` key and checked right before

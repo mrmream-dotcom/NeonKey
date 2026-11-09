@@ -476,3 +476,132 @@ test("no backup outside the backup hour, and /health flags a missing backup", as
   const h2 = await health();
   assert.ok(!h2.body.problems.includes("nightly backup is late"));
 });
+
+// ---- one-tap buttons, payment link, trial nudges ----
+test("follow-ups carry Yes / Question buttons, plus Pay when a payment link is set; invoices get no Yes", async () => {
+  const { acct, link } = await readyAccount();
+  await runAccount(env, acct, TUE_10AM);
+  const m = sent[0];
+  const item = acct.items[0];
+  assert.ok(m.html.includes(`https://desk.example/a/${acct.id}/${item.id}/yes`));
+  assert.ok(m.html.includes(`/a/${acct.id}/${item.id}/ask`));
+  assert.match(m.text, /Yes, let's go ahead: https:\/\/desk\.example\/a\//);
+  assert.doesNotMatch(m.html, /Pay the deposit/);
+
+  let r = await post(`${link}/settings`, { business: "Smith Roofing", replyTo: "pat@roofing.test", signoff: "Pat", timezone: "America/Chicago", d0: "3", d1: "7", d2: "14", buttons: "1", payUrl: "javascript:alert(1)" });
+  assert.match(r.headers.get("Location"), /settings\?m=badpay/);
+  r = await post(`${link}/settings`, { business: "Smith Roofing", replyTo: "pat@roofing.test", signoff: "Pat", timezone: "America/Chicago", d0: "3", d1: "7", d2: "14", buttons: "1", payUrl: "https://buy.stripe.com/test_abc" });
+  assert.match(r.headers.get("Location"), /settings\?m=saved/);
+  const { followUpEmail: fue } = await import("../src/mail.js");
+  const { actionUrls } = await import("../src/mail.js");
+  const a2 = await getAccount(env, acct.id);
+  const est = fue({ ...a2.items[0], step: 1 }, a2.settings, "https://u", actionUrls(env, a2, a2.items[0]));
+  assert.match(est.html, /Pay the deposit/);
+  assert.ok(est.html.includes('href="https://buy.stripe.com/test_abc"'));
+  const inv = fue({ ...a2.items[0], kind: "invoice", step: 0 }, a2.settings, "https://u", actionUrls(env, a2, a2.items[0]));
+  assert.doesNotMatch(inv.html, /go ahead/);
+  assert.match(inv.html, /Pay the invoice/);
+  assert.match(inv.html, /I have a question/);
+
+  // Buttons off: none at all (the payment link still shows).
+  await post(`${link}/settings`, { business: "Smith Roofing", replyTo: "pat@roofing.test", signoff: "Pat", timezone: "America/Chicago", d0: "3", d1: "7", d2: "14", payUrl: "https://buy.stripe.com/test_abc" });
+  const a3 = await getAccount(env, acct.id);
+  const off = fue({ ...a3.items[0], step: 1 }, a3.settings, "https://u", actionUrls(env, a3, a3.items[0]));
+  assert.doesNotMatch(off.html, /\/a\//);
+  assert.match(off.html, /Pay the deposit/);
+});
+
+test("Yes button: GET only shows a form; POST tells the owner (Reply goes to the customer) and stops follow-ups", async () => {
+  const { acct } = await readyAccount();
+  const item = acct.items[0];
+  const path = `/a/${acct.id}/${item.id}/yes`;
+  const page = await get(path);
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /Yes, let&#39;s go ahead|Yes, let's go ahead/);
+  assert.equal((await getAccount(env, acct.id)).items[0].status, "open", "a link scanner opening the link changes nothing");
+  assert.equal(sent.length, 0);
+
+  const r = await post(path, { note: "Can you start <b>Monday</b>?", phone: "555-0100 <x>" });
+  assert.match(await r.text(), /it's sent/);
+  const after = await getAccount(env, acct.id);
+  assert.equal(after.items[0].status, "replied");
+  assert.ok(await env.DESK.get(`stop:${acct.id}:${item.id}`));
+  assert.equal(sent.length, 1);
+  const m = sent[0];
+  assert.deepEqual(m.to, ["pat@roofing.test"]);
+  assert.equal(m.reply_to, "jane@ex.test");
+  assert.equal(m.bcc, undefined);
+  assert.match(m.subject, /Good news: Jane Smith wants to go ahead with the deck/);
+  assert.ok(m.html.includes("&lt;b&gt;Monday&lt;/b&gt;"), "customer text is escaped");
+  assert.match(m.text, /Phone: 555-0100/);
+  assert.doesNotMatch(m.text, /<x>/);
+
+  // A second tap within 10 minutes doesn't email the owner again.
+  await post(path, { note: "again" });
+  assert.equal(sent.length, 1);
+});
+
+test("Question button needs a question; unknown links 404; invoices have no Yes page", async () => {
+  const { acct } = await readyAccount();
+  const item = acct.items[0];
+  let r = await post(`/a/${acct.id}/${item.id}/ask`, { note: "  " });
+  assert.match(await r.text(), /Please type your question/);
+  assert.equal(sent.length, 0);
+  r = await post(`/a/${acct.id}/${item.id}/ask`, { note: "Does that include permits?" });
+  assert.match(await r.text(), /it's sent/);
+  assert.match(sent[0].subject, /^Question: Jane Smith has a question about the deck/);
+  assert.equal((await get(`/a/${acct.id}/zzzzzzzzz/yes`)).status, 404);
+  assert.equal((await get(`/a/zzzzzzzzzzzz/${item.id}/yes`)).status, 404);
+  const a = await getAccount(env, acct.id);
+  a.items[0].kind = "invoice";
+  await env.DESK.put(`acct:${a.id}`, JSON.stringify(a));
+  assert.equal((await get(`/a/${acct.id}/${item.id}/yes`)).status, 404);
+});
+
+test("preview buttons work without touching any real job", async () => {
+  const { acct } = await readyAccount();
+  const r = await post(`/a/${acct.id}/test/yes`, { note: "hi" });
+  assert.match(await r.text(), /it's sent/);
+  assert.match(sent[0].subject, /^\[Preview\] Good news/);
+  assert.equal((await getAccount(env, acct.id)).items[0].status, "open");
+});
+
+test("trial nudges: day 1, 3 and 10, only while empty, only in daytime, never stacked", async () => {
+  const { id } = await signup();
+  sent = [];
+  let acct = await getAccount(env, id);
+  const start = TUE_10AM;
+  acct.created = start;
+  await env.DESK.put(`acct:${id}`, JSON.stringify(acct));
+  // Day 0: nothing.
+  await runAccount(env, await getAccount(env, id), start + 3600000);
+  assert.equal(sent.length, 0);
+  // Day 1 at 3 AM Central: too early.
+  await runAccount(env, await getAccount(env, id), start + DAY - 7 * 3600000);
+  assert.equal(sent.length, 0);
+  // Day 1 at 10 AM: nudge 1, with a working dashboard link.
+  await runAccount(env, await getAccount(env, id), start + DAY);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0].subject, /Add your first estimate/);
+  assert.match(sent[0].text, /Finish setup|https:\/\/desk\.example\/d\//);
+  assert.deepEqual(sent[0].to, ["owner@roofing.test"]);
+  // Same day again: nothing new.
+  await runAccount(env, await getAccount(env, id), start + DAY + 3600000);
+  assert.equal(sent.length, 1);
+  // Day 12 (missed day 3): only one email, the day-10 one.
+  await runAccount(env, await getAccount(env, id), start + 12 * DAY);
+  assert.equal(sent.length, 2);
+  assert.match(sent[1].subject, /Still want help/);
+  await runAccount(env, await getAccount(env, id), start + 13 * DAY);
+  assert.equal(sent.length, 2);
+});
+
+test("no trial nudges once a follow-up has been added", async () => {
+  const { acct } = await readyAccount();
+  const a = await getAccount(env, acct.id);
+  a.created = TUE_10AM - 2 * DAY;
+  await env.DESK.put(`acct:${a.id}`, JSON.stringify(a));
+  await runAccount(env, await getAccount(env, a.id), TUE_10AM - 4 * 3600000); // 6 AM: outside the send window, inside nothing
+  await runAccount(env, await getAccount(env, a.id), TUE_10AM + 6 * 3600000); // 4 PM: no sends due, nudge hours
+  assert.ok(sent.every((m) => !/estimate \(2 minutes\)|waiting on\?|help with follow-ups/.test(m.subject)));
+});
