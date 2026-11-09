@@ -10,20 +10,22 @@ import Flashcards from '../../../components/learn/Flashcards.astro';
 import SelfCheck from '../../../components/learn/SelfCheck.astro';
 import StudyResources from '../../../components/learn/StudyResources.astro';
 
-<p class="lead">This domain covers the vocabulary the rest of the exam builds on: what kinds of controls exist, what security is trying to protect, how changes are managed safely, and what cryptography is for. It's about 12% of SY0-701.</p>
+<p class="lead">This domain covers the vocabulary the rest of the exam builds on: what kinds of controls exist, what security is trying to protect, how changes are managed safely, and what cryptography is for. It's about 16% of SY0-801.</p>
 
-<ExamVersionNote v8="Weight rises to about 16%. CompTIA's V8 summary lists three objectives here (controls, change management, cryptography). Check the full V8 objectives to see where topics like the CIA triad and Zero Trust are covered." />
+<ExamVersionNote changes="Weight rises from about 12% to about 16%. SY0-801 has three objectives here instead of four: the core ideas (CIA, AAA, non-repudiation, Zero Trust, least privilege) now sit inside 1.1 with the controls, under defense in depth. Change management (1.2) adds the change advisory board, fail forward and SOPs." />
 
-## Security controls
+## Security concepts and controls
 
 Every control can be described two ways: **how it's implemented** (its category) and **what it's meant to do** (its type or function).
 
-- **Categories:** *technical* (enforced by hardware or software, like firewall rules or MFA), *managerial* (policies, risk assessments, planning), *operational* (things people do day to day, like awareness training or reviewing logs), and *physical* (fences, locks, bollards).
-- **Types:** *preventive* stops something before it happens, *detective* spots or records it, *corrective* fixes things afterward, *deterrent* discourages an attacker from trying, *directive* tells people what to do, and *compensating* stands in when the preferred control can't be used.
+- **Categories:** *technical/logical* (enforced by hardware or software, like firewall rules or MFA), *managerial/administrative* (policies, risk assessments, planning), *operational* (things people do day to day, like awareness training or reviewing logs), and *physical/environmental* (fences, locks, bollards, climate control).
+- **Types:** *preventive* stops something before it happens, *detective* spots or records it, *corrective* fixes things afterward, *deterring* discourages an attacker from trying, *directive* tells people what to do, and *compensating* stands in when the preferred control can't be used.
 
 A locked door is physical and preventive. A camera is physical and mainly detective. If an old app can't support MFA, putting it behind a jump host with extra monitoring is a compensating control.
 
-## Core security ideas
+## Defense in depth
+
+SY0-801 groups the core ideas under **defense in depth**: layers of protection, so one failure isn't fatal.
 
 - **CIA triad:** *confidentiality* (only the right people see it), *integrity* (it isn't changed without permission), and *availability* (it works when people need it).
 - **AAA:** *authentication* proves who you are, *authorization* decides what you're allowed to do, and *accounting* records what you did.
@@ -33,11 +35,11 @@ A locked door is physical and preventive. A camera is physical and mainly detect
 
 ## Change management
 
-Most outages and plenty of security holes come from changes made in a hurry. A good change process includes an owner, a reason, an impact analysis, approval, a maintenance window, testing, a **backout (rollback) plan**, and documentation.
+Most outages and plenty of security holes come from changes made in a hurry. A good change process includes an owner, the stakeholders, an impact analysis, test results, approval from a **change advisory board (CAB)**, a maintenance window, a **backout plan**, and **standard operating procedures (SOPs)**.
 
-- *Standard* changes are pre-approved, low-risk and repeatable.
-- *Normal* changes go through review and approval.
-- *Emergency* changes get fast-tracked approval, then a review afterward.
+- **Backout planning** means knowing how to undo the change. **Fail forward** means pushing a fix ahead instead of rolling back, when undoing would cause more harm.
+- **Technical implications:** allow lists and deny lists may need updating, some activities may be restricted, and services or applications may need a restart or cause downtime. Watch legacy applications and dependencies.
+- **Documentation:** update network diagrams and policies/procedures after the change.
 
 Version control helps too: it shows who changed what, and it lets you roll back.
 
@@ -47,8 +49,10 @@ Version control helps too: it shows who changed what, and it lets you roll back.
 - **Asymmetric encryption** (like RSA or ECC) uses a public/private key pair. It's used for key exchange and digital signatures.
 - **Hashing** (like SHA-256) makes a one-way fingerprint of data. It isn't encryption. Use it to check whether something has changed.
 - **Digital signatures:** you sign with your private key and anyone can verify with your public key. That gives integrity, authenticity and non-repudiation.
-- **PKI:** certificates link an identity to a public key. Certificate authorities issue them and revocation lists (CRL/OCSP) cancel them.
+- **Encryption levels:** you can encrypt a full disk, a partition, a volume, a single file, a database, or a single record. Pick the level that matches what you're protecting.
+- **PKI:** certificates link an identity to a public key. Certificate authorities issue them (after a certificate signing request, or CSR), and revocation lists (CRL) and OCSP report the ones that were canceled. A *wildcard* certificate covers the subdomains at one level, like *.example.com. A *self-signed* one isn't vouched for by any outside authority. **Key escrow** keeps a copy of a key with a trusted party.
 - **Salting** adds random data to each password before hashing, which defeats precomputed "rainbow table" attacks.
+- **Obfuscation** makes data or code harder to read or understand, without being true encryption.
 
 <Flashcards domain={1} />
 <SelfCheck domain={1} />

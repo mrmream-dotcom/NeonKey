@@ -10,22 +10,27 @@ import Flashcards from '../../../components/learn/Flashcards.astro';
 import SelfCheck from '../../../components/learn/SelfCheck.astro';
 import StudyResources from '../../../components/learn/StudyResources.astro';
 
-<p class="lead">This domain covers the business side of security: who decides, how risk is measured and handled, how vendors are checked, which rules apply, and how you build good habits across an organization. It's about 20% of SY0-701.</p>
+<p class="lead">This domain covers the business side of security: who decides, how risk is measured and handled, how vendors are checked, which rules apply, and how you build good habits across an organization. It's about 14% of SY0-801.</p>
 
-<ExamVersionNote v8="Weight drops to about 14%. CompTIA's V8 summary lists the same six themes: governance, risk, third parties, compliance and privacy, audits, and awareness." />
+<ExamVersionNote changes="Weight drops from about 20% to about 14%. The six objectives keep the same themes and order: governance documents, risk, third parties, compliance and privacy, audits and assessments, and awareness. New details include vendor selection (RFP, RFI, RFQ), compliance training like anti-money laundering, and threat frameworks like MITRE ATT&CK." />
 
 ## Governance
 
-- **Policy:** the high-level rule (for example, "sensitive data must be encrypted").
-- **Standard:** the required specifics (which algorithms are approved).
-- **Procedure:** the step-by-step instructions (how to turn encryption on).
-- **Guideline:** recommended, but not required.
+Governance is built from documents, called **artifacts**:
 
-Governance also defines who owns what (data owners, custodians), how often documents are reviewed, and how exceptions are handled.
+- **Policy:** the high-level rule (for example, "sensitive data must be encrypted"). Common ones cover acceptable use (AUP), BYOD, information security, incident response, access control, data classification and retention, data disposal, vulnerability disclosure, privacy, and a clean desk.
+- **Standard:** the required specifics, like password, encryption or physical security standards.
+- **Procedure:** the step-by-step instructions, like a standard operating procedure (SOP) or a runbook.
+- **Guideline:** recommended, but not required. Benchmarks, advisories, implementation guides and reference architectures fit here.
+- **Plans:** business continuity and disaster recovery.
+
+Governance also defines who owns what, how often documents are reviewed, and how exceptions are handled.
 
 ## Risk management
 
-Risk is **likelihood × impact**. You can **avoid**, **mitigate**, **transfer** (for example, with insurance), or **accept** a risk. Record decisions in a **risk register**, with an owner for each risk. **Risk appetite** is how much risk leadership is willing to take on.
+Start by identifying assets and who owns each risk. Then assess it: risk is **likelihood × impact**, scored **qualitatively** (high, medium, low) or **quantitatively** (in dollars). Record it in a **risk register** with the owner and current mitigations, and review it regularly.
+
+You can **avoid**, **mitigate**, **transfer** (for example, with insurance), or **accept** a risk. **Risk appetite** is how much risk leadership is willing to take on. **Residual risk** is what's left after your controls.
 
 Quick math:
 
@@ -36,28 +41,37 @@ So a $20,000 loss expected every other year (ARO 0.5) gives an ALE of $10,000. T
 
 ## Third-party risk
 
-A vendor's security becomes part of yours. Do **due diligence** before signing, and keep checking afterward. Useful contract terms include **SLAs** (service targets), **NDAs** (confidentiality), **right to audit**, breach-notification timelines, and an exit plan that covers how data is returned or destroyed.
+A vendor's security becomes part of yours.
+
+- **Vendor selection:** requests for proposal (RFP), information (RFI) or quote (RFQ), and expressions of interest (EOI). Do **due diligence** and check for conflicts of interest before signing.
+- **Agreements:** **SLAs** (service targets) and SLOs, MOUs and MOAs, **NDAs** (confidentiality), a master services agreement (MSA), and a statement of work (SOW).
+- **Monitoring:** keep a vendor registry, keep a **right to audit**, track service levels, and ask for compliance attestations or penetration test results.
+- **Limits:** jurisdiction, laws, staffing, cost (ROI), and **vendor lock-in**.
 
 ## Compliance and privacy
 
-Being compliant isn't the same as being secure. Know which rules actually apply to you:
+Being compliant isn't the same as being secure. Know which rules actually apply to you, and train people on them (like data handling, anti-money laundering, and anti-bribery rules).
 
-- **PCI DSS** if you handle payment cards.
-- **HIPAA** for covered US health information.
-- **GDPR** for personal data of people in the EU, within its scope.
-
-**Data minimization** (collect only what you need) and clear **retention schedules** reduce your exposure.
+- **Monitoring:** attestations and signed acknowledgements show people know the rules.
+- **Consequences of non-compliance:** fines, sanctions, legal and contractual trouble, reputational damage, or even loss of license.
+- **Privacy:** people may have a **right to be forgotten**, a choice to opt in or opt out, and a right to have their data corrected or its processing restricted. The **controller** decides how personal data is used. The **processor** handles it on the controller's behalf.
+- **Legal:** a **legal hold** means you must keep certain data, even if your normal retention schedule says to delete it.
 
 ## Audits and assessments
 
-- An **audit** checks evidence against defined criteria. It can be internal or done by an independent outside party.
-- A **vulnerability assessment** finds and ranks weaknesses.
-- A **penetration test** actually tries to exploit them, with permission.
-- **Attestation** is a formal statement about controls. Every finding needs an owner and a fix-by date.
+- An **audit** checks evidence against defined criteria, using sampling, questionnaires and interviews. It can be internal (including self-assessments and an audit committee) or done by an independent outside party, sometimes for a regulator.
+- A **gap analysis** compares where you are with where a standard says you should be.
+- A **penetration test** actually tries to exploit weaknesses, with permission. It can be *known environment*, *unknown environment* or *partially known*, and offensive, defensive or integrated. Reconnaissance can be passive or active.
+- **Reference sources** like **MITRE ATT&CK**, the **Cyber Kill Chain** and the **Diamond Model** describe how attackers operate.
+- Every finding needs an owner and a fix-by date.
 
 ## Security awareness
 
-Training works best when it fits people's roles and focuses on real behavior: spotting phishing, reporting quickly, and handling data safely. Measure **reporting rates and speed**, not just course completion. Phishing simulations should teach, not shame.
+Training works best when it fits people's roles and focuses on real behavior: spotting social engineering and business email compromise (BEC), handling passwords and removable media, working safely from home, and reporting quickly.
+
+- **Types:** onboarding, ongoing, targeted, and corrective training.
+- **Delivery:** a learning management system (LMS), self-service portals, one-to-one or one-to-many sessions.
+- **Measuring it:** use metrics, managerial reports and personnel behavior risk scoring. Measure **reporting rates and speed**, not just course completion. Phishing simulations should teach, not shame.
 
 <Flashcards domain={5} />
 <SelfCheck domain={5} />

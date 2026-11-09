@@ -1,9 +1,12 @@
 ---
-// Shown on every Security+ page while SY0-701 and SY0-801 overlap. Remove or update once 701 retires.
-interface Props { v8?: string }
-const { v8 } = Astro.props;
+// Shown on every Security+ page while SY0-801 and SY0-701 overlap. Remove the SY0-701 line once 701 retires (June 11, 2027).
+// The launch wording switches from "is set to launch" to "launched" on its own at build time, using track.json.
+import track from '../../data/security-plus/track.json';
+interface Props { changes?: string }
+const { changes } = Astro.props;
+const launched = new Date() >= new Date(`${track.launch}T00:00:00Z`);
 ---
 <div class="callout warn">
-  <strong>Exam version:</strong> these notes follow <strong>SY0-701</strong> (V7). CompTIA plans to launch <strong>SY0-801</strong> (V8) on or around November 17, 2026. SY0-701 stays available in English until June 11, 2027. Book the version you studied for.
-  {v8 && <p><strong>What changes in V8 for this domain:</strong> {v8}</p>}
+  <strong>Exam version:</strong> these notes follow <strong>SY0-801</strong> (V8), which CompTIA {launched ? 'launched' : 'is set to launch'} on or around November 17, 2026. The older <strong>SY0-701</strong> (V7) stays available in English until June 11, 2027 (Japanese, Portuguese, Spanish and Thai until August 13, 2027). Book the version you studied for.
+  {changes && <p><strong>What's different from SY0-701 in this domain:</strong> {changes}</p>}
 </div>
