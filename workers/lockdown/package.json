@@ -11,6 +11,6 @@
     "preview": "node scripts/preview.mjs"
   },
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.158.0"
   }
 }
