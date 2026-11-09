@@ -178,6 +178,10 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
     H.push(box(`<p style="${h2}">Start-Up Deal: ${e(v.packagePick.name)} (${e(v.packagePick.price)})</p><p style="${p}">${e(v.packagePick.text)} <a href="${e(abs(v.packagePick.href))}" style="color:${C.cyan};">See the package</a></p>`));
     T.push(`START-UP DEAL: ${v.packagePick.name} (${v.packagePick.price})`, v.packagePick.text, abs(v.packagePick.href), "");
   }
+  if (v.stylePick) {
+    H.push(box(`<p style="${h2}">${e(v.stylePick.kicker)}: ${e(v.stylePick.name)} (${e(v.stylePick.price)})</p><p style="${p}">${e(v.stylePick.text)} <a href="${e(abs(v.stylePick.href))}" style="color:${C.cyan};">${e(v.stylePick.cta)}</a></p>`));
+    T.push(`${v.stylePick.kicker.toUpperCase()}: ${v.stylePick.name} (${v.stylePick.price})`, v.stylePick.text, abs(v.stylePick.href), "");
+  }
   if (v.tip) { H.push(`<p style="${p}">${e(v.tip)}</p>`); T.push(v.tip, ""); }
 
   if (v.nextSteps && v.nextSteps.length) {
