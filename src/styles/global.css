@@ -99,20 +99,24 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
    Only transform and opacity animate, so phones composite it on the GPU. The global prefers-reduced-motion rule
    turns every animation off, which leaves a still version of the same picture. */
 .hero-motion { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
-.hero-motion .glow { position: absolute; width: 62vmax; height: 62vmax; border-radius: 50%; opacity: .75; will-change: transform; }
-.hero-motion .g1 { top: -30vmax; left: -18vmax; background: radial-gradient(closest-side, rgba(34,211,238,.32), transparent); animation: nk-drift-a 22s ease-in-out infinite alternate; }
-.hero-motion .g2 { top: -26vmax; right: -22vmax; background: radial-gradient(closest-side, rgba(167,139,250,.34), transparent); animation: nk-drift-b 26s ease-in-out infinite alternate; }
-.hero-motion .g3 { bottom: -40vmax; left: 18%; background: radial-gradient(closest-side, rgba(244,114,182,.22), transparent); animation: nk-drift-c 30s ease-in-out infinite alternate; }
-.hero-motion .floor { position: absolute; left: -50%; right: -50%; bottom: 0; height: 30%; perspective: 520px; -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); }
+.hero-motion .glow { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; will-change: transform; }
+.hero-motion .g1 { top: -28vmax; left: -20vmax; background: radial-gradient(closest-side, rgba(34,211,238,.5), transparent); animation: nk-drift-a 9s ease-in-out infinite alternate; }
+.hero-motion .g2 { top: -24vmax; right: -22vmax; background: radial-gradient(closest-side, rgba(167,139,250,.55), transparent); animation: nk-drift-b 11s ease-in-out infinite alternate; }
+.hero-motion .g3 { bottom: -38vmax; left: 15%; background: radial-gradient(closest-side, rgba(244,114,182,.38), transparent); animation: nk-drift-c 13s ease-in-out infinite alternate; }
+.hero-motion .beam { position: absolute; top: -20%; bottom: -20%; left: 0; width: 22%; background: linear-gradient(90deg, transparent, rgba(34,211,238,.10), rgba(244,114,182,.10), transparent); transform: translateX(-120%) skewX(-18deg); animation: nk-beam 7s ease-in-out infinite; will-change: transform; }
+.hero-motion .floor { position: absolute; left: -50%; right: -50%; bottom: 0; height: 26%; perspective: 480px; -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.7) 50%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.7) 50%, transparent 100%); }
 .hero-motion .floor-plane { position: absolute; inset: -60px 0 0; transform: rotateX(62deg); transform-origin: 50% 100%; }
-.hero-motion .floor-grid { position: absolute; inset: 0 0 -60px; opacity: .5; background-image: linear-gradient(rgba(34,211,238,.55) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,.45) 1px, transparent 1px); background-size: 60px 60px; animation: nk-floor 3.2s linear infinite; will-change: transform; }
-.hero-motion .horizon { position: absolute; left: 0; right: 0; bottom: 30%; height: 1px; background: linear-gradient(90deg, transparent, rgba(34,211,238,.7), rgba(244,114,182,.7), transparent); opacity: .3; animation: nk-pulse 6s ease-in-out infinite; }
-@keyframes nk-drift-a { to { transform: translate(14vmax, 8vmax) scale(1.12); } }
-@keyframes nk-drift-b { to { transform: translate(-12vmax, 10vmax) scale(.92); } }
-@keyframes nk-drift-c { to { transform: translate(-10vmax, -6vmax) scale(1.08); } }
+.hero-motion .floor-grid { position: absolute; inset: 0 0 -60px; opacity: .9; background-image: linear-gradient(rgba(34,211,238,.8) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(167,139,250,.7) 1.5px, transparent 1.5px); background-size: 60px 60px; animation: nk-floor 1.6s linear infinite; will-change: transform; }
+.hero-motion .horizon { position: absolute; left: 0; right: 0; bottom: 26%; height: 2px; background: linear-gradient(90deg, transparent, #22d3ee 30%, #f472b6 70%, transparent); box-shadow: 0 0 18px rgba(34,211,238,.8); opacity: .55; animation: nk-horizon 3s ease-in-out infinite; }
+@keyframes nk-drift-a { to { transform: translate(22vmax, 12vmax) scale(1.2); } }
+@keyframes nk-drift-b { to { transform: translate(-20vmax, 14vmax) scale(.85); } }
+@keyframes nk-drift-c { to { transform: translate(-16vmax, -10vmax) scale(1.15); } }
 @keyframes nk-floor { to { transform: translateY(60px); } }
-@keyframes nk-pulse { 50% { opacity: .6; } }
-html[data-ab-motion="b"] .hero-bg .hero-art { opacity: .14; }
+@keyframes nk-horizon { 50% { opacity: 1; } }
+@keyframes nk-beam { 0% { transform: translateX(-120%) skewX(-18deg); } 60%, 100% { transform: translateX(560%) skewX(-18deg); } }
+@keyframes nk-float { 50% { transform: translate(-50%, calc(-50% - 14px)); } }
+html[data-ab-motion="b"] .hero-bg .hero-art { opacity: .16; animation: nk-float 6s ease-in-out infinite; }
+html[data-ab-motion="b"] .hero-ctas .btn-ghost { background: rgba(11,13,23,.88); }
 .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .hero-bg { display: flex; align-items: center; }
 .hero-content h1 { font-size: clamp(2.5rem, 6vw, 3.75rem); line-height: 1.1; letter-spacing: -.02em; max-width: 18ch; margin-inline: auto; text-wrap: balance; }
