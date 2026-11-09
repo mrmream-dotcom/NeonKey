@@ -37,7 +37,7 @@ export const PRICE_DISCLAIMER = `Pricing is a starting point, not a quote. ${int
 
 export interface QuizOption { v: string; label: string; exclusive?: boolean }
 export interface QuizQuestion { id: QId; text: string; hint?: string; multi?: boolean; options: QuizOption[] }
-export type QId = 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8' | 'q9';
+export type QId = 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8' | 'q9' | 'q10';
 
 export const QUESTIONS: QuizQuestion[] = [
   { id: 'q1', text: "Who\'s this for?", options: [
@@ -89,6 +89,14 @@ export const QUESTIONS: QuizQuestion[] = [
     { v: 'B', label: "I\'ll handle it myself if I have good notes" },
     { v: 'C', label: 'Not sure yet' },
   ] },
+  // How they like to buy (Nov 8 2026): hands-off, do-it-yourself, or "show me first". It never changes the main pick;
+  // it adds one matching next step (done for you, self-serve, or a free way to see it work). New id: q9 is retired.
+  { id: 'q10', text: 'How would you like to get this done?', hint: 'Pick the closest.', options: [
+    { v: 'A', label: "I'd rather someone set it up and handle it for me" },
+    { v: 'B', label: "I'll set it up myself if it's quick and clear" },
+    { v: 'C', label: "I've been burned before, so I'd like to see it work first" },
+    { v: 'D', label: 'Not sure yet' },
+  ] },
   { id: 'q8', text: 'Which tools do you use most day to day?', hint: 'This helps me tailor what to have ready.', options: [
     { v: 'A', label: 'Google (Gmail, Google Drive, Google Workspace)' },
     { v: 'B', label: 'Microsoft (Outlook, OneDrive, Microsoft 365)' },
@@ -98,7 +106,7 @@ export const QUESTIONS: QuizQuestion[] = [
   ] },
 ];
 
-export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; /** Retired Nov 2026 (site is remote-only); old saved answers may still carry it. */ q9?: string };
+export type Answers = { q1: string; q2: string; q3: string; q4: string; q5: string[]; q6: string; q7: string; q8: string; q10: string; /** Retired Nov 2026 (site is remote-only); old saved answers may still carry it. */ q9?: string };
 
 /** Strict whitelist check. Returns normalized answers or null. Used by the Worker on every request. */
 export function validateAnswers(raw: unknown): Answers | null {
@@ -108,6 +116,8 @@ export function validateAnswers(raw: unknown): Answers | null {
   for (const q of QUESTIONS) {
     const allowed = q.options.map((o) => o.v);
     const val = r[q.id];
+    // q10 is new (Nov 2026): a page built before it never sends it, so the Worker can ship in either order.
+    if (q.id === 'q10' && val === undefined) { out[q.id] = 'D'; continue; }
     if (q.multi) {
       if (!Array.isArray(val) || val.length < 1 || val.length > allowed.length) return null;
       const set = [...new Set(val)];
@@ -144,8 +154,12 @@ export interface Plan {
   local: boolean;
   /** Both the FAQ assistant and lead routing came up: the Front Office Package fits. */
   packageFit: boolean;
+  /** How they like to buy (q10): done for you, do it yourself, or see it work first. */
+  style: BuyStyle;
   answers: Answers;
 }
+export type BuyStyle = 'hands-off' | 'diy' | 'proof' | null;
+const STYLE: Record<string, BuyStyle> = { A: 'hands-off', B: 'diy', C: 'proof' };
 
 const TIE: ServiceKey[] = ['R', 'Q', 'F', 'L', 'D'];
 
@@ -198,7 +212,7 @@ export function computePlan(a: Answers): Plan {
   const local = false;
   const packageFit = !personal && !tooBig && ((type === 'F' && s.L >= 2) || (type === 'L' && s.F >= 2));
 
-  return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, local, packageFit, answers: a };
+  return { type, scores: s, items: itemList, healthCheck, support, secondary, basicsTip, wf, team, personal, local, packageFit, style: STYLE[a.q10] ?? null, answers: a };
 }
 
 // ---------------------------------------------------------------- plan copy
@@ -237,6 +251,8 @@ export interface PlanView {
   localPick?: { name: string; price: string; text: string; href: string };
   /** Both the FAQ assistant and lead routing came up: the Front Office Package. */
   packagePick?: { name: string; price: string; text: string; href: string };
+  /** One next step matched to how they like to buy (q10). Never replaces the main recommendation. */
+  stylePick?: { kicker: string; name: string; price: string; text: string; href: string; cta: string; key: ServiceKey | 'P' | 'KIT' | 'DEMO' };
   /** Every service with a one-line fit note, so the result never hides an option. */
   allOptions?: { name: string; price: string; line: string; href: string; mark: 'recommended' | 'also' | null }[];
   /** On-screen initial scope: short price line and item names only. */
@@ -375,6 +391,9 @@ function addPicks(v: PlanView, p: Plan) {
     };
   }
 
+  v.stylePick = stylePick(p);
+  const styleKey = v.stylePick?.key;
+
   // When both FAQ and lead problems come up, the package is the recommendation and its parts are 'also'.
   const mark = (k: string): 'recommended' | 'also' | null => (k === pick ? (p.packageFit ? 'also' : 'recommended') : k === p.secondary ? 'also' : null);
   const fit = (k: ServiceKey | 'S' | 'T' | 'P'): string => {
@@ -398,9 +417,56 @@ function addPicks(v: PlanView, p: Plan) {
     { name: remoteIt.name, price: `from ${usd(remoteIt.from)}`, line: fit('R'), href: '/services/remote-it/', mark: mark('R') },
     { name: remoteSupportPlan.name, price: `from ${usd(remoteSupportPlan.from)}/mo`, line: fit('S'), href: remoteSupportPlan.href!, mark: p.support === 'yes' ? 'also' : null },
     { name: quickWin.name, price: `from ${usd(quickWin.from)}`, line: fit('Q'), href: '/services/#quick-win', mark: mark('Q') ?? (p.type === 'LEARN-BIZ' ? 'also' : null) },
-    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit || pick === 'F' || pick === 'L' ? 'recommended' : null },
-    { name: followUpDesk.name, price: `${usd(deskMonthly())}/mo${deskSaleLive() ? ' founding price' : ''}, ${followUpDeskTrialDays} days free`, line: fit('D'), href: followUpDesk.href!, mark: mark('D') },
+    { name: `${frontOfficePackage.name} (Start-Up Deal)`, price: usd(frontOfficePackage.from), line: fit('P'), href: frontOfficePackage.href!, mark: p.packageFit || pick === 'F' || pick === 'L' ? 'recommended' : styleKey === 'P' ? 'also' : null },
+    { name: followUpDesk.name, price: `${usd(deskMonthly())}/mo${deskSaleLive() ? ' founding price' : ''}, ${followUpDeskTrialDays} days free`, line: fit('D'), href: followUpDesk.href!, mark: mark('D') ?? (styleKey === 'D' ? 'also' : null) },
   ];
+}
+
+// One next step matched to how they like to buy (q10), next to the main recommendation, never instead of it:
+// hands-off -> done for you, do-it-yourself -> self-serve or free, "see it work first" -> a trial, demo or free kit.
+function stylePick(p: Plan): PlanView['stylePick'] {
+  const a = p.answers;
+  const t = p.type;
+  if (!p.style || t === 'LEARN' || t === 'LEARN-BIZ' || t === 'TALK') return undefined;
+  const fd = followUpDesk;
+  const fop = frontOfficePackage;
+  const frontOffice = t === 'F' || t === 'L' || p.packageFit;
+  const followUp = t === 'L' || a.q3 === 'E' || a.q3 === 'G' || a.q6 === 'D';
+  const desk = { name: fd.name, price: startLabel('D'), href: fd.href! };
+  const kit = { name: 'Free Starter IT Kit', price: 'Free', href: '/free-it-kit/', cta: 'Get the free kit', key: 'KIT' as const };
+  if (p.style === 'hands-off') {
+    // F, L, Q and R are already done for you; only the self-serve Desk needs a done-for-you alternative.
+    if (t !== 'D') return undefined;
+    return {
+      kicker: 'Rather have it done for you?', name: fop.name, price: usd(fop.from), href: fop.href!, cta: `See the ${fop.name}`, key: 'P',
+      text: `You said you'd rather someone set it up and handle it. The ${fd.name} is self-serve. The ${fop.name} is set up for you: lead routing with follow-up reminders and templates, an FAQ assistant, email authentication setup and three months of support, with a written quote before any work starts.`,
+    };
+  }
+  if (p.style === 'diy') {
+    if (frontOffice && followUp) return {
+      kicker: 'Prefer to set it up yourself?', ...desk, cta: `See the ${fd.name}`, key: 'D',
+      text: `You said you'll set things up yourself if it's quick and clear. For follow-ups on estimates you've already sent, the ${fd.name} is the self-serve option: about five minutes to set up, no call needed, and it stops when the customer replies.`,
+    };
+    if (t === 'R') return {
+      kicker: 'Prefer to start on your own?', ...kit,
+      text: "You said you'll set things up yourself if it's quick and clear. The free Starter IT Kit is a spreadsheet to list every account your business uses, spot the risky ones and run a 10-minute monthly checkup. Start there, and ask about the setup if you want a hand.",
+    };
+    return undefined;
+  }
+  // 'proof': burned before, wants to see it work first.
+  if (t === 'D') return {
+    kicker: 'See it work first', ...desk, cta: 'Start with the free trial', key: 'D',
+    text: `You said you'd like to see it work first. The ${fd.name} has ${followUpDeskTrialDays} days free, and a preview shows exactly what your customers will get before anything is sent. Card required to start, cancel anytime.`,
+  };
+  if (t === 'R') return {
+    kicker: 'A free first step', ...kit,
+    text: "You said you'd like to see it work first. The free Starter IT Kit is a spreadsheet to list your accounts, spot the risky ones and run a 10-minute monthly checkup. If you want help after that, the setup comes with a fixed written quote before any work starts.",
+  };
+  const demo = t === 'Q' ? { name: 'AI inquiry triage demo', href: '/lab/ai-inquiry-triage/' } : { name: 'Front office demo', href: '/lab/front-office/' };
+  return {
+    kicker: 'See it work first', ...demo, price: 'Free', cta: 'Try the demo', key: 'DEMO',
+    text: `You said you'd like to see it work first. Try the ${demo.name.charAt(0).toLowerCase() + demo.name.slice(1)} in the Lab to see the kind of thing I build. If you go ahead, you get a fixed written quote before any work starts.`,
+  };
 }
 
 function buildPlanBase(p: Plan): PlanView {
