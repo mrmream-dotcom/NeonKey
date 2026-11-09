@@ -5,13 +5,13 @@ import PageHeader from '../../components/PageHeader.astro';
 import { QUESTIONS } from '../../data/quiz';
 const total = QUESTIONS.length;
 ---
-<Base title="What service do I need? A 2-minute quiz" description="Answer nine quick questions and see which NeonKey service fits: office IT setup, estimate follow-ups, an FAQ assistant or lead routing. No email needed.">
+<Base title="What service do I need? A 2-minute quiz" description="Answer nine quick questions and see which NeonKey service fits: office IT setup, estimate follow-ups, an FAQ assistant or lead routing. Add your email to see your result and get the full plan.">
   <PageHeader width="narrow" eyebrow="Services · 2-minute quiz" title="What service do I need?" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Quiz' }]}>
-    <p class="lede">Not sure where to start? Answer {total} quick questions and I'll show you what I'd recommend right away, with no email needed. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
+    <p class="lede">Not sure where to start? Answer {total} quick questions, add your email, and I'll show you what I'd recommend right away and email you the full plan. It's built mostly for small business owners and solo pros, but anyone can take it.</p>
     <Fragment slot="meta">
       <li><span><strong>{total}</strong> questions</span></li>
       <li><span>About 2 minutes</span></li>
-      <li><span>No email needed</span></li>
+      <li><span>Result and full plan by email</span></li>
     </Fragment>
   </PageHeader>
 
@@ -24,8 +24,8 @@ const total = QUESTIONS.length;
       <div class="panel quiz-intro" data-step="intro" hidden>
         <ul class="muted quiz-bullets">
           <li>One question per screen, with a Back button</li>
-          <li>Your result appears instantly, right here in your browser</li>
-          <li>Want the full, detailed plan? I can email it to you. That's optional, at the end</li>
+          <li>At the end, add your email and your result appears right here</li>
+          <li>The full, detailed plan comes to your inbox too</li>
         </ul>
         <button type="button" class="btn btn-primary" data-start data-umami-event="quiz-start">Start the quiz</button>
       </div>
@@ -57,16 +57,16 @@ const total = QUESTIONS.length;
       <div class="quiz-result" data-result tabindex="-1" hidden></div>
 
       <div class="panel quiz-email" data-email-box hidden>
-        <h2 class="quiz-h3">Want the full plan? I'll email you the details</h2>
-        <p class="muted">Your result above is yours either way. The email goes further: what each item involves and why your answers point to it, the order I'd do them in, what to have ready (tailored to the tools you use) and the next steps.</p>
+        <h2 class="quiz-h3">Last step: where should I send your plan?</h2>
+        <p class="muted">Add your email to see your result. It shows up right here, and I'll email you the full plan too: what each item involves and why your answers point to it, the order I'd do them in, what to have ready (tailored to the tools you use) and the next steps.</p>
         <form data-email-form novalidate>
           <div class="field"><label for="qz-name">First name <span class="muted">(optional)</span></label><input id="qz-name" name="first_name" autocomplete="given-name" maxlength="40" /></div>
           <div class="field"><label for="qz-email">Email</label><input id="qz-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" aria-describedby="qz-consent" />
-            <p class="form-note" id="qz-consent">Your email and quiz answers are sent to NeonKey to prepare this plan: I'll email it to you once, and a copy comes to me so I can help if you reply. I won't add you to any list unless you tick the box below. See the <a href={url('/privacy/')}>privacy policy</a>.</p>
+            <p class="form-note" id="qz-consent">Your email and quiz answers are sent to NeonKey to show your result and prepare your plan: I'll email it to you once, and a copy comes to me so I can help if you reply. I won't add you to any list unless you tick the box below. See the <a href={url('/privacy/')}>privacy policy</a>.</p>
           </div>
           <div class="quiz-hp" aria-hidden="true"><label for="qz-website">Website</label><input id="qz-website" name="website" tabindex="-1" autocomplete="off" /></div>
           <label class="quiz-opt quiz-check"><input type="checkbox" name="newsletter" value="1" /><span>Also send me Unlock the Week, NeonKey's free one-minute fix every Wednesday (optional). Kit will email you to confirm. Unsubscribe anytime.</span></label>
-          <button type="submit" class="btn btn-primary" data-send>Email me the full plan</button>
+          <button type="submit" class="btn btn-primary" data-send>Show my result</button>
           <p class="form-note quiz-status" data-status aria-live="polite"></p>
         </form>
       </div>
@@ -100,7 +100,8 @@ const total = QUESTIONS.length;
   .quiz-check { margin: 0 0 1rem; font-size: .95rem; }
   .quiz-error { color: #fda4af; margin: 0 0 .8rem; }
   .quiz-nav { justify-content: space-between; }
-  .quiz-result { margin-bottom: 1.25rem; outline: none; }
+  .quiz-result { margin-bottom: 1.25rem; outline: none; scroll-margin-top: 5rem; }
+  .quiz-email { scroll-margin-top: 5rem; }
   .quiz-result .panel + .panel, .quiz-result .callout { margin-top: 1rem; }
   .quiz-result h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: .35rem 0 .6rem; }
   .quiz-h3 { font-size: 1.2rem; margin: 1.2rem 0 .5rem; }
@@ -149,6 +150,7 @@ const total = QUESTIONS.length;
     let i = 0;
     let answers: Answers | null = null;
     let lastType = '';
+    let lastView: PlanView | null = null;
 
     intro.hidden = false;
     const track = (ev: string, data?: Record<string, string>) => (window as any).umami?.track?.(ev, data);
@@ -178,7 +180,8 @@ const total = QUESTIONS.length;
     $('[data-start]').addEventListener('click', () => { intro.hidden = true; form.hidden = false; show(0, true); });
     $('[data-restart]').addEventListener('click', () => {
       form.reset(); emailForm.reset(); status.textContent = ''; status.className = 'form-note quiz-status';
-      result.hidden = true; emailBox.hidden = true; foot.hidden = true; answers = null;
+      result.hidden = true; emailBox.hidden = true; foot.hidden = true; answers = null; lastView = null;
+      emailForm.querySelectorAll<HTMLInputElement | HTMLButtonElement>('input, button').forEach((x) => (x.disabled = false));
       form.hidden = false; show(0, true);
     });
     back.addEventListener('click', () => go(-1));
@@ -210,11 +213,22 @@ const total = QUESTIONS.length;
       answers = a as Answers;
       const view = buildPlan(computePlan(answers));
       lastType = view.type;
-      result.innerHTML = render(view);
-      form.hidden = true; result.hidden = false; emailBox.hidden = false; foot.hidden = false;
+      lastView = view;
+      // Email gate (Michael, Nov 9 2026): the result shows only after they enter an email.
+      form.hidden = true; result.hidden = true; emailBox.hidden = false; foot.hidden = false;
+      emailForm.querySelector<HTMLInputElement>('#qz-email')!.focus();
+      emailBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      track('quiz-complete', { result: view.type, style: answers.q10 || '' });
+    }
+    // Shown once a valid email was submitted. If sending failed (outage, or one plan per address a day), they
+    // still see the result, with a note, so a Worker problem never strands someone who gave their email.
+    function showResult(note: string, ok: boolean) {
+      if (!lastView) return;
+      result.innerHTML = `<p class="form-note quiz-status ${ok ? 'ok' : 'err'}" role="status">${esc(note)}</p>` + render(lastView);
+      emailBox.hidden = true; result.hidden = false;
       result.focus();
       result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      track('quiz-complete', { result: view.type, style: answers.q10 || '' });
+      track('quiz-result-view', { result: lastType, sent: String(ok) });
     }
 
     function esc(s: string) {
@@ -277,16 +291,15 @@ const total = QUESTIONS.length;
         });
         const out = await res.json().catch(() => ({}));
         if (res.ok && out.ok) {
-          status.className = 'form-note quiz-status ok';
-          status.textContent = 'Sent! Check your inbox (and spam, just in case) for an email from NeonKey.' + (newsletter ? (out.newsletter === 'ok' ? ' Kit will send a separate email to confirm Unlock the Week.' : " The newsletter signup didn't go through, but you can sign up anytime on the Newsletter page.") : '');
-          emailForm.querySelectorAll('input').forEach((x) => (x.disabled = true));
+          status.textContent = '';
+          showResult('Your full plan is on its way. Check your inbox (and spam, just in case) for an email from NeonKey.' + (newsletter ? (out.newsletter === 'ok' ? ' Kit will send a separate email to confirm Unlock the Week.' : " The newsletter signup didn't go through, but you can sign up anytime on the Newsletter page.") : ''), true);
           return;
         }
-        status.className = 'form-note quiz-status err';
-        status.textContent = out.message || "That didn't go through. Try again, or email hello@neonkey.tech.";
+        status.textContent = '';
+        showResult(`Here's your result. ${out.message || "The email with your full plan didn't go through."} You can email hello@neonkey.tech for a copy.`, false);
       } catch {
-        status.className = 'form-note quiz-status err';
-        status.textContent = "That didn't go through. Try again, or email hello@neonkey.tech.";
+        status.textContent = '';
+        showResult("Here's your result. The email with your full plan didn't go through. You can email hello@neonkey.tech for a copy.", false);
       }
       btn.disabled = false;
     });
