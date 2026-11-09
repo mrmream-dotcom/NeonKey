@@ -2,12 +2,12 @@
 import { url } from '../../../config';
 import Base from '../../../layouts/Base.astro';
 import PageHeader from '../../../components/PageHeader.astro';
+import GuideSale from '../../../components/GuideSale.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
 // Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
-// The buy button stays off until setupGuide.buyUrl holds the live Payment Link.
+// Prices and buy buttons come from GuideSale (regular $97, or the 24-hour flash sale while it's configured and running).
 // Copy rules: no income claims or implied results, no comparison "value" price, no invented reviews.
-const canBuy = setupGuide.buyUrl !== '';
 ---
 <Base image="/og-founder-stack.png" title={`${setupGuide.name}: a setup guide for founders`} description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}>
   <PageHeader eyebrow="Guide for founders · PDF" title={setupGuide.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: setupGuide.name }]}>
@@ -19,10 +19,7 @@ const canBuy = setupGuide.buyUrl !== '';
   <section class="sg-top-wrap">
     <div class="container">
       <div class="panel topline accent-magenta sg-top">
-        <p class="sg-top-price">{usd(setupGuide.price)} <span class="muted">one-time · PDF emailed in minutes</span></p>
-        {canBuy
-          ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-top" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
-          : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
+        <GuideSale variant="top" location="guide-top" />
         <p class="sg-small sg-top-free">Not ready to buy? <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="guide-top" data-umami-event-track="founders">Run the free Launch Preflight</a> on your domain first. It takes about 30 seconds, no signup.</p>
       </div>
     </div>
@@ -78,29 +75,21 @@ const canBuy = setupGuide.buyUrl !== '';
         <ul class="muted">
           <li>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</li>
           <li>It's a PDF of about 18 pages, first edition, November 2026. Your copy is emailed to you automatically right after checkout, usually within a few minutes.</li>
-          <li>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the {usd(setupGuide.price)}. Check each tool's current pricing.</li>
+          <li>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the price of the guide. Check each tool's current pricing.</li>
           <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
         </ul>
         <p class="muted">Not sure where your domain stands? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight</a> first.</p>
       </div>
       <aside class="panel topline accent-magenta sg-buy">
         <span class="kicker">Guide for founders · PDF</span>
-        <p class="price">{usd(setupGuide.price)}<small>One-time. First edition, November 2026.</small></p>
+        <GuideSale variant="box" location="guide-page" />
         {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Authentication Setup for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
-        {canBuy
-          ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-page" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
-          : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
         <p class="muted sg-small">Secure checkout by Stripe. Your copy is emailed to you automatically, usually within a few minutes.</p>
         <p class="muted sg-small">Questions first? <a href={url('/contact/')}>Send a message</a>.</p>
       </aside>
     </div>
   </section>
-  {canBuy && (
-    <div class="sg-mbar">
-      <span class="sg-mbar-price">{usd(setupGuide.price)}</span>
-      <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-mobile-bar" data-umami-event-track="founders">Get the guide</a>
-    </div>
-  )}
+  <GuideSale variant="bar" location="guide-mobile-bar" />
   <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>
@@ -118,25 +107,19 @@ const canBuy = setupGuide.buyUrl !== '';
   .sg-samples img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; }
   @media (max-width: 560px) { .sg-samples { grid-template-columns: 1fr; } }
   .sg-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 5rem; }
-  .sg-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
-  .sg-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
-  .sg-buy .btn { align-self: flex-start; }
-  .sg-buy .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
-  .sg-small { font-size: .88rem; margin: 0; }
+  .sg-buy :global(.btn) { align-self: flex-start; }
+  :global(.sg-small) { font-size: .88rem; margin: 0; }
   .sg-video { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); background: #0b0d17; margin: .25rem 0 .35rem; }
   .sg-vnote { margin-bottom: 1.25rem; }
   .sg-top-wrap { padding: 0 0 1.25rem; }
   .sg-top { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
-  .sg-top-price { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text); }
-  .sg-top-price .muted { font-size: .88rem; font-weight: 400; }
   .sg-top-free { flex-basis: 100%; }
-  .sg-top .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
   /* Phones only: a slim buy bar pinned to the bottom of the screen (CSS only, no script). */
-  .sg-mbar { display: none; }
+  :global(.sg-mbar) { display: none; }
   @media (max-width: 820px) {
-    .sg-mbar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: .6rem 16px calc(.6rem + env(safe-area-inset-bottom)); background: var(--bg, #0b0d17); border-top: 1px solid var(--line, #262b52); }
-    .sg-mbar-price { font-weight: 800; font-size: 1.15rem; color: var(--text); }
-    .sg-mbar .btn { margin: 0; }
+    :global(.sg-mbar) { display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: .6rem 16px calc(.6rem + env(safe-area-inset-bottom)); background: var(--bg, #0b0d17); border-top: 1px solid var(--line, #262b52); }
+    :global(.sg-mbar-price) { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+    :global(.sg-mbar .btn) { margin: 0; }
     :global(body) { padding-bottom: 4.5rem; }
   }
 </style>

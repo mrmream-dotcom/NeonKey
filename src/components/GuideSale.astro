@@ -1,0 +1,114 @@
+---
+// Price and buy button for The Founder Stack, with the 24-hour flash sale (guideFlashSale in src/data/services.ts).
+// While guideFlashSaleLive is true at build time, each spot shows the sale ($97 crossed out, the sale price, a
+// countdown to one fixed end time for every visitor, the first-100 limit) and keeps the regular $97 offer hidden in
+// [data-sale-after]; at the deadline the script swaps them. With no sale it renders exactly the regular offer.
+import { setupGuide as g, guideFlashSale as sale, guideFlashSaleLive as live, usd } from '../data/services';
+interface Props { variant: 'top' | 'box' | 'bar' | 'kicker'; location: string }
+const { variant, location } = Astro.props;
+const canBuy = g.buyUrl !== '';
+const saleOffer = `${g.name} flash ${sale.price}`;
+const limits = `${sale.hours} hours only, first ${sale.cap} orders. When either runs out, the price goes back to ${usd(g.price)}.`;
+---
+{variant === 'kicker' && (live
+  ? <span data-sale-ends={sale.endsAt}><span data-sale>Guide · PDF · <s class="gs-was" aria-label={`was ${usd(g.price)}`}>{usd(g.price)}</s> {usd(sale.price)} for {sale.hours} hours</span><span data-sale-after hidden>Guide · PDF · {usd(g.price)}</span></span>
+  : <span>Guide · PDF · {usd(g.price)}</span>)}
+
+{variant === 'top' && (
+  <div class="gs gs-top" data-sale-ends={live ? sale.endsAt : undefined}>
+    {live && (
+      <div data-sale class="gs-row">
+        <p class="gs-tag">Flash sale · {sale.percentOff}% off · first {sale.cap} orders</p>
+        <p class="gs-count" aria-live="off"><span data-countdown>{sale.hours} hours only</span></p>
+        <p class="sg-top-price"><s class="gs-was" aria-label={`was ${usd(g.price)}`}>{usd(g.price)}</s> {usd(sale.price)} <span class="muted">one-time · PDF emailed in minutes</span></p>
+        <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={saleOffer} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(sale.price)}</a>
+        <p class="sg-small gs-full">{limits}</p>
+      </div>
+    )}
+    <div data-sale-after hidden={live} class="gs-row">
+      <p class="sg-top-price">{usd(g.price)} <span class="muted">one-time · PDF emailed in minutes</span></p>
+      {canBuy
+        ? <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
+        : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
+    </div>
+  </div>
+)}
+
+{variant === 'box' && (
+  <div class="gs gs-box" data-sale-ends={live ? sale.endsAt : undefined}>
+    {live && (
+      <div data-sale class="gs-col">
+        <p class="gs-tag">Flash sale · {sale.percentOff}% off</p>
+        <p class="gs-count" aria-live="off"><span data-countdown>{sale.hours} hours only</span></p>
+        <p class="price"><s class="gs-was" aria-label={`was ${usd(g.price)}`}>{usd(g.price)}</s> {usd(sale.price)}<small>One-time. First edition, November 2026.</small></p>
+        <p class="sg-small"><strong>First {sale.cap} orders only.</strong> When the {sale.hours} hours or the {sale.cap} orders run out, the price goes back to {usd(g.price)}.</p>
+        <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={saleOffer} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(sale.price)}</a>
+        <p class="muted sg-small">If checkout says the sale has closed, all {sale.cap} are gone. <a href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">The guide is still available at {usd(g.price)}</a>.</p>
+      </div>
+    )}
+    <div data-sale-after hidden={live} class="gs-col">
+      <p class="price">{usd(g.price)}<small>One-time. First edition, November 2026.</small></p>
+      {canBuy
+        ? <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
+        : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
+    </div>
+  </div>
+)}
+
+{variant === 'bar' && canBuy && (
+  <div class="sg-mbar" data-sale-ends={live ? sale.endsAt : undefined}>
+    {live && (
+      <div data-sale class="gs-bar">
+        <span class="sg-mbar-price"><s class="gs-was" aria-label={`was ${usd(g.price)}`}>{usd(g.price)}</s> {usd(sale.price)} <span class="gs-bar-count" data-countdown="short">{sale.hours}h only</span></span>
+        <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={saleOffer} data-umami-event-location={location} data-umami-event-track="founders">Get the guide</a>
+      </div>
+    )}
+    <div data-sale-after hidden={live} class="gs-bar">
+      <span class="sg-mbar-price">{usd(g.price)}</span>
+      <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Get the guide</a>
+    </div>
+  </div>
+)}
+
+<script>
+  // One fixed deadline for every visitor (data-sale-ends); nothing resets on reload. At zero, swap to the regular offer.
+  const boxes = Array.from(document.querySelectorAll<HTMLElement>('[data-sale-ends]'));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  function tick() {
+    const now = Date.now();
+    for (const box of boxes) {
+      const left = Date.parse(box.dataset.saleEnds || '') - now;
+      if (!(left > 0)) {
+        box.querySelectorAll<HTMLElement>('[data-sale]').forEach((el) => { el.hidden = true; });
+        box.querySelectorAll<HTMLElement>('[data-sale-after]').forEach((el) => { el.hidden = false; });
+        continue;
+      }
+      const s = Math.floor(left / 1000);
+      const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+      const text = `${pad(h)}h ${pad(m)}m ${pad(s % 60)}s left`;
+      box.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => { el.textContent = el.dataset.countdown === "short" ? `${h}h ${pad(m)}m left` : text; });
+    }
+  }
+  if (boxes.length) { tick(); setInterval(tick, 1000); }
+</script>
+
+<style>
+  [data-sale][hidden], [data-sale-after][hidden] { display: none !important; }
+  .gs p { margin: 0; }
+  .gs-top { flex-basis: 100%; }
+  .gs-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+  .gs-col { display: flex; flex-direction: column; gap: .6rem; }
+  .gs-col .btn { align-self: flex-start; }
+  .gs-full { flex-basis: 100%; }
+  .gs-tag { flex-basis: 100%; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--magenta); }
+  .gs-count { display: inline-block; align-self: flex-start; padding: .3rem .7rem; border-radius: 999px; background: var(--panel); border: 1px solid var(--magenta); color: var(--magenta); font-variant-numeric: tabular-nums; font-weight: 700; font-size: .95rem; }
+  .gs-was { color: var(--muted); font-weight: 500; text-decoration-thickness: 2px; margin-right: .15rem; }
+  .gs-bar { display: flex; white-space: nowrap; flex: 1; align-items: center; justify-content: space-between; gap: .75rem; }
+  .gs-bar-count { white-space: nowrap; font-size: .8rem; font-weight: 700; color: var(--magenta); font-variant-numeric: tabular-nums; margin-left: .35rem; }
+  .gs-box .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
+  .gs-box .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
+  .gs .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .gs-top .sg-top-price { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  .gs-top .sg-top-price .muted { font-size: .88rem; font-weight: 400; }
+  .gs .sg-small { font-size: .88rem; }
+</style>

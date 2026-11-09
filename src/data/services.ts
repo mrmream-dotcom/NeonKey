@@ -52,7 +52,8 @@ export const introPricing = {
 };
 
 /** Format a price like $1,200. */
-export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+// Whole dollars show no cents ($97); a price with cents shows both digits ($48.50, not $48.5).
+export const usd = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 
 export const remoteIt: Offer = {
   slug: 'remote-it',
@@ -273,6 +274,29 @@ export const setupGuide = {
   includesLockdown: true,
   buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
 };
+
+/**
+ * The Founder Stack 24-hour flash sale (Michael, Nov 9 2026: "FLASH SALE 24 HOURS ONLY FOUNDERS GUIDE IS ON SALE FOR
+ * 50% OFF!!!!!!! FIRST 100 ONLY!!!!!! CROSS OUT 97!!!!").
+ * Honest framing: $97 is the real price the guide has sold at since Nov 6 and goes back to after the sale, so it can be
+ * shown crossed out. Both limits are real and enforced by Stripe, not only by the page:
+ * - first 100: the sale Payment Link has restrictions.completed_sessions.limit = 100, so Stripe closes it after 100
+ *   paid orders and shows its inactive message, which points back to the $97 guide;
+ * - 24 hours: at endsAt the countdown swaps every sale box back to $97; then the sale Payment Link is deactivated in
+ *   Stripe and the site is rebuilt.
+ * The sale link must carry metadata offer=nk_founder_stack_guide, or workers/payments won't email the PDF.
+ * Nothing shows until BOTH buyUrl and endsAt are set (endsAt = launch time + 24 hours, Alaska offset -09:00).
+ */
+export const guideFlashSale = {
+  price: 48.5,
+  percentOff: 50,
+  cap: 100,
+  hours: 24,
+  endsAt: '', // e.g. '2026-11-10T18:00:00-09:00'
+  buyUrl: '', // the capped sale Payment Link (https://buy.stripe.com/...)
+};
+/** True while the flash sale is configured and not yet over at build time. */
+export const guideFlashSaleLive = Boolean(guideFlashSale.buyUrl && guideFlashSale.endsAt) && Date.now() < Date.parse(guideFlashSale.endsAt);
 
 /**
  * Follow-Up Desk: the fully self-serve product (Michael, Nov 7 2026: "something a company can just get, put their own
