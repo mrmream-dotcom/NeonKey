@@ -95,6 +95,28 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .hero-bg { position: relative; overflow: hidden; isolation: isolate; padding-bottom: clamp(3.5rem, 8vw, 6rem); }
 .hero-bg .hero-art { position: absolute; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, 118vw); pointer-events: none; opacity: .1; }
 .hero-bg .hero-art svg { position: relative; display: block; width: 100%; height: auto; filter: drop-shadow(0 0 28px rgba(167,139,250,.7)) drop-shadow(0 0 60px rgba(34,211,238,.35)); }
+/* Home hero motion background (A/B test "motion", variant b). CSS only: no script, no video, no extra request.
+   Only transform and opacity animate, so phones composite it on the GPU. The global prefers-reduced-motion rule
+   turns every animation off, which leaves a still version of the same picture. */
+.hero-motion { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+.hero-motion .glow { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; will-change: transform; }
+.hero-motion .g1 { top: -28vmax; left: -20vmax; background: radial-gradient(closest-side, rgba(34,211,238,.5), transparent); animation: nk-drift-a 9s ease-in-out infinite alternate; }
+.hero-motion .g2 { top: -24vmax; right: -22vmax; background: radial-gradient(closest-side, rgba(167,139,250,.55), transparent); animation: nk-drift-b 11s ease-in-out infinite alternate; }
+.hero-motion .g3 { bottom: -38vmax; left: 15%; background: radial-gradient(closest-side, rgba(244,114,182,.38), transparent); animation: nk-drift-c 13s ease-in-out infinite alternate; }
+.hero-motion .beam { position: absolute; top: -20%; bottom: -20%; left: 0; width: 22%; background: linear-gradient(90deg, transparent, rgba(34,211,238,.10), rgba(244,114,182,.10), transparent); transform: translateX(-120%) skewX(-18deg); animation: nk-beam 7s ease-in-out infinite; will-change: transform; }
+.hero-motion .floor { position: absolute; left: -50%; right: -50%; bottom: 0; height: 26%; perspective: 480px; -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.7) 50%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.7) 50%, transparent 100%); }
+.hero-motion .floor-plane { position: absolute; inset: -60px 0 0; transform: rotateX(62deg); transform-origin: 50% 100%; }
+.hero-motion .floor-grid { position: absolute; inset: 0 0 -60px; opacity: .9; background-image: linear-gradient(rgba(34,211,238,.8) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(167,139,250,.7) 1.5px, transparent 1.5px); background-size: 60px 60px; animation: nk-floor 1.6s linear infinite; will-change: transform; }
+.hero-motion .horizon { position: absolute; left: 0; right: 0; bottom: 26%; height: 2px; background: linear-gradient(90deg, transparent, #22d3ee 30%, #f472b6 70%, transparent); box-shadow: 0 0 18px rgba(34,211,238,.8); opacity: .55; animation: nk-horizon 3s ease-in-out infinite; }
+@keyframes nk-drift-a { to { transform: translate(22vmax, 12vmax) scale(1.2); } }
+@keyframes nk-drift-b { to { transform: translate(-20vmax, 14vmax) scale(.85); } }
+@keyframes nk-drift-c { to { transform: translate(-16vmax, -10vmax) scale(1.15); } }
+@keyframes nk-floor { to { transform: translateY(60px); } }
+@keyframes nk-horizon { 50% { opacity: 1; } }
+@keyframes nk-beam { 0% { transform: translateX(-120%) skewX(-18deg); } 60%, 100% { transform: translateX(560%) skewX(-18deg); } }
+@keyframes nk-float { 50% { transform: translate(-50%, calc(-50% - 14px)); } }
+html[data-ab-motion="b"] .hero-bg .hero-art { opacity: .16; animation: nk-float 6s ease-in-out infinite; }
+html[data-ab-motion="b"] .hero-ctas .btn-ghost { background: rgba(11,13,23,.88); }
 .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .hero-bg { display: flex; align-items: center; }
 .hero-content h1 { font-size: clamp(2.5rem, 6vw, 3.75rem); line-height: 1.1; letter-spacing: -.02em; max-width: 18ch; margin-inline: auto; text-wrap: balance; }
@@ -396,6 +418,7 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }
 /* A/B tests (src/data/ab-tests.ts): show only the visitor's variant; "a" is the default without JS. */
 html:not([data-ab-nl="b"]) [data-ab="nl:b"], html[data-ab-nl="b"] [data-ab="nl:a"] { display: none !important; }
+html:not([data-ab-motion="b"]) [data-ab="motion:b"], html[data-ab-motion="b"] [data-ab="motion:a"] { display: none !important; }
 /* /newsletter/ variant B: calm, no glow, one cyan action, form on the first phone screen. */
 .nlb-wrap { max-width: 680px; }
 .nlb-hero { padding: clamp(1.75rem, 5vw, 3.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
