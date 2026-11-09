@@ -27,4 +27,10 @@ export const abTests: AbTest[] = [
     b: '/newsletter/: calmer page ("One small tech fix, every Wednesday.", visible email label, form on the first phone screen, fix topics, form again)',
     started: 'on ship (Nov 2026)',
   },
+  {
+    id: 'motion',
+    a: 'home hero: still background (faint key art, soft glow)',
+    b: 'home hero: same content plus a slow neon motion background (drifting glows and a moving grid floor, CSS only, off for reduced motion)',
+    started: 'on ship (Nov 2026)',
+  },
 ];

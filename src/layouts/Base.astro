@@ -6,6 +6,7 @@ import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, abs
 import SocialLinks from '../components/SocialLinks.astro';
 import { abTests } from '../data/ab-tests';
 import { articles } from '../data/articles';
+import { existsSync } from 'node:fs';
 interface Props {
   title: string;
   description?: string;
@@ -17,7 +18,7 @@ interface Props {
   /** Set false when the page prints its own JSON-LD (home, /local/). */
   schema?: boolean;
 }
-const { title, description = DEFAULT_DESCRIPTION, image = '/og-default.png', noindex = false, type = 'website', schema = true } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, image: imageProp, noindex = false, type = 'website', schema = true } = Astro.props;
 
 // Current path relative to the base, e.g. "/lab/" for /NeonKey/lab/.
 const baseNoSlash = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -35,6 +36,11 @@ const isActive = (href: string) => path === href.replace(/\/$/, '') || path.star
 const fullTitle = title === 'Home' ? 'NeonKey | Lead Follow-Up and Office IT for Small Businesses' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
+// Link-preview image: the page's own image, else its branded card from public/og/ (npm run og), else the default.
+const ogSlug = canonicalPath.replace(/^\/|\/$/g, '').replace(/\//g, '--') || 'home';
+const ogCard = `/og/${ogSlug}.jpg`;
+const hasOgCard = !imageProp && existsSync(`${process.cwd()}/public${ogCard}`); // builds run from the repo root
+const image = imageProp || (hasOgCard ? ogCard : '/og-default.png');
 const ogImage = absoluteUrl(image, Astro.site);
 const abIds = abTests.map((t) => t.id);
 const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
@@ -147,7 +153,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="NeonKey: Unlock tech, whatever your level." />
+    <meta property="og:image:alt" content={hasOgCard ? `${title === 'Home' ? 'Small-business tech' : title}, from NeonKey` : 'NeonKey: Unlock tech, whatever your level.'} />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />

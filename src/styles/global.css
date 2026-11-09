@@ -95,6 +95,24 @@ section { padding: clamp(3rem, 7vw, 5rem) 0; }
 .hero-bg { position: relative; overflow: hidden; isolation: isolate; padding-bottom: clamp(3.5rem, 8vw, 6rem); }
 .hero-bg .hero-art { position: absolute; z-index: -1; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, 118vw); pointer-events: none; opacity: .1; }
 .hero-bg .hero-art svg { position: relative; display: block; width: 100%; height: auto; filter: drop-shadow(0 0 28px rgba(167,139,250,.7)) drop-shadow(0 0 60px rgba(34,211,238,.35)); }
+/* Home hero motion background (A/B test "motion", variant b). CSS only: no script, no video, no extra request.
+   Only transform and opacity animate, so phones composite it on the GPU. The global prefers-reduced-motion rule
+   turns every animation off, which leaves a still version of the same picture. */
+.hero-motion { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+.hero-motion .glow { position: absolute; width: 62vmax; height: 62vmax; border-radius: 50%; opacity: .75; will-change: transform; }
+.hero-motion .g1 { top: -30vmax; left: -18vmax; background: radial-gradient(closest-side, rgba(34,211,238,.32), transparent); animation: nk-drift-a 22s ease-in-out infinite alternate; }
+.hero-motion .g2 { top: -26vmax; right: -22vmax; background: radial-gradient(closest-side, rgba(167,139,250,.34), transparent); animation: nk-drift-b 26s ease-in-out infinite alternate; }
+.hero-motion .g3 { bottom: -40vmax; left: 18%; background: radial-gradient(closest-side, rgba(244,114,182,.22), transparent); animation: nk-drift-c 30s ease-in-out infinite alternate; }
+.hero-motion .floor { position: absolute; left: -50%; right: -50%; bottom: 0; height: 30%; perspective: 520px; -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); }
+.hero-motion .floor-plane { position: absolute; inset: -60px 0 0; transform: rotateX(62deg); transform-origin: 50% 100%; }
+.hero-motion .floor-grid { position: absolute; inset: 0 0 -60px; opacity: .5; background-image: linear-gradient(rgba(34,211,238,.55) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,.45) 1px, transparent 1px); background-size: 60px 60px; animation: nk-floor 3.2s linear infinite; will-change: transform; }
+.hero-motion .horizon { position: absolute; left: 0; right: 0; bottom: 30%; height: 1px; background: linear-gradient(90deg, transparent, rgba(34,211,238,.7), rgba(244,114,182,.7), transparent); opacity: .3; animation: nk-pulse 6s ease-in-out infinite; }
+@keyframes nk-drift-a { to { transform: translate(14vmax, 8vmax) scale(1.12); } }
+@keyframes nk-drift-b { to { transform: translate(-12vmax, 10vmax) scale(.92); } }
+@keyframes nk-drift-c { to { transform: translate(-10vmax, -6vmax) scale(1.08); } }
+@keyframes nk-floor { to { transform: translateY(60px); } }
+@keyframes nk-pulse { 50% { opacity: .6; } }
+html[data-ab-motion="b"] .hero-bg .hero-art { opacity: .14; }
 .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .hero-bg { display: flex; align-items: center; }
 .hero-content h1 { font-size: clamp(2.5rem, 6vw, 3.75rem); line-height: 1.1; letter-spacing: -.02em; max-width: 18ch; margin-inline: auto; text-wrap: balance; }
@@ -396,6 +414,7 @@ section[id], h2[id] { scroll-margin-top: 84px; }
 .intro-tag { display: inline-block; width: fit-content; align-self: flex-start; font-size: .8rem; font-weight: 600; color: var(--cyan); border: 1px solid rgba(34,211,238,.4); border-radius: 999px; padding: .15rem .6rem; margin: 0 0 .6rem; }
 /* A/B tests (src/data/ab-tests.ts): show only the visitor's variant; "a" is the default without JS. */
 html:not([data-ab-nl="b"]) [data-ab="nl:b"], html[data-ab-nl="b"] [data-ab="nl:a"] { display: none !important; }
+html:not([data-ab-motion="b"]) [data-ab="motion:b"], html[data-ab-motion="b"] [data-ab="motion:a"] { display: none !important; }
 /* /newsletter/ variant B: calm, no glow, one cyan action, form on the first phone screen. */
 .nlb-wrap { max-width: 680px; }
 .nlb-hero { padding: clamp(1.75rem, 5vw, 3.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
