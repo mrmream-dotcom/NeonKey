@@ -143,8 +143,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     <span data-ab="motion:a" hidden></span>
     <div class="hero-motion" data-ab="motion:b" aria-hidden="true">
       <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
-      <div class="beam"></div><div class="horizon"></div>
-      <div class="floor"><div class="floor-plane"><div class="floor-grid"></div></div></div>
+      <canvas class="hero-matrix"></canvas>
     </div>
     <div class="hero-art" aria-hidden="true">
       <svg viewBox="0 0 320 320" width="320" height="320" focusable="false">
@@ -334,6 +333,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </div>
     </div>
   </section>
+  <script is:inline defer src={url('/js/hero-matrix.js')}></script>
 </Base>
 
 <style>
