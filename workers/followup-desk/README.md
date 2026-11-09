@@ -55,6 +55,8 @@ each send, so a cron run holding an older copy of the account can't send one mor
   bound) the nightly backup is less than 26 hours old. Otherwise 503 with a `problems` list. Point a free uptime
   monitor at `<APP_URL>/health` so a page reaches Michael even when email is the thing that's broken. Right after a
   deploy it reads 503 ("no hourly run recorded yet") until the next :05 run.
+- **Uptime monitor.** `.github/workflows/desk-uptime.yml` checks `/health` every 15 minutes (3 tries) from GitHub.
+  A failed run means GitHub emails Michael. An outside monitor such as UptimeRobot can be added on top.
 - **Logs.** Workers Logs is on, invocation logs off (request URLs carry dashboard tokens). Only the `desk:` lines are
   kept, for 3 days: Cloudflare dashboard > Workers > neonkey-followup-desk > Logs.
 
