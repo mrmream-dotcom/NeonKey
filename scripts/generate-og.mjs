@@ -15,7 +15,8 @@ const outDir = join(root, 'public', 'og');
 // Must match ogSlug() in src/layouts/Base.astro.
 export const ogSlug = (path) => path.replace(/^\/|\/$/g, '').replace(/\//g, '--') || 'home';
 
-const decode = (s) => s.replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;|&#160;/g, ' ');
+// &amp; is decoded last so "&amp;lt;" stays the literal text "&lt;" (no double unescaping).
+const decode = (s) => s.replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;|&#160;/g, ' ').replace(/&amp;/g, '&');
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const text = (html) => decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 
