@@ -292,8 +292,8 @@ export const guideFlashSale = {
   percentOff: 50,
   cap: 100,
   hours: 24,
-  endsAt: '', // e.g. '2026-11-10T18:00:00-09:00'
-  buyUrl: '', // the capped sale Payment Link (https://buy.stripe.com/...)
+  endsAt: '2026-11-10T15:30:00-09:00', // Michael said go Nov 9 ~2:55 PM AKST; 24h from go-live (~3:30 PM AKST)
+  buyUrl: 'https://buy.stripe.com/fZu28qgZE7sAaFx1Ccb3q06', // plink_1Ua2P3CRxS1tvAi2Cx8YxOmc, price_1Ua2OqCRxS1tvAi233WyoOOM, limit 100
 };
 /** True while the flash sale is configured and not yet over at build time. */
 export const guideFlashSaleLive = Boolean(guideFlashSale.buyUrl && guideFlashSale.endsAt) && Date.now() < Date.parse(guideFlashSale.endsAt);
