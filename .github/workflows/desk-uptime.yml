@@ -1,0 +1,31 @@
+# Free uptime monitor for the Follow-Up Desk Worker.
+# Every 15 minutes GitHub fetches the Desk's /health endpoint. If it does not
+# answer 200 (Worker down, hourly run late or failing, backup late), this run
+# fails and GitHub emails the repo owner. It runs outside Cloudflare, so it
+# still catches problems when the Desk's own alert emails can't go out.
+# Read-only: it changes nothing and needs no secrets.
+name: Desk uptime
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check /health
+        run: |
+          url="https://neonkey-followup-desk.mr-mream.workers.dev/health"
+          for i in 1 2 3; do
+            code=$(curl -sS -o body.json -w '%{http_code}' --max-time 20 "$url" || echo 000)
+            if [ "$code" = "200" ]; then cat body.json; exit 0; fi
+            echo "Attempt $i: HTTP $code"; cat body.json 2>/dev/null || true; echo
+            sleep 30
+          done
+          echo "::error::Follow-Up Desk /health is not 200 after 3 tries"
+          exit 1
