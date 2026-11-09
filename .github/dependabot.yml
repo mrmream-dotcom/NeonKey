@@ -49,6 +49,11 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
+  - package-ecosystem: npm
+    directory: /workers/followup-desk
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
   - package-ecosystem: github-actions
     directory: /
     schedule:
