@@ -5,6 +5,8 @@
 //   POST /d/<token>/...   dashboard forms (no JavaScript).
 //   GET/POST /login       "email me a new link" (buyer email only; never says whether an account exists).
 //   GET/POST /u/<a>/<i>   recipient "stop these emails" (also the one-click List-Unsubscribe target).
+//   GET/POST /a/<a>/<i>/<yes|ask>  the customer's one-tap buttons: GET shows a short form (so link scanners can't
+//                         trigger it), POST tells the owner right away and stops that job's follow-ups.
 //   POST /resend          Resend webhook: email.bounced / email.complained -> that follow-up stops.
 //   email()               Cloudflare Email Routing catch-all for DESK_DOMAIN: a reply to r-<acct>-<item>@ stops
 //                         that job and is passed straight to the owner (hit Reply to answer the customer).
@@ -17,11 +19,12 @@ import { verifyStripeEvent, verifyResendEvent } from "./verify.js";
 import {
   DAY, MAX_OPEN, DAILY_CAP, REPORT_HOUR, KINDS, DEFAULT_TEMPLATES, TIMEZONES,
   isEmail, oneLine, clean, validDays, parseDate, parseList, normAmount, randomId, isDue, inSendWindow, localParts,
+  validPayUrl, NUDGE_DAYS,
 } from "./engine.js";
 import { getAccount, putAccount, setStatus, accountByToken, issueToken, createAccount, deleteAccount, prune } from "./store.js";
-import { welcomeEmail, linkEmail, reportEmail, forwardEmail, sendOwner, sendNotice, sendFollowUp } from "./mail.js";
+import { welcomeEmail, linkEmail, reportEmail, forwardEmail, actionEmail, nudgeEmail, sendOwner, sendNotice, sendFollowUp } from "./mail.js";
 import { alert, health, hourly as runHourly } from "./ops.js";
-import { CSS, dashboardPage, settingsPage, loginPage, unsubPage, notFoundPage, deskState } from "./pages.js";
+import { CSS, dashboardPage, settingsPage, loginPage, unsubPage, actionPage, notFoundPage, deskState } from "./pages.js";
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'none'; style-src 'self'; img-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
@@ -49,6 +52,8 @@ export default {
       if (path === "/login") return await login(request, env, ctx);
       let m = path.match(/^\/u\/([a-z0-9]{12})\/([a-z0-9]{9})$/);
       if (m) return await unsubscribe(request, env, m[1], m[2]);
+      m = path.match(/^\/a\/([a-z0-9]{12})\/([a-z0-9]{9}|test)\/(yes|ask)$/);
+      if (m) return await customerAction(request, env, m[1], m[2], m[3]);
       m = path.match(/^\/d\/([A-Za-z0-9_-]{40,50})(?:\/([a-z]+))?$/);
       if (m) return await dashboard(request, env, m[1], m[2] || "");
       return html(notFoundPage(), 404);
@@ -296,6 +301,34 @@ async function unsubscribe(request, env, acctId, itemId) {
   return html(unsubPage(acct.settings.business, false, `/u/${acctId}/${itemId}`));
 }
 
+// ---------- the customer's one-tap buttons ----------
+export async function customerAction(request, env, acctId, itemId, action, now = Date.now()) {
+  const acct = await getAccount(env, acctId);
+  const preview = itemId === "test";
+  const item = !acct ? null : preview
+    ? { id: "test", kind: "estimate", name: "Jane", email: acct.settings.replyTo, job: "the kitchen remodel" }
+    : acct.items.find((i) => i.id === itemId);
+  if (!item || (action === "yes" && item.kind === "invoice")) return html(notFoundPage(), 404);
+  const path = `/a/${acctId}/${itemId}/${action}`;
+  const view = (o = {}) => html(actionPage({ business: acct.settings.business, item, action, path, ...o }));
+  if (request.method !== "POST") return view();
+  const form = await request.formData();
+  const note = clean(form.get("note"), 1000).replace(/\r\n/g, "\n");
+  const phone = oneLine(form.get("phone"), 30).replace(/[^0-9+().\- ]/g, "");
+  if (action === "ask" && !note) return view({ error: "Please type your question." });
+  // One message per job every 10 minutes, so a double tap (or a bored bot) can't flood the owner.
+  if (!preview && item.lastActionAt && now - item.lastActionAt < 10 * 60000) return view({ done: true });
+  const mail = actionEmail({ item, action, note, phone, preview });
+  const ok = await sendOwner(env, acct, mail, undefined, { replyTo: isEmail(item.email) ? item.email : undefined, bcc: false });
+  if (!ok) return view({ error: "That didn't go through. Please try again, or just reply to the email." });
+  if (!preview) {
+    item.lastActionAt = now;
+    if (item.status === "open" || item.status === "done") await setStatus(env, acct, item.id, "replied", action === "yes" ? "Tapped: ready to go ahead" : "Tapped: has a question");
+    await putAccount(env, acct);
+  }
+  return view({ done: true });
+}
+
 // ---------- sign-in links ----------
 async function login(request, env, ctx) {
   if (request.method !== "POST") return html(loginPage(false));
@@ -359,6 +392,10 @@ export async function act(env, acct, action, form, now = Date.now()) {
       if (!days) return "settings:baddays";
       s.days = days;
       s.bccMe = form.get("bccMe") === "1";
+      s.buttons = form.get("buttons") === "1";
+      const pay = validPayUrl(get("payUrl", 600));
+      if (pay === null) return "settings:badpay";
+      s.payUrl = pay;
       for (const kind of Object.keys(KINDS)) {
         s.templates[kind] = [0, 1, 2].map((k) => {
           const subject = oneLine(get(`${kind}_s${k}`, 150), 150);
@@ -503,6 +540,19 @@ export async function runAccount(env, acct, now = Date.now()) {
       out.sent++;
       changed = true;
       await putAccount(env, acct); // save after every send so a crash can't double-send
+    }
+  }
+
+  // Trial nudges: one email on day 1, 3 and 10 after signup, only while nothing has been added, 9 AM to 5 PM local.
+  if (acct.billing !== "canceled" && !acct.items.length && acct.created && local.hour >= 9 && local.hour < 17) {
+    const age = now - acct.created;
+    const due = NUDGE_DAYS.map((d, n) => (age >= d * DAY && !(acct.nudges || []).includes(n) ? n : -1)).filter((n) => n >= 0);
+    if (due.length) {
+      const n = due[due.length - 1]; // only the latest one; older missed ones are skipped, never stacked up
+      const token = await issueToken(env, acct);
+      changed = true;
+      const ok = await sendOwner(env, acct, nudgeEmail({ n, name: acct.name, link: `${env.APP_URL}/d/${token}`, setupDone: acct.setupDone, trialing: acct.billing === "trialing" }), `desk-nudge-${acct.id}-${n}`, { to: acct.email, bcc: false });
+      if (ok) { acct.nudges = [...new Set([...(acct.nudges || []), ...due])]; changed = true; } else out.failed++;
     }
   }
 

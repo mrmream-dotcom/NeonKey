@@ -5,7 +5,7 @@
 //   per-job address on DESK_DOMAIN so a reply stops that job's follow-ups, then lands in the owner's inbox.
 // Michael is BCC'd (BCC_ADDRESS) on NeonKey's own emails. He is NOT BCC'd on follow-ups or reply forwards: those are
 // the customer's own correspondence with their clients (see README "Privacy").
-import { message, KINDS, fmtDate, summarize, firstName } from "./engine.js";
+import { message, KINDS, ACTIONS, fmtDate, summarize, firstName } from "./engine.js";
 
 const C = { bg: "#0b0d17", panel: "#151935", line: "#262b52", text: "#e8eaf6", muted: "#b3b8d6", cyan: "#22d3ee", violet: "#a78bfa", magenta: "#f472b6", green: "#34d399", amber: "#fbbf24" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -127,13 +127,63 @@ export function forwardEmail({ item, from, subject, text, auto, unsubscribe }) {
 
 // ---------- owner -> their customer ----------
 // Plain on purpose: it should read like a note from the owner, not a newsletter.
-export function followUpEmail(item, settings, unsubUrl) {
+// actions (optional): { yes, ask, pay } URLs. Each one shows as a button only when its URL and its label (by job kind) exist.
+export function followUpEmail(item, settings, unsubUrl, actions = {}) {
   const m = message(item, settings);
+  const labels = ACTIONS[item.kind] || ACTIONS.estimate;
+  const btns = ["yes", "ask", "pay"].filter((k) => actions[k] && labels[k]).map((k) => ({ k, label: labels[k], href: actions[k] }));
   const paras = m.body.split(/\n{2,}/).map((para) => `<p style="margin:0 0 14px 0;">${esc(para).replace(/\n/g, "<br>")}</p>`).join("");
+  const btnHtml = btns.length
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 4px 0;"><tr>${btns.map((b, i) => `<td style="padding:0 8px 8px 0;"><a href="${esc(b.href)}" style="display:inline-block;padding:10px 16px;border-radius:8px;font-family:${FONT};font-size:15px;font-weight:600;text-decoration:none;${i === 0 ? "background:#1f2937;color:#ffffff;border:1px solid #1f2937;" : "background:#ffffff;color:#1f2937;border:1px solid #c7cbd1;"}">${esc(b.label)}</a></td>`).join("")}</tr></table>`
+    : "";
   const foot = `<p style="margin:22px 0 0 0;font-size:12px;color:#777;">Sent for ${esc(settings.business)} by NeonKey Follow-Up Desk. Reply to reach ${esc(settings.business)} directly. <a href="${esc(unsubUrl)}" style="color:#777;">Stop these emails</a>.</p>`;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body style="margin:0;padding:16px;font-family:${FONT};font-size:15px;line-height:1.55;color:#222;background:#fff;">${paras}${foot}</body></html>`;
-  const text = `${m.body}\n\n--\nSent for ${settings.business} by NeonKey Follow-Up Desk. Reply to reach ${settings.business} directly. Stop these emails: ${unsubUrl}`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body style="margin:0;padding:16px;font-family:${FONT};font-size:15px;line-height:1.55;color:#222;background:#fff;">${paras}${btnHtml}${foot}</body></html>`;
+  const btnText = btns.length ? `\n\n${btns.map((b) => `${b.label}: ${b.href}`).join("\n")}` : "";
+  const text = `${m.body}${btnText}\n\n--\nSent for ${settings.business} by NeonKey Follow-Up Desk. Reply to reach ${settings.business} directly. Stop these emails: ${unsubUrl}`;
   return { subject: m.subject, html, text };
+}
+
+// The customer tapped a button. The owner hears right away; hitting Reply answers the customer.
+export function actionEmail({ item, action, note, phone, preview = false }) {
+  const who = item.name || item.email;
+  const job = item.job ? ` ${item.job}` : "";
+  const headline = action === "yes"
+    ? (item.kind === "inquiry" ? `${who} wants to set up a time${job ? ` about${job}` : ""}` : `${who} wants to go ahead${job ? ` with${job}` : ""}`)
+    : `${who} has a question${job ? ` about${job}` : ""}`;
+  const lines = [
+    note ? `Their message: ${note}` : "",
+    phone ? `Phone: ${phone}` : "",
+    `Email: ${item.email}`,
+  ].filter(Boolean);
+  const subject = `${preview ? "[Preview] " : ""}${action === "yes" ? "Good news: " : "Question: "}${headline}`.slice(0, 180);
+  const html = shell(headline, [
+    p(`<strong>${esc(headline)}.</strong> ${action === "yes" ? "They tapped the button in your follow-up. Follow-ups for this job are stopped." : "They tapped \"I have a question\" in your follow-up. Follow-ups for this job are stopped."}`),
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;background:${C.panel};border:1px solid ${C.line};border-left:3px solid ${action === "yes" ? C.green : C.cyan};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};font-size:15px;line-height:1.55;color:${C.text};white-space:pre-wrap;">${lines.map(esc).join("<br>")}</td></tr></table>`,
+    p("Hit Reply to answer them directly.", `color:${C.muted};font-size:14px;`),
+  ].join(""));
+  const text = `${headline}.\n${action === "yes" ? "They tapped the button in your follow-up." : "They tapped \"I have a question\" in your follow-up."} Follow-ups for this job are stopped.\n\n${lines.join("\n")}\n\nHit Reply to answer them directly.`;
+  return { subject, html, text };
+}
+
+// Trial nudge n (0, 1, 2): sent only while the account has no follow-ups yet.
+export function nudgeEmail({ n, name, link, setupDone, trialing }) {
+  const hiText = firstName(name) === "there" ? "Hi," : `Hi ${firstName(name)},`;
+  const first = setupDone ? "Your Follow-Up Desk is set up, but there's nothing in it to follow up on yet." : "Your Follow-Up Desk is waiting on two minutes of setup.";
+  const ask = setupDone
+    ? "Add one estimate you're still waiting to hear back on. That's all it takes: the follow-ups go out on their own, and a reply stops them."
+    : "Add your business name and how you sign off, then one estimate you're still waiting on. The follow-ups go out on their own, and a reply stops them.";
+  const last = n === 2 && trialing ? "Your free trial ends in a few days. If the Desk isn't a fit, you can cancel from the Billing button on your dashboard and you won't be charged." : "";
+  const subject = ["Add your first estimate (2 minutes)", "Any estimates you're still waiting on?", "Still want help with follow-ups?"][n] || "Your Follow-Up Desk";
+  const html = shell(subject, [
+    p(esc(hiText)),
+    p(esc(first)),
+    p(esc(ask)),
+    button(link, setupDone ? "Add an estimate" : "Finish setup"),
+    last ? p(esc(last), `font-size:14px;color:${C.muted};`) : "",
+    p("Questions, or want a hand getting started? Just reply.", `font-size:14px;color:${C.muted};`),
+  ].join(""));
+  const text = `${hiText}\n\n${first}\n\n${ask}\n\n${link}\n\n${last ? last + "\n\n" : ""}Questions, or want a hand getting started? Just reply.\n\nNeonKey`;
+  return { subject, html, text };
 }
 
 // ---------- notices to hello@ ----------
@@ -208,10 +258,19 @@ export function fromAddress(env, business) {
   return `"${name}" <followups@${env.DESK_DOMAIN}>`;
 }
 
+export function actionUrls(env, acct, item) {
+  const s = acct.settings;
+  const base = `${env.APP_URL}/a/${acct.id}/${item.id}`;
+  return {
+    ...(s.buttons !== false ? { yes: `${base}/yes`, ask: `${base}/ask` } : {}),
+    ...(s.payUrl ? { pay: s.payUrl } : {}),
+  };
+}
+
 export function sendFollowUp(env, acct, item, { test = false } = {}) {
   const s = acct.settings;
   const unsub = `${env.APP_URL}/u/${acct.id}/${item.id}`;
-  const mail = followUpEmail(item, s, unsub);
+  const mail = followUpEmail(item, s, unsub, actionUrls(env, acct, item));
   const reply = replyAddress(env, acct.id, item.id);
   const to = test ? s.replyTo : item.email;
   return resend(env, {

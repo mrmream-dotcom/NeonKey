@@ -1,7 +1,7 @@
 // The dashboard. Server-rendered HTML with plain forms: no JavaScript, no cookies, no inline scripts.
 // The link token in the URL is the login (see store.js). Every dynamic string goes through esc().
 import { esc } from "./mail.js";
-import { KINDS, TIMEZONES, fmtDate, nextDue, DEFAULT_TEMPLATES } from "./engine.js";
+import { KINDS, TIMEZONES, ACTIONS, fmtDate, nextDue, DEFAULT_TEMPLATES } from "./engine.js";
 
 export const CSS = `
 :root{--bg:#0b0d17;--panel:#151935;--line:#262b52;--text:#e8eaf6;--muted:#b3b8d6;--cyan:#22d3ee;--violet:#a78bfa;--magenta:#f472b6;--green:#34d399;--amber:#fbbf24;--red:#f87171}
@@ -74,6 +74,11 @@ h1{font-size:1.6rem;margin:0 0 4px}
 .foot{margin-top:22px}
 :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 @media (max-width:640px){.hide-sm{display:none}th,td{padding:8px 4px}.tool{flex:1 1 calc(50% - 8px);justify-content:center}.tool-form{flex:1 1 calc(50% - 8px)}.tool-form .tool{width:100%}}
+body.cust{--bg:#f6f7f9;--panel:#ffffff;--line:#d9dde3;--text:#1f2937;--muted:#5b6472;--cyan:#1f2937;background:var(--bg);color:var(--text)}
+body.cust .panel{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+body.cust .btn{background:#1f2937;color:#fff;border-color:#1f2937}
+body.cust input,body.cust select,body.cust textarea{background:#fff;color:var(--text)}
+body.cust .foot{margin-top:18px;font-size:.8rem;color:var(--muted);text-align:center}
 `;
 
 const MSGS = {
@@ -85,6 +90,7 @@ const MSGS = {
   limit: ["You've reached 500 open follow-ups. Close some out before adding more.", "warn"],
   bad: ["Something in that form wasn't right. Check the highlighted fields and try again.", "bad"],
   bademail: ["That doesn't look like an email address.", "bad"],
+  badpay: ["The payment link has to be a full https:// link.", "bad"],
   baddays: ["Follow-up days must be three increasing numbers between 1 and 60.", "bad"],
   updated: ["Updated. No more follow-ups for that job.", ""],
   reopened: ["Reopened. Follow-ups pick up where they left off.", ""],
@@ -95,8 +101,8 @@ const MSGS = {
   reset: ["Messages reset to the defaults.", ""],
 };
 
-function page(title, body) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>${esc(title)} · NeonKey Follow-Up Desk</title><link rel="stylesheet" href="/app.css"></head><body><div class="wrap">${body}</div></body></html>`;
+function page(title, body, cls = "") {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>${esc(title)} · NeonKey Follow-Up Desk</title><link rel="stylesheet" href="/app.css"></head><body${cls ? ` class="${cls}"` : ""}><div class="wrap">${body}</div></body></html>`;
 }
 
 function header(acct) {
@@ -271,6 +277,10 @@ export function settingsPage({ acct, base, msg }) {
 <div><label for="timezone">Your time zone</label><select id="timezone" name="timezone">${tzOptions(s.timezone)}</select></div>
 </div>
 <p style="margin:12px 0 0"><label><input type="checkbox" name="bccMe" value="1"${s.bccMe ? " checked" : ""}>Send me a copy of every follow-up</label></p></div>
+<div class="panel"><h2>Buttons in your follow-ups</h2>
+<p style="margin:0 0 10px"><label><input type="checkbox" name="buttons" value="1"${s.buttons !== false ? " checked" : ""}>Add \"Yes, let's go ahead\" and \"I have a question\" buttons. One tap tells you right away and stops that job's follow-ups.</label></p>
+<label for="payUrl">Payment link (optional)</label><input id="payUrl" name="payUrl" type="url" maxlength="500" placeholder="https://..." value="${esc(s.payUrl || "")}">
+<p class="small muted" style="margin:6px 0 0">Paste a link from Stripe, Square, PayPal or your invoicing app. Estimates get a \"Pay the deposit\" button and unpaid invoices get \"Pay the invoice\". Money goes straight to you.</p></div>
 <div class="panel"><h2>When follow-ups go out</h2><p class="small muted">Days after you sent the original. Three increasing numbers, 1 to 60.</p><div class="row">
 ${[0, 1, 2].map((k) => `<div><label for="d${k}">Follow-up ${k + 1}</label><input id="d${k}" name="d${k}" type="number" min="1" max="60" required value="${esc(s.days[k])}"></div>`).join("")}
 </div></div>
@@ -299,4 +309,27 @@ ${done ? `<p>You won't get more follow-up emails from ${name} through this servi
 
 export function notFoundPage() {
   return page("Link not found", header(null) + `<div class="panel" style="max-width:520px"><h2>That link doesn't work</h2><p>It may be old or mistyped. <a href="/login">Get a new link</a> with the email you paid with.</p></div>`);
+}
+
+// The customer's side of the one-tap buttons. Light and plain: it belongs to the owner's business, not to NeonKey.
+export function actionPage({ business, item, action, path, done = false, error = "" }) {
+  const name = esc(business || "the business");
+  const labels = ACTIONS[item.kind] || ACTIONS.estimate;
+  const job = item.job ? esc(item.job) : "";
+  const foot = `<p class="foot">Sent through NeonKey Follow-Up Desk for ${name}.</p>`;
+  if (done) {
+    return page("Sent", `<div class="panel" style="max-width:560px;margin:40px auto 0"><h2>Thanks, it's sent</h2><p>${name} has your message and will get back to you. You won't get more follow-up emails about ${job || "this"}.</p></div>${foot}`, "cust");
+  }
+  const yes = action === "yes";
+  const title = yes ? (labels.yes || "Yes") : "Ask a question";
+  const intro = yes
+    ? `Let ${name} know you'd like to go ahead${job ? ` with <strong>${job}</strong>` : ""}. They'll reach out to set things up.`
+    : `Send your question to ${name}${job ? ` about <strong>${job}</strong>` : ""}. They'll reply by email.`;
+  return page(title, `<div class="panel" style="max-width:560px;margin:40px auto 0"><h2>${esc(title)}</h2><p>${intro}</p>
+${error ? `<p class="small" style="color:#b91c1c">${esc(error)}</p>` : ""}
+<form method="post" action="${esc(path)}">
+<label for="note">${yes ? "Anything they should know? (optional)" : "Your question"}</label><textarea id="note" name="note" maxlength="1000"${yes ? "" : " required"} style="min-height:110px"></textarea>
+${yes ? `<label for="phone" style="margin-top:10px">Best phone number (optional)</label><input id="phone" name="phone" type="tel" maxlength="30" autocomplete="tel">` : ""}
+<p style="margin:14px 0 0"><button class="btn" type="submit">${yes ? `Send to ${name}` : "Send my question"}</button></p>
+</form></div>${foot}`, "cust");
 }

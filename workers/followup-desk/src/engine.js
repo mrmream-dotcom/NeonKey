@@ -45,6 +45,28 @@ export const DEFAULT_TEMPLATES = {
 
 export const DEFAULT_DAYS = [3, 7, 14];
 
+// One-tap buttons under each follow-up (customer -> owner). yes = ready to go ahead, ask = has a question,
+// pay = the owner's own payment link (Stripe, Square, PayPal...). Money never passes through NeonKey.
+export const ACTIONS = {
+  estimate: { yes: "Yes, let's go ahead", ask: "I have a question", pay: "Pay the deposit" },
+  invoice: { yes: "", ask: "I have a question", pay: "Pay the invoice" },
+  inquiry: { yes: "Yes, let's set up a time", ask: "I have a question", pay: "" },
+};
+
+// Trial nudges: days after signup, sent only while the account has no follow-ups yet.
+export const NUDGE_DAYS = [1, 3, 10];
+
+// An https link the owner pastes for payments. Anything else is rejected (no javascript:, no http:).
+export function validPayUrl(s) {
+  const v = String(s ?? "").trim();
+  if (!v) return "";
+  if (v.length > 500 || /\s/.test(v)) return null;
+  try {
+    const u = new URL(v);
+    return u.protocol === "https:" && u.hostname.includes(".") && !u.username && !u.password ? u.href : null;
+  } catch { return null; }
+}
+
 export function defaultSettings(business = "") {
   return {
     business: String(business || "").slice(0, 80),
@@ -54,6 +76,8 @@ export function defaultSettings(business = "") {
     days: [...DEFAULT_DAYS],
     templates: structuredClone(DEFAULT_TEMPLATES),
     bccMe: true,
+    buttons: true,
+    payUrl: "",
   };
 }
 
