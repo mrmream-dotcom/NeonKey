@@ -14,6 +14,20 @@ const canBuy = setupGuide.buyUrl !== '';
     <p class="lede">The complete setup guide to the production backend NeonKey runs on: business email that inboxes trust, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails and a lead tracker that shows what's actually happening. Every step comes from a system running today, with the exact settings.</p>
   </PageHeader>
 
+  <!-- Top call to action (Nov 9 2026): ad visitors landed here and 74% left before reaching the buy box,
+       which sits at the bottom of the page on phones. Price and buy button up top, plus a free next step. -->
+  <section class="sg-top-wrap">
+    <div class="container">
+      <div class="panel topline accent-magenta sg-top">
+        <p class="sg-top-price">{usd(setupGuide.price)} <span class="muted">one-time · PDF emailed in minutes</span></p>
+        {canBuy
+          ? <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-top" data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
+          : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
+        <p class="sg-small sg-top-free">Not ready to buy? <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="guide-top" data-umami-event-track="founders">Run the free Launch Preflight</a> on your domain first. It takes about 30 seconds, no signup.</p>
+      </div>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="container sg-grid">
       <div class="panel topline">
@@ -81,6 +95,12 @@ const canBuy = setupGuide.buyUrl !== '';
       </aside>
     </div>
   </section>
+  {canBuy && (
+    <div class="sg-mbar">
+      <span class="sg-mbar-price">{usd(setupGuide.price)}</span>
+      <a class="btn btn-primary" href={setupGuide.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location="guide-mobile-bar" data-umami-event-track="founders">Get the guide</a>
+    </div>
+  )}
   <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>
 </Base>
@@ -105,4 +125,18 @@ const canBuy = setupGuide.buyUrl !== '';
   .sg-small { font-size: .88rem; margin: 0; }
   .sg-video { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); background: #0b0d17; margin: .25rem 0 .35rem; }
   .sg-vnote { margin-bottom: 1.25rem; }
+  .sg-top-wrap { padding: 0 0 1.25rem; }
+  .sg-top { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+  .sg-top-price { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  .sg-top-price .muted { font-size: .88rem; font-weight: 400; }
+  .sg-top-free { flex-basis: 100%; }
+  .sg-top .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  /* Phones only: a slim buy bar pinned to the bottom of the screen (CSS only, no script). */
+  .sg-mbar { display: none; }
+  @media (max-width: 820px) {
+    .sg-mbar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: .6rem 16px calc(.6rem + env(safe-area-inset-bottom)); background: var(--bg, #0b0d17); border-top: 1px solid var(--line, #262b52); }
+    .sg-mbar-price { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+    .sg-mbar .btn { margin: 0; }
+    :global(body) { padding-bottom: 4.5rem; }
+  }
 </style>
