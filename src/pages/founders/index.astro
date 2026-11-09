@@ -2,7 +2,8 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { setupGuide, usd } from '../../data/services';
+import { setupGuide } from '../../data/services';
+import GuideSale from '../../components/GuideSale.astro';
 // Founders track (Nov 6 2026): tools and guides for startup founders, kept apart from the small-business pages.
 // Linked from the footer only; the main nav stays aimed at small businesses. Umami events carry track=founders.
 ---
@@ -19,7 +20,7 @@ import { setupGuide, usd } from '../../data/services';
         <span class="fd-go">Run the check</span>
       </a>
       <a class="panel topline accent-magenta fd-card" href={url('/founders/guide/')} data-umami-event="founders-nav" data-umami-event-target="guide" data-umami-event-track="founders">
-        <span class="kicker">Guide · PDF · {usd(setupGuide.price)}</span>
+        <span class="kicker"><GuideSale variant="kicker" location="founders-hub" /></span>
         <h2>{setupGuide.name}</h2>
         <p class="muted">{setupGuide.subtitle}, step by step: domain and email, website, Stripe, a self-delivering product, outreach and lead tracking. Includes an Email Authentication Setup.</p>
         <span class="fd-go">See what's inside</span>
