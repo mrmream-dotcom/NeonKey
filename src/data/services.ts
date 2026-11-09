@@ -291,7 +291,7 @@ export const followUpDesk: Offer = {
   unit: '/month',
   outcome: 'Estimates that go quiet get a polite follow-up on their own, and the follow-ups stop the moment your customer replies',
   for: 'For contractors and service businesses that send estimates by email',
-  items: ['Up to three follow-ups per estimate, written in your words', 'Sent under your business name on weekday mornings', 'Stops on its own when your customer replies, and the reply comes to your inbox', 'Mark jobs Won, Lost or Stop with one click', 'A short report every Monday', 'Paste a list from QuickBooks or a spreadsheet'],
+  items: ['Up to three follow-ups per estimate, written in your words', 'Sent under your business name on weekday mornings', 'Stops on its own when your customer replies, and the reply comes to your inbox', 'One-tap "Yes, let\'s go ahead" and "I have a question" buttons', 'Add your own deposit or payment link', 'Mark jobs Won, Lost or Stop with one click', 'A short report every Monday', 'Paste a list from QuickBooks or a spreadsheet'],
   href: '/follow-up-desk/',
   buyUrl: 'https://buy.stripe.com/7sY4gydNsbIQ00TcgQb3q03',
 };
