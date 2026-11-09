@@ -1,0 +1,22 @@
+WEBVTT
+
+00:00.400 --> 00:04.400
+The Founder Stack is the setup guide to the backend NeonKey runs on.
+
+00:04.850 --> 00:10.500
+Start with your domain: email that inboxes trust, set up before you send a single message.
+
+00:10.850 --> 00:15.250
+Then a fast website, small Workers for your forms, and Stripe checkout.
+
+00:15.650 --> 00:20.650
+Build a product that delivers itself, from payment to inbox, with no manual step.
+
+00:21.000 --> 00:24.800
+Track every lead, and run it all with Claude and written guardrails.
+
+00:25.200 --> 00:28.350
+An Email Authentication Setup for your own domain is included.
+
+00:28.750 --> 00:31.500
+Get your copy at neonkey.tech.
