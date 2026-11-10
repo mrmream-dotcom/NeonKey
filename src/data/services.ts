@@ -242,7 +242,7 @@ export const automationOffers: Offer[] = [
  * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
  */
 /** Michael, Nov 4 2026: the $49 Lockdown is a bridge into bigger work; its price comes off any larger package or setup. */
-export const lockdownCredit = 'Want more later? Your $49 comes off any larger package or setup.';
+export const lockdownCredit = 'Want more later? What you pay for it comes off any larger package or setup.';
 
 export const emailLockdown: Offer = {
   slug: 'email-lockdown',
@@ -274,6 +274,25 @@ export const setupGuide = {
   includesLockdown: true,
   buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
 };
+
+/**
+ * Email Authentication Setup flash sale (Michael, Nov 9 2026 ~3:06 PM AKST: "SAME WITH EMAIL LOCKDOWN 50% off!!!!!"),
+ * same window as the Founder Stack sale. $49 is the real price it has sold at since Nov 4, so it can be crossed out.
+ * Uses the EXISTING Payment Link (the neonkey-lockdown Worker only fulfills checkouts from that link) with promotion
+ * code FLASH50 prefilled through ?prefilled_promo_code. Both limits are enforced by Stripe: coupon vyMpAFWl and
+ * promotion code promo_1Ua2aUCRxS1tvAi2t2iuv6On are 50% off nk_email_lockdown, max 100 redemptions, expire at endsAt.
+ * After the sale: rebuild the site; optionally set allow_promotion_codes back to false on the Lockdown link.
+ */
+export const lockdownFlashSale = {
+  price: 24.5,
+  percentOff: 50,
+  cap: 100,
+  code: 'FLASH50',
+  endsAt: '2026-11-10T15:30:00-09:00',
+  buyUrl: 'https://buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01?prefilled_promo_code=FLASH50',
+};
+/** True while the Lockdown flash sale is not yet over at build time. */
+export const lockdownFlashSaleLive = Date.now() < Date.parse(lockdownFlashSale.endsAt);
 
 /**
  * The Founder Stack 24-hour flash sale (Michael, Nov 9 2026: "FLASH SALE 24 HOURS ONLY FOUNDERS GUIDE IS ON SALE FOR

@@ -1,0 +1,27 @@
+---
+// Countdown and deadline swap for flash-sale markup: inside any [data-sale-ends="<ISO time>"] box, [data-countdown]
+// shows the time left, and at the deadline [data-sale] hides and [data-sale-after] (the regular offer) shows.
+// One fixed end time for every visitor; nothing resets on reload. Include once per page while a sale is live.
+---
+<script>
+  const boxes = Array.from(document.querySelectorAll<HTMLElement>('[data-sale-ends]'));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  function tick() {
+    const now = Date.now();
+    for (const box of boxes) {
+      const left = Date.parse(box.dataset.saleEnds || '') - now;
+      if (!(left > 0)) {
+        box.querySelectorAll<HTMLElement>('[data-sale]').forEach((el) => { el.hidden = true; });
+        box.querySelectorAll<HTMLElement>('[data-sale-after]').forEach((el) => { el.hidden = false; });
+        continue;
+      }
+      const s = Math.floor(left / 1000);
+      const text = `${pad(Math.floor(s / 3600))}h ${pad(Math.floor((s % 3600) / 60))}m ${pad(s % 60)}s left`;
+      box.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => { el.textContent = text; });
+    }
+  }
+  if (boxes.length) { tick(); setInterval(tick, 1000); }
+</script>
+<style is:global>
+  [data-sale][hidden], [data-sale-after][hidden] { display: none !important; }
+</style>
