@@ -2,26 +2,35 @@
 // $49 Email Authentication Setup entry offer: buy online, no call. The $49 is credited toward any larger package or setup
 // (Michael, Nov 4 2026 8:19 PM AKST: "we'll take the 49 off any package"). Shown on the homepage and services page.
 import { url } from '../config';
-import { emailLockdown, lockdownCredit, usd } from '../data/services';
+import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlashSaleLive as live, usd } from '../data/services';
+import SaleClock from './SaleClock.astro';
 interface Props { location: string }
 const { location } = Astro.props;
 ---
 <aside class="card topline accent-magenta lockdown-strip" aria-label="Email Authentication Setup">
   <div class="ls-text">
     <span class="kicker">Start small · buy online · no call</span>
-    <p class="ls-title"><strong>{emailLockdown.name}, {usd(emailLockdown.from)} flat.</strong> Make it harder for scammers to send email pretending to be you.</p>
+    {live && <p class="ls-flash" data-sale-ends={sale.endsAt}><span data-sale>Flash sale · {sale.percentOff}% off · first {sale.cap} orders · <span data-countdown>24 hours only</span></span></p>}
+    <div data-sale-ends={live ? sale.endsAt : undefined}>
+      {live && <p class="ls-title" data-sale><strong>{emailLockdown.name}, <s class="ls-was">{usd(emailLockdown.from)}</s> {usd(sale.price)}.</strong> Make it harder for scammers to send email pretending to be you.</p>}
+      <p class="ls-title" data-sale-after hidden={live}><strong>{emailLockdown.name}, {usd(emailLockdown.from)} flat.</strong> Make it harder for scammers to send email pretending to be you.</p>
+    </div>
     <p class="muted ls-note">{lockdownCredit}</p>
   </div>
-  <div class="btn-row ls-btns">
-    <a class="btn btn-primary btn-sm" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location={location}>Buy now · {usd(emailLockdown.from)}</a>
+  <div class="btn-row ls-btns" data-sale-ends={live ? sale.endsAt : undefined}>
+    {live && <a data-sale class="btn btn-primary btn-sm" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${emailLockdown.name} flash ${sale.price}`} data-umami-event-location={location}>Buy now · {usd(sale.price)}</a>}
+    <a data-sale-after hidden={live} class="btn btn-primary btn-sm" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location={location}>Buy now · {usd(emailLockdown.from)}</a>
     <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="services-cta" data-umami-event-offer={emailLockdown.name} data-umami-event-location={location}>Details</a>
   </div>
 </aside>
+{live && <SaleClock />}
 
 <style>
   .lockdown-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; }
   .ls-text { flex: 1 1 22rem; min-width: 0; }
   .ls-title { margin: .25rem 0; color: var(--text); }
   .ls-note { margin: 0; font-size: .9rem; }
+  .ls-flash { margin: .2rem 0; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--magenta); font-variant-numeric: tabular-nums; }
+  .ls-was { color: var(--muted); font-weight: 500; }
   .ls-btns { flex: 0 0 auto; margin: 0; }
 </style>

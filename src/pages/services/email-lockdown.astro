@@ -3,7 +3,8 @@ import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/services';
+import { emailLockdown, introPricing, lockdownCredit, lockdownFlashSale as sale, lockdownFlashSaleLive as live, usd } from '../../data/services';
+import SaleClock from '../../components/SaleClock.astro';
 // Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
 // from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
@@ -45,8 +46,21 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
       </div>
       <aside class="panel topline accent-magenta el-buy">
         <span class="kicker">{emailLockdown.kicker}</span>
-        <p class="price">{usd(emailLockdown.from)}<small>{introPricing.label} · standard {usd(emailLockdown.standard!)}</small></p>
-        <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
+        <div class="el-pricebox" data-sale-ends={live ? sale.endsAt : undefined}>
+          {live && (
+            <div data-sale class="el-pricebox">
+              <p class="el-flash">Flash sale · {sale.percentOff}% off</p>
+              <p class="el-count"><span data-countdown>24 hours only</span></p>
+              <p class="price"><s class="el-was">{usd(emailLockdown.from)}</s> {usd(sale.price)}<small>First {sale.cap} orders only. When the time or the {sale.cap} run out, the price goes back to {usd(emailLockdown.from)}.</small></p>
+              <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${emailLockdown.name} flash ${sale.price}`} data-umami-event-location="lockdown-page">Buy now · {usd(sale.price)}</a>
+              <p class="muted el-small">Code {sale.code} is added at checkout for you. If it doesn't show, type it in the promotion code box. If Stripe says the code is invalid, all {sale.cap} are gone.</p>
+            </div>
+          )}
+          <div data-sale-after hidden={live} class="el-pricebox">
+            <p class="price">{usd(emailLockdown.from)}<small>{introPricing.label} · standard {usd(emailLockdown.standard!)}</small></p>
+            <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
+          </div>
+        </div>
         <a class="btn btn-ghost btn-sm" href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a>
         <p class="el-small"><strong>{lockdownCredit}</strong></p>
         <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
@@ -56,6 +70,7 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
     </div>
   </section>
 
+  {live && <SaleClock />}
 </Base>
 
 <style>
@@ -69,5 +84,9 @@ import { emailLockdown, introPricing, lockdownCredit, usd } from '../../data/ser
   .el-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
   .el-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
   .el-buy .btn { align-self: flex-start; }
+  .el-pricebox { display: flex; flex-direction: column; gap: .6rem; }
+  .el-flash { margin: 0; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--magenta); }
+  .el-count { margin: 0; align-self: flex-start; padding: .3rem .7rem; border-radius: 999px; border: 1px solid var(--magenta); color: var(--magenta); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .el-was { color: var(--muted); font-weight: 500; }
   .el-small { font-size: .88rem; margin: 0; }
 </style>
