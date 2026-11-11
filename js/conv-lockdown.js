@@ -1,4 +1,4 @@
-// Google Ads conversion: "Lockdown purchase" ($49 Email Lockdown, Category Purchase, Count = One).
+// Google Ads conversion: "Lockdown purchase" ($29 Email Lockdown, Category Purchase, Count = One).
 // Loaded only on /pay/thanks/. The Email Lockdown Stripe Payment Link redirects there after payment as
 //   /pay/thanks/?offer=email-lockdown&session_id={CHECKOUT_SESSION_ID}
 // It fires only when that offer and a real-looking Checkout Session id (cs_live_/cs_test_) are in the URL,
@@ -14,6 +14,6 @@
   if (p.get('offer') !== 'email-lockdown' || !/^cs_(live|test)_[A-Za-z0-9]+$/.test(sid)) return;
   window.__nkLockdownConv = true;
   if (typeof gtag === 'function') {
-    gtag('event', 'conversion', { send_to: SEND_TO, value: 49.0, currency: 'USD', transaction_id: sid });
+    gtag('event', 'conversion', { send_to: SEND_TO, value: 29.0, currency: 'USD', transaction_id: sid });
   }
 })();
