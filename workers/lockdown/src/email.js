@@ -68,19 +68,19 @@ function recordsText(a) {
 }
 const stepsText = (a) => a.buyerSteps.map((s) => `- ${s.title}: ${s.text}\n  Guide: ${s.help}`).join("\n\n");
 
-// Upsell (Michael, Nov 4 2026: the $49 is credited toward any package). Specific to what the audit detected,
+// Upsell (Michael, Nov 4 2026: the price paid is credited toward any package; price $29 since Nov 11 2026). Specific to what the audit detected,
 // and always after the result: deliver first, offer relevant help second, broader services third.
 const SERVICES = "https://neonkey.tech/services/";
 function upsell(a) {
   const ws = a.provider && /Google|Microsoft/.test(a.provider.label) ? a.provider.label : null;
   return {
-    title: "Your $49 counts toward any NeonKey package",
+    title: "Your $29 counts toward any NeonKey package",
     html: ws
-      ? `Since you're on <strong>${esc(ws)}</strong>, these records are only part of the picture. The <a href="https://neonkey.tech/services/remote-it/?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">Remote Small-Office IT Setup</a> also covers 2-step sign-in, a password manager and backups: from $299, or from $250 with your $49 credit. Want every new lead answered and followed up too? The <a href="https://neonkey.tech/services/?utm_source=lockdown&utm_medium=email#front-office-package" style="color:${C.cyan};font-weight:700;text-decoration:none;">Front Office Package</a> is $950 after your credit.`
-      : `Going further, like a full remote IT setup (from $250 after your credit) or the Front Office Package ($950 after your credit)? We take the $49 you paid for this setup off the price. <a href="${SERVICES}?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">See the packages</a>.`,
+      ? `Since you're on <strong>${esc(ws)}</strong>, these records are only part of the picture. The <a href="https://neonkey.tech/services/remote-it/?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">Remote Small-Office IT Setup</a> also covers 2-step sign-in, a password manager and backups: from $299, or from $270 with your $29 credit. Want every new lead answered and followed up too? The <a href="https://neonkey.tech/services/?utm_source=lockdown&utm_medium=email#front-office-package" style="color:${C.cyan};font-weight:700;text-decoration:none;">Front Office Package</a> is $970 after your credit.`
+      : `Going further, like a full remote IT setup (from $270 after your credit) or the Front Office Package ($970 after your credit)? We take the $29 you paid for this setup off the price. <a href="${SERVICES}?utm_source=lockdown&utm_medium=email" style="color:${C.cyan};font-weight:700;text-decoration:none;">See the packages</a>.`,
     text: ws
-      ? `Your $49 counts toward any NeonKey package. Since you're on ${ws}, these records are only part of the picture: the Remote Small-Office IT Setup also covers 2-step sign-in, a password manager and backups (from $299, or from $250 with your $49 credit): https://neonkey.tech/services/remote-it/ . The Front Office Package is $950 after your credit.`
-      : `Your $49 counts toward any NeonKey package: a full remote IT setup is from $250 after your credit, the Front Office Package $950. ${SERVICES}`,
+      ? `Your $29 counts toward any NeonKey package. Since you're on ${ws}, these records are only part of the picture: the Remote Small-Office IT Setup also covers 2-step sign-in, a password manager and backups (from $299, or from $270 with your $29 credit): https://neonkey.tech/services/remote-it/ . The Front Office Package is $970 after your credit.`
+      : `Your $29 counts toward any NeonKey package: a full remote IT setup is from $270 after your credit, the Front Office Package $970. ${SERVICES}`,
   };
 }
 function creditBlock(a) {
@@ -109,7 +109,7 @@ function scoreLine(passing, a) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${seg}</tr></table>
 <p style="margin:8px 0 0 0;font-family:${FONT};font-size:13px;color:${C.muted};">${esc(a.domain)}${a.provider ? ` · ${esc(a.provider.label)}` : ""}${a.dnsHost?.label ? ` · domain at ${esc(a.dnsHost.label)}` : ""}</p></td></tr></table>`;
 }
-const doneForYou = (a) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in your $49. No passwords shared.`, "font-size:15px;");
+const doneForYou = (a) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in your $29. No passwords shared.`, "font-size:15px;");
 
 // Locked domains: point at the extra checks so "you're already fine" still comes with something useful.
 function extrasLine(a) {
@@ -150,7 +150,7 @@ export function reportEmail({ name, a, pdf = false }) {
   body += doneForYou(a) + p("We'll recheck on day 2 and day 5 and send you an updated report.", `font-size:14px;color:${C.muted};`);
   body += creditBlock(a) + p("NeonKey", `color:${C.muted};`);
 
-  const text = `${hiT}\n\nThanks for your order. Here's where ${a.domain} stands (${passing} of 4 checks passing). Your full report is attached.\n\n${total} ${total === 1 ? "CHANGE" : "CHANGES"} TO MAKE\n${changeText(a)}\n\n${a.dnsHost?.help ? `Make these at ${a.dnsHost.label}. Guide: ${a.dnsHost.help}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person. We'll follow up within 1 business day.\n\n" : ""}Rather not do it yourself? Reply and we'll make these changes for you, included in your $49.\nWe'll recheck on day 2 and day 5 and send you an updated report.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  const text = `${hiT}\n\nThanks for your order. Here's where ${a.domain} stands (${passing} of 4 checks passing). Your full report is attached.\n\n${total} ${total === 1 ? "CHANGE" : "CHANGES"} TO MAKE\n${changeText(a)}\n\n${a.dnsHost?.help ? `Make these at ${a.dnsHost.label}. Guide: ${a.dnsHost.help}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person. We'll follow up within 1 business day.\n\n" : ""}Rather not do it yourself? Reply and we'll make these changes for you, included in your $29.\nWe'll recheck on day 2 and day 5 and send you an updated report.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
   return { subject, html: shell(`${passing} of 4 checks passing for ${a.domain}. Your report is attached.`, body), text };
 }
 

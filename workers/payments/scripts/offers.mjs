@@ -18,9 +18,9 @@ function pagePrice(file, pattern, label) {
 }
 const tuneUp = pagePrice("src/pages/local.astro", /<strong>\$(\d+)<\/strong> founding rate/, "Office Tech Tune-Up");
 // Email Lockdown is sold by pay link and outreach email, not on its own site card, so its founding rate lives here:
-// $49 (Michael, Nov 3 2026; live Payment Link since Nov 4). The site may list a higher standard rate inside the
-// package ("standard rate $79"); we only check the founding rate is not above what the site shows.
-const lockdown = 49;
+// $29 (Michael, Nov 11 2026: "Change the price of the email permanently to 29"; was $49 from Nov 3). The package
+// part on the site ("standard rate $29") must not be below it.
+const lockdown = 29;
 {
   const text = readFileSync(root + "src/data/services.ts", "utf8");
   const shown = text.match(/Email lockdown[^']*', value: '(?:standard rate|normally) \$(\d+)'/);

@@ -13,7 +13,7 @@ After a job is scoped, Michael sends one of these:
 | --- | --- | --- |
 | Scoped project, remote or on-site (IT Setup, Quick Win, AI Intake, Lead-Routing, Front Office, Tune-Up) | **Invoicing**: Stripe emails an invoice with a hosted pay page (card, bank, Apple/Google Pay, Link) | Stripe Dashboard or the Stripe phone app (Invoices > Create). `npm run invoice` does the same from a terminal. |
 | Monthly Remote Support Plan ($99/mo flat, no trial) | **Billing**: subscription through a reusable Payment Link; Stripe charges monthly, retries failed cards, emails receipts | `npm run checkout-link -- --offer support_plan_monthly --reusable` (once), then send that link. Leave out `--reusable` for a 24-hour link tied to one email. |
-| Fixed-price item in an outreach email ($49 Email Lockdown) | **Payments**: reusable Payment Link | `npm run checkout-link -- --offer email_lockdown --reusable` |
+| Fixed-price item in an outreach email ($29 Email Lockdown) | **Payments**: reusable Payment Link | `npm run checkout-link -- --offer email_lockdown --reusable` |
 | On-site job paid on the spot | Invoice with the client there: open its pay page on their phone | Dashboard or app, due today |
 
 This follows Stripe's integration planner (run Nov 4 2026): invoices made by hand per job in the Dashboard,

@@ -28,7 +28,7 @@
     f.fbq('init', META_PIXEL_ID);
     f.fbq('track', 'PageView');
     if (isSignup) f.fbq('track', 'Lead', { content_name: 'Unlock the Week' });
-    if (isPurchase) f.fbq('track', 'Purchase', { value: 97, currency: 'USD', content_name: 'The Founder Stack' }, { eventID: sid });
+    if (isPurchase) f.fbq('track', 'Purchase', { value: 29, currency: 'USD', content_name: 'The Founder Stack' }, { eventID: sid });
   }
 
   if (REDDIT_PIXEL_ID) {
@@ -42,6 +42,6 @@
     w.rdt('init', REDDIT_PIXEL_ID);
     w.rdt('track', 'PageVisit');
     if (isSignup) w.rdt('track', 'SignUp');
-    if (isPurchase) w.rdt('track', 'Purchase', { value: 97, currency: 'USD', conversionId: sid });
+    if (isPurchase) w.rdt('track', 'Purchase', { value: 29, currency: 'USD', conversionId: sid });
   }
 })();

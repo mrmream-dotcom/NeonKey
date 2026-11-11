@@ -239,6 +239,17 @@ test("ignores other Payment Links, unpaid sessions and live events while ALLOW_L
   assert.equal(sent.length, 0);
 });
 
+test("LOCKDOWN_PAYMENT_LINK can list the new and the retired link", async () => {
+  const multi = { ...env, LOCKDOWN_PAYMENT_LINK: ` plink_new , ${PLINK}` };
+  const r = await worker.fetch(signed(ev(session("multi.test"))), multi);
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 2);
+  sent.length = 0;
+  const other = await worker.fetch(signed(ev(session("multi.test", { id: "cs_test_other", payment_link: "plink_other" }))), multi);
+  assert.deepEqual(await other.json(), { ok: true, ignored: "other_offer" });
+  assert.equal(sent.length, 0);
+});
+
 test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with From + BCC", async () => {
   const r = await worker.fetch(signed(ev(session("https://www.bare.test/"))), env);
   assert.equal(r.status, 200);
@@ -253,12 +264,12 @@ test("paid Lockdown: buyer gets the branded report, hello@ gets an FYI, all with
   assert.equal(buyer.attachments.length, 1);
   assert.match(buyer.attachments[0].filename, /NeonKey-Email-Report-bare\.test\.html/);
   assert.match(Buffer.from(buyer.attachments[0].content, "base64").toString("utf8"), /Recommended changes/);
-  assert.match(buyer.html, /included in your \$49/);
+  assert.match(buyer.html, /included in your \$29/);
   assert.doesNotMatch(buyer.html + buyer.text, /10 minutes|stop working/);
   assert.match(buyer.html, /v=spf1 include:_spf\.google\.com ~all/);
   assert.match(buyer.html, /godaddy\.com\/help\/add-a-txt-record/);
-  assert.match(buyer.html, /Your \$49 counts toward any NeonKey package/);
-  assert.match(buyer.text, /from \$250 with your \$49 credit/);
+  assert.match(buyer.html, /Your \$29 counts toward any NeonKey package/);
+  assert.match(buyer.text, /from \$270 with your \$29 credit/);
   assert.match(buyer.html, /Hi Pat,/);
   assert.deepEqual(notice.to, ["hello@neonkey.tech"]);
   assert.equal(notice.reply_to, "pat@owner.example");
@@ -354,7 +365,7 @@ test("rechecks: quiet on day 2, reminder on day 5, ACTION NEEDED on day 10, done
   assert.equal(sent.length, 0, "closed orders are left alone");
 });
 
-test("buyer fixes everything by day 2: locked-down email with the $49 credit", async () => {
+test("buyer fixes everything by day 2: locked-down email with the $29 credit", async () => {
   await worker.fetch(signed(ev(session("bare.test"))), env);
   const created = JSON.parse([...env.ORDERS.m.values()][0]).created;
   zone["bare.test"].TXT.push(q("v=spf1 include:_spf.google.com ~all"));
@@ -366,7 +377,7 @@ test("buyer fixes everything by day 2: locked-down email with the $49 credit", a
   assert.match(sent[0].body.subject, /bare\.test: all four records published/);
   assert.match(sent[0].body.html, /up from 1 of 4/);
   assert.ok(sent[0].body.attachments?.length === 1);
-  assert.match(sent[0].body.html, /Your \$49 counts toward any NeonKey package/);
+  assert.match(sent[0].body.html, /Your \$29 counts toward any NeonKey package/);
   assert.match(sent[1].body.subject, /FYI: Email Lockdown locked down/);
 });
 

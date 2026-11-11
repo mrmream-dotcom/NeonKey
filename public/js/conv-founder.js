@@ -1,4 +1,4 @@
-// Google Ads conversion: "Founder guide purchase" (The Founder Stack, $97, Category Purchase, Count = Every).
+// Google Ads conversion: "Founder guide purchase" (The Founder Stack, $29, Category Purchase, Count = Every).
 // Loaded only on /founders/guide/thanks/. The Founder Stack Stripe Payment Link redirects there after payment as
 //   /founders/guide/thanks/?offer=founder-stack&session_id={CHECKOUT_SESSION_ID}
 // It fires only when that offer and a real-looking Checkout Session id (cs_live_/cs_test_) are in the URL,
@@ -14,6 +14,6 @@
   if (p.get('offer') !== 'founder-stack' || !/^cs_(live|test)_[A-Za-z0-9]+$/.test(sid)) return;
   window.__nkFounderConv = true;
   if (typeof gtag === 'function') {
-    gtag('event', 'conversion', { send_to: SEND_TO, value: 97.0, currency: 'USD', transaction_id: sid });
+    gtag('event', 'conversion', { send_to: SEND_TO, value: 29.0, currency: 'USD', transaction_id: sid });
   }
 })();

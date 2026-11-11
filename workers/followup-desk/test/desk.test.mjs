@@ -424,9 +424,17 @@ test("a follow-up Resend refuses: alert to NOTIFY_TO, retried next hour, /health
   assert.ok(!alerts[0].text.includes("jane@ex.test"), "alert names the account, not the customer's client");
   const after = await getAccount(env, acct.id);
   assert.equal(after.items[0].step || 0, 0, "not counted as sent, so it retries");
-  const h = await health();
-  assert.equal(h.status, 503);
-  assert.deepEqual(h.body.problems, ["last hourly run had failures"]);
+  // Read /health a minute after that run, not at the real clock: the run is pinned to TUE_10AM, so once the real
+  // time is 2+ hours past it, "hourly run is late" would also show (this test went red on Nov 11 2026 that way).
+  const realNow = Date.now;
+  Date.now = () => TUE_10AM + 60000;
+  try {
+    const h = await health();
+    assert.equal(h.status, 503);
+    assert.deepEqual(h.body.problems, ["last hourly run had failures"]);
+  } finally {
+    Date.now = realNow;
+  }
 });
 
 test("a request that throws alerts NOTIFY_TO without the private link in it", async () => {

@@ -19,8 +19,10 @@ NOTIFY_TO = "hello@neonkey.tech"
 REPLY_TO = "hello@neonkey.tech"
 # Every email this Worker sends is BCC'd here (Resend has no account-level BCC).
 BCC_ADDRESS = "mr.mream@gmail.com"
-# Only checkouts from this Payment Link are handled: the live $49 Email Lockdown link (buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01).
-LOCKDOWN_PAYMENT_LINK = "plink_1UXuPCCRxS1tvAi22FJy7HTk"
+# Only checkouts from these Payment Links are handled (comma-separated). First: the live $29 Email Lockdown link
+# (buy.stripe.com/9B6dR8bFk14cfZR94Eb3q08, since Nov 11 2026). Second: the retired $49 link
+# (buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01), kept so a checkout already open on it still gets its report.
+LOCKDOWN_PAYMENT_LINK = "plink_1UajXgCRxS1tvAi2TjNiqT0y,plink_1UXuPCCRxS1tvAi22FJy7HTk"
 ALLOW_LIVE = "true"
 # "shadow": buyer emails go to hello@ only (Michael reads them first). "send": they go to the buyer.
 CUSTOMER_EMAILS = "send"

@@ -1,6 +1,6 @@
 # neonkey-lockdown
 
-Runs the $49 **Email Lockdown** end to end with no manual step. Shares nothing with the other workers
+Runs the $29 **Email Lockdown** end to end with no manual step. Shares nothing with the other workers
 (its own Stripe webhook endpoint and secret, its own KV namespace).
 
 ## What happens
@@ -14,7 +14,7 @@ Runs the $49 **Email Lockdown** end to end with no manual step. Shares nothing w
    NS (which DNS host), SPF, DMARC and DKIM. No logins, nothing changed.
 4. The buyer gets a branded email (`src/email.js`) with the exact records to add, written for their provider
    (Google Workspace, Microsoft 365, Zoho, Fastmail, Proton, Titan, GoDaddy email, Namecheap Private Email, or forwarding via Porkbun, Cloudflare Email Routing or ImprovMX), a link to their DNS host's own guide, the DKIM click-path for their admin
-   console, and the "$49 counts toward any NeonKey package" credit (Michael, Nov 4 2026).
+   console, and the "$29 counts toward any NeonKey package" credit (Michael, Nov 4 2026; price $29 since Nov 11 2026).
 5. hello@ (BCC Michael) gets a short notice. The subject starts with **FYI** when everything was automatic and
    **ACTION NEEDED** only when a person has to step in.
 6. A daily cron (8:07 AM AKST) rechecks open orders:
@@ -44,7 +44,7 @@ Every entry expires after 180 days (long enough to cover a card dispute). No pay
 
 | Var | Meaning |
 | --- | --- |
-| `LOCKDOWN_PAYMENT_LINK` | The live Email Lockdown Payment Link id. Other links are ignored. |
+| `LOCKDOWN_PAYMENT_LINK` | The live Email Lockdown Payment Link id(s), comma-separated. Other links are ignored. |
 | `ALLOW_LIVE` | Live-mode events are ignored unless `"true"`. |
 | `CUSTOMER_EMAILS` | `"shadow"`: buyer emails go to hello@ only, subject `[SHADOW for buyer@...]`. `"send"`: they go to the buyer. |
 | `FROM_ADDRESS`, `NOTIFY_TO`, `REPLY_TO`, `BCC_ADDRESS` | NeonKey 🔑 From, notices to hello@, every email BCC'd to Michael. |

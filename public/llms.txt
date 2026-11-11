@@ -48,7 +48,7 @@ NeonKey is an accessible resource designed for beginners and builders alike, foc
   An AI assistant that answers common questions from your own FAQ, lead routing with follow-up reminders, email authentication setup and three months of remote support, as one project. $999 founding rate.
 
 - [Email Authentication Setup](https://neonkey.tech/services/email-lockdown/)  
-  Your domain's SPF, DKIM and DMARC email records checked and fixed, $49 flat. Buy online; no passwords needed.
+  Your domain's SPF, DKIM and DMARC email records checked and fixed, $29 flat. Buy online; no passwords needed.
 
 - [All Builds & Projects](https://neonkey.tech/lab/)  
   Portfolio of practical builds and lessons from real-world system setups and automations.

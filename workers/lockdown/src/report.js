@@ -201,8 +201,8 @@ ${a.human.length ? `<div class="box" style="margin-top:8px;border-left:3px solid
 
 <div class="h2">Next steps</div>
 <div class="next">
-<div class="box">${a.locked ? "<b>Keep it that way.</b> When you add a new tool that sends email as you, turn on its \"verify your domain\" setting." : "<b>Rather not do it yourself?</b> Reply to our email and we'll make these changes for you, included in your $49. We'll recheck on day 2 and day 5 and send you an updated report."}</div>
-<div class="box credit"><b>Your $49 counts toward any NeonKey package.</b> ${/Google|Microsoft/.test(a.provider?.label || "") ? `For example, a full ${esc(a.provider.label)} setup with 2-step sign-in and backups is from $250 after your credit.` : "For example, a full remote IT setup is from $250 after your credit."} Mention report ${esc(ref)}.</div>
+<div class="box">${a.locked ? "<b>Keep it that way.</b> When you add a new tool that sends email as you, turn on its \"verify your domain\" setting." : "<b>Rather not do it yourself?</b> Reply to our email and we'll make these changes for you, included in your $29. We'll recheck on day 2 and day 5 and send you an updated report."}</div>
+<div class="box credit"><b>Your $29 counts toward any NeonKey package.</b> ${/Google|Microsoft/.test(a.provider?.label || "") ? `For example, a full ${esc(a.provider.label)} setup with 2-step sign-in and backups is from $270 after your credit.` : "For example, a full remote IT setup is from $270 after your credit."} Mention report ${esc(ref)}.</div>
 </div>
 
 <div class="foot"><span>Prepared by NeonKey · <a href="mailto:hello@neonkey.tech">hello@neonkey.tech</a> · <a href="https://neonkey.tech/">neonkey.tech</a></span><span>Based on public records on ${fmtDate(a.checkedAt)}. No logins used.</span></div>

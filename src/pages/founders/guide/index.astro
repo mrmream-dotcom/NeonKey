@@ -6,7 +6,7 @@ import GuideSale from '../../../components/GuideSale.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
 // Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
-// Prices and buy buttons come from GuideSale (regular $97, or the 24-hour flash sale while it's configured and running).
+// Prices and buy buttons come from GuideSale (regular price, or the 24-hour flash sale while it's configured and running).
 // Copy rules: no income claims or implied results, no comparison "value" price, no invented reviews.
 ---
 <Base image="/og-founder-stack.png" title={`${setupGuide.name}: a setup guide for founders`} description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}>
