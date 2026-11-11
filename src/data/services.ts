@@ -238,10 +238,11 @@ export const automationOffers: Offer[] = [
 ];
 
 /**
- * Email Authentication Setup: the fixed-price email security fix. Founding $49, standard $79 (Michael, Nov 3 2026).
+ * Email Authentication Setup: the fixed-price email security fix. $29, permanently (Michael, Nov 11 2026: "Change the
+ * price of the email permanently to 29"). Was $49 founding / $79 standard from Nov 3 2026; no standard rate now.
  * Same price as the Stripe Payment Link used in outreach. It is also one of the Front Office Package parts.
  */
-/** Michael, Nov 4 2026: the $49 Lockdown is a bridge into bigger work; its price comes off any larger package or setup. */
+/** Michael, Nov 4 2026: the Lockdown is a bridge into bigger work; its price comes off any larger package or setup. */
 export const lockdownCredit = 'Want more later? What you pay for it comes off any larger package or setup.';
 
 export const emailLockdown: Offer = {
@@ -249,30 +250,32 @@ export const emailLockdown: Offer = {
   name: 'Email Authentication Setup',
   headline: 'Make it harder for scammers to fake your email address',
   kicker: 'Remote · fixed price',
-  from: 49,
-  standard: 79,
+  from: 29,
   outcome: 'Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes',
   for: 'For any business that sends email from its own domain',
   items: ['Your SPF, DKIM and DMARC records checked', 'Missing or broken records fixed', 'DMARC started in report-only mode', 'A short note of what changed'],
   href: '/services/#email-lockdown',
-  // Live Stripe Payment Link (Nov 4 2026, see workers/payments). After paying, the customer lands on /pay/thanks/.
-  buyUrl: 'https://buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01',
+  // Live $29 Stripe Payment Link plink_1UajXgCRxS1tvAi2TjNiqT0y (Nov 11 2026; the $49 link 8x2aEW... is retired).
+  // The neonkey-lockdown Worker must list this link in LOCKDOWN_PAYMENT_LINK. After paying, the customer lands on /pay/thanks/.
+  buyUrl: 'https://buy.stripe.com/9B6dR8bFk14cfZR94Eb3q08',
 };
 
 /**
  * Self-serve digital guide for founders. Pages: /founders/guide/ (sales) and /founders/guide/thanks/ (after checkout).
- * Price $97 requested by Michael Nov 6 2026. No comparison "value" price: the guide has never sold at a higher price.
+ * Price $29 (Michael, Nov 11 2026: "the founders guide to $29", permanent; was $97 from Nov 6). No comparison "value"
+ * price and no crossed-out $97.
  * Retitled for founders Nov 6 2026 (Michael: "the guide for founders should be targeted to sell the guide").
  * buyUrl is the live Stripe Payment Link; the page only goes live when Michael says ship.
  */
 export const setupGuide = {
   name: 'The Founder Stack',
   subtitle: 'Set up the lean, automated backend NeonKey runs on',
-  price: 97,
-  // No dated increase (Nov 6 2026): $97 until the first 10 sales, then raise it for real.
+  price: 29,
   // Real standalone price of the included Lockdown (emailLockdown.from).
   includesLockdown: true,
-  buyUrl: 'https://buy.stripe.com/7sY3cu5gWcMUaFx4Oob3q02',
+  // Live $29 Payment Link plink_1UajXgCRxS1tvAi2Esh56b8q, metadata offer=nk_founder_stack_guide (workers/payments
+  // emails the PDF). The $97 link 7sY3cu... (plink_1UYvrICRxS1tvAi2komKzvTp) is retired.
+  buyUrl: 'https://buy.stripe.com/cNi3cubFkeV29Btgx6b3q07',
 };
 
 /**
@@ -384,7 +387,7 @@ export const officeTuneUp: Offer = {
 /**
  * All-inclusive package: AI Intake & FAQ + Lead-Routing + email lockdown + 3 months of the Support Plan.
  * Founding-client rate $999 (Michael, Nov 3 2026). `separately` is what the same parts cost booked one by one at
- * STANDARD rates (Michael set them Nov 3 2026: $699 + $999 + $79 email lockdown + 3 x $129 support = $2,164);
+ * STANDARD rates (Michael set them Nov 3 2026: $699 + $999 + $29 email authentication (Nov 11) + 3 x $129 support = $2,114);
  * `value` is the rounded-down "$2,000+ value" shown crossed out on the card, so the value claim stays true.
  * Shown as the "Start-Up Deal".
  */
@@ -398,13 +401,13 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
   kicker: 'Start-Up Deal · All-inclusive',
   from: 999,
   value: 2000,
-  separately: 2164,
+  separately: 2114,
   outcome: "Reply to new inquiries faster, follow up on every quote that goes quiet, answer common questions and lock down your business email, set up as one system with three months of support",
   for: 'The all-in-one option for small businesses that want their front office handled in one project instead of four',
   parts: [
     { name: 'AI Intake & FAQ Assistant', value: 'standard rate from $699' },
     { name: 'Lead-Routing & Follow-Up System', value: 'standard rate from $999' },
-    { name: 'Email authentication setup (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $79' },
+    { name: 'Email authentication setup (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $29' },
     { name: '3 months of the Monthly Remote Support Plan', value: 'standard rate $129/mo' },
   ],
   items: [

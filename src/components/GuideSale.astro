@@ -1,7 +1,7 @@
 ---
 // Price and buy button for The Founder Stack, with the 24-hour flash sale (guideFlashSale in src/data/services.ts).
-// While guideFlashSaleLive is true at build time, each spot shows the sale ($97 crossed out, the sale price, a
-// countdown to one fixed end time for every visitor, the first-100 limit) and keeps the regular $97 offer hidden in
+// While guideFlashSaleLive is true at build time, each spot shows the sale (the regular price crossed out, the sale price, a
+// countdown to one fixed end time for every visitor, the first-100 limit) and keeps the regular offer hidden in
 // [data-sale-after]; at the deadline the script swaps them. With no sale it renders exactly the regular offer.
 import { setupGuide as g, guideFlashSale as sale, guideFlashSaleLive as live, usd } from '../data/services';
 interface Props { variant: 'top' | 'box' | 'bar' | 'kicker'; location: string }

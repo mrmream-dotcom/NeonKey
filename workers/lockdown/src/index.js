@@ -1,4 +1,4 @@
-// neonkey-lockdown: runs the $49 Email Lockdown end to end with no manual step.
+// neonkey-lockdown: runs the $29 Email Lockdown end to end with no manual step.
 //   POST /webhook  Stripe checkout.session.completed / async_payment_succeeded for the Email Lockdown Payment Link only.
 //                  Reads the domain the buyer typed at checkout, audits its public DNS, emails the buyer a branded
 //                  report with the exact records, and emails hello@ (BCC Michael) a notice. ACTION NEEDED only when
@@ -72,7 +72,7 @@ export default {
     }
     const relevant = (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") && s.object === "checkout.session";
     if (!relevant) return json(200, { ok: true, ignored: event.type });
-    if (s.payment_link !== env.LOCKDOWN_PAYMENT_LINK) return json(200, { ok: true, ignored: "other_offer" });
+    if (!lockdownLinks(env).includes(s.payment_link)) return json(200, { ok: true, ignored: "other_offer" });
     if (s.payment_status !== "paid") return json(200, { ok: true, ignored: "unpaid" }); // async methods arrive later as async_payment_succeeded
 
     const ok = await handleOrder(env, s, event.livemode);
@@ -83,6 +83,12 @@ export default {
     ctx.waitUntil(recheckAll(env));
   },
 };
+
+// LOCKDOWN_PAYMENT_LINK can list more than one link, comma-separated (Nov 11 2026: the $29 link plus the retired $49
+// link, so a checkout already open on the old link still gets its report).
+export function lockdownLinks(env) {
+  return String(env.LOCKDOWN_PAYMENT_LINK || "").split(",").map((l) => l.trim()).filter(Boolean);
+}
 
 export function customerMode(env) {
   return env.CUSTOMER_EMAILS === "send" ? "send" : "shadow";

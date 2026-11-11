@@ -309,7 +309,7 @@ export function renderKitEmail({ firstName, newsletter, kitUrl, need, mailingAdd
 
 /** Which NeonKey offer fits a kit lead's answer, for the internal copy only. */
 const KIT_FIT = {
-  email: "Remote Small-Office IT Setup or the $49 Email Authentication Setup",
+  email: "Remote Small-Office IT Setup or the $29 Email Authentication Setup",
   passwords: "Remote Small-Office IT Setup (password manager + 2FA)",
   backups: "Remote Small-Office IT Setup (backups)",
   devices: "Remote Small-Office IT Setup",
