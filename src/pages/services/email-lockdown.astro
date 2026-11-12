@@ -5,6 +5,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlashSaleLive as live, usd } from '../../data/services';
 import SaleClock from '../../components/SaleClock.astro';
+import DomainCheck from '../../components/DomainCheck.astro';
 // Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
 // from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
@@ -61,12 +62,28 @@ import SaleClock from '../../components/SaleClock.astro';
             <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
           </div>
         </div>
+        <a class="btn btn-ghost btn-sm" href="#free-check" data-umami-event="lockdown-free-check-jump" data-umami-event-location="lockdown-page">Check your domain free first</a>
         <a class="btn btn-ghost btn-sm" href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a>
         <p class="el-small"><strong>{lockdownCredit}</strong></p>
         <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
         <p class="muted el-small">Your report is sent right after checkout, so sales are final once it's delivered. If we can't deliver it or something in it is wrong, we'll fix it or refund you. <a href={url('/refunds/#email-authentication-setup')}>How refunds work</a>.</p>
         <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>
       </aside>
+    </div>
+  </section>
+
+  <section id="free-check" style="padding-top:0">
+    <div class="container narrow-ish">
+      <SectionHeading eyebrow="Free check" title="Not sure you need it? Check your domain first" />
+      <p class="muted">Type the part of your email address after the @. You'll see the same public records the paid setup starts from, with what's missing or weak. No signup.</p>
+      <DomainCheck placeholder="yourbusiness.com" track="lockdown">
+        <div slot="next" class="panel topline accent-magenta pf-next">
+          <h2 class="pf-h">Want it fixed for you?</h2>
+          <p>The Email Authentication Setup turns this check into the exact records for your email provider and DNS host, in a PDF report that usually arrives by email within a few minutes. Type this same domain at checkout.</p>
+          <p><a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
+          <p class="muted el-small">Everything passing already? Then you don't need this one. Keep the result for your records.</p>
+        </div>
+      </DomainCheck>
     </div>
   </section>
 

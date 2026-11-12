@@ -11,8 +11,25 @@ import Icon from '../../components/Icon.astro';
     <p class="lede">Michael Ream reads every message and will reply by email. If you need to add anything, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
   </PageHeader>
   <div class="narrow status-body">
+    <h2 class="ct-h">What happens next</h2>
+    <ol class="ct-steps">
+      <li><strong>Michael replies by email</strong> from {CONTACT_EMAIL}, with any questions about your setup. Check your spam folder if you don't see it.</li>
+      <li><strong>You get a fixed written quote</strong> before any work starts. Nothing is charged until you approve it.</li>
+      <li><strong>Work starts when you say go</strong>, remotely, on the schedule in your quote.</li>
+    </ol>
+    <h2 class="ct-h">While you wait</h2>
+    <ul class="ct-steps">
+      <li><a href={url('/services/email-lockdown/#free-check')} data-umami-event="contact-thanks-next" data-umami-event-target="free-check">Check your domain's email setup for free</a>. It takes a few seconds and shows what's missing.</li>
+      <li><a href={url('/free-it-kit/')} data-umami-event="contact-thanks-next" data-umami-event-target="free-kit">Get the free Starter IT Kit</a>, a spreadsheet to list your accounts and run a 10-minute monthly checkup.</li>
+    </ul>
     <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/services/')}>See services</a></p>
   </div>
   <!-- Confirmed inquiry (Umami "contact-confirmed" + GA4 "generate_lead"), only after a real submit in this tab. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-contact.js')}></script>
 </Base>
+
+<style>
+  .ct-h { font-size: 1.15rem; margin: 1.5rem 0 .5rem; }
+  .ct-steps { padding-left: 1.2rem; margin: 0 0 1rem; text-align: left; }
+  .ct-steps li { margin-bottom: .5rem; }
+</style>
