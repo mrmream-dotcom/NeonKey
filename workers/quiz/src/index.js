@@ -95,7 +95,7 @@ export default {
     ]);
 
     // Lead copy to NeonKey (reply goes straight to the visitor). Failure doesn't fail the request.
-    const lead = renderLeadEmail(view, { email, firstName, newsletter, summary: answerSummary(answers), plan });
+    const lead = renderLeadEmail(view, { email, firstName, newsletter, summary: answerSummary(answers), plan, source: cleanSource(body.src) });
     const leadRes = await resendSend(env, {
       from: env.FROM_ADDRESS,
       to: [env.LEAD_TO],
@@ -160,7 +160,7 @@ async function handleKit(request, env, body, reply) {
     env.QUIZ_RL.put(gKey, String(Number(gN || 0) + 1), { expirationTtl: DAY + 3600 }),
   ]);
 
-  const lead = renderKitLeadEmail({ email, firstName, newsletter, business, size: KIT_SIZES[size] || "", need: KIT_NEEDS[need] || "", needKey: need });
+  const lead = renderKitLeadEmail({ email, firstName, newsletter, business, size: KIT_SIZES[size] || "", need: KIT_NEEDS[need] || "", needKey: need, source: cleanSource(body.src) });
   const leadRes = await resendSend(env, {
     from: env.FROM_ADDRESS,
     to: [env.LEAD_TO],
@@ -212,6 +212,17 @@ async function kitSubscribe(env, email, firstName, referrer = "https://neonkey.t
 }
 
 // Free text: strip control chars and angle brackets, collapse spaces, cap length.
+/** Lead source from the page (first-touch data the site keeps per tab). Text only, short, never trusted for logic. */
+function cleanSource(src) {
+  if (!src || typeof src !== "object") return "";
+  const parts = [
+    cleanText(src.l, 120) && `landed on ${cleanText(src.l, 120)}`,
+    cleanText(src.u, 200).replace(/^[ /]+$/, "") && `utm ${cleanText(src.u, 200)}`,
+    cleanText(src.r, 200) && `from ${cleanText(src.r, 200)}`,
+  ].filter(Boolean);
+  return parts.join("; ") || "";
+}
+
 function cleanText(v, max) {
   if (typeof v !== "string") return "";
   return v.replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);

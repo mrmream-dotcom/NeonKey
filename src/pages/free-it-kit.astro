@@ -142,6 +142,8 @@ import SectionHeading from '../components/SectionHeading.astro';
             need: String(fd.get('need') || ''),
             newsletter,
             website: String(fd.get('website') || ''),
+            // Lead source (first-touch data from Base.astro) so the lead copy says where the visit started.
+            src: (() => { try { return JSON.parse(sessionStorage.getItem('nk_src') || '{}'); } catch { return {}; } })(),
           }),
         });
         const out = await res.json().catch(() => ({}));
