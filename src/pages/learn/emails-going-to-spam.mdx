@@ -1,0 +1,67 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "Why are my business emails going to spam? 7 causes and how to fix each"
+description: Business emails landing in spam? Check the 7 common causes, from missing SPF, DKIM and DMARC to new domains and links, with a free check for your domain.
+kicker: Learn · Email · Small business · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+import EmailCheckBox from '../../components/learn/EmailCheckBox.astro';
+
+<p class="lead">You sent a quote, an invoice or a reply, and the customer says they never got it, or found it in spam. That costs real jobs. Most of the time the cause is one of seven things, and the first three are settings on your domain that take minutes to check.</p>
+
+Want the answer for your own domain first? <a href={siteUrl('#check-your-domain')} data-umami-event="learn-jump-check" data-umami-event-location="emails-going-to-spam">Jump to the free check</a>.
+
+## 1. No SPF record
+
+SPF is a public list, saved on your domain, of the services allowed to send email as you. Without it, Gmail, Yahoo and Outlook can't tell your real email from a fake, so they're more likely to filter it. You need exactly **one** SPF record (a TXT record starting with `v=spf1`). Two SPF records count as an error.
+
+## 2. No DKIM signature
+
+DKIM adds a digital signature to every email you send, using a key published on your domain. Receivers check the signature to confirm the email really came from you and wasn't changed on the way. You turn it on in your email provider's admin settings (Google Workspace or Microsoft 365), then add the record it gives you.
+
+## 3. No DMARC policy
+
+DMARC tells receiving servers what to do with email that fails SPF and DKIM, and sends you reports about who is sending as your domain. Since 2024, Google and Yahoo require it from bulk senders, and Google recommends SPF, DKIM and DMARC for everyone ([Gmail sender guidelines](https://support.google.com/a/answer/81126)). Our step-by-step guide covers <a href={siteUrl('/learn/dmarc-google-workspace/')}>setting up DMARC for Google Workspace</a>.
+
+## 4. A tool sends for you, but isn't in your SPF
+
+Invoicing apps, website forms, booking tools and newsletter services often send email "from" your address. If one of them isn't included in your SPF record (or doesn't sign with DKIM for your domain), its emails can fail checks even when your normal mailbox is fine. List every tool that sends as you, and check each one's help page for the SPF "include" or DKIM record it needs.
+
+## 5. A brand-new domain or mailbox
+
+New domains have no sending history, so filters are cautious at first. Start with normal one-to-one email to people who expect it, and avoid sending to a big list from a new domain in its first weeks.
+
+## 6. What's in the email
+
+Spam filters look at the message too. Common triggers:
+
+- link shorteners, or lots of links,
+- an email that's mostly one big image,
+- attachments people didn't expect, especially zipped files,
+- ALL CAPS subject lines and "act now" language.
+
+A short message with one clear link to your own website is the safest shape.
+
+## 7. People marking you as spam, or bounced addresses
+
+If people don't recognize the sender, some hit "Report spam", and that teaches filters to block you. Sending to addresses that bounce hurts too. Only email people who asked to hear from you or are expecting a reply, and remove addresses that bounce.
+
+## The quick order to fix things
+
+<ol class="steps">
+  <li>Run the free check below to see SPF, DKIM and DMARC for your domain.</li>
+  <li>Fix anything marked <strong>Fix</strong> first: missing or duplicate SPF, no DMARC.</li>
+  <li>Turn on DKIM in your email provider and in every tool that sends as you.</li>
+  <li>Send yourself a test at a Gmail address and an Outlook address, and check where it lands.</li>
+</ol>
+
+Passing these checks doesn't promise the inbox, since content, sending history and each provider's own filters matter too. It does remove the most common setup reasons small-business email gets filtered.
+
+<EmailCheckBox track="spam-guide" />
+
+## Sources
+
+- Gmail Help: [Email sender guidelines](https://support.google.com/a/answer/81126)
+- Google Workspace Admin Help: [Set up SPF](https://support.google.com/a/answer/10685031), [Set up DKIM](https://support.google.com/a/answer/174124), [Set up DMARC](https://support.google.com/a/answer/2466580)
+- Microsoft Learn: [Set up SPF for Microsoft 365](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-spf-configure)
