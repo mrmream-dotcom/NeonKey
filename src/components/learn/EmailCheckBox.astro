@@ -1,0 +1,26 @@
+---
+// Free domain check + the $29 Email Authentication Setup, for Learn guides about email authentication
+// (Nov 12 2026: organic search pages that end where the fix is sold). One per page (DomainCheck limitation).
+import { url } from '../../config';
+import DomainCheck from '../DomainCheck.astro';
+import { emailLockdown, usd } from '../../data/services';
+interface Props { track: string }
+const { track } = Astro.props;
+---
+<section class="ecb" id="check-your-domain">
+  <h2>Check your domain now (free)</h2>
+  <p>Type the part of your email address after the @. You'll see your SPF, DKIM and DMARC records and what's missing, in a few seconds. No signup.</p>
+  <DomainCheck placeholder="yourbusiness.com" track={track}>
+    <div slot="next" class="panel topline accent-magenta pf-next">
+      <h2 class="pf-h">Rather have it done for you?</h2>
+      <p>The <a href={url('/services/email-lockdown/')}>Email Authentication Setup</a> checks your domain and emails you the exact records for your email provider and DNS host, in a PDF report that usually arrives within a few minutes. {usd(emailLockdown.from)} flat, no call needed.</p>
+      <p><a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location={`learn-${track}`}>Fix it for {usd(emailLockdown.from)}</a></p>
+      <p class="muted" style="font-size:.9rem">Everything passing already? Then you don't need it.</p>
+    </div>
+  </DomainCheck>
+</section>
+
+<style>
+  .ecb { margin: 2rem 0; }
+  .ecb > h2 { margin-bottom: .4rem; }
+</style>

@@ -23,6 +23,15 @@ export const labTags = ['Homelab', 'Automation', 'Networking', 'Security', 'AI']
 
 export const labProjects: LabProject[] = [
   {
+    slug: 'follow-up-desk',
+    title: 'Follow-Up Desk demo: see your follow-ups before you sign up',
+    summary: 'Type one estimate, invoice or inquiry and see the exact follow-up emails the Desk would send, the days they go out, and how a customer reply stops the rest.',
+    tags: ['Automation'],
+    level: 'Beginner',
+    service: { label: 'Follow-Up Desk', href: '/follow-up-desk/' },
+    icon: 'bolt', accent: 'magenta', flag: 'Interactive demo',
+  },
+  {
     slug: 'front-office',
     title: 'Front office demo: what we build for a small business',
     summary: 'Click through the system behind the Front Office Package: every inquiry in one tracker, FAQ answers after hours, routing, replies you approve, follow-ups that stop when the customer answers, and email security.',

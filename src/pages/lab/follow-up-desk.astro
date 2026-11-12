@@ -1,0 +1,133 @@
+---
+// Follow-Up Desk interactive demo (Nov 12 2026, Michael: "do another product demo").
+// Runs only in the browser. The messages, days and buttons come straight from the real Desk engine
+// (workers/followup-desk/src/engine.js), so the preview matches what the Desk sends by default. Nothing is sent or stored.
+import { url } from '../../config';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { labProjects } from '../../data/lab';
+import { followUpDesk as fd, followUpDeskTrialDays as trial } from '../../data/services';
+import { DEFAULT_DAYS } from '../../../workers/followup-desk/src/engine.js';
+const project = labProjects.find((p) => p.slug === 'follow-up-desk')!;
+---
+<Base title={project.title} description="Try the Follow-Up Desk: type one estimate, invoice or inquiry and see the exact follow-up emails it would send, on which days, and how a reply stops them.">
+  <PageHeader eyebrow="Lab · Automation · Interactive demo" title="Follow-Up Desk demo: see your follow-ups before you sign up" crumbs={[{ href: '/', label: 'Home' }, { href: '/lab/', label: 'Lab' }, { label: 'Follow-Up Desk demo' }]}>
+    <p class="lede">Most quotes that go quiet never get a second email. Type one estimate you're waiting on, and see the follow-ups the Desk would send for you: what they say, which days they go out, and what happens when your customer replies.</p>
+    <Fragment slot="meta">
+      <li><span>Nothing is sent</span></li>
+      <li><span>Runs in your browser</span></li>
+      <li><span>Real default messages</span></li>
+    </Fragment>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container fud">
+      <form class="panel topline fud-form" data-fud-form>
+        <div class="fud-grid">
+          <label>What is it?
+            <select name="kind">
+              <option value="estimate">An estimate I sent</option>
+              <option value="invoice">An unpaid invoice</option>
+              <option value="inquiry">A new inquiry</option>
+            </select>
+          </label>
+          <label>Customer's name <input name="name" value="Dana Lopez" maxlength="60" autocomplete="off" /></label>
+          <label>The job <input name="job" value="the kitchen repaint" maxlength="80" autocomplete="off" /></label>
+          <label>Amount <span class="muted">(optional)</span> <input name="amount" value="$2,400" maxlength="20" autocomplete="off" /></label>
+          <label>Your business <input name="biz" value="Northside Painting" maxlength="60" autocomplete="off" /></label>
+          <label>When you sent it <input name="sent" type="date" /></label>
+        </div>
+        <button type="submit" class="btn btn-primary" data-umami-event="desk-demo-run">Show my follow-ups</button>
+      </form>
+
+      <div data-fud-out hidden>
+        <ol class="fud-timeline" data-fud-list></ol>
+        <div class="panel topline accent-violet fud-reply">
+          <h2 class="fud-h">What if they reply?</h2>
+          <p>The moment your customer replies, the rest stop on their own and the reply lands in your inbox. If they tap a button, you get an email saying so. You can also mark any job Won, Lost or Stop with one click.</p>
+          <p><button type="button" class="btn btn-ghost btn-sm" data-fud-reply data-umami-event="desk-demo-reply">Show it: the customer replies after the first one</button></p>
+        </div>
+        <div class="panel topline accent-magenta fud-cta">
+          <h2 class="fud-h">Want this running on your real estimates?</h2>
+          <p>The Follow-Up Desk sends these for you, from your business name, on weekday mornings. You can rewrite every message in your own words. Free for {trial} days, then cancel anytime before day 15 and you're never charged.</p>
+          <p><a class="btn btn-primary" href={url(fd.href ?? '/follow-up-desk/')} data-umami-event="desk-demo-cta">See plans and start the free trial</a></p>
+        </div>
+      </div>
+
+      <div class="panel fud-about">
+        <h2 class="fud-h">How this demo works</h2>
+        <ul>
+          <li>The messages, buttons and schedule ({DEFAULT_DAYS.join(', ')} days after you sent it) are the Desk's real defaults, loaded from the same code the Desk runs.</li>
+          <li>Follow-ups go out Monday to Friday, between 9 AM and noon in your time zone, so a day that lands on a weekend moves to the next weekday.</li>
+          <li>Nothing you type here leaves your browser.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { DEFAULT_TEMPLATES, DEFAULT_DAYS, ACTIONS, fill, firstName } from '../../../workers/followup-desk/src/engine.js';
+  type Kind = 'estimate' | 'invoice' | 'inquiry';
+  const form = document.querySelector<HTMLFormElement>('[data-fud-form]');
+  const out = document.querySelector<HTMLElement>('[data-fud-out]');
+  const list = document.querySelector<HTMLElement>('[data-fud-list]');
+  const replyBtn = document.querySelector<HTMLButtonElement>('[data-fud-reply]');
+  const DAY = 86400000;
+  const sentInput = form?.querySelector<HTMLInputElement>('input[name="sent"]');
+  if (sentInput) sentInput.value = new Date().toISOString().slice(0, 10);
+
+  function nextWeekday(ms: number) { let d = new Date(ms); while (d.getUTCDay() === 0 || d.getUTCDay() === 6) d = new Date(d.getTime() + DAY); return d; }
+  const fmt = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const el = (tag: string, cls?: string, text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+
+  function render(replied = false) {
+    if (!form || !list || !out) return;
+    const f = new FormData(form);
+    const kind = (String(f.get('kind')) as Kind) in DEFAULT_TEMPLATES ? (String(f.get('kind')) as Kind) : 'estimate';
+    const biz = String(f.get('biz') || '').slice(0, 60);
+    const item = { kind, name: String(f.get('name') || '').slice(0, 60), job: String(f.get('job') || '').slice(0, 80), amount: kind === 'invoice' ? String(f.get('amount') || '').slice(0, 20) : '' };
+    const settings = { business: biz, signoff: biz };
+    const sentRaw = String(f.get('sent') || '');
+    const sent = /^\d{4}-\d{2}-\d{2}$/.test(sentRaw) ? Date.parse(`${sentRaw}T12:00:00Z`) : Date.now();
+    const acts = ACTIONS[kind];
+    list.replaceChildren();
+    DEFAULT_TEMPLATES[kind].forEach((t: { subject: string; body: string }, i: number) => {
+      const li = el('li', `fud-step${replied && i > 0 ? ' fud-stopped' : ''}`);
+      const when = el('p', 'fud-when', `${fmt(nextWeekday(sent + DEFAULT_DAYS[i] * DAY))} · follow-up ${i + 1} of 3 (day ${DEFAULT_DAYS[i]})`);
+      const mail = el('div', 'fud-mail');
+      mail.append(el('p', 'fud-meta', `From: ${biz || 'Your business'}   To: ${firstName(item.name)}`), el('p', 'fud-subj', fill(t.subject, item, settings)));
+      for (const para of fill(t.body, item, settings).split('\n\n')) mail.append(el('p', 'fud-body', para));
+      const btns = el('div', 'fud-btns');
+      for (const label of [acts.yes, acts.ask].filter(Boolean)) btns.append(el('span', 'fud-fakebtn', label));
+      mail.append(btns);
+      li.append(when, mail);
+      if (replied && i === 0) li.append(el('p', 'fud-note', `${firstName(item.name)} replies "Can you do the 18th?" The reply goes to your inbox and the next two follow-ups are canceled.`));
+      if (replied && i > 0) li.append(el('p', 'fud-note', 'Not sent: the customer already replied.'));
+      list.append(li);
+    });
+    out.hidden = false;
+  }
+
+  form?.addEventListener('submit', (e) => { e.preventDefault(); render(false); out?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  replyBtn?.addEventListener('click', () => render(true));
+</script>
+
+<style is:global>
+  .fud { max-width: 860px; display: flex; flex-direction: column; gap: 1.25rem; }
+  .fud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem 1rem; margin-bottom: 1rem; }
+  .fud-grid label { display: flex; flex-direction: column; gap: .3rem; font-weight: 600; font-size: .95rem; }
+  .fud-h { font-size: 1.15rem; margin: 0 0 .4rem; }
+  .fud-timeline { list-style: none; padding: 0; margin: 0 0 1.25rem; display: flex; flex-direction: column; gap: .9rem; }
+  .fud-step { border-left: 3px solid var(--line); padding-left: 1rem; }
+  .fud-when { font-weight: 700; margin: 0 0 .4rem; }
+  .fud-mail { border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; background: var(--panel); }
+  .fud-mail p { margin: 0 0 .5rem; }
+  .fud-meta { font-size: .85rem; color: var(--muted); white-space: pre-wrap; }
+  .fud-subj { font-weight: 700; }
+  .fud-btns { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+  .fud-fakebtn { display: inline-block; padding: .35rem .8rem; border-radius: 8px; border: 1px solid var(--line); font-size: .9rem; font-weight: 600; }
+  .fud-stopped .fud-mail { opacity: .35; text-decoration: line-through; }
+  .fud-note { margin: .5rem 0 0; font-weight: 600; }
+  .fud-about ul { padding-left: 1.1rem; }
+</style>

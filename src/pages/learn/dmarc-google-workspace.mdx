@@ -1,0 +1,64 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "How to set up SPF, DKIM and DMARC for Google Workspace (step by step)"
+description: Step-by-step SPF, DKIM and DMARC setup for a Google Workspace domain, with the exact records, where to add them, and a free check to confirm they work.
+kicker: Learn · Email · Small business · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+import EmailCheckBox from '../../components/learn/EmailCheckBox.astro';
+
+<p class="lead">If your business email runs on Google Workspace (you sign in to Gmail with you@yourbusiness.com), these three records help your email land in the inbox and make your address harder to fake. You add them where your domain's DNS is managed: often the company you bought the domain from (like GoDaddy, Namecheap or Squarespace) or Cloudflare.</p>
+
+Not sure what you have now? <a href={siteUrl('#check-your-domain')} data-umami-event="learn-jump-check" data-umami-event-location="dmarc-google-workspace">Run the free check first</a>.
+
+## Before you start
+
+- You need **admin** access to the Google Admin console (admin.google.com).
+- You need to be able to edit **DNS records** for your domain. Find out where your DNS is managed: it's the company your domain's "nameservers" point to.
+- Make a note of every other tool that sends email as your domain (website forms, invoicing, newsletters). They may need their own entries later.
+
+## Step 1: SPF
+
+<ol class="steps">
+  <li>In your DNS host, look for an existing TXT record that starts with <code>v=spf1</code>. You should only ever have <strong>one</strong>.</li>
+  <li>If there's none, add a <strong>TXT</strong> record. Host or name: <code>@</code> (some hosts want it blank). Value: <code>v=spf1 include:_spf.google.com ~all</code></li>
+  <li>If one already exists, don't add a second. Edit the existing one and add <code>include:_spf.google.com</code> before the <code>~all</code> or <code>-all</code> at the end.</li>
+</ol>
+
+## Step 2: DKIM
+
+<ol class="steps">
+  <li>In the Admin console, go to <strong>Apps → Google Workspace → Gmail → Authenticate email</strong>.</li>
+  <li>Pick your domain and click <strong>Generate new record</strong>. Choose a 2048-bit key if your DNS host allows it. Keep the prefix selector as <code>google</code>.</li>
+  <li>Google shows a host name (<code>google._domainkey</code>) and a long TXT value. Add that as a new <strong>TXT</strong> record in your DNS host, copied exactly.</li>
+  <li>Wait for it to show up (often minutes, sometimes up to 48 hours), then go back to the Admin console and click <strong>Start authentication</strong>.</li>
+</ol>
+
+## Step 3: DMARC
+
+<ol class="steps">
+  <li>Add a <strong>TXT</strong> record. Host or name: <code>_dmarc</code>. Value: <code>v=DMARC1; p=none; rua=mailto:you@yourbusiness.com</code> (use an address you actually read).</li>
+  <li><code>p=none</code> means "watch only": nothing gets blocked while you check that all your real email passes. The reports to that address show who is sending as your domain.</li>
+  <li>After a few weeks of clean reports, change it to <code>p=quarantine</code> (failing email goes to spam), and later <code>p=reject</code> if you want to block fakes outright.</li>
+</ol>
+
+## Step 4: Check it worked
+
+Run the free check below. You want SPF and DMARC to pass, and a DKIM key found at the <code>google</code> selector. Then send a test email to a Gmail address, open it, choose <strong>Show original</strong>, and look for SPF, DKIM and DMARC all showing <strong>PASS</strong>.
+
+## Common mistakes
+
+- **Two SPF records.** Merge them into one.
+- **Forgetting other senders.** If your website or invoicing app sends as you, add its SPF include or DKIM record too, before you tighten DMARC.
+- **Jumping straight to p=reject.** Start at <code>p=none</code> so you don't block your own email by accident.
+- **Typos in long DKIM values.** Copy and paste; don't retype.
+
+<EmailCheckBox track="google-workspace-guide" />
+
+## Sources
+
+- Google Workspace Admin Help: [Set up SPF](https://support.google.com/a/answer/10685031)
+- Google Workspace Admin Help: [Set up DKIM](https://support.google.com/a/answer/174124)
+- Google Workspace Admin Help: [Set up DMARC](https://support.google.com/a/answer/2466580)
+- Gmail Help: [Email sender guidelines](https://support.google.com/a/answer/81126)
