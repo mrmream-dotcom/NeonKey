@@ -185,7 +185,7 @@ function toolbar(base, acct, portalUrl) {
   return `<nav class="tools" aria-label="Tools">${t("#add", "plus", "Add one")}${t("#paste", "list", "Paste a list")}${t("#list", "chart", "Your follow-ups")}${t(`${base}/settings`, "pen", "Your messages")}
 <form method="post" action="${base}/test" class="tool-form"><button class="tool" type="submit">${icon("send")}<span>Send me a preview</span></button></form>
 <form method="post" action="${base}/pause" class="tool-form"><input type="hidden" name="paused" value="${acct.paused ? "0" : "1"}"><button class="tool" type="submit">${icon(acct.paused ? "play" : "pause")}<span>${acct.paused ? "Resume" : "Pause"}</span></button></form>
-${portalUrl ? t(esc(portalUrl), "card", "Billing") : ""}</nav>`;
+${portalUrl ? t(esc(portalUrl), "card", "Billing and cancel") : ""}</nav>`;
 }
 
 function addForms(base) {
@@ -236,6 +236,7 @@ export function dashboardPage({ acct, base, msg, portalUrl }) {
   const sent = items.reduce((n, i) => n + (i.sends || []).length, 0);
   const banner = !["active", "trialing"].includes(acct.billing)
     ? `<div class="note bad">Follow-ups are off because ${acct.billing === "canceled" ? "your subscription has ended" : "the last payment didn't go through"}. ${portalUrl ? `<a href="${esc(portalUrl)}">Manage billing</a>.` : "Reply to any NeonKey email for help."}</div>`
+    : acct.cancelScheduled ? `<div class="note warn">Your subscription is set to end at the close of this billing period. Follow-ups keep going until then. Changed your mind? ${portalUrl ? `<a href="${esc(portalUrl)}">Turn it back on in Billing</a>` : "Reply to any NeonKey email"}. Just need a break? Pause holds every follow-up${acct.paused ? " (you're paused now)" : ""}.</div>`
     : acct.paused ? `<div class="note warn">Paused. Nothing goes out until you press Resume.</div>` : "";
   if (!acct.setupDone) return page("Welcome", [header(acct), flash(msg), banner, setupForm(base, acct), footer()].join(""));
   const stat = (n, label, ic) => `<div class="stat">${icon(ic)}<div><b>${n}</b><span class="muted small">${label}</span></div></div>`;

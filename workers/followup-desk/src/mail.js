@@ -188,7 +188,7 @@ export function nudgeEmail({ n, name, link, setupDone, trialing }) {
 
 // ---------- notices to hello@ ----------
 export function noticeEmail(kind, acct, extra = "") {
-  const titles = { new: "New Follow-Up Desk signup", canceled: "Follow-Up Desk canceled", billing: "Follow-Up Desk billing changed", error: "Follow-Up Desk problem" };
+  const titles = { new: "New Follow-Up Desk signup", canceled: "Follow-Up Desk canceled", cancelScheduled: "Follow-Up Desk cancel scheduled", billing: "Follow-Up Desk billing changed", error: "Follow-Up Desk problem" };
   // No account (an alert from the hourly run or a failed request): just the details.
   const lines = !acct ? String(extra).split("\n") : [
     `Account: ${acct?.id || "?"}`,

@@ -163,9 +163,34 @@ export async function handleSubscription(env, sub, deleted) {
   acct.billing = deleted ? "canceled" : sub.status === "trialing" ? "trialing" : sub.status === "active" ? "active" : sub.status || "unknown";
   if (acct.billing === "canceled" && !acct.canceledAt) acct.canceledAt = Date.now();
   if (acct.billing !== "canceled") delete acct.canceledAt;
+  // Cancel at period end (the Stripe portal's only cancel mode): Stripe keeps the status active and sets
+  // cancel_at_period_end, so tell Michael right away, with the reason the customer picked. That leaves days to reach
+  // out (Pause in the dashboard, a fix, or just a thank-you) before follow-ups stop. Nothing is sent to the customer.
+  const scheduled = !deleted && Boolean(sub.cancel_at_period_end);
+  const wasScheduled = Boolean(acct.cancelScheduled);
+  if (scheduled) acct.cancelScheduled = true;
+  else delete acct.cancelScheduled;
   await putAccount(env, acct);
-  if (before !== acct.billing) await sendNotice(env, acct.billing === "canceled" ? "canceled" : "billing", acct, `Billing went from ${before} to ${acct.billing}.${acct.billing === "canceled" ? " Data is deleted on its own in 30 days." : ""}`);
+  const why = cancelReason(sub);
+  if (before !== acct.billing) await sendNotice(env, acct.billing === "canceled" ? "canceled" : "billing", acct, `Billing went from ${before} to ${acct.billing}.${acct.billing === "canceled" ? ` Data is deleted on its own in 30 days.${why}` : ""}`);
+  else if (scheduled && !wasScheduled) await sendNotice(env, "cancelScheduled", acct, `They canceled in the billing portal. Follow-ups keep running until ${periodEnd(sub)}, then stop.${why}`);
+  else if (!scheduled && wasScheduled && !deleted) await sendNotice(env, "billing", acct, "They turned their cancellation back off. The subscription renews as normal.");
   return acct.billing;
+}
+
+/** Reason and comment from the Stripe portal's cancel screen (both optional for the customer). */
+export function cancelReason(sub) {
+  const d = sub?.cancellation_details || {};
+  const labels = { too_expensive: "too expensive", missing_features: "missing features", switched_service: "switched to another service", unused: "not using it", customer_service: "customer service", too_complex: "too complex", low_quality: "quality", other: "other" };
+  const parts = [];
+  if (d.feedback) parts.push(`Reason they picked: ${labels[d.feedback] || d.feedback}.`);
+  if (d.comment) parts.push(`Their comment: "${oneLine(String(d.comment), 300)}"`);
+  return parts.length ? ` ${parts.join(" ")}` : "";
+}
+
+function periodEnd(sub) {
+  const t = sub?.cancel_at || sub?.current_period_end || sub?.items?.data?.[0]?.current_period_end;
+  return t ? new Date(t * 1000).toISOString().slice(0, 10) : "the end of the paid period";
 }
 
 // ---------- Resend (bounces and spam complaints) ----------

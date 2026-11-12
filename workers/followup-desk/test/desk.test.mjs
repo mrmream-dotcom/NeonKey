@@ -337,6 +337,46 @@ test("cancel stops sending; data is deleted 30 days later; signing up again rest
   assert.deepEqual([...env.DESK.m.keys()].sort(), ["sess:cs_1", "sess:cs_2"]); // only the 90-day checkout markers remain
 });
 
+test("cancel at period end: Michael hears right away with the reason; dashboard offers Pause; undo is noticed", async () => {
+  const { acct, link } = await readyAccount();
+  env.PORTAL_URL = "https://billing.example/login";
+  const sub = { object: "subscription", id: "sub_1", status: "active", cancel_at_period_end: true, cancel_at: 1796083200, cancellation_details: { feedback: "too_expensive", comment: "Slow <season>" } };
+  sent = [];
+  await worker.fetch(stripeReq({ id: "evt_c1", type: "customer.subscription.updated", livemode: true, data: { object: sub } }), env, ctx);
+  let a = await getAccount(env, acct.id);
+  assert.equal(a.billing, "active");
+  assert.equal(a.cancelScheduled, true);
+  const notice = sent.find((m) => m.subject.includes("cancel scheduled"));
+  assert.ok(notice, "notice sent to hello@");
+  assert.match(notice.text, /too expensive/);
+  assert.match(notice.text, /Slow <season>/);
+  assert.match(notice.text, /2026-12-01/);
+  assert.ok(!/<season>/.test(notice.html), "comment is escaped in the HTML notice");
+  assert.ok(!sent.some((m) => m.to === "owner@roofing.test" || (Array.isArray(m.to) && m.to.includes("owner@roofing.test"))), "nothing goes to the customer");
+  // Same event again: no second notice.
+  sent = [];
+  await worker.fetch(stripeReq({ id: "evt_c2", type: "customer.subscription.updated", livemode: true, data: { object: sub } }), env, ctx);
+  assert.equal(sent.length, 0);
+  // Follow-ups still run until the period ends.
+  assert.equal((await runAccount(env, a, TUE_10AM)).sent, 1);
+  // Dashboard shows the banner with Pause and a way back, escaped.
+  const page = await (await get(link)).text();
+  assert.match(page, /set to end at the close of this billing period/);
+  assert.match(page, /Turn it back on in Billing/);
+  assert.match(page, /Billing and cancel/);
+  // Customer turns the cancellation off.
+  sent = [];
+  await worker.fetch(stripeReq({ id: "evt_c3", type: "customer.subscription.updated", livemode: true, data: { object: { ...sub, cancel_at_period_end: false, cancellation_details: {} } } }), env, ctx);
+  a = await getAccount(env, acct.id);
+  assert.equal(a.cancelScheduled, undefined);
+  assert.ok(sent.some((m) => /turned their cancellation back off/.test(m.text)));
+  // Period ends: the canceled notice carries the reason too.
+  sent = [];
+  await worker.fetch(stripeReq({ id: "evt_c4", type: "customer.subscription.deleted", livemode: true, data: { object: { ...sub, status: "canceled" } } }), env, ctx);
+  const done = sent.find((m) => m.subject.includes("canceled"));
+  assert.match(done.text, /too expensive/);
+});
+
 test("sign-in link: same page either way, rate limited", async () => {
   await signup();
   sent = [];
