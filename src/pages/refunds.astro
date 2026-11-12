@@ -1,0 +1,74 @@
+---
+import { url, CONTACT_EMAIL } from '../config';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { emailLockdown, setupGuide, followUpDeskSale, usd } from '../data/services';
+// Refunds and cancellations in one place (growth directive, Nov 12 2026: "make refunds simple").
+// This page only SUMMARIZES /terms/; it adds no new promise. If a rule changes, change /terms/ first, then this page.
+// The request link is a prefilled email (no new form markup, so the form pins in scripts/approved-form-changes.json
+// are untouched). PORTAL is Stripe's customer portal login: the buyer types the email they paid with and gets a
+// one-time link to cancel, update a card or download invoices. Same link the Follow-Up Desk dashboard uses.
+const PORTAL = 'https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00';
+const body = [
+  'Email I paid with:',
+  'What I bought (and roughly when):',
+  'What went wrong:',
+  'What I would like (fix, refund or cancel):',
+].join('\n');
+const requestHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Refund or cancellation request')}&body=${encodeURIComponent(body)}`;
+---
+<Base title="Refunds and cancellations" description="How refunds and cancellations work for NeonKey purchases: who can get a refund, how to ask, how to cancel a subscription yourself, and how long it takes.">
+  <PageHeader width="narrow" eyebrow="Help · Refunds" title="Refunds and cancellations" crumbs={[{ href: '/', label: 'Home' }, { label: 'Refunds and cancellations' }]}>
+    <p class="lede">The short version for every NeonKey purchase. The <a href={url('/terms/#cancellations-and-refunds')}>Terms of Service</a> are the official wording, and if anything here ever differs, the terms win.</p>
+    <div class="btn-row rf-actions">
+      <a class="btn btn-primary" href={requestHref} data-umami-event="refund-request" data-umami-event-location="refunds-top">Email a refund or cancel request</a>
+      <a class="btn" href={PORTAL} rel="noopener" data-umami-event="billing-portal" data-umami-event-location="refunds-top">Cancel a subscription yourself</a>
+    </div>
+  </PageHeader>
+
+  <div class="narrow rf">
+    <h2 id="how-to-ask">How to ask</h2>
+    <ol>
+      <li><strong>Email <a href={requestHref}>{CONTACT_EMAIL}</a></strong> from the address you paid with, or include it. The button above fills in the four things we need: your email, what you bought, what went wrong and what you'd like.</li>
+      <li><strong>We look up your order in Stripe</strong> by that email. You don't need an order number, and never send card details.</li>
+      <li><strong>You get an answer by email</strong>, usually within one business day (Monday to Friday).</li>
+      <li><strong>If a refund is approved</strong>, it goes back to the card you paid with. Stripe sends the refund right away; your bank usually takes 5 to 10 business days to show it.</li>
+    </ol>
+
+    <h2 id="email-authentication-setup">Email Authentication Setup ({usd(emailLockdown.from)})</h2>
+    <p>Your report is created and emailed right after checkout, so the sale is final once it's sent. If we can't deliver your report, or there's a mistake in it, email us within 14 days and we'll fix it or refund you in full. <a href={url('/terms/#email-lockdown-refunds')}>Full terms</a>.</p>
+
+    <h2 id="digital-guides">{setupGuide.name} and other guides</h2>
+    <p>Guides are emailed automatically after checkout and are final once sent. If your copy doesn't arrive within one business day, the file won't open, or there's a mistake in it, email us within 14 days and we'll fix it or refund you in full. <a href={url('/terms/#digital-guides')}>Full terms</a>.</p>
+
+    <h2 id="follow-up-desk">Follow-Up Desk</h2>
+    <ul>
+      <li><strong>Free trial:</strong> cancel before the 14 days are up and you're never charged.</li>
+      <li><strong>Monthly plan:</strong> cancel anytime from the Billing button on your dashboard, or with the <a href={PORTAL} rel="noopener">billing link</a> above. Follow-ups keep running to the end of the month you've paid for; partial months aren't refunded.</li>
+      <li><strong>Yearly plan:</strong> ask within {followUpDeskSale.refundDays} days of paying for a full refund. After that, unused months aren't refunded, and you can turn off the renewal anytime.</li>
+      <li><strong>Our mistake:</strong> if the Desk fails to send follow-ups for a stretch because of a problem on our side, email us and we'll credit or refund that month.</li>
+      <li><strong>Just need a break?</strong> The Pause button on your dashboard holds every follow-up until you press Resume.</li>
+    </ul>
+    <p><a href={url('/terms/#follow-up-desk')}>Full terms</a>.</p>
+
+    <h2 id="support-plan">Monthly Remote Support Plan</h2>
+    <p>Cancel anytime, by email or with the <a href={PORTAL} rel="noopener">billing link</a>. The plan runs to the end of the month you've paid for. <a href={url('/terms/#monthly-support-plan')}>Full terms</a>.</p>
+
+    <h2 id="quoted-work">Quoted projects</h2>
+    <p>Projects follow the cancellation and refund terms in your written quote. If none were agreed, tell us as soon as you want to cancel and we'll work out a fair outcome based on the work already done. <a href={url('/terms/#cancellations-and-refunds')}>Full terms</a>.</p>
+
+    <h2 id="how-the-billing-link-works">How the billing link works</h2>
+    <p>The billing link is Stripe's secure customer page. Type the email you paid with, and Stripe emails you a one-time sign-in link. From there you can cancel a subscription, update your card or download receipts. NeonKey never sees your card number.</p>
+
+    <p class="muted rf-small">Questions about any of this? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </div>
+</Base>
+
+<style>
+  .rf-actions { margin-top: 1rem; }
+  .rf { padding-bottom: 3rem; }
+  .rf h2 { font-size: 1.2rem; margin: 1.75rem 0 .5rem; }
+  .rf ol, .rf ul { padding-left: 1.2rem; }
+  .rf li { margin-bottom: .5rem; }
+  .rf-small { font-size: .9rem; margin-top: 2rem; }
+</style>

@@ -14,6 +14,25 @@ import Icon from '../../components/Icon.astro';
   </PageHeader>
   <div class="narrow status-body">
     <div class="callout" style="margin-bottom:1.25rem"><strong>No email after 10 minutes?</strong> Check spam for "Your Follow-Up Desk is ready", or <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">get a new link</a> with the email you paid with. Still stuck? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</div>
-    <p class="status-actions"><a class="btn btn-primary" href={url('/follow-up-desk/')}>Back to the Follow-Up Desk</a></p>
+    <div class="panel topline fdt-next">
+      <h2>Your first five minutes</h2>
+      <ol class="fdt-steps">
+        <li class="done"><strong>Signed up.</strong> Stripe emails your receipt.</li>
+        <li><strong>Open the email "Your Follow-Up Desk is ready"</strong> and tap the private link. No password.</li>
+        <li><strong>Add your details:</strong> business name, where replies go and how you sign off. The three messages are already written.</li>
+        <li><strong>Add the estimates you've sent</strong> but haven't heard back on, one at a time or as a pasted list.</li>
+        <li><strong>Press "Send me a preview"</strong> to see exactly what your customers get.</li>
+      </ol>
+      <p class="muted">Every estimate you add is one that won't go quiet. Follow-ups go out on weekday mornings, your time, and stop the moment a customer replies.</p>
+    </div>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/follow-up-desk/')}>Back to the Follow-Up Desk</a> <a class="btn" href={url('/refunds/#follow-up-desk')}>Cancel and refund rules</a></p>
   </div>
 </Base>
+
+<style>
+  .fdt-next { margin-bottom: 1.25rem; }
+  .fdt-next h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .fdt-steps { padding-left: 1.4rem; margin: 0 0 .75rem; }
+  .fdt-steps li { margin-bottom: .4rem; }
+  .fdt-steps li.done::marker { color: var(--cyan, #22d3ee); }
+</style>

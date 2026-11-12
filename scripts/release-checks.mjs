@@ -75,5 +75,24 @@ if (!existsSync(contactThanks) || !read(contactThanks).includes('conv-contact.js
 // 7. Paid products never ship on the site. The Founder Stack PDF is delivered only by email from private KV.
 for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.test(relative(distDir, f))) fail(`paid product file in the build: ${relative(distDir, f)}`);
 
+// 8. Experiments (growth directive, Nov 12 2026): every live A/B test has a registry entry with a hypothesis, metric,
+// guardrails and a minimum sample, and no price or offer test goes live without Michael's written OK. docs/experiments.md.
+{
+  const reg = JSON.parse(read(new URL('../src/data/experiments.json', import.meta.url))).experiments;
+  const abIds = [...read(new URL('../src/data/ab-tests.ts', import.meta.url)).matchAll(/^\s*id: '([\w-]+)'/gm)].map((m) => m[1]);
+  for (const id of abIds) {
+    const e = reg.find((x) => x.id === id);
+    if (!e) { fail(`A/B test "${id}" has no entry in src/data/experiments.json`); continue; }
+    if (e.status !== 'live') fail(`A/B test "${id}" is running but experiments.json says ${e.status}`);
+  }
+  for (const e of reg) {
+    for (const k of ['hypothesis', 'primaryMetric', 'baseline', 'readOn']) if (!e[k]) fail(`experiment "${e.id}" is missing ${k}`);
+    if (!Array.isArray(e.guardrails) || !e.guardrails.length) fail(`experiment "${e.id}" has no guardrails`);
+    if (!(e.minPerArm >= 100)) fail(`experiment "${e.id}" needs minPerArm of at least 100`);
+    if (e.status === 'live' && !abIds.includes(e.id)) fail(`experiment "${e.id}" is marked live but not in ab-tests.ts`);
+    if (e.status === 'live' && ['price', 'offer'].includes(e.kind) && !e.ownerOk) fail(`price/offer experiment "${e.id}" is live without Michael's OK`);
+  }
+}
+
 console.log(`release checks: ${pages.length} pages, ${links} internal links, ${failures.length} failure(s)`);
 if (failures.length) { for (const m of failures) console.log(`::error::${m}`); process.exit(1); }

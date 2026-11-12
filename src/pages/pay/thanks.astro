@@ -3,6 +3,7 @@ import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
+import { lockdownCredit, followUpDesk, followUpDeskTrialDays as trial } from '../../data/services';
 // Where Stripe Checkout and Payment Links send customers after paying (workers/payments/scripts/).
 // Google Ads purchase conversion: public/js/conv-lockdown.js fires only for the Email Authentication Setup Payment Link
 // redirect (?offer=email-lockdown&session_id=cs_...), never for invoice payments or plain visits.
@@ -15,8 +16,26 @@ import Icon from '../../components/Icon.astro';
   </PageHeader>
   <div class="narrow status-body">
     <div class="callout" style="margin-bottom:1.25rem"><strong>Bought the Email Authentication Setup?</strong> Your report is on its way by email, usually within a few minutes (up to 1 business day if your setup needs a closer look). Want to tell us more, like other tools that send email as you? <a href={url('/pay/email-lockdown/')} data-umami-event="lockdown-intake-link" data-umami-event-location="pay-thanks">Optional questions</a>. No passwords needed.</div>
-    <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/learn/')}>Browse Learn</a></p>
+    <div class="panel topline pt-next">
+      <h2>What happens next</h2>
+      <ol class="pt-steps">
+        <li><strong>Now:</strong> Stripe emails your receipt.</li>
+        <li><strong>Usually within minutes:</strong> your Email Authentication Setup report arrives, with the exact records to add.</li>
+        <li><strong>Day 2 and day 5:</strong> we recheck your domain and email you what changed.</li>
+      </ol>
+      <p class="pt-credit"><strong>{lockdownCredit}</strong></p>
+      <p class="muted">Losing jobs to estimates that go quiet? The <a href={url('/follow-up-desk/')} data-umami-event="post-purchase-next" data-umami-event-target="follow-up-desk" data-umami-event-location="pay-thanks">{followUpDesk.name}</a> follows up for you and stops when the customer replies. {trial} days free.</p>
+    </div>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/refunds/')}>Refunds and cancellations</a></p>
   </div>
   <!-- Google Ads "Lockdown purchase" conversion. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-lockdown.js')}></script>
 </Base>
+
+<style>
+  .pt-next { margin-bottom: 1.25rem; }
+  .pt-next h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .pt-steps { padding-left: 1.2rem; margin: 0 0 .75rem; }
+  .pt-steps li { margin-bottom: .35rem; }
+  .pt-credit { margin: 0 0 .5rem; }
+</style>

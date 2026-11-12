@@ -8,6 +8,9 @@
 // shown (e.g. { hero: "b" }). Once a visitor has seen a test, every tracked click on any page (including
 // `contact-submit` on /contact/) gets an `ab-<id>` property. Compare clicks and submits per `ab-view`. Submit events count only real submits (data-umami-submit, see Base.astro). Preview a variant with ?ab=nl:b (not saved).
 //
+// Every test here needs a 'live' entry in src/data/experiments.json (hypothesis, metric, guardrails, minimum sample);
+// release-checks fails otherwise. Rules for price tests: docs/experiments.md.
+//
 // To end a test: keep the winner's markup, delete the loser's and the data-ab attributes, remove the
 // id here and its CSS rule. Results and dates live in /mnt/project-files/site-tests/ab-log.md.
 export interface AbTest {

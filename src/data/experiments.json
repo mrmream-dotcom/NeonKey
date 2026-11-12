@@ -1,0 +1,57 @@
+{
+  "_readme": "Experiment registry (growth directive, Nov 12 2026). Every A/B test in src/data/ab-tests.ts must have a 'live' entry here, and release-checks fails otherwise. Rules: docs/experiments.md. Baselines are only numbers we measured; anything else says 'none yet'. kind 'price' or 'offer' can go live only with ownerOk filled in with Michael's words and date.",
+  "experiments": [
+    {
+      "id": "nl",
+      "status": "live",
+      "kind": "presentation",
+      "page": "/newsletter/",
+      "hypothesis": "A calmer page with the form on the first phone screen gets more signups per view than the original.",
+      "primaryMetric": "newsletter-signup events per ab-view, by variant (Umami), confirmed against Kit subscriber count",
+      "guardrails": ["confirmed subscribers in Kit do not drop", "no rise in fake or test signups"],
+      "baseline": "none yet: Kit had about 10 subscribers Oct 30-Nov 6, many of them Michael's own tests",
+      "minPerArm": 100,
+      "readOn": "Friday scoreboard",
+      "ownerOk": "Michael, Nov 6 2026 (thread: newsletter page)"
+    },
+    {
+      "id": "motion",
+      "status": "live",
+      "kind": "presentation",
+      "page": "/",
+      "hypothesis": "A subtle motion background on the homepage hero raises clicks to services and contact without slowing the page.",
+      "primaryMetric": "services-cta + contact-click + newsletter-cta per ab-view, by variant (Umami)",
+      "guardrails": ["bounce rate does not rise", "mobile page weight and load time stay within 10% of control"],
+      "baseline": "none yet",
+      "minPerArm": 100,
+      "readOn": "Friday scoreboard",
+      "ownerOk": "Michael, Nov 8 2026 (picked 'All three, free')"
+    },
+    {
+      "id": "desk-plan-order",
+      "status": "draft",
+      "kind": "presentation",
+      "page": "/follow-up-desk/",
+      "hypothesis": "Showing the yearly plan's real saving next to the monthly price (same prices, same terms) raises yearly signups without lowering total signups.",
+      "primaryMetric": "Stripe checkouts completed per buy-box view, split monthly vs yearly",
+      "guardrails": ["total checkouts per view do not fall", "yearly refund requests within 30 days stay at 0-1"],
+      "baseline": "none yet: 0 customer signups as of Nov 12 2026",
+      "minPerArm": 300,
+      "readOn": "only after 300 buy-box views per arm; with current traffic that is weeks away",
+      "ownerOk": ""
+    },
+    {
+      "id": "lockdown-price",
+      "status": "draft",
+      "kind": "price",
+      "page": "/services/email-lockdown/",
+      "hypothesis": "Email Authentication Setup sells at least as many units per visitor at a higher price than $29, so revenue per visitor rises.",
+      "primaryMetric": "revenue per Lockdown page view (Stripe purchases / Umami views), by arm",
+      "guardrails": ["refund requests do not rise", "add-on quote requests from Lockdown buyers do not fall", "every visitor pays exactly the price shown to them"],
+      "baseline": "Nov 3-6: 26 paid-search clicks, $43.88 spend, 0 sales at $49 (Google Ads, recorded Nov 7). No sales yet at $29.",
+      "minPerArm": 1000,
+      "readOn": "not before 1,000 page views per arm AND at least 10 purchases in total; until then do not run",
+      "ownerOk": ""
+    }
+  ]
+}
