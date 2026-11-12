@@ -15,6 +15,11 @@ export const SUBJECT = "Welcome to Unlock the Week";
 // Reply call-to-action: replies help engagement and inbox placement on a new domain.
 const REPLY_ASK = "One more thing: reply \"yes\" to this email.";
 const REPLY_MAILTO = "mailto:hello@neonkey.tech?subject=Yes%2C%20send%20the%20Fix%20List&body=Yes";
+// Free Starter IT Kit: the newsletter page promises it on signup (PR #81), so the welcome email carries it too.
+// Same file the /newsletter/thanks/ page links (src/config.ts FREE_KIT_FILE). Keep the two in step.
+export const KIT_URL = "https://neonkey.tech/downloads/cffeda4dca/NeonKey-Starter-IT-Kit.xlsx";
+const KIT_HEAD = "Your free Starter IT Kit";
+const KIT_NOTE = "One spreadsheet to list every account your business signs into, see which ones still need a second login step, and run a 10-minute checkup once a month. No passwords go in the file. It opens in Excel or Google Sheets.";
 const REPLY_NOTE = "We'll send you the One-Minute Fix List: 12 small fixes for your business tech and customer follow-up, on one page. If there's one tech thing you're stuck on, add a line about it too. We read every reply, and it shapes what goes into Unlock the Week.";
 
 export function escapeHtml(s) {
@@ -99,6 +104,15 @@ export function renderWelcome({ firstName, unsubscribeUrl, mailingAddress }) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
 ${bulletRows}
         </table>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px 0;">
+          <tr>
+            <td bgcolor="#0e1129" style="background-color:#0e1129;border:1px solid ${C.rule};border-left:4px solid ${C.pink};border-radius:10px;padding:18px 20px;">
+              <p style="margin:0 0 6px 0;font-family:${font};font-size:17px;line-height:1.5;color:${C.text};font-weight:700;">${escapeHtml(KIT_HEAD)}</p>
+              <p style="margin:0 0 12px 0;font-family:${font};font-size:15px;line-height:1.6;color:${C.muted};">${escapeHtml(KIT_NOTE)}</p>
+              <a href="${KIT_URL}" style="font-family:${font};font-size:15px;font-weight:700;color:${C.accent};text-decoration:underline;">Download the kit</a>
+            </td>
+          </tr>
+        </table>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px 0;">
           <tr>
             <td bgcolor="#0e1129" style="background-color:#0e1129;border:1px solid ${C.rule};border-left:4px solid ${C.accent};border-radius:10px;padding:18px 20px;">
@@ -139,6 +153,10 @@ Thanks for confirming. You're officially on the list for Unlock the Week, the we
 
 WHAT TO EXPECT
 ${bullets.map((b) => `- ${b}`).join("\n")}
+
+${KIT_HEAD.toUpperCase()}
+${KIT_NOTE}
+Download: ${KIT_URL}
 
 ${REPLY_ASK}
 ${REPLY_NOTE}
