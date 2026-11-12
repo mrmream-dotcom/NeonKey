@@ -287,7 +287,7 @@ const total = QUESTIONS.length;
           headers: { 'Content-Type': 'application/json' },
           // Bridge (Nov 5 2026): the live Worker still requires the retired q9; 'D' = "doesn't apply" (remote). The
           // updated Worker ignores it. Remove once workers/quiz is redeployed.
-          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), answers: { ...answers, q9: 'D' }, newsletter, website: String(fd.get('website') || '') }),
+          body: JSON.stringify({ email, first_name: String(fd.get('first_name') || '').trim(), answers: { ...answers, q9: 'D' }, newsletter, website: String(fd.get('website') || ''), src: (() => { try { return JSON.parse(sessionStorage.getItem('nk_src') || '{}'); } catch { return {}; } })() }),
         });
         const out = await res.json().catch(() => ({}));
         if (res.ok && out.ok) {

@@ -216,7 +216,7 @@ ${s.ready && s.ready.length ? `${label("Have ready")}${bullets(s.ready.map(e))}`
 }
 
 /** Internal lead copy to hello@neonkey.tech. */
-export function renderLeadEmail(v, { email, firstName, newsletter, summary, plan }) {
+export function renderLeadEmail(v, { email, firstName, newsletter, summary, plan, source = "" }) {
   const e = escapeHtml;
   const name = cleanFirstName(firstName);
   const rows = [
@@ -227,6 +227,7 @@ export function renderLeadEmail(v, { email, firstName, newsletter, summary, plan
     ["Support plan", plan.support || "no"],
     ["Also worth a look", v.secondary ? v.secondary.name : "(none)"],
     ["Newsletter opt-in", newsletter ? "yes (Kit double opt-in requested)" : "no"],
+    ["Came from", source || "(not recorded)"],
   ];
   const H = [
     `<p style="${p}">Someone asked for their plan from the service quiz. Their copy has been sent. Reply to this email to reach them directly.</p>`,
@@ -319,7 +320,7 @@ const KIT_FIT = {
 };
 
 /** Internal lead copy for a free kit download. */
-export function renderKitLeadEmail({ email, firstName, newsletter, business, size, need, needKey }) {
+export function renderKitLeadEmail({ email, firstName, newsletter, business, size, need, needKey, source = "" }) {
   const e = escapeHtml;
   const name = cleanFirstName(firstName);
   const rows = [
@@ -330,6 +331,7 @@ export function renderKitLeadEmail({ email, firstName, newsletter, business, siz
     ["Biggest tech headache", need || "(not given)"],
     ["Likely fit", KIT_FIT[needKey] || "(ask them)"],
     ["Newsletter opt-in", newsletter ? "yes (Kit double opt-in requested)" : "no"],
+    ["Came from", source || "(not recorded)"],
   ];
   const H = [
     `<p style="${p}">New lead: someone downloaded the free Starter IT Kit. Their copy has been sent. Reply to this email to reach them directly.</p>`,
