@@ -1,0 +1,25 @@
+[
+ {"id":"lr-desk","tag":"QUOTE FOLLOW-UP","music":true,"track":"neon-drive.wav","scenes":[
+  {"kind":"title","dur":3.0,"text":"Most quotes don't get a no. They just go quiet.","accent":["quiet"]},
+  {"kind":"list","dur":6.0,"head":"A follow-up that gets answered","tick":true,"items":["Short: two or three lines","Answers the question they didn't ask","Gives them an easy way to say no"]},
+  {"kind":"compare","dur":5.4,"head":"Who should send it?","bad":"Whoever remembers, whenever","good":"The same steps, every quote, on a schedule","note":"Stop the moment they reply."},
+  {"kind":"shots","dur":7.5,"imgs":["cmp-1.png","cmp-2.png","cmp-3.png"],"heads":["Run it yourself, or have it built?","Who does the work","Where it runs"],"caption":"Side by side on our services page"}
+ ],"end":{"lead":"Which one fits you?","url":"neonkey.tech/services","tagline":"Compare the options side by side"}},
+ {"id":"lr-checker","tag":"FREE TOOL","music":true,"track":"bright-click.wav","scenes":[
+  {"kind":"title","dur":3.0,"text":"Not sure about a text? Paste it here first.","accent":["Paste"]},
+  {"kind":"shots","dur":9.0,"imgs":["chk-2.png","chk-3.png","chk-4.png"],"heads":["Paste the message","It points out the warning signs","Then tells you what to do"],"caption":"Sample message, made up. Don't visit the link."},
+  {"kind":"card","dur":5.4,"head":"Private by design","label":"HOW IT WORKS","lines":["The check runs in your browser","What you paste isn't sent or saved","Still leave out names and codes"]},
+  {"kind":"compare","dur":5.2,"head":"If money or a code is involved","bad":"Tap the link to check","good":"Open the app or type the site yourself","note":"A second opinion, not a promise."}
+ ],"end":{"lead":"Check a message free","url":"neonkey.tech/scam-checker","tagline":"Send it to someone who'd use it"}},
+ {"id":"lr-guides","tag":"FREE GUIDES","music":true,"track":"chill-grid.wav","scenes":[
+  {"kind":"title","dur":3.0,"text":"4 common scams, and the one move that beats each","accent":["one","move"]},
+  {"kind":"list","dur":8.0,"head":"Do this instead","tick":true,"items":["Unpaid toll text: log in to your toll account yourself","\"New number\" from family: call the number you already have","Bank \"fraud alert\": never read a code back","\"Call Microsoft\" pop-up: close the browser, don't call"]},
+  {"kind":"shots","dur":8.0,"imgs":["g-1.png","g-2.png","g-3.png","g-4.png"],"heads":["Unpaid tolls","Family emergencies","Bank fraud alerts","Tech support pop-ups"],"caption":"A 3-minute guide for each one"}
+ ],"end":{"lead":"Free guides, each with a source","url":"neonkey.tech/scam-checker","tagline":"All four are linked there"}},
+ {"id":"lr-watchdog","tag":"FOR FOUNDERS","music":true,"track":"pulse-up.wav","scenes":[
+  {"kind":"title","dur":3.0,"text":"Your email passed last month. Today is a different story.","accent":["Today"]},
+  {"kind":"list","dur":7.0,"head":"What changes without you","items":["A new sending tool isn't in your SPF record","A DNS record gets deleted","Your certificate or domain runs out","Your homepage goes down"]},
+  {"kind":"card","dur":6.0,"head":"A 2-minute habit","label":"DO THIS MONTHLY","lines":["Look up your SPF, DKIM and DMARC","Turn on auto-renew for the domain","Put the renewal date on your calendar"]},
+  {"kind":"compare","dur":5.0,"head":"Finding out","bad":"When a customer says your email went to spam","good":"The day the record changes"}
+ ],"end":{"lead":"Get told when it changes","url":"neonkey.tech/founders/watchdog","tagline":"Founder Watchdog"}}
+]
