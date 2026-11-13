@@ -286,5 +286,6 @@ test("emails escape what the buyer typed", async () => {
   const f = stubFetch();
   await onCheckout(env, ev("checkout.session.completed", s), s, T0);
   f.restore();
-  assert.doesNotMatch(f.sent[0].html, /<script>/);
+  assert.doesNotMatch(f.sent[0].html, /<\s*script/i);
+  assert.match(f.sent[0].html, /&lt;script&gt;/);
 });
