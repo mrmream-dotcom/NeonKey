@@ -55,7 +55,8 @@
     },
     {
       "id": "watchdog-waitlist",
-      "status": "draft",
+      "status": "running",
+      "note": "Waitlist demand test, not an A/B test, so it has no ab-tests.ts entry. Live from Nov 13 2026.",
       "kind": "offer",
       "page": "/founders/watchdog/",
       "hypothesis": "Founders who just checked or fixed their domain will join a waitlist for daily change alerts at a planned $9/mo or $90/yr, enough to justify building Founder Watchdog.",
@@ -64,7 +65,7 @@
       "baseline": "none yet: not shown to visitors as of Nov 13 2026",
       "minPerArm": 100,
       "readOn": "Dec 13 2026 gate (master plan section J: 25+ qualified), and only after at least 100 views of /founders/watchdog/",
-      "ownerOk": ""
+      "ownerOk": "Michael, Nov 13 2026: \"Ship all items\" (waitlist and planned prices on the site, thread: Test demand for Founder Watchdog)"
     }
   ]
 }

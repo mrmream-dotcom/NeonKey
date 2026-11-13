@@ -24,7 +24,7 @@ const DRAFT_PAGES = ['/founders/guide/thanks'];
 const isDraftPage = (page) => { const p = new URL(page).pathname.replace(/\/$/, ''); return DRAFT_PAGES.some((d) => p.endsWith(d)); };
 const MODE = process.env.PUBLIC_SITE_MODE === 'live' ? 'live' : 'demo';
 // Founder Watchdog waitlist page stays out of the sitemap unless the waitlist is live (src/config.ts WATCHDOG_WAITLIST).
-const WATCHDOG_LIVE = (process.env.PUBLIC_WATCHDOG_WAITLIST || '').trim().toLowerCase() === 'live';
+const WATCHDOG_LIVE = !['off', 'preview'].includes((process.env.PUBLIC_WATCHDOG_WAITLIST || 'live').trim().toLowerCase());
 
 export default defineConfig({
   output: 'static',

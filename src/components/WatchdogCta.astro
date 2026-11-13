@@ -1,7 +1,6 @@
 ---
 // "Watch it for me" entry point to the Founder Watchdog waitlist (src/pages/founders/watchdog.astro).
-// Renders nothing unless PUBLIC_WATCHDOG_WAITLIST is "preview" or "live" (src/config.ts), so production is unchanged
-// until Michael decides to show the waitlist. `from` names the touchpoint (WD_FROM in src/data/watchdog.ts).
+// Renders nothing when PUBLIC_WATCHDOG_WAITLIST is "off" (src/config.ts). Live by default since Michael's OK, Nov 13 2026. `from` names the touchpoint (WD_FROM in src/data/watchdog.ts).
 // Inside a DomainCheck "next" slot, DomainCheck adds the checked domain to the link (data-wd-link).
 import { url, WATCHDOG_WAITLIST } from '../config';
 import { watchdog, type WdFrom } from '../data/watchdog';

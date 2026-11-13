@@ -2,9 +2,9 @@
 // Founder Watchdog waitlist: a demand test, not a product page (Nov 13 2026; docs/founder-watchdog-mvp.md).
 // Nothing is for sale here: no Stripe link, no beta, no promise to build. The planned $9/$90 is shown so interest is
 // measured against a real number. Mode comes from PUBLIC_WATCHDOG_WAITLIST (src/config.ts):
-//   off     -> this route is only a redirect to /founders/ (production default until Michael says otherwise)
+//   off     -> this route is only a redirect to /founders/ (rollback)
 //   preview -> full page, noindex, the form shows what it would send and sends nothing
-//   live    -> the form POSTs to the quiz Worker's /watchdog route (same host the CSP already allows)
+//   live    -> (default since Michael's OK, Nov 13 2026) the form POSTs to the quiz Worker's /watchdog route
 // Entry points pass ?from=<touchpoint>&domain=<domain> (WatchdogCta.astro). Umami events carry track=founders.
 import { WATCHDOG_WAITLIST } from '../../config';
 import Redirect from '../../components/Redirect.astro';

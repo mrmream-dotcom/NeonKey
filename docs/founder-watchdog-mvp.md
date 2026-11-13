@@ -1,8 +1,8 @@
 # Founder Watchdog: demand test and bounded MVP design
 
-Written Nov 13 2026 for the Product Ecosystem Master Plan (B2F lane). Status: **waitlist test only.** No Stripe
+Written Nov 13 2026 for the Product Ecosystem Master Plan (B2F lane). **Live since Nov 13 2026** (Michael: "Ship all items"). Status: **waitlist test only.** No Stripe
 product, no beta, no promise to build. Michael parked a $20-30 "Email Watch" on Nov 7 2026; that decision stands.
-Showing the planned $9/$90 on the live site, and adding waitlist links, are open owner decisions (master plan section L).
+Michael approved showing the waitlist and the planned $9/$90 on the live site on Nov 13 2026 ("Ship all items").
 
 Labels used below: **Observed** (checked, with source and date), **Assumption**, **Target** (the plan's number),
 **Recommendation**.
@@ -32,7 +32,7 @@ Gaps found (reported, not changed in this PR, since they touch live offer copy o
 
 ## 2. The demand test (this PR)
 
-Entry points (all hidden unless `PUBLIC_WATCHDOG_WAITLIST` is `preview` or `live`):
+Entry points (shown unless `PUBLIC_WATCHDOG_WAITLIST=off`):
 
 | Touchpoint | `from` value | Where |
 |---|---|---|
@@ -70,15 +70,14 @@ Honest limit: traffic is thin (GA ~757 visits in 30 days to Nov 7; founders page
 paused). 25 qualified signups is unlikely from organic site traffic alone in 4 weeks, so the waitlist needs a
 founder-facing channel (newsletter issue, own social posts; no Reddit/IH promo posts) to give the test a fair read.
 
-### Going live (needs Michael)
+### Going live (done Nov 13 2026)
 
-1. Michael OKs showing the waitlist and planned prices on the site (section L), in words, with a date.
-2. Deploy the quiz Worker (`workers/quiz`, adds `POST /watchdog`; no new secrets, KV or CSP hosts).
-3. Build with `PUBLIC_WATCHDOG_WAITLIST=live` (add it to the build env in the deploy steps), then the usual
-   regression checks.
-4. Set the `watchdog-waitlist` entry in `src/data/experiments.json` to live with his OK.
+1. Michael OK'd the waitlist and planned prices on the site (Nov 13 2026, "Ship all items").
+2. Deploy the quiz Worker first (`workers/quiz`, adds `POST /watchdog`; no new secrets, KV or CSP hosts).
+3. The build default is `live`, so the normal production build shows the waitlist. Then the usual regression checks.
+4. `watchdog-waitlist` in `src/data/experiments.json` is `running`.
 
-Rollback: rebuild without the variable (default `off`): every link disappears and the page becomes a redirect.
+Rollback: build with `PUBLIC_WATCHDOG_WAITLIST=off`: every link disappears and the page becomes a redirect.
 Entries already collected stay in KV until their 365-day TTL; delete with `wrangler kv key delete` on request.
 
 ## 3. Reusing the Lockdown rechecks (observed in code, `6b46bc4`)

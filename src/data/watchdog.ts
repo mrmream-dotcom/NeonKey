@@ -5,8 +5,7 @@
 // Status: WAITLIST ONLY. Founder Watchdog is not for sale. There is no Stripe product, no beta and no promise to build
 // it. Michael parked a $20-30 "Email Watch" on Nov 7 2026; the $9/$90 figures below are the master plan's PLANNED
 // prices, shown only so interest is measured against a real number. Showing them on the live site is an open owner
-// decision (master plan section L), so the page stays off in production until Michael says so (WATCHDOG_WAITLIST in
-// src/config.ts). Pure data and functions only: no import.meta.env here, the Worker bundles this file too.
+// decision Michael made on Nov 13 2026 ("Ship all items"), so the waitlist is live (WATCHDOG_WAITLIST in src/config.ts). Pure data and functions only: no import.meta.env here, the Worker bundles this file too.
 
 export const watchdog = {
   name: 'Founder Watchdog',
