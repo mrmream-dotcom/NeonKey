@@ -119,13 +119,10 @@ export const RECEIPT_API_URL = (import.meta.env.PUBLIC_RECEIPT_API_URL || 'https
 // Review reply demo (/lab/review-reply/) runs on the same Worker as the triage demo, at /review.
 export const REVIEW_API_URL = (import.meta.env.PUBLIC_REVIEW_API_URL || TRIAGE_API_URL.replace(/\/triage$/, '/review')).trim();
 
-// Founder Watchdog waitlist (demand test, Nov 13 2026; src/data/watchdog.ts, docs/founder-watchdog-mvp.md).
-//   PUBLIC_WATCHDOG_WAITLIST = "live"    (default since Michael's OK, Nov 13 2026: "Ship all items"): the form posts to the
-//                                         quiz Worker's /watchdog route.
-//                              "off"     : /founders/watchdog/ is a redirect to /founders/ and no page links to it (rollback).
-//                              "preview": page and entry links render, noindex; the form only shows what would be sent
-//                                         and sends nothing. For reviewing the flow on a local or preview build.
-//   PUBLIC_WATCHDOG_API_URL  = override, e.g. http://localhost:8787/watchdog when running `wrangler dev`.
-const wdRaw = (import.meta.env.PUBLIC_WATCHDOG_WAITLIST || 'live').trim().toLowerCase();
-export const WATCHDOG_WAITLIST: 'off' | 'preview' | 'live' = wdRaw === 'off' ? 'off' : wdRaw === 'preview' ? 'preview' : 'live';
-export const WATCHDOG_API_URL = (import.meta.env.PUBLIC_WATCHDOG_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/watchdog').trim();
+// Founder Watchdog: paid product ($9/mo or $90/yr) since Nov 13 2026 (Michael: "make it live now"; it replaced the
+// waitlist). Checkout is two Stripe Payment Links (src/data/watchdog.ts); the checking runs in workers/watchdog/.
+//   PUBLIC_WATCHDOG = "live" (default): /founders/watchdog/ is the sales page and the "Watch it for me" links show.
+//                     "off"           : /founders/watchdog/ is a redirect to /founders/ and no page links to it (rollback).
+//                                       Also deactivate both Payment Links in Stripe, or old links still sell.
+const wdRaw = (import.meta.env.PUBLIC_WATCHDOG || import.meta.env.PUBLIC_WATCHDOG_WAITLIST || 'live').trim().toLowerCase();
+export const WATCHDOG: 'off' | 'live' = wdRaw === 'off' ? 'off' : 'live';

@@ -1,0 +1,38 @@
+---
+// Where the Founder Watchdog Payment Links send buyers after checkout. The neonkey-watchdog Worker (workers/watchdog/)
+// emails the TXT record within a few minutes of the Stripe webhook. No conversion tag yet: add one only when Michael
+// sets up an ads goal for it.
+import { url, CONTACT_EMAIL } from '../../../config';
+import Base from '../../../layouts/Base.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import Icon from '../../../components/Icon.astro';
+import { watchdog } from '../../../data/watchdog';
+---
+<Base title="You're subscribed" description="Founder Watchdog: one step left before we start watching your domain." noindex>
+  <PageHeader width="narrow" align="center" eyebrow={`${watchdog.name} · Thank you`} crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/watchdog/', label: watchdog.name }, { label: 'Subscribed' }]} class="status-head">
+    <span class="status-mark" slot="title-before"><Icon name="check" /></span>
+    <Fragment slot="title">You're in. One step left.</Fragment>
+    <p class="lede">We're emailing you one TXT record to add to your domain, usually within a few minutes. As soon as it shows up, we send your first look and start the daily checks. Stripe emails your receipt separately.</p>
+  </PageHeader>
+  <div class="narrow status-body">
+    <div class="callout" style="margin-bottom:1.25rem"><strong>No email after 15 minutes?</strong> Check spam for "One step to start watching", from hello@neonkey.tech. Still nothing, or typed the wrong domain? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll sort it out.</div>
+    <div class="panel topline wdt-next">
+      <h2>What happens next</h2>
+      <ol class="wdt-steps">
+        <li class="done"><strong>Subscribed.</strong> Stripe emails your receipt.</li>
+        <li><strong>Add the TXT record</strong> from our email wherever your domain's DNS is managed. If someone else handles DNS, forward them the email. It changes nothing about your email or website.</li>
+        <li><strong>We spot it</strong> (we look every hour for the first two days) and email your first look: email records, mail servers, homepage and renewal date.</li>
+        <li><strong>Daily checks start.</strong> You'll hear from us when something changes or breaks, plus a short all-clear once a month. Please leave the TXT record in place.</li>
+      </ol>
+    </div>
+    <p class="status-actions"><a class="btn btn-primary" href={url('/founders/watchdog/')}>Back to {watchdog.name}</a> <a class="btn" href={url('/refunds/#founder-watchdog')}>Cancel and refund rules</a></p>
+  </div>
+</Base>
+
+<style>
+  .wdt-next { margin-bottom: 1.25rem; }
+  .wdt-next h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .wdt-steps { padding-left: 1.4rem; margin: 0 0 .75rem; }
+  .wdt-steps li { margin-bottom: .4rem; }
+  .wdt-steps li.done::marker { color: var(--cyan, #22d3ee); }
+</style>

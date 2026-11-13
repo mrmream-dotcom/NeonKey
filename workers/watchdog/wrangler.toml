@@ -1,0 +1,40 @@
+# NeonKey Founder Watchdog Worker: $9/mo or $90/yr, watches one domain a day (DNS email records, MX/NS, homepage,
+# registration expiry) and emails the subscriber when something changes or breaks. README.md has the full picture.
+# Secrets (set by Michael with `wrangler secret put` or the Cloudflare dashboard, never committed, never in chat):
+#   STRIPE_WEBHOOK_SECRET  whsec_... from the Stripe webhook endpoint for /stripe
+#   RESEND_API_KEY         same kind of key the other Workers use (sends from hello@neonkey.tech)
+#   WATCHDOG_SECRET        random string; signs the ownership records and "I meant to do this" links. Never change it
+#                          once subscribers exist, or their verification records stop matching.
+#   MAILING_ADDRESS        optional, shown in the email footer
+name = "neonkey-watchdog"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+REPLY_TO = "hello@neonkey.tech"
+NOTIFY_TO = "hello@neonkey.tech"
+BCC_ADDRESS = "mr.mream@gmail.com"
+ALLOW_LIVE = "true"
+# Payment Link id:plan pairs. Checkouts from these links (or with metadata offer=nk_watchdog) become subscribers.
+PAYMENT_LINKS = "plink_1UbQTOCRxS1tvAi2exE78atm:monthly,plink_1UbQTPCRxS1tvAi2PvqRoQM0:yearly"
+PORTAL_URL = "https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00"
+PUBLIC_URL = "https://neonkey-watchdog.mr-mream.workers.dev"
+# Free plan: 50 outbound subrequests per invocation. Stay under it with room to spare.
+MAX_SUBREQUESTS = "45"
+
+[[kv_namespaces]]
+binding = "WATCHDOG"
+id = "4cae5b3b28b34b28af82cf6b7a5c53f9"
+
+[triggers]
+crons = ["*/10 * * * *"]
+
+# Workers Logs: console.log lines (errors, failed sends) kept for 3 days. Invocation logs off so ack links aren't stored.
+[observability]
+enabled = true
+
+[observability.logs]
+invocation_logs = false

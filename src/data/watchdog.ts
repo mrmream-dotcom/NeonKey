@@ -1,24 +1,39 @@
-// Founder Watchdog waitlist (demand test, Nov 13 2026). Shared by the page (src/pages/founders/watchdog.astro, runs in
-// the browser) and the quiz Worker's POST /watchdog route (workers/quiz/src/watchdog.js), so both use the same answer
-// whitelist and the same definition of a "qualified" signup.
+// Founder Watchdog. Shared by the site (sales page, CTAs) and the quiz Worker's old POST /watchdog waitlist route
+// (workers/quiz/src/watchdog.js), so keep the exports that route uses (plannedMonthly/plannedYearly, WD_OPTIONS,
+// validateWdAnswers, cleanWdDomain, qualifyWd, wdSummary). Pure data and functions only: no import.meta.env here.
 //
-// Status: WAITLIST ONLY. Founder Watchdog is not for sale. There is no Stripe product, no beta and no promise to build
-// it. Michael parked a $20-30 "Email Watch" on Nov 7 2026; the $9/$90 figures below are the master plan's PLANNED
-// prices, shown only so interest is measured against a real number. Showing them on the live site is an open owner
-// decision Michael made on Nov 13 2026 ("Ship all items"), so the waitlist is live (WATCHDOG_WAITLIST in src/config.ts). Pure data and functions only: no import.meta.env here, the Worker bundles this file too.
+// Status: ON SALE since Nov 13 2026. Michael: "why are we doing a waitlist ... make it live now". Prices $9/mo and
+// $90/yr were in the master plan and are the ones he approved. The checking itself runs in workers/watchdog/ (README
+// there). The waitlist page is gone; its route on the quiz Worker stays only so old links fail politely.
 
 export const watchdog = {
   name: 'Founder Watchdog',
-  status: 'waitlist' as const,
+  status: 'live' as const,
+  monthly: 9,
+  yearly: 90,
+  /** Kept for the quiz Worker's waitlist route (same numbers). */
   plannedMonthly: 9,
   plannedYearly: 90,
-  /** What the planned basic tier would watch, from master plan section G. Planned scope, not a promise. */
-  plannedChecks: [
-    'SPF, DKIM and DMARC: alert when a record disappears, breaks or loosens',
-    'Mail servers (MX) and DNS host (NS) changes',
-    'HTTPS certificate close to expiring',
-    'Domain registration close to expiring',
-    'Your homepage going down',
+  // Stripe Payment Links (live account). Each asks for the domain at checkout (custom field "domain") and returns to
+  // /founders/watchdog/thanks/. Product prod_VcfopubLOi4DBj; prices price_1UbQT1CRxS1tvAi2bk17BDux ($9/mo,
+  // nk_watchdog_monthly) and price_1UbQT2CRxS1tvAi2iepDAxMV ($90/yr, nk_watchdog_yearly).
+  monthlyUrl: 'https://buy.stripe.com/aFaeVc38OeV2cNF4Oob3q09', // plink_1UbQTOCRxS1tvAi2exE78atm
+  yearlyUrl: 'https://buy.stripe.com/dRm3cucJo28g5ldgx6b3q0a', // plink_1UbQTPCRxS1tvAi2PvqRoQM0
+  portalUrl: 'https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00',
+  refundDays: 30,
+  /** What the Worker actually checks today (workers/watchdog/src/engine.js). Keep in step with the code. */
+  checks: [
+    'SPF, DKIM and DMARC: a record that disappears, breaks or gets weaker than it was',
+    'Mail servers (MX) and DNS host (NS) changing',
+    'Your homepage not loading over HTTPS (an expired certificate shows up here too)',
+    'Domain registration expiring: a warning 30 days and 7 days out',
+  ],
+  /** Honest limits, shown on the page. */
+  limits: [
+    'One domain per subscription.',
+    'Checks run once a day, not every minute. A problem is checked a second time about 15 minutes later before we email you, so one blip does not wake you up.',
+    'We warn about the domain renewal date, but not about an HTTPS certificate before it expires; an expired certificate shows up as your homepage not loading.',
+    'Alerts come by email from hello@neonkey.tech. We never change anything on your domain.',
   ],
 };
 
