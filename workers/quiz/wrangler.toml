@@ -23,8 +23,13 @@ GLOBAL_DAILY_LIMIT = "100"
 # Free Starter IT Kit (POST /kit): the emailed download link, and its own daily cap.
 KIT_DOWNLOAD_URL = "https://neonkey.tech/downloads/cffeda4dca/NeonKey-Starter-IT-Kit.xlsx"
 KIT_GLOBAL_DAILY_LIMIT = "200"
+# Product waitlists (POST /waitlist, src/waitlist.js): per-IP and total signups per day.
+WAITLIST_IP_DAILY_LIMIT = "5"
+WAITLIST_GLOBAL_DAILY_LIMIT = "300"
 
-# Short-lived rate-limit counters (hashed IP / hashed email / daily total). No answers stored.
+# Short-lived rate-limit counters (hashed IP / hashed email / daily total). No quiz answers stored.
+# Also holds waitlist signups (wl:<product>:<hash> = email, who it's for, join date), kept until the test ends or the
+# person asks to be removed. Count them with `wrangler kv key list --binding QUIZ_RL --prefix wl:family-shield:`.
 [[kv_namespaces]]
 binding = "QUIZ_RL"
 id = "5fb0df1c3d8e41d3a158a62e4e1ce3be"

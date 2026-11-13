@@ -105,6 +105,9 @@ export const QUIZ_API_URL = (import.meta.env.PUBLIC_QUIZ_API_URL || 'https://neo
 // Free Starter IT Kit: same Worker as the quiz (workers/quiz/, route POST /kit) emails the download link.
 //   PUBLIC_FREE_KIT_API_URL = override, e.g. http://localhost:8787/kit when running `wrangler dev`.
 export const FREE_KIT_API_URL = (import.meta.env.PUBLIC_FREE_KIT_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/kit').trim();
+// Product waitlists (demand tests, e.g. Family Shield on /learn/is-this-a-scam/): same Worker, route POST /waitlist.
+//   PUBLIC_WAITLIST_API_URL = override, e.g. http://localhost:8787/waitlist when running `wrangler dev`.
+export const WAITLIST_API_URL = (import.meta.env.PUBLIC_WAITLIST_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/waitlist').trim();
 // Direct link to the free Starter IT Kit file. Same file the quiz Worker emails (workers/quiz KIT_DOWNLOAD_URL).
 // Newsletter signups get it right away on /newsletter/thanks/ and /newsletter/welcome/.
 export const FREE_KIT_FILE = '/downloads/cffeda4dca/NeonKey-Starter-IT-Kit.xlsx';
