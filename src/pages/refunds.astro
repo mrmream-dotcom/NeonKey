@@ -3,6 +3,7 @@ import { url, CONTACT_EMAIL } from '../config';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { emailLockdown, setupGuide, followUpDeskSale, usd } from '../data/services';
+import { watchdog } from '../data/watchdog';
 // Refunds and cancellations in one place (growth directive, Nov 12 2026: "make refunds simple").
 // This page only SUMMARIZES /terms/; it adds no new promise. If a rule changes, change /terms/ first, then this page.
 // The request link is a prefilled email (no new form markup, so the form pins in scripts/approved-form-changes.json
@@ -50,6 +51,15 @@ const requestHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Refun
       <li><strong>Just need a break?</strong> The Pause button on your dashboard holds every follow-up until you press Resume.</li>
     </ul>
     <p><a href={url('/terms/#follow-up-desk')}>Full terms</a>.</p>
+
+    <h2 id="founder-watchdog">Founder Watchdog</h2>
+    <ul>
+      <li><strong>Cancel anytime</strong> with the <a href={PORTAL} rel="noopener">billing link</a> above or the one in any Watchdog email. Checks keep running to the end of the period you've paid for; partial months aren't refunded.</li>
+      <li><strong>Couldn't get started?</strong> If we never manage to start watching your domain, ask within {watchdog.refundDays} days of paying for a full refund.</li>
+      <li><strong>Yearly plan:</strong> ask within {watchdog.refundDays} days of paying for a full refund. After that, unused months aren't refunded, and you can turn off the renewal anytime.</li>
+      <li><strong>Our mistake:</strong> if checks stop for a stretch because of a problem on our side, email us and we'll credit or refund that period.</li>
+    </ul>
+    <p><a href={url('/terms/#founder-watchdog')}>Full terms</a>.</p>
 
     <h2 id="support-plan">Monthly Remote Support Plan</h2>
     <p>Cancel anytime, by email or with the <a href={PORTAL} rel="noopener">billing link</a>. The plan runs to the end of the month you've paid for. <a href={url('/terms/#monthly-support-plan')}>Full terms</a>.</p>

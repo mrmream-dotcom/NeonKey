@@ -95,11 +95,14 @@ for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.te
 }
 
 // 9. Checkout integrity (B2B workstream, Nov 13 2026): every Stripe checkout link in the build is one listed in
-// src/data/services.ts, and the Follow-Up Desk page carries exactly the Desk links (regular, plus founding monthly
+// src/data/services.ts or src/data/watchdog.ts, the Founder Watchdog page carries exactly its two links, and the Follow-Up Desk page carries exactly the Desk links (regular, plus founding monthly
 // and yearly while the sale is on). Catches a typo'd, stale or swapped Payment Link before visitors can click it.
 {
   const src = read(new URL('../src/data/services.ts', import.meta.url));
-  const known = new Set([...src.matchAll(/https:\/\/buy\.stripe\.com\/[\w]+/g)].map((m) => m[0]));
+  const wdSrc = read(new URL('../src/data/watchdog.ts', import.meta.url));
+  const links = (text) => [...text.matchAll(/https:\/\/buy\.stripe\.com\/[\w]+/g)].map((m) => m[0]);
+  const known = new Set([...links(src), ...links(wdSrc)]);
+  const wdWant = new Set([...wdSrc.matchAll(/(?:monthlyUrl|yearlyUrl): '(https:\/\/buy\.stripe\.com\/\w+)'/g)].map((m) => m[1]));
   const pick = (block, key) => (src.slice(src.indexOf(block)).match(new RegExp(`${key}: '(https://buy\\.stripe\\.com/\\w+)'`)) || [])[1];
   const deskRegular = pick('export const followUpDesk: Offer', 'buyUrl');
   const saleMonthly = pick('export const followUpDeskSale', 'monthlyUrl');
@@ -109,6 +112,13 @@ for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.te
     for (const [, h] of read(f).matchAll(/href="(https:\/\/buy\.stripe\.com\/[^"]*)"/g)) {
       if (!known.has(h)) fail(`unknown Stripe checkout link ${h} on ${relative(distDir, f)}`);
     }
+  }
+  const wdPage = join(distDir, 'founders', 'watchdog', 'index.html');
+  if (existsSync(wdPage) && !read(wdPage).includes('http-equiv="refresh"')) {
+    const onPage = new Set([...read(wdPage).matchAll(/href="(https:\/\/buy\.stripe\.com\/[^"]*)"/g)].map((m) => m[1]));
+    if (wdWant.size !== 2) fail('could not read watchdog.monthlyUrl and yearlyUrl from src/data/watchdog.ts');
+    for (const u of wdWant) if (!onPage.has(u)) fail(`Founder Watchdog page is missing its checkout link ${u}`);
+    for (const u of onPage) if (!wdWant.has(u)) fail(`Founder Watchdog page links to a checkout that isn't a Watchdog link: ${u}`);
   }
   const deskPage = join(distDir, 'follow-up-desk', 'index.html');
   if (!existsSync(deskPage)) fail('follow-up-desk/index.html missing');

@@ -30,7 +30,7 @@ products/it-kit/). If you rebuild it, keep the same path or update `KIT_DOWNLOAD
 
 ## Founder Watchdog waitlist: `POST /watchdog`
 
-Used by https://neonkey.tech/founders/watchdog/ only when the site is built with `PUBLIC_WATCHDOG_WAITLIST=live`
+No longer linked from the site (the waitlist closed Nov 13 2026 when Founder Watchdog went on sale, see workers/watchdog/). Was used by https://neonkey.tech/founders/watchdog/ when the site was built with `PUBLIC_WATCHDOG_WAITLIST=live`
 (default `off`). Waitlist only: nothing is sold, nothing is monitored. Code in `src/watchdog.js`; the answer
 whitelist and the "qualified" rule live in `../../src/data/watchdog.ts`, shared with the page.
 
