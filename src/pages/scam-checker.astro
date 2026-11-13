@@ -1,0 +1,55 @@
+---
+// /scam-checker/: the Family Shield free check as its own page (Michael, Nov 13 2026: he didn't like /scam).
+// Same component as /learn/is-this-a-scam/. Old short link /scam/ redirects here.
+import LearnLayout from '../components/learn/LearnLayout.astro';
+import ScamChecker from '../components/learn/ScamChecker.astro';
+import { url } from '../config';
+import { familyShield as fs } from '../data/scam-samples';
+
+const frontmatter = {
+  title: 'Free scam checker: is this text or email a scam?',
+  description: 'Paste a text, email or pop-up into the free Family Shield check to see the warning signs and what to do. It runs in your browser and nothing you paste is saved.',
+  kicker: 'Free tool · Family Shield',
+  back: { href: '/learn/', label: 'Back to Learn' },
+};
+---
+<LearnLayout frontmatter={frontmatter}>
+  <p class="lead">Got a text, email or pop-up that feels off? Paste it below. The check looks for the warning signs scammers rely on and tells you what to do next. It's free, and nothing you paste leaves your device.</p>
+
+  <ScamChecker />
+
+  <h2 id="looks-for">What it looks for</h2>
+  <ul>
+    <li><strong>Pressure:</strong> deadlines, threats, late fees, "final notice".</li>
+    <li><strong>Look-alike links:</strong> a company's name inside a different web address, shortened links, odd endings.</li>
+    <li><strong>Risky requests:</strong> gift cards, crypto, wire transfers, reading back a code, confirming your password.</li>
+    <li><strong>Common setups:</strong> "new number" family texts, unpaid tolls, stuck packages, fake fraud alerts, virus pop-ups, prizes you didn't enter.</li>
+  </ul>
+
+  <h2 id="limits">What it can't do</h2>
+  <p>It reads the words you paste against a set of rules. It doesn't open links, look anything up or know who really sent the message, so it can miss a new trick or flag a real message. Treat the result as a second opinion, not a promise. When money, a code or a login is involved, <strong>don't tap, go direct:</strong> open the company's app, type its website yourself, or call a number you find yourself.</p>
+
+  <h2 id="guides">Guides for the most common scams</h2>
+  <ul>
+    <li><a href={url('/learn/unpaid-toll-text-scam/')}>Unpaid toll texts</a></li>
+    <li><a href={url('/learn/family-emergency-scam/')}>"Hi Mom, this is my new number" and other family emergency scams</a></li>
+    <li><a href={url('/learn/bank-fraud-alert-scam/')}>Bank "fraud alerts" that ask for a code</a></li>
+    <li><a href={url('/learn/tech-support-popup-scam/')}>Pop-ups that say call Microsoft</a></li>
+    <li><a href={url('/learn/spot-a-scam/')}>How to spot a scam</a>, the full guide</li>
+  </ul>
+  <p>Want to get faster at spotting them? <a href={url('/learn/is-this-a-scam/#practice')}>Practice on six made-up examples</a>.</p>
+
+  <section class="fs-box topline" id="family-plan" aria-labelledby="fp-h">
+    <span class="eyebrow">Family Shield · coming next</span>
+    <h2 id="fp-h">A family plan with an AI second opinion</h2>
+    <p>The family plan we're building adds an AI second opinion on the messages your family checks, for up to {fs.maxAdults} adults who each say yes by email. Adults 18 and over only. Messages get deleted after the check, and the AI service we pick won't train on them. We'll open it here once it works end to end; nothing is for sale yet.</p>
+    <p>Until then, the best thing you can do for someone you love is send them this page.</p>
+    <p><button type="button" class="btn btn-primary" data-share>Send this checker to family</button> <span class="form-note fs-status" data-share-status role="status" aria-live="polite"></span></p>
+  </section>
+</LearnLayout>
+
+<style>
+  .fs-box { margin: 2.5rem 0 1rem; padding: 1.3rem 1.3rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(167,139,250,.06); scroll-margin-top: 100px; }
+  .fs-box h2 { margin-top: .3rem; }
+  .fs-status:empty { display: none; }
+</style>
