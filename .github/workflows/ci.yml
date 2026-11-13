@@ -34,6 +34,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx astro build
+      - run: npm run test:site
       - name: Check build output has no source maps or env files
         run: |
           if find dist \( -name '*.map' -o -name '.env*' -o -name '.dev.vars' \) | grep -q .; then
@@ -48,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        worker: [followup-desk, lockdown, payments]
+        worker: [followup-desk, lockdown, payments, quiz]
     defaults:
       run:
         working-directory: workers/${{ matrix.worker }}
