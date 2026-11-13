@@ -115,3 +115,14 @@ export const RECEIPT_API_URL = (import.meta.env.PUBLIC_RECEIPT_API_URL || 'https
 
 // Review reply demo (/lab/review-reply/) runs on the same Worker as the triage demo, at /review.
 export const REVIEW_API_URL = (import.meta.env.PUBLIC_REVIEW_API_URL || TRIAGE_API_URL.replace(/\/triage$/, '/review')).trim();
+
+// Founder Watchdog waitlist (demand test, Nov 13 2026; src/data/watchdog.ts, docs/founder-watchdog-mvp.md).
+//   PUBLIC_WATCHDOG_WAITLIST = "off"     (default): /founders/watchdog/ is a redirect to /founders/ and no page links to it.
+//                              "preview": page and entry links render, noindex; the form only shows what would be sent
+//                                         and sends nothing. For reviewing the flow on a local or preview build.
+//                              "live"   : the form posts to the quiz Worker's /watchdog route. Needs Michael's OK on
+//                                         showing planned prices (master plan section L) and the Worker deployed first.
+//   PUBLIC_WATCHDOG_API_URL  = override, e.g. http://localhost:8787/watchdog when running `wrangler dev`.
+const wdRaw = (import.meta.env.PUBLIC_WATCHDOG_WAITLIST || 'off').trim().toLowerCase();
+export const WATCHDOG_WAITLIST: 'off' | 'preview' | 'live' = wdRaw === 'live' ? 'live' : wdRaw === 'preview' ? 'preview' : 'off';
+export const WATCHDOG_API_URL = (import.meta.env.PUBLIC_WATCHDOG_API_URL || 'https://neonkey-quiz.mr-mream.workers.dev/watchdog').trim();

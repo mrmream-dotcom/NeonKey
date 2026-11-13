@@ -342,3 +342,41 @@ export function renderKitLeadEmail({ email, firstName, newsletter, business, siz
   const html = shell({ title: "Free IT Kit lead", preheader: `Free IT Kit lead: ${business || email}`, kicker: "Free kit lead", heading: business || "Starter IT Kit download", body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker (/kit). Disclosed on neonkey.tech/privacy/ (Free IT kit)."] });
   return { html, text: T.join("\n") };
 }
+
+/** Founder Watchdog waitlist confirmation (POST /watchdog). One email, no promise to build, no price commitment. */
+export function renderWatchdogEmail({ domain, plannedMonthly, plannedYearly, mailingAddress }) {
+  const e = escapeHtml;
+  const subject = "You're on the Founder Watchdog waitlist";
+  const pre = `${SITE}/founders/preflight/?domain=${encodeURIComponent(domain)}`;
+  const H = [
+    `<p style="${p}">Thanks for joining the Founder Watchdog waitlist for <strong>${e(domain)}</strong>.</p>`,
+    `<p style="${p}">Founder Watchdog isn't built yet. It's a service we're considering that would check a domain's email and website setup every day and email the owner when something breaks. We'll only build it if enough founders want it.</p>`,
+    box(`<p style="${body15}"><strong>What joining means:</strong> nothing to pay and nothing to cancel. We're not monitoring your domain. If it opens, you'll hear first, by one email, at the planned $${e(String(plannedMonthly))} a month or $${e(String(plannedYearly))} a year. If we decide not to build it, we'll tell you once and stop.</p>`),
+    `<p style="${p}">Want to know where your domain stands today? The free Launch Preflight checks it in about 30 seconds.</p>`,
+    button("Run the free Launch Preflight", pre),
+    `<p style="${small}">Changed your mind? Reply "remove me" and we'll delete your entry.</p>`,
+  ];
+  const T = [
+    `Thanks for joining the Founder Watchdog waitlist for ${domain}.`, "",
+    "Founder Watchdog isn't built yet. It's a service we're considering that would check a domain's email and website setup every day and email the owner when something breaks. We'll only build it if enough founders want it.", "",
+    `What joining means: nothing to pay and nothing to cancel. We're not monitoring your domain. If it opens, you'll hear first, by one email, at the planned $${plannedMonthly} a month or $${plannedYearly} a year. If we decide not to build it, we'll tell you once and stop.`, "",
+    `Free Launch Preflight for your domain: ${pre}`, "",
+    "Changed your mind? Reply \"remove me\" and we'll delete your entry.",
+  ];
+  const footer = [`You're getting this one-time email because you joined the Founder Watchdog waitlist on neonkey.tech. <a href="https://neonkey.tech/privacy/#founder-watchdog-waitlist" style="color:${C.muted};text-decoration:underline;">Privacy</a>`];
+  T.push("--", footer[0].replace(/ <a .*$/, " Privacy: https://neonkey.tech/privacy/#founder-watchdog-waitlist"));
+  if (mailingAddress) T.push("", `NeonKey · ${mailingAddress}`);
+  const html = shell({ title: subject, preheader: "Nothing to pay. We'll email you once if it opens.", kicker: "Waitlist", heading: "You're on the list", body: H.join("\n"), footer, address: mailingAddress });
+  return { subject, html, text: T.join("\n") };
+}
+
+/** Internal copy of a waitlist signup for hello@ (reply goes to the visitor). */
+export function renderWatchdogLeadEmail({ email, summary, qualified, reasons, source = "", repeat = false }) {
+  const e = escapeHtml;
+  const rows = [["Email", email], ...summary.map((l) => [l.slice(0, l.indexOf(":")), l.slice(l.indexOf(":") + 2)]), ["Qualified", qualified ? "yes" : `no (${reasons.join(", ")})`], ["First touch", source || "(not recorded)"]];
+  const lead = `${repeat ? "Updated" : "New"} Founder Watchdog waitlist signup. Waitlist only: nothing was sold or promised. Reply to reach them directly.`;
+  const H = [`<p style="${p}">${e(lead)}</p>`, box(rows.map(([k, val]) => `<p style="margin:0 0 6px 0;font-family:${FONT};font-size:15px;line-height:1.5;color:${C.text};"><strong>${e(k)}:</strong> ${e(val)}</p>`).join(""))];
+  const T = [lead, "", ...rows.map(([k, val]) => `${k}: ${val}`)];
+  const html = shell({ title: "Watchdog waitlist", preheader: `Watchdog waitlist: ${email}`, kicker: qualified ? "Qualified waitlist signup" : "Waitlist signup", heading: "Founder Watchdog waitlist", body: H.join("\n"), footer: ["Internal copy from the neonkey-quiz Worker (/watchdog). Disclosed on neonkey.tech/privacy/ (Founder Watchdog waitlist)."] });
+  return { html, text: T.join("\n") };
+}

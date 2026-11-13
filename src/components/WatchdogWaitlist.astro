@@ -1,0 +1,144 @@
+---
+// Founder Watchdog waitlist page body. Only rendered by src/pages/founders/watchdog.astro when the waitlist is on,
+// so its script and styles never ship in the default (off) production build. See that page for the modes.
+import { url, WATCHDOG_WAITLIST, WATCHDOG_API_URL } from '../config';
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import { watchdog, WD_OPTIONS } from '../data/watchdog';
+import { usd } from '../data/services';
+const mode = WATCHDOG_WAITLIST;
+---
+<Base title="Founder Watchdog waitlist" description="Founder Watchdog is a planned NeonKey service that would watch your domain's email and website setup and tell you when something breaks. Join the waitlist. Nothing to pay." noindex={mode !== 'live'}>
+  <PageHeader eyebrow="Waitlist · For founders" title="Watch it for me" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: watchdog.name }]}>
+    <p class="lede">Your domain passes today. Then someone adds a new sending tool, a record gets deleted, or a certificate quietly expires, and mail starts landing in spam before anyone notices. {watchdog.name} is a service we're thinking about building that would check your domain every day and email you when something changes.</p>
+    <Fragment slot="meta">
+      <li><span>Waitlist only</span></li>
+      <li><span>Nothing to pay</span></li>
+      <li><span>No commitment</span></li>
+    </Fragment>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container wd-grid">
+      <div class="panel topline">
+        {mode === 'preview' && <p class="wd-preview" data-wd-preview><strong>Preview build.</strong> This form shows what it would send and sends nothing.</p>}
+        <h2 class="wd-h">What it would watch</h2>
+        <ul class="wd-list">{watchdog.plannedChecks.map((c) => <li>{c}</li>)}</ul>
+        <p class="muted">Alerts would come by email, in everyday words, with what changed and how to fix it. One domain on the basic plan.</p>
+        <h2 class="wd-h">Planned price</h2>
+        <p><strong>{usd(watchdog.plannedMonthly)} a month, or {usd(watchdog.plannedYearly)} a year.</strong> That's the price we'd plan to charge if we build it. It isn't on sale, and joining the list doesn't sign you up for anything.</p>
+        <h2 class="wd-h">Why we ask about DNS</h2>
+        <p class="muted">Before Watchdog would watch a domain, the owner would add one short TXT record to prove it's theirs, so nobody can watch a domain that isn't theirs. If someone else manages your DNS, that's fine: they'd add it for you.</p>
+        <h2 class="wd-h">Honest status</h2>
+        <ul class="muted wd-list">
+          <li>It isn't built yet. We'll only build it if enough founders say they want it.</li>
+          <li>If we do, people on this list hear first, by one email. If we don't, we'll say so once and stop.</li>
+          <li>Want it fixed today instead? The free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="watchdog" data-umami-event-track="founders">Launch Preflight</a> checks your domain right now.</li>
+        </ul>
+      </div>
+
+      <form class="panel topline accent-magenta wd-form" data-wd-form data-api={WATCHDOG_API_URL} data-mode={mode} novalidate>
+        <h2 class="wd-h">Join the waitlist</h2>
+        <div class="wd-field"><label for="wd-email">Email <span aria-hidden="true">*</span></label><input id="wd-email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="254" placeholder="you@yourstartup.com" /></div>
+        <div class="wd-field"><label for="wd-domain">Domain to watch <span aria-hidden="true">*</span></label><input id="wd-domain" name="domain" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="253" placeholder="yourstartup.com" /></div>
+        <fieldset class="wd-field"><legend>Who can add a DNS record for it? <span aria-hidden="true">*</span></legend>
+          {Object.entries(WD_OPTIONS.dns).map(([k, v]) => <label class="wd-opt"><input type="radio" name="dns" value={k} required /> <span>{v}</span></label>)}
+        </fieldset>
+        <div class="wd-field"><label for="wd-domains">How many domains do you run?</label>
+          <select id="wd-domains" name="domains">{Object.entries(WD_OPTIONS.domains).map(([k, v]) => <option value={k}>{v}</option>)}</select>
+        </div>
+        <fieldset class="wd-field"><legend>What matters most to you?</legend>
+          {Object.entries(WD_OPTIONS.watch).map(([k, v]) => <label class="wd-opt"><input type="checkbox" name="watch" value={k} /> <span>{v}</span></label>)}
+        </fieldset>
+        <fieldset class="wd-field"><legend>If it existed, would you pay for it? <span aria-hidden="true">*</span></legend>
+          {Object.entries(WD_OPTIONS.plan).map(([k, v]) => <label class="wd-opt"><input type="radio" name="plan" value={k} required /> <span>{v}</span></label>)}
+        </fieldset>
+        <div class="wd-hp" aria-hidden="true"><label for="wd-website">Website</label><input id="wd-website" name="website" tabindex="-1" autocomplete="off" /></div>
+        <input type="hidden" name="from" value="direct" data-wd-from />
+        <button type="submit" class="btn btn-primary" data-wd-send data-umami-event="watchdog-submit" data-umami-event-track="founders">Join the waitlist</button>
+        <p class="form-note wd-status" data-wd-status role="status" aria-live="polite"></p>
+        <p class="form-note">We email you once to confirm, and a copy of your answers comes to NeonKey. Nothing is checked or monitored on your domain from this form. Your entry is kept for up to a year, then deleted; ask anytime at hello@neonkey.tech and we'll delete it sooner. See the <a href={url('/privacy/#founder-watchdog-waitlist')}>privacy policy</a>.</p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .wd-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 820px) { .wd-grid { grid-template-columns: 1fr; } .wd-form { order: -1; } }
+  .wd-h { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .wd-list { padding-left: 1.1rem; margin-top: 0; }
+  .wd-list li { margin-bottom: .4rem; }
+  .wd-preview { border: 1px dashed var(--line); border-radius: 10px; padding: .6rem .8rem; margin: 0 0 1rem; }
+  .wd-form { display: flex; flex-direction: column; gap: .85rem; }
+  .wd-field { display: flex; flex-direction: column; gap: .35rem; border: 0; padding: 0; margin: 0; min-width: 0; }
+  .wd-field legend { font-weight: 700; margin-bottom: .35rem; padding: 0; }
+  .wd-field label:not(.wd-opt) { font-weight: 700; }
+  .wd-opt { display: flex; gap: .5rem; align-items: flex-start; font-weight: 400; }
+  .wd-opt input { width: auto; min-width: 0; height: auto; padding: 0; margin: .3rem 0 0; flex: none; box-shadow: none; }
+  .wd-opt span { flex: 1; min-width: 0; }
+  .wd-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .wd-status:empty { display: none; }
+  .wd-status.ok { color: #2ee6a6; }
+  .wd-status.err { color: #ff4d6d; }
+  .wd-form .btn { align-self: flex-start; }
+</style>
+
+<script>
+  import { validateWdAnswers, cleanWdDomain, qualifyWd, WD_FROM } from '../data/watchdog';
+  const form = document.querySelector<HTMLFormElement>('[data-wd-form]');
+  if (form) {
+    const mode = form.dataset.mode || 'off';
+    const API = form.dataset.api || '';
+    const status = form.querySelector<HTMLElement>('[data-wd-status]')!;
+    const btn = form.querySelector<HTMLButtonElement>('[data-wd-send]')!;
+    const track = (name: string, data?: Record<string, string>) => { try { (window as any).umami?.track(name, { track: 'founders', ...data }); } catch { /* analytics optional */ } };
+    const qs = new URLSearchParams(location.search);
+    const from = (WD_FROM as readonly string[]).includes(qs.get('from') || '') ? (qs.get('from') as string) : 'direct';
+    form.querySelector<HTMLInputElement>('[data-wd-from]')!.value = from;
+    const pre = cleanWdDomain(qs.get('domain') || '');
+    if (pre) form.querySelector<HTMLInputElement>('#wd-domain')!.value = pre;
+    track('watchdog-view', { from, prefilled: String(Boolean(pre)) });
+
+    const say = (cls: string, msg: string) => { status.className = `form-note wd-status ${cls}`; status.textContent = msg; };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const email = String(fd.get('email') || '').trim();
+      const domain = cleanWdDomain(String(fd.get('domain') || ''));
+      const answers = validateWdAnswers({ dns: fd.get('dns'), domains: fd.get('domains'), plan: fd.get('plan'), watch: fd.getAll('watch'), from });
+      if (!email || !form.querySelector<HTMLInputElement>('#wd-email')!.checkValidity()) return say('err', 'Please enter a valid email address.');
+      if (!domain) return say('err', 'Please enter a domain like yourstartup.com.');
+      if (!answers) return say('err', 'Please answer the DNS and price questions.');
+      const q = qualifyWd(domain, answers);
+      const ev = { from, qualified: String(q.qualified), dns: answers.dns, plan: answers.plan, domains: answers.domains };
+      const payload = {
+        email, domain, answers, website: String(fd.get('website') || ''),
+        src: (() => { try { return JSON.parse(sessionStorage.getItem('nk_src') || '{}'); } catch { return {}; } })(),
+      };
+      if (mode !== 'live') {
+        track('watchdog-preview-submit', ev);
+        say('ok', `Preview only, nothing was sent. A live form would send: ${domain}, DNS "${answers.dns}", price "${answers.plan}", from "${from}". This signup ${q.qualified ? 'would count as qualified' : `would not count as qualified (${q.reasons.join(', ')})`}.`);
+        return;
+      }
+      btn.disabled = true;
+      say('', 'Adding you to the list…');
+      try {
+        const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.ok) {
+          track('watchdog-signup', ev);
+          say('ok', out.repeat ? "You're already on the list. We've updated your answers." : "You're on the list. Check your inbox for a short confirmation from NeonKey.");
+          form.querySelectorAll('input, select, button').forEach((x) => ((x as HTMLInputElement).disabled = true));
+          return;
+        }
+        track('watchdog-error', { status: String(res.status) });
+        say('err', out.message || "That didn't go through. Try again in a minute, or email hello@neonkey.tech.");
+      } catch {
+        track('watchdog-error', { status: 'network' });
+        say('err', "That didn't go through. Check your connection and try again, or email hello@neonkey.tech.");
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

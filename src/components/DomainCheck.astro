@@ -160,6 +160,12 @@ const { placeholder = 'yourbusiness.com', track = 'business' } = Astro.props;
       if (x.fix) { const fx = document.createElement('p'); fx.className = 'pf-fix'; fx.textContent = `How to fix: ${x.fix}`; li.append(fx); }
       list.append(li);
     }
+    // Founder Watchdog waitlist links in the "next" slot (WatchdogCta.astro) carry the checked domain and the verdict.
+    document.querySelectorAll<HTMLAnchorElement>('[data-wd-link]').forEach((a) => {
+      const u = new URL(a.href, location.href);
+      u.searchParams.set('domain', domain);
+      a.href = u.pathname + u.search;
+    });
     results.hidden = false;
   }
 

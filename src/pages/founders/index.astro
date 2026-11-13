@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import { setupGuide } from '../../data/services';
 import GuideSale from '../../components/GuideSale.astro';
+import WatchdogCta from '../../components/WatchdogCta.astro';
 // Founders track (Nov 6 2026): tools and guides for startup founders, kept apart from the small-business pages.
 // Linked from the footer only; the main nav stays aimed at small businesses. Umami events carry track=founders.
 ---
@@ -25,6 +26,7 @@ import GuideSale from '../../components/GuideSale.astro';
         <p class="muted">{setupGuide.subtitle}, step by step: domain and email, website, Stripe, a self-delivering product, outreach and lead tracking. Includes an Email Authentication Setup.</p>
         <span class="fd-go">See what's inside</span>
       </a>
+      <WatchdogCta from="founders-hub" variant="panel" />
     </div>
     <div class="container"><p class="muted fd-note">Run a small business rather than a startup? Start at <a href={url('/services/')}>Services</a> instead.</p></div>
   </section>

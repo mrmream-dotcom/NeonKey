@@ -1,0 +1,24 @@
+---
+// "Watch it for me" entry point to the Founder Watchdog waitlist (src/pages/founders/watchdog.astro).
+// Renders nothing unless PUBLIC_WATCHDOG_WAITLIST is "preview" or "live" (src/config.ts), so production is unchanged
+// until Michael decides to show the waitlist. `from` names the touchpoint (WD_FROM in src/data/watchdog.ts).
+// Inside a DomainCheck "next" slot, DomainCheck adds the checked domain to the link (data-wd-link).
+import { url, WATCHDOG_WAITLIST } from '../config';
+import { watchdog, type WdFrom } from '../data/watchdog';
+import { usd } from '../data/services';
+interface Props { from: WdFrom; variant?: 'line' | 'panel'; lead?: string }
+const { from, variant = 'line', lead = 'Passing today?' } = Astro.props;
+const href = url(`/founders/watchdog/?from=${from}`);
+const price = `planned ${usd(watchdog.plannedMonthly)}/mo`;
+---
+{WATCHDOG_WAITLIST !== 'off' && <Fragment><style is:inline>   .wd-cta { display: flex; flex-direction: column; gap: .45rem; }   .wd-cta-h { font-size: 1.15rem; margin: 0; }   .wd-cta p, .wd-cta-line { margin: .4rem 0; }   .wd-cta .btn { align-self: flex-start; } </style></Fragment>}
+{WATCHDOG_WAITLIST !== 'off' && (variant === 'panel' ? (
+  <div class="panel topline wd-cta" data-wd-cta>
+    <span class="kicker">Waitlist · {price}</span>
+    <h2 class="wd-cta-h">Watch it for me</h2>
+    <p class="muted">Records change. {watchdog.name} would check your domain every day and email you when something breaks. It isn't built yet; join the waitlist to tell us you want it.</p>
+    <a class="btn btn-ghost btn-sm" href={href} data-wd-link data-umami-event="watchdog-cta" data-umami-event-from={from} data-umami-event-track="founders">Join the waitlist</a>
+  </div>
+) : (
+  <p class="wd-cta-line" data-wd-cta><strong>{lead}</strong> Records change after setup. <a href={href} data-wd-link data-umami-event="watchdog-cta" data-umami-event-from={from} data-umami-event-track="founders">Watch it for me</a>: join the {watchdog.name} waitlist ({price}, nothing to pay now).</p>
+))}

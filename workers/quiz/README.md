@@ -28,6 +28,30 @@ Rate-limit keys are prefixed `kit:` so they don't collide with plan requests; da
 `KIT_GLOBAL_DAILY_LIMIT`. The spreadsheet is built by `build_free_kit.py` (project files,
 products/it-kit/). If you rebuild it, keep the same path or update `KIT_DOWNLOAD_URL`.
 
+## Founder Watchdog waitlist: `POST /watchdog`
+
+Used by https://neonkey.tech/founders/watchdog/ only when the site is built with `PUBLIC_WATCHDOG_WAITLIST=live`
+(default `off`). Waitlist only: nothing is sold, nothing is monitored. Code in `src/watchdog.js`; the answer
+whitelist and the "qualified" rule live in `../../src/data/watchdog.ts`, shared with the page.
+
+JSON `{ email, domain, answers: { dns, domains, plan, watch[], from }, website, src }`. Same origin lock, honeypot and
+JSON checks as the other routes. Stores one entry per email at `wd:entry:<hash>` in `QUIZ_RL` (365-day TTL) with key
+metadata `{ q, from, plan, dns, created }`; a repeat signup updates it and sends no second confirmation. Sends the
+visitor one confirmation and `LEAD_TO` a lead copy. Limits: `WD_IP_DAILY_LIMIT` (default 5) per hashed IP,
+`WD_GLOBAL_DAILY_LIMIT` (default 200) per day. Count the gate with:
+
+```sh
+npx wrangler kv key list --binding QUIZ_RL --prefix wd:entry:   # metadata.q = 1 means qualified
+```
+
+Delete an entry on request with `npx wrangler kv key delete --binding QUIZ_RL <key>`.
+
+## Tests
+
+```sh
+npm test    # node --test, stubbed KV and Resend, no network
+```
+
 ## Deploy
 
 ```sh

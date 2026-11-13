@@ -3,6 +3,7 @@ import { url } from '../../../config';
 import Base from '../../../layouts/Base.astro';
 import PageHeader from '../../../components/PageHeader.astro';
 import GuideSale from '../../../components/GuideSale.astro';
+import WatchdogCta from '../../../components/WatchdogCta.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
 // Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
@@ -79,6 +80,7 @@ import { setupGuide, emailLockdown, usd } from '../../../data/services';
           <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
         </ul>
         <p class="muted">Not sure where your domain stands? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight</a> first.</p>
+        <WatchdogCta from="guide" lead="After setup:" />
       </div>
       <aside class="panel topline accent-magenta sg-buy">
         <span class="kicker">Guide for founders · PDF</span>
