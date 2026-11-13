@@ -2,7 +2,7 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as saleLive, frontOfficePackage as fop, usd } from '../../data/services';
+import { followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as saleLive, frontOfficePackage as fop, remoteSupportPlan as sp, usd } from '../../data/services';
 import DeskSale from '../../components/DeskSale.astro';
 import { followUpDeskSale } from '../../data/services';
 // Payback example uses whatever monthly price is on sale right now ($1,250 profit per job is a labeled example).
@@ -124,9 +124,14 @@ const sample = [
           </ul>
         </div>
 
-        <div class="panel topline">
-          <h2 class="fd-h">Want it set up for you instead?</h2>
-          <p class="muted">The Follow-Up Desk is do-it-yourself. If you'd rather have new requests from your website and inbox routed, answered with drafts and tracked on one list, that's the <a href={url('/services/#front-office-package')}>{fop.name}</a>, a custom setup done with you.</p>
+        <div class="panel topline" id="fit">
+          <h2 class="fd-h">Is this the right one for you?</h2>
+          <ul class="fd-fit">
+            <li><strong>{fd.name}: you run it.</strong> You send estimates by email and want follow-ups to go out on their own. Set it up yourself in about five minutes.</li>
+            <li><strong>{fop.name}: built for you.</strong> You want new requests from your website and inbox routed, answered with drafts and tracked on one list, as a custom setup with a written quote first.</li>
+            <li><strong>{sp.name}: IT help by email.</strong> Your basics are set up and you want someone to handle small IT changes and questions. It doesn't send follow-ups.</li>
+          </ul>
+          <p class="fd-small"><a href={url('/services/#compare')} data-umami-event="desk-compare-link" data-umami-event-location="follow-up-desk-page">Compare all three side by side</a></p>
         </div>
       </div>
 
@@ -146,6 +151,7 @@ const sample = [
         <ul class="fd-list">
           {fd.items.map((i) => <li>{i}</li>)}
         </ul>
+        <p class="muted fd-small">Questions before you start? <a href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-buybox">Ask us</a> and you'll get a written answer by email.</p>
         <p class="muted fd-small">Already signed up? <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">Get your dashboard link</a>.</p>
         <p class="muted fd-small">See the <a href={url('/terms/#follow-up-desk')}>terms</a> and <a href={url('/privacy/#follow-up-desk')}>what we keep</a>.</p>
       </aside>
@@ -175,6 +181,7 @@ const sample = [
   .fd-shot { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); margin: .5rem 0 .35rem; }
   .fd-tools { margin: .9rem 0 0; }
   .fd-why { margin: 0 0 .75rem; }
+  .fd-fit { margin: 0 0 .6rem; }
   .fd-video { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); background: #0b0d17; margin: .25rem 0 .35rem; }
   .fd-sub { font-size: 1rem; margin: 1.25rem 0 .35rem; }
   .fd-btnmail { margin: .5rem 0 .75rem; }

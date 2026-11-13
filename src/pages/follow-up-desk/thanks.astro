@@ -3,6 +3,7 @@ import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
+import { followUpDeskTrialDays } from '../../data/services';
 // Where the Follow-Up Desk Payment Link sends buyers after checkout. The neonkey-followup-desk Worker emails the
 // dashboard link (workers/followup-desk). No conversion tag yet: add one only when Michael sets up an ads goal for it.
 ---
@@ -10,14 +11,14 @@ import Icon from '../../components/Icon.astro';
   <PageHeader width="narrow" align="center" eyebrow="Follow-Up Desk · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/follow-up-desk/', label: 'Follow-Up Desk' }, { label: 'Signed up' }]} class="status-head">
     <span class="status-mark" slot="title-before"><Icon name="check" /></span>
     <Fragment slot="title">You're in. Check your email.</Fragment>
-    <p class="lede">Your private dashboard link is on its way, usually within a few minutes. Setup takes about five minutes. Your 14 days free start today, and Stripe emails you a receipt for the trial.</p>
+    <p class="lede">Your private dashboard link is on its way, usually within a few minutes. Setup takes about five minutes. On the monthly plan, your {followUpDeskTrialDays} free days start today. On the yearly plan, your year starts today. Either way, Stripe emails you a receipt.</p>
   </PageHeader>
   <div class="narrow status-body">
     <div class="callout" style="margin-bottom:1.25rem"><strong>No email after 10 minutes?</strong> Check spam for "Your Follow-Up Desk is ready", or <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">get a new link</a> with the email you paid with. Still stuck? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</div>
     <div class="panel topline fdt-next">
       <h2>Your first five minutes</h2>
       <ol class="fdt-steps">
-        <li class="done"><strong>Signed up.</strong> Stripe emails your receipt.</li>
+        <li class="done"><strong>Signed up.</strong> Stripe emails your receipt. The emails from NeonKey come from hello@neonkey.tech.</li>
         <li><strong>Open the email "Your Follow-Up Desk is ready"</strong> and tap the private link. No password.</li>
         <li><strong>Add your details:</strong> business name, where replies go and how you sign off. The three messages are already written.</li>
         <li><strong>Add the estimates you've sent</strong> but haven't heard back on, one at a time or as a pasted list.</li>
