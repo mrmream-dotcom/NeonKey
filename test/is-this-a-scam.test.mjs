@@ -8,7 +8,7 @@ const page = "dist/learn/is-this-a-scam/index.html";
 const html = existsSync(page) ? readFileSync(page, "utf8") : "";
 // Article body only: the site header/footer logo renders "Neon" and "Key" as separate spans.
 const body = (html.match(/<article[\s\S]*?<\/article>/) || [""])[0];
-const text = body.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/&#39;|&#x27;/g, "'").replace(/\s+/g, " ");
+const text = body.replace(/<script\b[\s\S]*?<\/script\s*>/gi, " ").replace(/<style\b[\s\S]*?<\/style\s*>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&#39;|&#x27;/g, "'").replace(/\s+/g, " ");
 
 test("page is built", () => assert.ok(html.length > 1000, `${page} missing; build first`));
 

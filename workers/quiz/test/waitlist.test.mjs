@@ -48,7 +48,8 @@ test("valid signup saves one record, emails the visitor and sends a lead copy", 
 
 test("the record key holds a hash, never the raw email", async () => {
   await handleWaitlist(req(), env, good(), reply, deps());
-  for (const k of kv.keys()) assert.ok(!k.includes("example.com"), k);
+  // Every key is a fixed prefix plus hex digits only, so no part of an email can be in it.
+  for (const k of kv.keys()) assert.match(k, /^(wl:family-shield:[0-9a-f]{32}|wlrl:ip:\d{4}-\d{2}-\d{2}:[0-9a-f]{32}|wlrl:global:\d{4}-\d{2}-\d{2})$/, k);
 });
 
 test("joining twice keeps one record, the first join date, and sends no second email", async () => {
@@ -122,6 +123,7 @@ test("confirmation copy: planned price, nothing charged, removal, no promises", 
   assert.match(m.text, /isn't built yet/);
   for (const banned of [/you're safe/i, /guarantee/i, /plain english/i, /\bMike\b/, /Neon Key/]) assert.doesNotMatch(m.text, banned);
   assert.doesNotMatch(m.html, /<script/i);
+  assert.match(m.html, /<a href="https:\/\/neonkey\.tech\/learn\/is-this-a-scam\/">/);
 });
 
 test("product list is a plain allowlist", () => {

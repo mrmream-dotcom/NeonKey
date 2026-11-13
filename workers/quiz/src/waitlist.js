@@ -63,7 +63,7 @@ export function renderWaitlistEmail({ product, mailingAddress }) {
     "hello@neonkey.tech",
     ...(mailingAddress ? ["", mailingAddress] : []),
   ];
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   const html = lines.map((l) => (l === "" ? "" : `<p style="margin:0 0 12px;font:15px/1.5 Arial,sans-serif;color:#1b2333">${l.startsWith("https://") ? `<a href="${esc(l)}">${esc(l)}</a>` : esc(l)}</p>`)).join("\n");
   return { subject, text: lines.join("\n"), html };
 }
