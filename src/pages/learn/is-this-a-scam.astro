@@ -1,29 +1,47 @@
 ---
-// "Is this a scam?" practice page + Family Shield waitlist (B2C demand test, master plan Nov 13 2026, Gate 1 Dec 13:
-// 300+ visits and 50+ waitlist signups). Practice messages are made up (src/data/scam-samples.ts). Nothing a visitor
-// types here is checked or stored except the waitlist email, which goes to the quiz Worker's POST /waitlist route.
-// Measured with Umami: pageviews (visits), scam-sample-answer, scam-samples-done, waitlist-view, waitlist-signup,
-// waitlist-error. No new CSP hosts: the Worker host is already in connect-src.
+// "Is this a scam?" page: Family Shield free check + practice (Nov 13 2026). Michael replaced the waitlist with a live
+// free tool the same day ("make it live now"). The check (src/lib/scam-check.mjs) runs in the browser only: pasted
+// text is never sent or stored. Practice messages are made up (src/data/scam-samples.ts).
+// Umami: scam-check-run (verdict + tell ids, never the text), scam-sample-answer, scam-samples-done, family-share.
 import LearnLayout from '../../components/learn/LearnLayout.astro';
-import { url, WAITLIST_API_URL } from '../../config';
+import { url } from '../../config';
 import { scamSamples, familyShield as fs } from '../../data/scam-samples';
 
 const frontmatter = {
-  title: 'Is this message a scam? Practice with 6 real-looking examples',
-  description: 'Six made-up texts, emails and pop-ups to practice on, the tells in each, and one rule for any message that feels off: don\'t tap, go direct.',
+  title: 'Is this message a scam? Free checker and 6 practice examples',
+  description: 'Paste a text or email into the free Family Shield check to see the tells, then practice on six made-up examples. One rule for anything that feels off: don\'t tap, go direct.',
   kicker: 'Learn · Security · Beginner',
   back: { href: '/learn/', label: 'Back to Learn' },
 };
 const scams = scamSamples.filter((s) => s.call === 'scam').length;
 ---
 <LearnLayout frontmatter={frontmatter}>
-  <p class="lead">Someone sent you a message and it feels off. Here's how to tell, using six practice messages that look like the real thing. Pick an answer for each, then see the tells. It takes about three minutes.</p>
+  <p class="lead">Someone sent you a message and it feels off. Paste it into the free check below to see the tells, then practice on six made-up messages that look like the real thing. It takes about three minutes.</p>
 
   <div class="callout">
     <strong>The one rule for any message that feels off: don't tap. Go direct.</strong> Open the company's app, type its website yourself, or call a number you find yourself, not one from the message. That works even when a scam looks perfect.
   </div>
 
-  <p><a class="btn btn-ghost btn-sm" href="#family-shield" data-umami-event="waitlist-cta" data-umami-event-product={fs.product} data-umami-event-location="top">Checking for a parent? See Family Shield ↓</a></p>
+  <section class="fc-box topline" id="check" aria-labelledby="fc-h">
+    <span class="eyebrow">Family Shield free check</span>
+    <h2 id="fc-h">Paste a message to check it</h2>
+    <p>Copy the text, email or pop-up wording and paste it below. <strong>The check runs only in your browser: what you paste is never sent or saved anywhere.</strong> Leave out names, account numbers and codes anyway.</p>
+    <div data-fc-form>
+      <label for="fc-text" class="sr-only">Message to check</label>
+      <textarea id="fc-text" name="message" rows="6" maxlength="8000" placeholder="Paste the message here" autocomplete="off" spellcheck="false"></textarea>
+      <div class="fc-actions">
+        <button type="button" class="btn btn-primary" data-fc-run>Check this message</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-fc-clear>Clear</button>
+      </div>
+    </div>
+    <div class="fc-result" data-fc-result hidden role="status" aria-live="polite">
+      <p class="fc-verdict" data-fc-verdict></p>
+      <ul data-fc-tells></ul>
+      <p><strong>What to do:</strong> <span data-fc-todo></span></p>
+      <p class="muted fc-note">This is advice from a set of rules, not a promise. It can miss a new trick or flag a real message. When money, a code or a login is involved, check it the direct way no matter what it says here.</p>
+    </div>
+  </section>
+
 
   <h2 id="practice">Practice: scam or normal?</h2>
   <p class="muted ss-note">Every message below is a <strong>sample made up for practice</strong>. The numbers and web addresses are fake. Don't call or type them.</p>
@@ -61,6 +79,14 @@ const scams = scamSamples.filter((s) => s.call === 'scam').length;
   </ol>
   <p>More detail on each, plus QR codes, fake shops and AI voice calls, is in the full guide: <a href={url('/learn/spot-a-scam/')}>How to spot a scam</a>.</p>
 
+  <h3 id="guides">Guides for the most common ones</h3>
+  <ul>
+    <li><a href={url('/learn/unpaid-toll-text-scam/')}>Unpaid toll texts</a></li>
+    <li><a href={url('/learn/family-emergency-scam/')}>"Hi Mom, this is my new number" and other family emergency scams</a></li>
+    <li><a href={url('/learn/bank-fraud-alert-scam/')}>Bank "fraud alerts" that ask for a code</a></li>
+    <li><a href={url('/learn/tech-support-popup-scam/')}>Pop-ups that say call Microsoft</a></li>
+  </ul>
+
   <h2 id="already">Already tapped, paid or shared a code?</h2>
   <ol class="steps">
     <li><strong>Paid by card or bank?</strong> Call the number on the back of your card or on your bank's own website now. The sooner they know, the more they can do.</li>
@@ -78,33 +104,12 @@ const scams = scamSamples.filter((s) => s.call === 'scam').length;
   </ul>
   <p>The <a href={url('/learn/family-tech-checkup/')}>Family Tech Checkup</a> covers the rest of a holiday visit: updates, backups and passwords.</p>
 
-  <section class="fs-box topline" id="family-shield" data-fs data-api={WAITLIST_API_URL} data-product={fs.product} aria-labelledby="fs-h">
-    <span class="eyebrow">Planned · not built yet</span>
-    <h2 id="fs-h">Family Shield: a second opinion for your family's messages</h2>
-    <p>We're thinking about building this, and we'd like to know if you'd use it first.</p>
-    <ul>
-      <li><strong>Forward a message that feels off</strong> and get a quick read on it, the tells we spotted and what to do next, in everyday words.</li>
-      <li><strong>Up to {fs.maxAdults} adults</strong> in one family. Each person joins only after they say yes by email. Adults 18 and over only.</li>
-      <li><strong>Your family can ask each other.</strong> Choose who sees a check, so "send it to me first" works even when you're not around.</li>
-      <li><strong>Planned privacy rules:</strong> forwarded messages deleted within 24 hours, only the result kept, and checks run on an AI service that doesn't train on them.</li>
-    </ul>
-    <p class="fs-price"><strong>Planned price: ${fs.plannedMonthly}/month or ${fs.plannedYearly}/year</strong> for the family. Joining the waitlist is free, charges nothing and commits you to nothing.</p>
-    <p class="muted">A check is advice, not a promise. Even a message that looks fine should be checked the direct way when money or a login is involved.</p>
-
-    <form data-fs-form novalidate>
-      <div class="fs-row">
-        <div class="field"><label for="fs-email">Email <span class="req" aria-hidden="true">*</span></label><input id="fs-email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" /></div>
-        <div class="field"><label for="fs-who">Who would you use it for? <span class="muted">(optional)</span></label>
-          <select id="fs-who" name="for_whom"><option value="">Choose one</option>{fs.who.map((w) => <option value={w.value}>{w.label}</option>)}</select>
-        </div>
-      </div>
-      <div class="kit-hp" aria-hidden="true"><label for="fs-website">Website</label><input id="fs-website" name="website" tabindex="-1" autocomplete="off" /></div>
-      <label class="kit-check"><input type="checkbox" name="consent" value="1" required /><span>Email me once when Family Shield opens. I'm 18 or older. (Required. You won't be added to the newsletter.)</span></label>
-      <button type="submit" class="btn btn-primary" data-send>Join the waitlist</button>
-      <p class="form-note fs-status" data-status role="status" aria-live="polite"></p>
-      <p class="form-note">We save your email and your answer above, send you one confirmation, and email you once when it opens (or if we decide not to build it). Reply "remove" anytime to be deleted. See the <a href={url('/privacy/#waitlists')}>privacy policy</a>.</p>
-    </form>
-    <noscript><p class="form-note">This form needs JavaScript. Email <a href="mailto:hello@neonkey.tech?subject=Family%20Shield%20waitlist">hello@neonkey.tech</a> with "Family Shield waitlist" and we'll add you.</p></noscript>
+  <section class="fs-box topline" id="family-plan" aria-labelledby="fp-h">
+    <span class="eyebrow">Family Shield · coming next</span>
+    <h2 id="fp-h">A family plan with an AI second opinion</h2>
+    <p>The free check above runs on rules. The family plan we're building adds an AI second opinion on the messages your family forwards, for up to {fs.maxAdults} adults who each say yes by email. Adults 18 and over only. Messages get deleted after the check, and the AI service we pick won't train on them. We'll open it here once it works end to end; nothing is for sale yet.</p>
+    <p>Until then, the best thing you can do for someone you love is send them this page.</p>
+    <p><button type="button" class="btn btn-primary" data-share>Send this checker to family</button> <span class="form-note fs-status" data-share-status role="status" aria-live="polite"></span></p>
   </section>
 </LearnLayout>
 
@@ -126,6 +131,17 @@ const scams = scamSamples.filter((s) => s.call === 'scam').length;
   .ss-src { font-size: .88rem; }
   .ss-score:empty { display: none; }
   .ss-score { font-weight: 700; }
+  .fc-box { margin: 1.5rem 0 2rem; padding: 1.3rem 1.3rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(34,211,238,.05); scroll-margin-top: 100px; }
+  .fc-box h2 { margin-top: .3rem; }
+  .fc-box textarea { width: 100%; min-height: 9rem; font: inherit; resize: vertical; }
+  .fc-actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: .7rem 0 0; }
+  .fc-result { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid var(--line); }
+  .fc-verdict { font-weight: 800; font-size: 1.15rem; margin: 0 0 .4rem; }
+  .fc-scam { color: #fda4af; }
+  .fc-unsure { color: #fcd34d; }
+  .fc-normal { color: #6ee7b7; }
+  .fc-note { font-size: .9rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .fs-box { margin: 2.5rem 0 1rem; padding: 1.3rem 1.3rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(167,139,250,.06); scroll-margin-top: 100px; }
   .fs-box h2 { margin-top: .3rem; }
   .fs-price { font-size: 1.02rem; }
@@ -142,6 +158,7 @@ const scams = scamSamples.filter((s) => s.call === 'scam').length;
 </style>
 
 <script>
+  import { checkMessage } from '../../lib/scam-check.mjs';
   const track = (name: string, data?: Record<string, string>) => { try { (window as any).umami?.track(name, data); } catch { /* analytics optional */ } };
 
   // Practice cards: one answer per card, then show the tells.
@@ -174,69 +191,46 @@ const scams = scamSamples.filter((s) => s.call === 'scam').length;
     }
   }
 
-  // Family Shield waitlist.
-  const box = document.querySelector<HTMLElement>('[data-fs]');
-  const form = box?.querySelector<HTMLFormElement>('[data-fs-form]');
-  if (box && form) {
-    const API = box.dataset.api || '';
-    const product = box.dataset.product || '';
-    const status = form.querySelector<HTMLElement>('[data-status]')!;
-    const btn = form.querySelector<HTMLButtonElement>('[data-send]')!;
-    const emailInput = form.querySelector<HTMLInputElement>('#fs-email')!;
-    const consentInput = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
-
-    // Denominator for the signup rate: count each page view that actually reaches the waitlist box, once.
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        if (entries.some((e) => e.isIntersecting)) { track('waitlist-view', { product }); io.disconnect(); }
-      }, { threshold: 0.4 });
-      io.observe(box);
-    }
-
-    const fail = (msg: string) => {
-      status.className = 'form-note fs-status err';
-      status.textContent = msg;
-    };
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const email = String(fd.get('email') || '').trim();
-      if (!email || !emailInput.checkValidity()) { fail('Please enter a valid email address.'); emailInput.focus(); return; }
-      if (!consentInput.checked) { fail('Please tick the box so we know it\'s OK to email you when it opens.'); consentInput.focus(); return; }
-      const forWhom = String(fd.get('for_whom') || '');
-      btn.disabled = true;
-      status.className = 'form-note fs-status';
-      status.textContent = 'Adding you…';
-      try {
-        const res = await fetch(API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            product, email, for_whom: forWhom, consent: true,
-            website: String(fd.get('website') || ''),
-            src: (() => { try { return JSON.parse(sessionStorage.getItem('nk_src') || '{}'); } catch { return {}; } })(),
-          }),
-        });
-        const out = await res.json().catch(() => ({}));
-        if (res.ok && out.ok) {
-          if (!out.already) track('waitlist-signup', { product, for_whom: forWhom || 'none' });
-          status.className = 'form-note fs-status ok';
-          status.textContent = out.already
-            ? "You're already on the list. We'll email you once when it opens."
-            : out.emailed === false
-              ? "You're on the list. Our confirmation email didn't go out, but your signup is saved."
-              : "You're on the list. Check your inbox for a short confirmation from NeonKey.";
-          form.querySelectorAll('input, select').forEach((x) => ((x as HTMLInputElement).disabled = true));
-          btn.textContent = 'On the list ✓';
-          return;
-        }
-        track('waitlist-error', { product, status: String(res.status) });
-        fail(out.message || "That didn't go through. Try again in a minute, or email hello@neonkey.tech.");
-      } catch {
-        track('waitlist-error', { product, status: 'network' });
-        fail("That didn't go through. Check your connection and try again, or email hello@neonkey.tech.");
+  // Family Shield free check: runs here, nothing leaves the page.
+  // Deliberately not a <form>: the Google tag watches form submits, and the pasted text must never leave the page.
+  const fcForm = document.querySelector<HTMLElement>('[data-fc-form]');
+  const fcBox = document.querySelector<HTMLElement>('[data-fc-result]');
+  if (fcForm && fcBox) {
+    const ta = fcForm.querySelector<HTMLTextAreaElement>('#fc-text')!;
+    const vEl = fcBox.querySelector<HTMLElement>('[data-fc-verdict]')!;
+    const list = fcBox.querySelector<HTMLUListElement>('[data-fc-tells]')!;
+    const todo = fcBox.querySelector<HTMLElement>('[data-fc-todo]')!;
+    fcForm.querySelector('[data-fc-run]')?.addEventListener('click', () => {
+      const r = checkMessage(ta.value);
+      fcBox.hidden = false;
+      list.replaceChildren();
+      if (r.empty) {
+        vEl.className = 'fc-verdict';
+        vEl.textContent = 'Paste a message first (at least a few words).';
+        todo.textContent = 'Copy the text from your messages or email app and paste it in the box.';
+        return;
       }
-      btn.disabled = false;
+      vEl.className = 'fc-verdict fc-' + r.verdict;
+      vEl.textContent = r.label;
+      for (const t of r.tells) { const li = document.createElement('li'); li.textContent = t.say; list.append(li); }
+      if (!r.tells.length) { const li = document.createElement('li'); li.textContent = 'None of the common tells showed up.'; list.append(li); }
+      todo.textContent = r.todo;
+      track('scam-check-run', { verdict: r.verdict, tells: r.tells.map((t) => t.id).join(',').slice(0, 200) || 'none', links: String(r.links.length) });
     });
+    fcForm.querySelector('[data-fc-clear]')?.addEventListener('click', () => { ta.value = ''; fcBox.hidden = true; ta.focus(); });
   }
+
+  // Share the checker with family (native share sheet, or copy the link).
+  const shareBtn = document.querySelector<HTMLButtonElement>('[data-share]');
+  const shareStatus = document.querySelector<HTMLElement>('[data-share-status]');
+  shareBtn?.addEventListener('click', async () => {
+    const link = 'https://neonkey.tech/scam/';
+    const text = 'If a text or email ever feels off, paste it here first. It checks it for free and nothing gets saved.';
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Is this message a scam?', text, url: link }); track('family-share', { how: 'share' }); return; }
+      await navigator.clipboard.writeText(`${text} ${link}`);
+      if (shareStatus) shareStatus.textContent = 'Link copied. Paste it in your family chat.';
+      track('family-share', { how: 'copy' });
+    } catch { if (shareStatus) shareStatus.textContent = `Share this link: ${link}`; }
+  });
 </script>
