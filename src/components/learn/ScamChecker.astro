@@ -1,0 +1,90 @@
+---
+// Family Shield free check (Nov 13 2026), used on /scam-checker/ and /learn/is-this-a-scam/.
+// The rules live in src/lib/scam-check.mjs and run only in the browser: the pasted text is never sent or stored.
+// Deliberately not a <form> (the Google tag watches form submits). Umami gets the verdict and tell ids only.
+// Also wires any [data-share] button on the page (send the checker to family).
+interface Props { heading?: string; level?: 'h1' | 'h2' }
+const { heading = 'Paste a message to check it', level = 'h2' } = Astro.props;
+const H = level;
+---
+  <section class="fc-box topline" id="check" aria-labelledby="fc-h">
+    <span class="eyebrow">Family Shield free check</span>
+    <H id="fc-h">{heading}</H>
+    <p>Copy the text, email or pop-up wording and paste it below. <strong>The check runs only in your browser: what you paste is never sent or saved anywhere.</strong> Leave out names, account numbers and codes anyway.</p>
+    <div data-fc-form>
+      <label for="fc-text" class="sr-only">Message to check</label>
+      <textarea id="fc-text" name="message" rows="6" maxlength="8000" placeholder="Paste the message here" autocomplete="off" spellcheck="false"></textarea>
+      <div class="fc-actions">
+        <button type="button" class="btn btn-primary" data-fc-run>Check this message</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-fc-clear>Clear</button>
+      </div>
+    </div>
+    <div class="fc-result" data-fc-result hidden role="status" aria-live="polite">
+      <p class="fc-verdict" data-fc-verdict></p>
+      <ul data-fc-tells></ul>
+      <p><strong>What to do:</strong> <span data-fc-todo></span></p>
+      <p class="muted fc-note">This is advice from a set of rules, not a promise. It can miss a new trick or flag a real message. When money, a code or a login is involved, check it the direct way no matter what it says here.</p>
+    </div>
+  </section>
+
+<style>
+  .fc-box { margin: 1.5rem 0 2rem; padding: 1.3rem 1.3rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(34,211,238,.05); scroll-margin-top: 100px; }
+  .fc-box h2 { margin-top: .3rem; }
+  .fc-box textarea { width: 100%; min-height: 9rem; font: inherit; resize: vertical; }
+  .fc-actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: .7rem 0 0; }
+  .fc-result { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid var(--line); }
+  .fc-verdict { font-weight: 800; font-size: 1.15rem; margin: 0 0 .4rem; }
+  .fc-scam { color: #fda4af; }
+  .fc-unsure { color: #fcd34d; }
+  .fc-normal { color: #6ee7b7; }
+  .fc-note { font-size: .9rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+
+<script>
+  import { checkMessage } from '../../lib/scam-check.mjs';
+  const track = (name: string, data?: Record<string, string>) => { try { (window as any).umami?.track(name, data); } catch { /* analytics optional */ } };
+
+  // Family Shield free check: runs here, nothing leaves the page.
+  // Deliberately not a <form>: the Google tag watches form submits, and the pasted text must never leave the page.
+  const fcForm = document.querySelector<HTMLElement>('[data-fc-form]');
+  const fcBox = document.querySelector<HTMLElement>('[data-fc-result]');
+  if (fcForm && fcBox) {
+    const ta = fcForm.querySelector<HTMLTextAreaElement>('#fc-text')!;
+    const vEl = fcBox.querySelector<HTMLElement>('[data-fc-verdict]')!;
+    const list = fcBox.querySelector<HTMLUListElement>('[data-fc-tells]')!;
+    const todo = fcBox.querySelector<HTMLElement>('[data-fc-todo]')!;
+    fcForm.querySelector('[data-fc-run]')?.addEventListener('click', () => {
+      const r = checkMessage(ta.value);
+      fcBox.hidden = false;
+      list.replaceChildren();
+      if (r.empty) {
+        vEl.className = 'fc-verdict';
+        vEl.textContent = 'Paste a message first (at least a few words).';
+        todo.textContent = 'Copy the text from your messages or email app and paste it in the box.';
+        return;
+      }
+      vEl.className = 'fc-verdict fc-' + r.verdict;
+      vEl.textContent = r.label;
+      for (const t of r.tells) { const li = document.createElement('li'); li.textContent = t.say; list.append(li); }
+      if (!r.tells.length) { const li = document.createElement('li'); li.textContent = 'None of the common tells showed up.'; list.append(li); }
+      todo.textContent = r.todo;
+      track('scam-check-run', { verdict: r.verdict, tells: r.tells.map((t) => t.id).join(',').slice(0, 200) || 'none', links: String(r.links.length) });
+    });
+    fcForm.querySelector('[data-fc-clear]')?.addEventListener('click', () => { ta.value = ''; fcBox.hidden = true; ta.focus(); });
+  }
+
+  // Share the checker with family (native share sheet, or copy the link).
+  const shareBtn = document.querySelector<HTMLButtonElement>('[data-share]');
+  const shareStatus = document.querySelector<HTMLElement>('[data-share-status]');
+  shareBtn?.addEventListener('click', async () => {
+    const link = 'https://neonkey.tech/scam-checker/';
+    const text = 'If a text or email ever feels off, paste it here first. It checks it for free and nothing gets saved.';
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Is this message a scam?', text, url: link }); track('family-share', { how: 'share' }); return; }
+      await navigator.clipboard.writeText(`${text} ${link}`);
+      if (shareStatus) shareStatus.textContent = 'Link copied. Paste it in your family chat.';
+      track('family-share', { how: 'copy' });
+    } catch { if (shareStatus) shareStatus.textContent = `Share this link: ${link}`; }
+  });
+</script>
