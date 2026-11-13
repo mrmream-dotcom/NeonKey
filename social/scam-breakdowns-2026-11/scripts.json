@@ -1,0 +1,67 @@
+[
+  {
+    "id": "scam-package",
+    "tag": "SCAM BREAKDOWN",
+    "music": true,
+    "track": "lofi-key.wav",
+    "scenes": [
+      { "kind": "title", "dur": 3.0, "text": "This $1.25 delivery text wants more than $1.25", "accent": ["$1.25"] },
+      { "kind": "card", "dur": 5.6, "head": "The text", "label": "SAMPLE · MADE UP", "lines": ["USPS: Your package is on hold. Pay the $1.25 redelivery fee within 24 hours: usps-redeliver-help.top"], "note": "Fake number, fake link. Don't type it." },
+      { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. A tiny fee: the real target is your card number", "2. \"usps\" inside a different web address", "3. A 24-hour deadline"] },
+      { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Tap the link and pay the fee", "good": "Type usps.com yourself and track it there", "note": "Then forward the text to 7726 and delete it." }
+    ],
+    "end": { "lead": "Practice on 6 real-looking examples", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: US Postal Inspection Service, smishing" }
+  },
+  {
+    "id": "scam-new-number",
+    "tag": "SCAM BREAKDOWN",
+    "music": true,
+    "track": "bright-click.wav",
+    "scenes": [
+      { "kind": "title", "dur": 3.0, "text": "\"Hi Grandma, this is my new number\"", "accent": ["new", "number"] },
+      { "kind": "card", "dur": 5.8, "head": "The text", "label": "SAMPLE · MADE UP", "lines": ["I dropped my phone, this is my new number. I need $400 for a bus home. Please don't tell Mom."] },
+      { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. New number + money, in one message", "2. \"Don't tell Mom\" stops the one call that ends it", "3. No name: it works on anyone"] },
+      { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Send the money, then ask", "good": "Call them on the number you already have", "note": "A family code word settles it in seconds." }
+    ],
+    "end": { "lead": "Send this to the family group chat", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, family emergency scams" }
+  },
+  {
+    "id": "scam-toll",
+    "tag": "SCAM BREAKDOWN",
+    "music": true,
+    "track": "bounce.wav",
+    "scenes": [
+      { "kind": "title", "dur": 3.0, "text": "Got an \"unpaid toll\" text? Read this first", "accent": ["unpaid", "toll"] },
+      { "kind": "card", "dur": 5.6, "head": "The text", "label": "SAMPLE · MADE UP", "lines": ["FINAL NOTICE: unpaid toll balance of $6.99. Pay now to avoid a $50 late fee and license suspension."] },
+      { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. License threats over a few dollars", "2. A web address that isn't your toll agency", "3. People get it who never used a toll road"] },
+      { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Pay through the link", "good": "Log in to your toll account the usual way", "note": "Or call the number on the agency's own website." }
+    ],
+    "end": { "lead": "Free scam practice page", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC consumer alert, unpaid toll texts" }
+  },
+  {
+    "id": "scam-bank-code",
+    "tag": "SCAM BREAKDOWN",
+    "music": true,
+    "track": "lofi-key.wav",
+    "scenes": [
+      { "kind": "title", "dur": 3.0, "text": "The \"fraud alert\" that is the fraud", "accent": ["is", "the", "fraud"] },
+      { "kind": "card", "dur": 5.8, "head": "The text", "label": "SAMPLE · MADE UP", "lines": ["Did you try an $892 purchase? Reply YES or NO. A specialist will call to verify you with the code we just sent."] },
+      { "kind": "card", "dur": 5.8, "head": "The trick", "label": "HOW IT WORKS", "lines": ["They try to sign in as you", "Your bank texts you a real code", "The \"specialist\" asks you to read it back"] },
+      { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Read the code to the caller", "good": "Hang up, call the number on your card", "note": "Your bank won't ask you to read a code back." }
+    ],
+    "end": { "lead": "Send this to someone who banks on their phone", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, spam text messages" }
+  },
+  {
+    "id": "scam-popup",
+    "tag": "SCAM BREAKDOWN",
+    "music": true,
+    "track": "bright-click.wav",
+    "scenes": [
+      { "kind": "title", "dur": 3.0, "text": "A pop-up says call Microsoft. Don't.", "accent": ["Don't"] },
+      { "kind": "card", "dur": 5.6, "head": "The pop-up", "label": "SAMPLE · MADE UP", "lines": ["Your computer is infected with 3 viruses. Do NOT close this window. Call Microsoft Support now."] },
+      { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. Real Microsoft and Apple warnings never ask you to call", "2. \"Do NOT close\" keeps you stuck", "3. The goal: remote access to your computer"] },
+      { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Call and let them connect", "good": "Close the browser", "note": "Won't close? Ctrl + Shift + Esc opens Task Manager on Windows." }
+    ],
+    "end": { "lead": "Practice on 6 real-looking examples", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, tech support scams" }
+  }
+]

@@ -1,11 +1,13 @@
 // NeonKey service quiz: plan email Worker.
 //   POST /plan  { email, first_name?, answers, newsletter, website }  (website = honeypot)
 //   POST /kit   { email, first_name?, business?, size?, need?, newsletter, website }  free Starter IT Kit download link
+//   POST /waitlist { product, email, for_whom?, consent, website }  demand-test waitlists (src/waitlist.js)
 //   POST /watchdog { email, domain, answers, website, src }  Founder Watchdog waitlist (src/watchdog.js)
 // Recomputes the plan server-side from the shared logic in src/data/quiz.ts, emails it
 // to the visitor through Resend, sends a lead copy to hello@neonkey.tech, and (only if
 // the visitor ticked the box) starts Kit's double opt-in for Unlock the Week.
 import { validateAnswers, computePlan, buildPlan, answerSummary } from "../../../src/data/quiz.ts";
+import { handleWaitlist } from "./waitlist.js";
 import { handleWatchdog } from "./watchdog.js";
 import { renderPlanEmail, renderLeadEmail, renderKitEmail, renderKitLeadEmail, cleanFirstName } from "./email.js";
 
@@ -35,7 +37,7 @@ export default {
       return new Response(body === null ? null : JSON.stringify(body), { status, headers: h });
     };
 
-    if (url.pathname !== "/plan" && url.pathname !== "/kit" && url.pathname !== "/watchdog") return reply(404, { ok: false, message: "Not found." });
+    if (url.pathname !== "/plan" && url.pathname !== "/kit" && url.pathname !== "/waitlist" && url.pathname !== "/watchdog") return reply(404, { ok: false, message: "Not found." });
     if (request.method === "OPTIONS") return reply(okOrigin ? 204 : 403, null);
     if (request.method !== "POST") return reply(405, { ok: false, message: "Method not allowed." });
     if (!okOrigin) return reply(403, { ok: false, message: "Forbidden." });
@@ -51,6 +53,7 @@ export default {
     if (typeof body.website === "string" && body.website.trim() !== "") return reply(200, { ok: true });
 
     if (url.pathname === "/kit") return handleKit(request, env, body, reply);
+    if (url.pathname === "/waitlist") return handleWaitlist(request, env, body, reply, { normalizeEmail, sha256Hex, resendSend, cleanSource });
     if (url.pathname === "/watchdog") return handleWatchdog(request, env, body, reply, { resendSend, sha256Hex, normalizeEmail, cleanSource });
 
     const email = normalizeEmail(body.email);

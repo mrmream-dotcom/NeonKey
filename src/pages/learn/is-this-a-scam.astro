@@ -1,0 +1,242 @@
+---
+// "Is this a scam?" practice page + Family Shield waitlist (B2C demand test, master plan Nov 13 2026, Gate 1 Dec 13:
+// 300+ visits and 50+ waitlist signups). Practice messages are made up (src/data/scam-samples.ts). Nothing a visitor
+// types here is checked or stored except the waitlist email, which goes to the quiz Worker's POST /waitlist route.
+// Measured with Umami: pageviews (visits), scam-sample-answer, scam-samples-done, waitlist-view, waitlist-signup,
+// waitlist-error. No new CSP hosts: the Worker host is already in connect-src.
+import LearnLayout from '../../components/learn/LearnLayout.astro';
+import { url, WAITLIST_API_URL } from '../../config';
+import { scamSamples, familyShield as fs } from '../../data/scam-samples';
+
+const frontmatter = {
+  title: 'Is this message a scam? Practice with 6 real-looking examples',
+  description: 'Six made-up texts, emails and pop-ups to practice on, the tells in each, and one rule for any message that feels off: don\'t tap, go direct.',
+  kicker: 'Learn · Security · Beginner',
+  back: { href: '/learn/', label: 'Back to Learn' },
+};
+const scams = scamSamples.filter((s) => s.call === 'scam').length;
+---
+<LearnLayout frontmatter={frontmatter}>
+  <p class="lead">Someone sent you a message and it feels off. Here's how to tell, using six practice messages that look like the real thing. Pick an answer for each, then see the tells. It takes about three minutes.</p>
+
+  <div class="callout">
+    <strong>The one rule for any message that feels off: don't tap. Go direct.</strong> Open the company's app, type its website yourself, or call a number you find yourself, not one from the message. That works even when a scam looks perfect.
+  </div>
+
+  <p><a class="btn btn-ghost btn-sm" href="#family-shield" data-umami-event="waitlist-cta" data-umami-event-product={fs.product} data-umami-event-location="top">Checking for a parent? See Family Shield ↓</a></p>
+
+  <h2 id="practice">Practice: scam or normal?</h2>
+  <p class="muted ss-note">Every message below is a <strong>sample made up for practice</strong>. The numbers and web addresses are fake. Don't call or type them.</p>
+
+  <ol class="ss-list" data-ss-root>
+    {scamSamples.map((s, i) => (
+      <li class="ss-card" data-ss data-id={s.id} data-call={s.call}>
+        <div class="ss-head"><span class="tag">Sample {i + 1} · {s.channel}</span><span class="muted ss-from">From: {s.from}</span></div>
+        <blockquote class="ss-msg">{s.body}</blockquote>
+        <div class="ss-picks" role="group" aria-label={`Your answer for sample ${i + 1}`}>
+          <button type="button" class="btn btn-ghost btn-sm" data-pick="scam">Looks like a scam</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-pick="normal">Looks normal</button>
+        </div>
+        <div class="ss-reveal" data-reveal hidden>
+          <p class="ss-verdict" data-verdict-line></p>
+          <p class="ss-headline"><strong>{s.headline}</strong></p>
+          <ul>{s.tells.map((t) => <li>{t}</li>)}</ul>
+          <p><strong>What to do:</strong> {s.todo}</p>
+          <p class="muted ss-src">Source: <a href={s.source.href} rel="noopener noreferrer" target="_blank" data-umami-event="outbound-click" data-umami-event-item={`scam-sample-${s.id}`}>{s.source.label}</a></p>
+        </div>
+      </li>
+    ))}
+  </ol>
+  <noscript><style>.ss-reveal[hidden] { display: block !important; } .ss-picks { display: none; }</style></noscript>
+  <p class="ss-score" data-ss-score role="status" aria-live="polite"></p>
+
+  <p>{scams} of the {scamSamples.length} were scams, and even the normal one came with a condition. That's the real lesson: no single detail proves a message is fine. A message only fits a normal one if you were expecting it, nothing is urgent, and you can check it the direct way.</p>
+
+  <h2 id="tells">The tells, in one list</h2>
+  <ol class="steps">
+    <li><strong>Pressure.</strong> A deadline, a threat, a fee that grows. Urgency is there to stop you from checking.</li>
+    <li><strong>Something slightly off.</strong> A web address with the company's name inside a different address, a number you don't know, no name in the greeting.</li>
+    <li><strong>A request for a code, a password or a payment.</strong> Especially gift cards, crypto, wire transfers or "read me the code we just sent."</li>
+    <li><strong>"Don't tell anyone."</strong> Secrecy is there to stop the one call that would end the scam.</li>
+  </ol>
+  <p>More detail on each, plus QR codes, fake shops and AI voice calls, is in the full guide: <a href={url('/learn/spot-a-scam/')}>How to spot a scam</a>.</p>
+
+  <h2 id="already">Already tapped, paid or shared a code?</h2>
+  <ol class="steps">
+    <li><strong>Paid by card or bank?</strong> Call the number on the back of your card or on your bank's own website now. The sooner they know, the more they can do.</li>
+    <li><strong>Shared a password or code?</strong> Change that password from the official app or website, and sign out other devices. Turn on two-step login if it's off (<a href={url('/learn/two-factor-authentication/')}>how to turn on 2FA</a>).</li>
+    <li><strong>Paid with gift cards?</strong> Contact the company that issued the card right away and keep the card and receipt.</li>
+    <li><strong>Report it</strong> at <a href="https://reportfraud.ftc.gov/" rel="noopener noreferrer" target="_blank">ReportFraud.ftc.gov</a>. Forward scam texts to <strong>7726</strong> (it spells SPAM), then delete them.</li>
+  </ol>
+
+  <h2 id="family">Helping a parent or another adult you love</h2>
+  <p>Scams often aim at the person who doesn't have a "tech person" sitting next to them. Three things you can set up this week, for free:</p>
+  <ul>
+    <li><strong>A "send it to me first" rule.</strong> Agree that any message asking for money, a code or a login gets sent to you before they tap anything. No judgment, ever.</li>
+    <li><strong>A family code word.</strong> A word only your family knows, asked for on any "emergency" call or text. It beats a cloned voice.</li>
+    <li><strong>The numbers they trust, saved.</strong> Their bank, their carrier and you, saved in their contacts, so "go direct" is one tap.</li>
+  </ul>
+  <p>The <a href={url('/learn/family-tech-checkup/')}>Family Tech Checkup</a> covers the rest of a holiday visit: updates, backups and passwords.</p>
+
+  <section class="fs-box topline" id="family-shield" data-fs data-api={WAITLIST_API_URL} data-product={fs.product} aria-labelledby="fs-h">
+    <span class="eyebrow">Planned · not built yet</span>
+    <h2 id="fs-h">Family Shield: a second opinion for your family's messages</h2>
+    <p>We're thinking about building this, and we'd like to know if you'd use it first.</p>
+    <ul>
+      <li><strong>Forward a message that feels off</strong> and get a quick read on it, the tells we spotted and what to do next, in everyday words.</li>
+      <li><strong>Up to {fs.maxAdults} adults</strong> in one family. Each person joins only after they say yes by email. Adults 18 and over only.</li>
+      <li><strong>Your family can ask each other.</strong> Choose who sees a check, so "send it to me first" works even when you're not around.</li>
+      <li><strong>Planned privacy rules:</strong> forwarded messages deleted within 24 hours, only the result kept, and checks run on an AI service that doesn't train on them.</li>
+    </ul>
+    <p class="fs-price"><strong>Planned price: ${fs.plannedMonthly}/month or ${fs.plannedYearly}/year</strong> for the family. Joining the waitlist is free, charges nothing and commits you to nothing.</p>
+    <p class="muted">A check is advice, not a promise. Even a message that looks fine should be checked the direct way when money or a login is involved.</p>
+
+    <form data-fs-form novalidate>
+      <div class="fs-row">
+        <div class="field"><label for="fs-email">Email <span class="req" aria-hidden="true">*</span></label><input id="fs-email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" /></div>
+        <div class="field"><label for="fs-who">Who would you use it for? <span class="muted">(optional)</span></label>
+          <select id="fs-who" name="for_whom"><option value="">Choose one</option>{fs.who.map((w) => <option value={w.value}>{w.label}</option>)}</select>
+        </div>
+      </div>
+      <div class="kit-hp" aria-hidden="true"><label for="fs-website">Website</label><input id="fs-website" name="website" tabindex="-1" autocomplete="off" /></div>
+      <label class="kit-check"><input type="checkbox" name="consent" value="1" required /><span>Email me once when Family Shield opens. I'm 18 or older. (Required. You won't be added to the newsletter.)</span></label>
+      <button type="submit" class="btn btn-primary" data-send>Join the waitlist</button>
+      <p class="form-note fs-status" data-status role="status" aria-live="polite"></p>
+      <p class="form-note">We save your email and your answer above, send you one confirmation, and email you once when it opens (or if we decide not to build it). Reply "remove" anytime to be deleted. See the <a href={url('/privacy/#waitlists')}>privacy policy</a>.</p>
+    </form>
+    <noscript><p class="form-note">This form needs JavaScript. Email <a href="mailto:hello@neonkey.tech?subject=Family%20Shield%20waitlist">hello@neonkey.tech</a> with "Family Shield waitlist" and we'll add you.</p></noscript>
+  </section>
+</LearnLayout>
+
+<style>
+  .ss-note { font-size: .95rem; }
+  .ss-list { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 1rem; }
+  .ss-card { border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; background: rgba(255,255,255,.02); }
+  .ss-head { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; font-size: .9rem; }
+  .ss-from { overflow-wrap: anywhere; }
+  .ss-msg { margin: .75rem 0; padding: .8rem 1rem; border-left: 3px solid var(--cyan); background: rgba(34,211,238,.06); border-radius: 0 10px 10px 0; font-size: 1rem; overflow-wrap: anywhere; }
+  .ss-picks { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .ss-picks button[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
+  .ss-reveal { margin-top: .8rem; }
+  .ss-reveal ul { margin: .4rem 0 .6rem; }
+  .ss-verdict { font-weight: 700; margin: 0 0 .3rem; }
+  .ss-verdict.right { color: #6ee7b7; }
+  .ss-verdict.wrong { color: #fda4af; }
+  .ss-headline { margin: 0 0 .2rem; }
+  .ss-src { font-size: .88rem; }
+  .ss-score:empty { display: none; }
+  .ss-score { font-weight: 700; }
+  .fs-box { margin: 2.5rem 0 1rem; padding: 1.3rem 1.3rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(167,139,250,.06); scroll-margin-top: 100px; }
+  .fs-box h2 { margin-top: .3rem; }
+  .fs-price { font-size: 1.02rem; }
+  .fs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  @media (max-width: 640px) { .fs-row { grid-template-columns: 1fr; } }
+  .fs-box select, .fs-box input[type="email"] { width: 100%; }
+  .req { color: var(--cyan); }
+  .kit-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .kit-check { display: flex; gap: .6rem; align-items: flex-start; font-weight: 500; font-size: .93rem; margin: 0 0 1rem; cursor: pointer; }
+  .kit-check input { width: auto; flex: 0 0 auto; margin: .25rem 0 0; accent-color: var(--cyan); padding: 0; box-shadow: none; }
+  .fs-status:empty { display: none; }
+  .fs-status.ok { color: #6ee7b7; }
+  .fs-status.err { color: #fda4af; }
+</style>
+
+<script>
+  const track = (name: string, data?: Record<string, string>) => { try { (window as any).umami?.track(name, data); } catch { /* analytics optional */ } };
+
+  // Practice cards: one answer per card, then show the tells.
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-ss]')];
+  const score = document.querySelector<HTMLElement>('[data-ss-score]');
+  let answered = 0;
+  let right = 0;
+  for (const card of cards) {
+    const call = card.dataset.call || '';
+    const reveal = card.querySelector<HTMLElement>('[data-reveal]')!;
+    const line = card.querySelector<HTMLElement>('[data-verdict-line]')!;
+    const buttons = [...card.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    for (const b of buttons) {
+      b.addEventListener('click', () => {
+        if (!reveal.hidden) return;
+        const pick = b.dataset.pick || '';
+        const ok = pick === call;
+        buttons.forEach((x) => { x.disabled = true; x.setAttribute('aria-pressed', String(x === b)); });
+        line.textContent = ok ? 'Good call.' : call === 'scam' ? 'This one is a scam.' : 'This one fits a normal message, with a condition.';
+        line.className = 'ss-verdict ' + (ok ? 'right' : 'wrong');
+        reveal.hidden = false;
+        answered++;
+        if (ok) right++;
+        track('scam-sample-answer', { sample: card.dataset.id || '', pick, right: String(ok) });
+        if (answered === cards.length && score) {
+          score.textContent = `You got ${right} of ${cards.length}. Whatever your score, the rule is the same: don't tap, go direct.`;
+          track('scam-samples-done', { score: `${right}/${cards.length}` });
+        }
+      });
+    }
+  }
+
+  // Family Shield waitlist.
+  const box = document.querySelector<HTMLElement>('[data-fs]');
+  const form = box?.querySelector<HTMLFormElement>('[data-fs-form]');
+  if (box && form) {
+    const API = box.dataset.api || '';
+    const product = box.dataset.product || '';
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const btn = form.querySelector<HTMLButtonElement>('[data-send]')!;
+    const emailInput = form.querySelector<HTMLInputElement>('#fs-email')!;
+    const consentInput = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
+
+    // Denominator for the signup rate: count each page view that actually reaches the waitlist box, once.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { track('waitlist-view', { product }); io.disconnect(); }
+      }, { threshold: 0.4 });
+      io.observe(box);
+    }
+
+    const fail = (msg: string) => {
+      status.className = 'form-note fs-status err';
+      status.textContent = msg;
+    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const email = String(fd.get('email') || '').trim();
+      if (!email || !emailInput.checkValidity()) { fail('Please enter a valid email address.'); emailInput.focus(); return; }
+      if (!consentInput.checked) { fail('Please tick the box so we know it\'s OK to email you when it opens.'); consentInput.focus(); return; }
+      const forWhom = String(fd.get('for_whom') || '');
+      btn.disabled = true;
+      status.className = 'form-note fs-status';
+      status.textContent = 'Adding you…';
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product, email, for_whom: forWhom, consent: true,
+            website: String(fd.get('website') || ''),
+            src: (() => { try { return JSON.parse(sessionStorage.getItem('nk_src') || '{}'); } catch { return {}; } })(),
+          }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.ok) {
+          if (!out.already) track('waitlist-signup', { product, for_whom: forWhom || 'none' });
+          status.className = 'form-note fs-status ok';
+          status.textContent = out.already
+            ? "You're already on the list. We'll email you once when it opens."
+            : out.emailed === false
+              ? "You're on the list. Our confirmation email didn't go out, but your signup is saved."
+              : "You're on the list. Check your inbox for a short confirmation from NeonKey.";
+          form.querySelectorAll('input, select').forEach((x) => ((x as HTMLInputElement).disabled = true));
+          btn.textContent = 'On the list ✓';
+          return;
+        }
+        track('waitlist-error', { product, status: String(res.status) });
+        fail(out.message || "That didn't go through. Try again in a minute, or email hello@neonkey.tech.");
+      } catch {
+        track('waitlist-error', { product, status: 'network' });
+        fail("That didn't go through. Check your connection and try again, or email hello@neonkey.tech.");
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

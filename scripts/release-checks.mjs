@@ -94,5 +94,35 @@ for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.te
   }
 }
 
+// 9. Checkout integrity (B2B workstream, Nov 13 2026): every Stripe checkout link in the build is one listed in
+// src/data/services.ts, and the Follow-Up Desk page carries exactly the Desk links (regular, plus founding monthly
+// and yearly while the sale is on). Catches a typo'd, stale or swapped Payment Link before visitors can click it.
+{
+  const src = read(new URL('../src/data/services.ts', import.meta.url));
+  const known = new Set([...src.matchAll(/https:\/\/buy\.stripe\.com\/[\w]+/g)].map((m) => m[0]));
+  const pick = (block, key) => (src.slice(src.indexOf(block)).match(new RegExp(`${key}: '(https://buy\\.stripe\\.com/\\w+)'`)) || [])[1];
+  const deskRegular = pick('export const followUpDesk: Offer', 'buyUrl');
+  const saleMonthly = pick('export const followUpDeskSale', 'monthlyUrl');
+  const saleAnnual = pick('export const followUpDeskSale', 'annualUrl');
+  const endsAt = (src.slice(src.indexOf('export const followUpDeskSale')).match(/endsAt: '([^']+)'/) || [])[1];
+  for (const f of pages) {
+    for (const [, h] of read(f).matchAll(/href="(https:\/\/buy\.stripe\.com\/[^"]*)"/g)) {
+      if (!known.has(h)) fail(`unknown Stripe checkout link ${h} on ${relative(distDir, f)}`);
+    }
+  }
+  const deskPage = join(distDir, 'follow-up-desk', 'index.html');
+  if (!existsSync(deskPage)) fail('follow-up-desk/index.html missing');
+  else {
+    const html = read(deskPage);
+    const onPage = new Set([...html.matchAll(/href="(https:\/\/buy\.stripe\.com\/[^"]*)"/g)].map((m) => m[1]));
+    const saleOn = endsAt && Date.now() < Date.parse(endsAt);
+    const want = new Set([deskRegular, ...(saleOn ? [saleMonthly, saleAnnual] : [])].filter(Boolean));
+    if (!deskRegular) fail('could not read followUpDesk.buyUrl from services.ts');
+    for (const u of want) if (!onPage.has(u)) fail(`Follow-Up Desk page is missing its checkout link ${u}`);
+    for (const u of onPage) if (!want.has(u)) fail(`Follow-Up Desk page links to a checkout that isn't a current Desk link: ${u}`);
+    if (saleOn && !html.includes(`data-sale-ends="${endsAt}"`)) fail('Follow-Up Desk page countdown does not use followUpDeskSale.endsAt');
+  }
+}
+
 console.log(`release checks: ${pages.length} pages, ${links} internal links, ${failures.length} failure(s)`);
 if (failures.length) { for (const m of failures) console.log(`::error::${m}`); process.exit(1); }

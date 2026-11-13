@@ -24,6 +24,7 @@ const smallJobs = [
   { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request, so none sit unseen.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
   { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
 ];
+const sp = remoteSupportPlan;
 ---
 <Base title="Lead and Estimate Follow-Up Services" description="Stop losing customers to slow replies and quotes that go quiet: start the self-serve Follow-Up Desk with 14 days free, or have a custom follow-up system set up for you. Remote, anywhere in the US.">
   <PageHeader eyebrow="Services" title="Stop losing customers to slow replies and quiet quotes" crumbs={[{ href: '/', label: 'Home' }, { label: 'Services' }]}>
@@ -68,31 +69,35 @@ const smallJobs = [
     </div>
   </section>
 
-  {/* Audit Nov 7 2026 (A3): the two follow-up offers side by side, so a buyer can tell them apart without another page.
+  {/* Audit Nov 7 2026 (A3), widened Nov 13 2026 (B2B workstream): Desk (self-serve), Front Office (done for you) and the
+      Support Plan (scoped IT help) side by side, so a buyer can tell them apart without another page.
       Keep every cell true to the Desk page and the package card. The Desk price uses DeskSale's [data-sale-ends] swap
       (its script is on this page via the choice card), so it changes to the regular price at the deadline. */}
   <section aria-labelledby="compare-h" id="compare" style="padding-top:1rem">
     <div class="container">
-      <SectionHeading id="compare-h" eyebrow="Compare" title={`${fop.name} or ${followUpDesk.name}?`} intro="Both stop quotes from going quiet. The difference is who sends the follow-ups and where it runs." />
+      <SectionHeading id="compare-h" eyebrow="Compare" title="Which one fits?" intro={`Two ways to stop quotes from going quiet, plus ongoing IT help. The difference is who does the work and where it runs.`} />
       <div class="table-scroll">
         <table class="vlan-table compare">
-          <thead><tr><th scope="col"><span class="sr-only">Question</span></th><th scope="col">{fop.name}</th><th scope="col">{followUpDesk.name}</th></tr></thead>
+          <thead><tr><th scope="col"><span class="sr-only">Question</span></th><th scope="col">{followUpDesk.name}</th><th scope="col">{fop.name}</th><th scope="col">{sp.name}</th></tr></thead>
           <tbody>
-            <tr><th scope="row">What it handles</th><td data-label={fop.name}>New requests from your website form and shared inbox, who handles each one, reply drafts, follow-up reminders, an FAQ assistant and email security</td><td data-label={followUpDesk.name}>Follow-ups on estimates you've already sent</td></tr>
-            <tr><th scope="row">How work gets in</th><td data-label={fop.name}>Your website form and shared inbox feed one list on their own</td><td data-label={followUpDesk.name}>You add estimates, or paste a list from QuickBooks or a spreadsheet</td></tr>
-            <tr><th scope="row">Who sends follow-ups</th><td data-label={fop.name}>A person on your team, from your own inbox. You get a reminder with a draft ready</td><td data-label={followUpDesk.name}>The Desk sends them on weekday mornings, from your business name at a NeonKey sending address. Replies go to your inbox and stop that job's follow-ups</td></tr>
-            <tr><th scope="row">Where it runs</th><td data-label={fop.name}>In your own accounts and tools, set up for you</td><td data-label={followUpDesk.name}>On NeonKey's hosted service. You set it up yourself in about five minutes</td></tr>
-            <tr><th scope="row">If you stop paying NeonKey</th><td data-label={fop.name}>What we built stays in your accounts. Any third-party software fees continue with that provider</td><td data-label={followUpDesk.name}>Follow-ups stop when your subscription ends, and your list is deleted 30 days later</td></tr>
-            <tr><th scope="row">Getting started</th><td data-label={fop.name}>Written scope and fixed quote first. Nothing goes live until you approve it</td><td data-label={followUpDesk.name}>{followUpDeskTrialDays} days free, card required, no call</td></tr>
-            <tr><th scope="row">Price</th><td data-label={fop.name}>{usd(fop.from)} setup + 3 months of support. Software fees, if any, listed in your quote</td><td data-label={followUpDesk.name}>{followUpDeskSaleLive
+            <tr><th scope="row">Best for</th><td data-label={followUpDesk.name}>You send estimates by email and want follow-ups to go out on their own, set up yourself today</td><td data-label={fop.name}>You want new requests and quote follow-up handled as one system, built for you</td><td data-label={sp.name}>Your basics are already set up and you want someone to email when a small IT change or question comes up</td></tr>
+            <tr><th scope="row">What it handles</th><td data-label={followUpDesk.name}>Follow-ups on estimates you've already sent</td><td data-label={fop.name}>New requests from your website form and shared inbox, who handles each one, reply drafts, follow-up reminders, an FAQ assistant and email security</td><td data-label={sp.name}>Account adds and removes, settings changes and how-to questions for your office tech. It doesn't send follow-ups</td></tr>
+            <tr><th scope="row">How work gets in</th><td data-label={followUpDesk.name}>You add estimates, or paste a list from QuickBooks or a spreadsheet</td><td data-label={fop.name}>Your website form and shared inbox feed one list on their own</td><td data-label={sp.name}>You email one request at a time</td></tr>
+            <tr><th scope="row">Who does the work</th><td data-label={followUpDesk.name}>The Desk sends follow-ups on weekday mornings, from your business name at a NeonKey sending address. Replies go to your inbox and stop that job's follow-ups</td><td data-label={fop.name}>NeonKey builds it in your accounts. After that, a person on your team sends follow-ups from your own inbox, with a reminder and a draft ready</td><td data-label={sp.name}>NeonKey handles each request remotely, with a first reply by the end of the next business day (Monday to Friday)</td></tr>
+            <tr><th scope="row">Where it runs</th><td data-label={followUpDesk.name}>On NeonKey's hosted service. You set it up yourself in about five minutes</td><td data-label={fop.name}>In your own accounts and tools, set up for you</td><td data-label={sp.name}>In your own accounts. Changes are made remotely</td></tr>
+            <tr><th scope="row">Limits</th><td data-label={followUpDesk.name}>Up to 3 follow-ups per estimate, at most 60 emails a day. Only people who asked you for an estimate</td><td data-label={fop.name}>The scope in your written quote. Small changes after go-live are covered by the 3 included months of support</td><td data-label={sp.name}>Up to 3 small requests a month (about 30 minutes each) unless your plan says otherwise. No 24/7 or emergency cover</td></tr>
+            <tr><th scope="row">If you stop paying NeonKey</th><td data-label={followUpDesk.name}>Follow-ups stop when your subscription ends, and your list is deleted 30 days later</td><td data-label={fop.name}>What we built stays in your accounts. Any third-party software fees continue with that provider</td><td data-label={sp.name}>Requests stop. Nothing already changed in your accounts is removed</td></tr>
+            <tr><th scope="row">Getting started</th><td data-label={followUpDesk.name}>{followUpDeskTrialDays} days free, card required, no call</td><td data-label={fop.name}>Written scope and fixed quote first. Nothing goes live until you approve it</td><td data-label={sp.name}>The number of requests and the response window are agreed in writing before you pay</td></tr>
+            <tr><th scope="row">Price</th><td data-label={followUpDesk.name}>{followUpDeskSaleLive
               ? <span data-sale-ends={followUpDeskSale.endsAt}><span data-sale>{usd(followUpDeskSale.monthly)}/month founding price if you start by {followUpDeskSale.endsLabel}, or {usd(followUpDeskSale.annualPerYear)}/year</span><span data-sale-after hidden>{usd(followUpDesk.from)}/month</span></span>
-              : <Fragment>{usd(followUpDesk.from)}/month</Fragment>}</td></tr>
+              : <Fragment>{usd(followUpDesk.from)}/month</Fragment>}</td><td data-label={fop.name}>{usd(fop.from)} setup + 3 months of support. Software fees, if any, listed in your quote</td><td data-label={sp.name}>From {usd(sp.from)}/month, cancel anytime</td></tr>
           </tbody>
         </table>
       </div>
       <div class="btn-row" style="margin-top:1rem">
-        <a class="btn btn-ghost btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-compare">Get a written quote</a>
         <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-compare">How the {followUpDesk.name} works</a>
+        <a class="btn btn-ghost btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-compare">Get a written quote</a>
+        <a class="btn btn-ghost btn-sm" href={url(sp.href)} data-umami-event="services-cta" data-umami-event-offer={sp.name} data-umami-event-location="services-compare">How the {sp.name} works</a>
       </div>
     </div>
   </section>
@@ -235,7 +240,7 @@ const smallJobs = [
         <div class="offer-details-body">
           <p>It depends on which one you pick.</p>
           <p><strong>{fop.name}:</strong> only the FAQ assistant replies on its own, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your team sends them.</p>
-          <p><strong>{followUpDesk.name}:</strong> yes, that's the point of it. Follow-ups on the estimates you add go out on their own, in wording you write and can edit, and they stop the moment the customer replies. You can send yourself a preview first and stop any job with one click. <a href="#compare">Compare the two</a>.</p>
+          <p><strong>{followUpDesk.name}:</strong> yes, that's the point of it. Follow-ups on the estimates you add go out on their own, in wording you write and can edit, and they stop the moment the customer replies. You can send yourself a preview first and stop any job with one click. <a href="#compare">Compare them</a>.</p>
         </div>
       </details>
       <details class="offer-details faq-item">
