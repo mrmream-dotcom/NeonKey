@@ -23,6 +23,8 @@ const emptyCategoryRe = EMPTY_ARTICLE_CATEGORIES.length ? new RegExp(`/articles/
 const DRAFT_PAGES = ['/founders/guide/thanks'];
 const isDraftPage = (page) => { const p = new URL(page).pathname.replace(/\/$/, ''); return DRAFT_PAGES.some((d) => p.endsWith(d)); };
 const MODE = process.env.PUBLIC_SITE_MODE === 'live' ? 'live' : 'demo';
+// Founder Watchdog waitlist page stays out of the sitemap unless the waitlist is live (src/config.ts WATCHDOG_WAITLIST).
+const WATCHDOG_LIVE = !['off', 'preview'].includes((process.env.PUBLIC_WATCHDOG_WAITLIST || 'live').trim().toLowerCase());
 
 export default defineConfig({
   output: 'static',
@@ -35,7 +37,7 @@ export default defineConfig({
   // Prefetch only downloads the HTML; no scripts run, so analytics are not affected.
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   // The sitemap is generated in both modes; in demo mode robots.txt still disallows crawling.
-  integrations: [mdx(), blurPlaceholders({ base: BASE_PATH }), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks|pay\/thanks|follow-up-desk\/thanks|pay\/email-lockdown)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) && !isDraftPage(page) && isLearnPathLive(new URL(page).pathname) }), scheduledPages({ base: BASE_PATH }), cspMeta()],
+  integrations: [mdx(), blurPlaceholders({ base: BASE_PATH }), externalLinks({ hosts: ['neonkey.tech', 'www.neonkey.tech', new URL(SITE_URL).hostname] }), sitemap({ filter: (page) => !/\/(404|newsletter\/(thanks|welcome)|contact\/thanks|pay\/thanks|follow-up-desk\/thanks|pay\/email-lockdown)\/?$/.test(page) && !/\/notes(\/|$)/.test(page) && !(emptyCategoryRe && emptyCategoryRe.test(page)) && !isDraftPage(page) && (WATCHDOG_LIVE || !/\/founders\/watchdog\/?$/.test(page)) && isLearnPathLive(new URL(page).pathname) }), scheduledPages({ base: BASE_PATH }), cspMeta()],
 });
 
 console.log(`[neonkey] mode=${MODE} site=${SITE_URL} base=${BASE_PATH}`);

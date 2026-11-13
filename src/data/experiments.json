@@ -52,6 +52,20 @@
       "minPerArm": 1000,
       "readOn": "not before 1,000 page views per arm AND at least 10 purchases in total; until then do not run",
       "ownerOk": ""
+    },
+    {
+      "id": "watchdog-waitlist",
+      "status": "running",
+      "note": "Waitlist demand test, not an A/B test, so it has no ab-tests.ts entry. Live from Nov 13 2026.",
+      "kind": "offer",
+      "page": "/founders/watchdog/",
+      "hypothesis": "Founders who just checked or fixed their domain will join a waitlist for daily change alerts at a planned $9/mo or $90/yr, enough to justify building Founder Watchdog.",
+      "primaryMetric": "qualified waitlist signups (KV wd:entry metadata q=1), plus signups per touchpoint view by 'from' (Umami watchdog-cta, watchdog-view, watchdog-signup)",
+      "guardrails": ["no visitor is charged or promised a beta", "Preflight runs and $29 buy-click rate on the touchpoint pages do not fall", "unqualified and test signups are reported separately, never counted toward the gate"],
+      "baseline": "none yet: not shown to visitors as of Nov 13 2026",
+      "minPerArm": 100,
+      "readOn": "Dec 13 2026 gate (master plan section J: 25+ qualified), and only after at least 100 views of /founders/watchdog/",
+      "ownerOk": "Michael, Nov 13 2026: \"Ship all items\" (waitlist and planned prices on the site, thread: Test demand for Founder Watchdog)"
     }
   ]
 }

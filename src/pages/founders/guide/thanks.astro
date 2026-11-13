@@ -3,6 +3,7 @@ import { url, CONTACT_EMAIL } from '../../../config';
 import Base from '../../../layouts/Base.astro';
 import PageHeader from '../../../components/PageHeader.astro';
 import Icon from '../../../components/Icon.astro';
+import WatchdogCta from '../../../components/WatchdogCta.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Where the Founder Stack Payment Link sends buyers after paying. noindex and in DRAFT_PAGES (out of the sitemap).
 // Delivery is automatic: the payments Worker (workers/payments/src/deliver.js) emails the buyer the PDF from private
@@ -16,6 +17,7 @@ import { setupGuide, emailLockdown, usd } from '../../../data/services';
   </PageHeader>
   <div class="narrow status-body">
     <div class="callout" style="margin-bottom:1.25rem"><strong>Your included Email Authentication Setup</strong> ({usd(emailLockdown.from)} on its own): if you entered your domain at checkout, your report arrives within one business day. If not, reply to the email your guide arrives in with your domain. Want a head start? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight-thanks" data-umami-event-track="founders">Launch Preflight</a> now.</div>
+    <WatchdogCta from="guide-thanks" variant="panel" />
     <p class="status-actions"><a class="btn btn-primary" href={url('/founders/')}>Back to Founders</a> <a class="btn" href={`mailto:${CONTACT_EMAIL}`}>Email us</a></p>
   </div>
   <!-- Google Ads "Founder guide purchase" conversion. External file: no inline scripts. -->

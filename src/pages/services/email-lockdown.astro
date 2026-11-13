@@ -6,6 +6,7 @@ import SectionHeading from '../../components/SectionHeading.astro';
 import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlashSaleLive as live, usd } from '../../data/services';
 import SaleClock from '../../components/SaleClock.astro';
 import DomainCheck from '../../components/DomainCheck.astro';
+import WatchdogCta from '../../components/WatchdogCta.astro';
 // Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
 // from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
@@ -82,6 +83,7 @@ import DomainCheck from '../../components/DomainCheck.astro';
           <p>The Email Authentication Setup turns this check into the exact records for your email provider and DNS host, in a PDF report that usually arrives by email within a few minutes. Type this same domain at checkout.</p>
           <p><a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
           <p class="muted el-small">Everything passing already? Then you don't need this one. Keep the result for your records.</p>
+          <WatchdogCta from="lockdown-check" lead="Founder or solo builder?" />
         </div>
       </DomainCheck>
       <p class="muted el-small" style="margin-top:1rem">Rather do it yourself? Free guides: <a href={url('/learn/dmarc-google-workspace/')}>Google Workspace</a> · <a href={url('/learn/spf-dkim-dmarc-microsoft-365/')}>Microsoft 365</a> · <a href={url('/learn/emails-going-to-spam/')}>Why emails go to spam</a>.</p>

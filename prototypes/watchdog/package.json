@@ -1,0 +1,11 @@
+{
+  "name": "neonkey-watchdog-prototype",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node scripts/run.mjs --fixture",
+    "own": "node scripts/run.mjs --live"
+  }
+}

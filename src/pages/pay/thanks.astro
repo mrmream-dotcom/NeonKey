@@ -3,6 +3,7 @@ import { url, CONTACT_EMAIL } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
+import WatchdogCta from '../../components/WatchdogCta.astro';
 import { lockdownCredit, followUpDesk, followUpDeskTrialDays as trial } from '../../data/services';
 // Where Stripe Checkout and Payment Links send customers after paying (workers/payments/scripts/).
 // Google Ads purchase conversion: public/js/conv-lockdown.js fires only for the Email Authentication Setup Payment Link
@@ -25,6 +26,7 @@ import { lockdownCredit, followUpDesk, followUpDeskTrialDays as trial } from '..
       </ol>
       <p class="pt-credit"><strong>{lockdownCredit}</strong></p>
       <p class="muted">Losing jobs to estimates that go quiet? The <a href={url('/follow-up-desk/')} data-umami-event="post-purchase-next" data-umami-event-target="follow-up-desk" data-umami-event-location="pay-thanks">{followUpDesk.name}</a> follows up for you and stops when the customer replies. {trial} days free.</p>
+      <WatchdogCta from="lockdown-thanks" lead="After day 5:" />
     </div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/')}>Back to NeonKey</a> <a class="btn" href={url('/refunds/')}>Refunds and cancellations</a></p>
   </div>
