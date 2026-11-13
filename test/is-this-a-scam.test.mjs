@@ -66,9 +66,13 @@ test("checker script sends nothing: no fetch or beacon in the page's own scripts
   }
 });
 
-test("/scam/ short link redirects to the checker", () => {
+test("/scam-checker/ page has the checker; old /scam/ link redirects there", () => {
+  const c = readFileSync("dist/scam-checker/index.html", "utf8");
+  assert.match(c, /<textarea id="fc-text"/);
+  assert.match(c, /data-share/);
+  assert.doesNotMatch(c, /buy\.stripe\.com|checkout\.stripe\.com/);
   const r = readFileSync("dist/scam/index.html", "utf8");
-  assert.match(r, /url=\/learn\/is-this-a-scam\/#check/);
+  assert.match(r, /url=\/scam-checker\//);
   assert.match(r, /noindex/);
 });
 
