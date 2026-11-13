@@ -6,9 +6,24 @@ import { readFileSync, existsSync } from "node:fs";
 
 const page = "dist/learn/is-this-a-scam/index.html";
 const html = existsSync(page) ? readFileSync(page, "utf8") : "";
+// Remove <tag ...>...</tag ...> blocks from our own build output (plain index search, not a sanitizer).
+function dropBlocks(src, tag) {
+  let out = "";
+  let i = 0;
+  const low = src.toLowerCase();
+  for (;;) {
+    const start = low.indexOf(`<${tag}`, i);
+    if (start < 0) return out + src.slice(i);
+    const close = low.indexOf(`</${tag}`, start);
+    const end = close < 0 ? -1 : low.indexOf(">", close);
+    out += src.slice(i, start) + " ";
+    if (end < 0) return out;
+    i = end + 1;
+  }
+}
 // Article body only: the site header/footer logo renders "Neon" and "Key" as separate spans.
 const body = (html.match(/<article[\s\S]*?<\/article>/) || [""])[0];
-const text = body.replace(/<script\b[\s\S]*?<\/script\s*>/gi, " ").replace(/<style\b[\s\S]*?<\/style\s*>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&#39;|&#x27;/g, "'").replace(/\s+/g, " ");
+const text = dropBlocks(dropBlocks(body, "script"), "style").replace(/<[^>]+>/g, " ").replace(/&#39;|&#x27;/g, "'").replace(/\s+/g, " ");
 
 test("page is built", () => assert.ok(html.length > 1000, `${page} missing; build first`));
 
