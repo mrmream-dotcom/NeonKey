@@ -26,8 +26,8 @@ export function randomToken() {
   return btoa(String.fromCharCode(...b)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 export function randomId(n = 12) {
-  const a = "abcdefghijkmnpqrstuvwxyz23456789";
-  return [...crypto.getRandomValues(new Uint8Array(n))].map((x) => a[x % a.length]).join("");
+  const a = "abcdefghijkmnpqrstuvwxyz23456789"; // exactly 32 characters, so the low 5 bits pick one with no bias
+  return [...crypto.getRandomValues(new Uint8Array(n))].map((x) => a[x & 31]).join("");
 }
 export const isEmail = (s) => /^[^\s@<>"',;]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/.test(String(s || ""));
 export const oneLine = (s, n) => String(s || "").replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
