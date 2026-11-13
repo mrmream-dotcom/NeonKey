@@ -10,7 +10,7 @@
       { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. A tiny fee: the real target is your card number", "2. \"usps\" inside a different web address", "3. A 24-hour deadline"] },
       { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Tap the link and pay the fee", "good": "Type usps.com yourself and track it there", "note": "Then forward the text to 7726 and delete it." }
     ],
-    "end": { "lead": "Practice on 6 real-looking examples", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: US Postal Inspection Service, smishing" }
+    "end": { "lead": "Check a message free", "url": "neonkey.tech/scam", "tagline": "Source: US Postal Inspection Service, smishing" }
   },
   {
     "id": "scam-new-number",
@@ -23,7 +23,7 @@
       { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. New number + money, in one message", "2. \"Don't tell Mom\" stops the one call that ends it", "3. No name: it works on anyone"] },
       { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Send the money, then ask", "good": "Call them on the number you already have", "note": "A family code word settles it in seconds." }
     ],
-    "end": { "lead": "Send this to the family group chat", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, family emergency scams" }
+    "end": { "lead": "Send this to the family group chat", "url": "neonkey.tech/scam", "tagline": "Source: FTC, family emergency scams" }
   },
   {
     "id": "scam-toll",
@@ -36,7 +36,7 @@
       { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. License threats over a few dollars", "2. A web address that isn't your toll agency", "3. People get it who never used a toll road"] },
       { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Pay through the link", "good": "Log in to your toll account the usual way", "note": "Or call the number on the agency's own website." }
     ],
-    "end": { "lead": "Free scam practice page", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC consumer alert, unpaid toll texts" }
+    "end": { "lead": "Free scam checker + practice", "url": "neonkey.tech/scam", "tagline": "Source: FTC consumer alert, unpaid toll texts" }
   },
   {
     "id": "scam-bank-code",
@@ -49,7 +49,7 @@
       { "kind": "card", "dur": 5.8, "head": "The trick", "label": "HOW IT WORKS", "lines": ["They try to sign in as you", "Your bank texts you a real code", "The \"specialist\" asks you to read it back"] },
       { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Read the code to the caller", "good": "Hang up, call the number on your card", "note": "Your bank won't ask you to read a code back." }
     ],
-    "end": { "lead": "Send this to someone who banks on their phone", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, spam text messages" }
+    "end": { "lead": "Send this to someone who banks on their phone", "url": "neonkey.tech/scam", "tagline": "Source: FTC, spam text messages" }
   },
   {
     "id": "scam-popup",
@@ -62,6 +62,6 @@
       { "kind": "card", "dur": 5.8, "head": "The tells", "label": "SPOT THEM", "lines": ["1. Real Microsoft and Apple warnings never ask you to call", "2. \"Do NOT close\" keeps you stuck", "3. The goal: remote access to your computer"] },
       { "kind": "compare", "dur": 6.2, "head": "What to do", "bad": "Call and let them connect", "good": "Close the browser", "note": "Won't close? Ctrl + Shift + Esc opens Task Manager on Windows." }
     ],
-    "end": { "lead": "Practice on 6 real-looking examples", "url": "neonkey.tech/learn/is-this-a-scam", "tagline": "Source: FTC, tech support scams" }
+    "end": { "lead": "Check a message free", "url": "neonkey.tech/scam", "tagline": "Source: FTC, tech support scams" }
   }
 ]

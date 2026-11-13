@@ -1,5 +1,7 @@
 # Family Shield: demand test and safety design
 
+> **Update Nov 13 2026 (Michael: "why are we doing a waitlist... make it live now"; chose "Both, free tool first").** The waitlist form is gone. `/learn/is-this-a-scam/#check` now has the **Family Shield free check**: a rules-based checker (`src/lib/scam-check.mjs`, tests in `test/scam-check.test.mjs`) that runs only in the browser and is deliberately not a `<form>`, so the Google tag never sees the pasted text. Umami `scam-check-run` carries the verdict and tell ids only. Short link `neonkey.tech/scam/`. The paid AI family plan is next; checkout opens only once it works end to end. The `/waitlist` Worker route stays deployed for any existing signups.
+
 _Written Nov 13 2026 for the B2C lane of the Product Ecosystem Master Plan. Nothing here is built for real
 messages yet. This file covers the demand test that is in this branch, and the rules the product must follow if
 Gate 1 passes. Prices are planned, not approved, and nothing is for sale._

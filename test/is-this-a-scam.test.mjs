@@ -44,15 +44,32 @@ test("practice phone numbers are fictional 555-01xx numbers", () => {
   for (const n of nums) assert.match(n, /555\)? ?-?010-?\d{4}|555[ -]010/, n);
 });
 
-test("Family Shield waitlist: planned price, not built, adults, consent, privacy link", () => {
-  assert.match(text, /Planned price: \$7\/month or \$70\/year/);
-  assert.match(text, /not built yet/i);
-  assert.match(text, /18 or older/);
-  assert.match(text, /charges nothing/);
-  assert.match(html, /name="consent"[^>]*required/);
-  assert.match(html, /href="\/privacy\/#waitlists"/);
-  assert.match(html, /data-api="https:\/\/neonkey-quiz\.mr-mream\.workers\.dev\/waitlist"/);
-  assert.match(html, /data-product="family-shield"/);
+test("Family Shield free check: in-browser only, advice wording, no waitlist form", () => {
+  assert.match(html, /id="check"/);
+  assert.match(html, /<textarea id="fc-text"/);
+  // Not inside a <form>: the Google tag watches form submits and could read fields.
+  const box = html.slice(html.indexOf('id="check"'), html.indexOf('id="practice"'));
+  assert.doesNotMatch(box, /<form/i);
+  assert.match(text, /never sent or saved anywhere/);
+  assert.match(text, /advice from a set of rules, not a promise/);
+  assert.doesNotMatch(html, /data-fs-form|name="consent"|\/waitlist"/);
+  assert.match(text, /nothing is for sale yet/);
+  assert.match(html, /href="\/privacy\/#scam-check"|privacy/);
+});
+
+test("checker script sends nothing: no fetch or beacon in the page's own scripts", () => {
+  const srcs = [...html.matchAll(/<script[^>]*src="(\/_astro\/[^"]+)"/g)].map((m) => m[1]);
+  for (const s of srcs) {
+    const js = readFileSync("dist" + s, "utf8");
+    if (!js.includes("scam-check-run")) continue;
+    assert.doesNotMatch(js, /\bfetch\(|sendBeacon|XMLHttpRequest/);
+  }
+});
+
+test("/scam/ short link redirects to the checker", () => {
+  const r = readFileSync("dist/scam/index.html", "utf8");
+  assert.match(r, /url=\/learn\/is-this-a-scam\/#check/);
+  assert.match(r, /noindex/);
 });
 
 test("no checkout or payment link on the page", () => {
@@ -61,13 +78,14 @@ test("no checkout or payment link on the page", () => {
 
 test("analytics: Umami present once, events wired", () => {
   assert.equal(html.split("cloud.umami.is/script.js").length - 1, 1);
-  assert.match(html, /data-umami-event="waitlist-cta"/);
-  const js = (html.match(/<script[^>]*src="([^"]+)"/g) || []).join(" ");
+    const js = (html.match(/<script[^>]*src="([^"]+)"/g) || []).join(" ");
   assert.ok(js.length > 0);
 });
 
-test("privacy page has the Waitlists section", () => {
+test("privacy page explains the free check", () => {
   const p = readFileSync("dist/privacy/index.html", "utf8");
+  assert.match(p, /id="scam-check"/);
+  assert.match(p, /never sent to NeonKey or anyone else/);
   assert.match(p, /id="waitlists"/);
   assert.match(p, /aren(&#39;|')t added to the newsletter/);
 });

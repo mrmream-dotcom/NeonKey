@@ -1,0 +1,51 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "A pop-up says your computer is infected and to call Microsoft. What now?"
+description: "How fake virus warnings and tech support scams work, how to close a pop-up that won't go away, and what to do if you already called or let someone connect."
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">Your screen fills with a warning: viruses found, your computer is locked, do not close this window, call Microsoft (or Apple) support now. It may beep or talk. It's a tech support scam. The FTC says real security warnings from Microsoft or Apple never ask you to call a phone number ([FTC: tech support scams](https://consumer.ftc.gov/articles/how-spot-avoid-and-report-tech-support-scams)).</p>
+
+<div class="callout">
+**Don't call the number.** Close the browser. That's usually all it takes, because the "infection" is just a web page.
+</div>
+
+## How to close a pop-up that won't go away
+
+- **Windows:** press **Ctrl + Shift + Esc** to open Task Manager, select your browser (Chrome, Edge or Firefox) and choose **End task**.
+- **Mac:** press **Command + Option + Esc**, select the browser and choose **Force Quit**.
+- **Phone or tablet:** close the browser app from the app switcher.
+- **When you reopen the browser,** don't restore the last session if it offers to. Start a fresh one.
+- **Still stuck?** Restart the device.
+
+## The tells
+
+1. **A phone number on a warning.** Microsoft, Apple and real antivirus programs don't put a number to call in a pop-up.
+2. **"Do NOT close this window."** It's there to keep you stuck while you panic.
+3. **Alarms, countdowns or a voice.** Real warnings don't need sirens.
+4. **A request for remote access.** The caller asks you to install AnyDesk, TeamViewer or a similar app so they can "fix" it.
+5. **A request for payment.** Gift cards, a wire, crypto, or a "refund" they accidentally made too big and need you to send back.
+
+## If you already called
+
+1. **Hang up.** You don't owe them anything, whatever they said.
+2. **Don't install anything they asked for.** If you did, uninstall it.
+3. **Expect a call back.** They may say they're from a "refund department". Hang up again.
+
+## If you let them connect to your computer
+
+1. **Disconnect from the internet** (Wi-Fi off, or unplug the cable) and uninstall any remote access app they had you install.
+2. **Run a full scan** with your built-in security (Microsoft Defender on Windows) or the antivirus you already trust.
+3. **Change your passwords from a different device,** starting with your email, then your bank. Turn on two-step login while you're there (<a href={siteUrl('/learn/two-factor-authentication/')}>how to turn on 2FA</a>).
+4. **If you paid or gave card or bank details,** call your bank or card issuer on the number on the back of your card.
+5. **Report it** at [ReportFraud.ftc.gov](https://reportfraud.ftc.gov/).
+6. **Still worried?** Ask an IT person you found yourself to check the computer (<a href={siteUrl('/learn/working-with-it-help/')}>how to work with IT help</a>).
+
+## Help someone else spot it
+
+These pop-ups often find the person in the family who doesn't have a tech person nearby. Show them the close-the-browser keys above, or send them the <a href={siteUrl('/learn/is-this-a-scam/')}>free scam check and practice</a>. More scam types are in <a href={siteUrl('/learn/spot-a-scam/')}>How to spot a scam</a>.
+
+<p class="muted">This guide is general advice, not a promise about any one pop-up. When money, a login or remote access is involved, check the direct way.</p>
