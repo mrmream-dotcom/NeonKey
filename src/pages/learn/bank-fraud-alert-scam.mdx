@@ -1,0 +1,50 @@
+---
+layout: ../../components/learn/LearnLayout.astro
+title: "The \"fraud alert\" that is the fraud: bank text and code scams"
+description: "How fake bank fraud alerts and \"read me the code\" scams work, why a real bank never asks for a code you were sent, and what to do if you shared one."
+kicker: Learn · Security · Beginner
+back: { href: /learn/, label: Back to Learn }
+---
+import { url as siteUrl } from '../../config';
+
+<p class="lead">A text asks if you just made a big purchase. You reply NO, and a friendly "fraud specialist" calls to help. To "verify you", they ask you to read back a code your bank just texted. That code is the key to your account, and the specialist is the scammer. The FTC warns about texts like this ([FTC: spam text messages](https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages)).</p>
+
+<div class="callout">
+**The rule:** never read a code to anyone who contacted you. Hang up and call the number on the back of your card.
+</div>
+
+## How the trick works
+
+1. **They already have part of your login,** often from a data breach or an earlier scam.
+2. **They try to sign in as you,** which makes your bank send you a real one-time code.
+3. **They call or text pretending to be the bank,** and ask you to read that code back "to verify you" or "to stop the charge".
+4. **With the code, they're in.** They may change your password, add a payee or move money.
+
+The code is real, which is what makes this one convincing. The person asking for it isn't.
+
+## The tells
+
+1. **"Did you try a $___ purchase? Reply YES or NO."** Replying starts the script and confirms your number.
+2. **A request to share a code,** a PIN or your online banking password. Real codes usually say "never share this code" right in the message.
+3. **Caller ID that looks right.** Scammers can fake the number that shows up, so it isn't proof.
+4. **Pressure to act now** or move money to a "safe account". There's no such thing as a safe account a bank asks you to move money into.
+
+## What to do instead
+
+1. **Don't reply, don't tap, don't call back** the number in the message.
+2. **Call the number on the back of your card,** or open your bank's app, and ask whether there's really a problem.
+3. **Report the text:** forward it to **7726**, then delete it.
+
+## If you already shared a code or a password
+
+1. **Call your bank now** on the number on your card. Tell them exactly what you shared and when. Ask them to lock the account, stop pending transfers and reset your login.
+2. **Change your online banking password** from the bank's app or a website you typed yourself, and the password on your email too if it's the same.
+3. **Check for changes:** new payees, new devices, a changed phone number or email on the account.
+4. **Report it** at [ReportFraud.ftc.gov](https://reportfraud.ftc.gov/), and follow [IdentityTheft.gov](https://www.identitytheft.gov/) if they got personal details.
+5. **Turn on stronger sign-in** where your bank offers it. An authenticator app or passkey is harder to talk out of you than a text code (<a href={siteUrl('/learn/two-factor-authentication/')}>how to turn on 2FA</a>).
+
+## Not sure about a message?
+
+Paste it into the <a href={siteUrl('/learn/is-this-a-scam/#check')}>free Family Shield check</a>. It runs in your browser and nothing you paste is saved. For other scam types, see <a href={siteUrl('/learn/spot-a-scam/')}>How to spot a scam</a>.
+
+<p class="muted">This guide is general advice, not a promise about any one message. When money or a login is involved, check the direct way.</p>
