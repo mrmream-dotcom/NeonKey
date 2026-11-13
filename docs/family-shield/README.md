@@ -2,6 +2,8 @@
 
 > **Update Nov 13 2026 (Michael: "why are we doing a waitlist... make it live now"; chose "Both, free tool first").** The waitlist form is gone. `/learn/is-this-a-scam/#check` now has the **Family Shield free check**: a rules-based checker (`src/lib/scam-check.mjs`, tests in `test/scam-check.test.mjs`) that runs only in the browser and is deliberately not a `<form>`, so the Google tag never sees the pasted text. Umami `scam-check-run` carries the verdict and tell ids only. Short link `neonkey.tech/scam/`. The paid AI family plan is next; checkout opens only once it works end to end. The `/waitlist` Worker route stays deployed for any existing signups.
 
+> **Update Nov 13 2026, later.** The free checker moved to its own page, `neonkey.tech/scam-checker/` (`/scam/` redirects there). The **paid family plan** is built as its own Worker, `workers/family-shield/` (see its README): Stripe signup, private links, invites for up to 5 adults with an 18+ consent page, rules plus Claude Haiku 5.5 with the more severe verdict winning, message text never stored, opt-in sharing, 20 checks a day per person and 60 per family, a global AI cap and a kill switch, deletion 30 days after cancel. It is **not deployed and checkout is closed** (`FS_PAYMENT_LINK` empty) until Michael sets the keys and the end-to-end test in that README passes.
+
 _Written Nov 13 2026 for the B2C lane of the Product Ecosystem Master Plan. Nothing here is built for real
 messages yet. This file covers the demand test that is in this branch, and the rules the product must follow if
 Gate 1 passes. Prices are planned, not approved, and nothing is for sale._
