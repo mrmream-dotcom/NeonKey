@@ -3,6 +3,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import Stripe from "stripe";
 import worker from "../src/index.js";
+import { describeEvent, productName } from "../src/events.js";
+import { readFileSync } from "node:fs";
 
 const SECRET = "whsec_unit_test_only";
 const env = { STRIPE_WEBHOOK_SECRET: SECRET, RESEND_API_KEY: "re_fake", FROM_ADDRESS: "NeonKey 🔑 <hello@neonkey.tech>", NOTIFY_TO: "hello@neonkey.tech", BCC_ADDRESS: "bcc@example.com", ALLOW_LIVE: "false" };
@@ -197,4 +199,67 @@ test("the Worker has no route that serves the PDF", async () => {
     const r = await worker.fetch(new Request("https://w.example" + p), fsEnv);
     assert.ok([404, 405].includes(r.status), p);
   }
+});
+
+// Product names in notices (05-conversion-tracking-spec A7): this endpoint also gets Follow-Up Desk (and Watchdog)
+// events, so nothing is called a "support plan" unless Stripe says it is one.
+
+const subObj = (price, metadata = {}) => ({ id: "sub_1", status: "trialing", customer: "cus_1", start_date: 1800000000, metadata, items: { data: [{ price }] } });
+
+test("new Follow-Up Desk subscription is named from metadata.offer, not 'support plan'", () => {
+  const n = describeEvent(ev("customer.subscription.created", subObj({ id: "price_x" }, { offer: "nk_follow_up_desk", plan: "founding-monthly" })));
+  assert.equal(n.subject, "New Follow-Up Desk subscription");
+  assert.doesNotMatch(JSON.stringify(n), /support plan/i);
+  assert.match(n.next, /dashboard link/);
+});
+
+test("Support Plan subscription keeps its welcome-note next step", () => {
+  const n = describeEvent(ev("customer.subscription.created", subObj({ id: "price_sp", lookup_key: "nk_support_plan_monthly" })));
+  assert.equal(n.subject, "New Support Plan subscription");
+  assert.match(n.next, /welcome note/);
+});
+
+test("unknown subscription is just 'New subscription'", () => {
+  const n = describeEvent(ev("customer.subscription.created", subObj({ id: "price_q" })));
+  assert.equal(n.subject, "New subscription");
+  assert.doesNotMatch(JSON.stringify(n), /support plan/i);
+});
+
+test("Watchdog cancel and past-due notices use the product name", () => {
+  const o = { ...subObj({ id: "p", nickname: "Founder Watchdog monthly" }), cancel_at_period_end: true, cancel_at: 1800000000 };
+  assert.equal(describeEvent(ev("customer.subscription.updated", o, { data: { object: o, previous_attributes: { cancel_at_period_end: false } } })).subject, "Founder Watchdog set to cancel");
+  const pd = { ...subObj({ id: "p", nickname: "Founder Watchdog monthly" }), status: "past_due" };
+  const n = describeEvent(ev("customer.subscription.updated", pd, { data: { object: pd, previous_attributes: { status: "active" } } }));
+  assert.equal(n.subject, "Founder Watchdog past due");
+  assert.equal(n.headline, "A Founder Watchdog payment is past due");
+  assert.equal(describeEvent(ev("customer.subscription.deleted", subObj({ id: "p" }))).subject, "Subscription canceled");
+});
+
+test("first Desk invoice is 'first Follow-Up Desk payment' (from subscription metadata or line text)", () => {
+  const viaMeta = describeEvent(ev("invoice.paid", { id: "in_d", amount_paid: 9900, currency: "usd", customer_email: "o@example.com", billing_reason: "subscription_create", parent: { subscription_details: { metadata: { offer: "follow-up-desk" } } } }));
+  assert.equal(viaMeta.headline, "Paid: $99.00 (first Follow-Up Desk payment)");
+  assert.match(viaMeta.subject, /^Invoice paid: \$99\.00 for Follow-Up Desk from o@example\.com$/);
+  const viaLine = describeEvent(ev("invoice.paid", { id: "in_e", amount_paid: 25000, currency: "usd", billing_reason: "subscription_cycle", lines: { data: [{ description: "1 × Follow-Up Desk (at $250.00 / month)" }] } }));
+  assert.equal(viaLine.headline, "Paid: $250.00 (Follow-Up Desk renewal)");
+  const unknown = describeEvent(ev("invoice.paid", { id: "in_f", amount_paid: 100, currency: "usd", billing_reason: "subscription_create" }));
+  assert.equal(unknown.headline, "Paid: $1.00 (first subscription payment)");
+});
+
+test("the Lead-Routing & Follow-Up System is not mistaken for the Follow-Up Desk", () => {
+  assert.equal(productName({ lines: { data: [{ description: "Lead-Routing & Follow-Up System" }] } }), "");
+  assert.equal(productName({ metadata: { offer: "nk_email_lockdown" } }), "Email Authentication Setup");
+});
+
+test("one-time checkout subject names the offer from metadata", () => {
+  const n = describeEvent(ev("checkout.session.completed", { mode: "payment", payment_status: "paid", amount_total: 2900, currency: "usd", metadata: { offer: "nk_email_lockdown" }, customer_details: { email: "a@example.com" } }));
+  assert.equal(n.subject, "Payment received: $29.00 for Email Authentication Setup from a@example.com");
+});
+
+test("wrangler.toml FOUNDER_STACK_LINK is the current $29 link listed in src/data/services.ts", () => {
+  const toml = readFileSync(new URL("../wrangler.toml", import.meta.url), "utf8");
+  const link = (toml.match(/^FOUNDER_STACK_LINK = "([^"]+)"/m) || [])[1];
+  assert.equal(link, "plink_1UajXgCRxS1tvAi2Esh56b8q");
+  const services = readFileSync(new URL("../../../src/data/services.ts", import.meta.url), "utf8");
+  const guide = services.slice(services.indexOf("export const setupGuide"), services.indexOf("export const lockdownFlashSale"));
+  assert.ok(guide.includes(link), "setupGuide in services.ts should name the same Payment Link");
 });

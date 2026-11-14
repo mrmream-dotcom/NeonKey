@@ -19,6 +19,39 @@ const money = (cents, cur = "usd") =>
 const day = (unix) => (unix ? new Date(unix * 1000).toISOString().slice(0, 10) : "");
 const who = (o) => o?.customer_details?.email || o?.customer_email || o?.billing_details?.email || o?.receipt_email || "";
 
+// This endpoint receives every subscription and invoice on the account: the Support Plan, but also the Follow-Up Desk
+// (which has its own Worker) and, if reactivated, Founder Watchdog. So notices name the product from the Stripe data
+// (metadata.offer / plan first, then the price lookup key or nickname, then invoice line text) instead of calling
+// everything a "support plan". Unknown products are just "subscription".
+const PRODUCTS = [
+  // Not plain "follow-up": the Lead-Routing & Follow-Up System is a different (invoiced) offer.
+  [/follow[\s_-]?up[\s_-]?desk|(^|[^a-z])desk([^a-z]|$)/i, "Follow-Up Desk"],
+  [/watchdog/i, "Founder Watchdog"],
+  [/support[\s_-]?plan/i, "Support Plan"],
+  [/founder[\s_-]?stack/i, "The Founder Stack"],
+  [/lockdown|email[\s_-]?auth/i, "Email Authentication Setup"],
+];
+const NEXT_NEW_SUB = {
+  "Support Plan": "Send the welcome note and agree the monthly request count in writing.",
+  "Follow-Up Desk": "Nothing to send: the Follow-Up Desk Worker emails the dashboard link. Check the BCC copy arrived.",
+  "Founder Watchdog": "Check the Watchdog account was set up for this customer.",
+};
+function hints(o) {
+  const md = [o.metadata, o.subscription_details?.metadata, o.parent?.subscription_details?.metadata];
+  const prices = [...(o.items?.data || []), ...(o.lines?.data || [])].map((i) => i.price || i.pricing?.price_details || {});
+  return [
+    ...md.flatMap((m) => [m?.offer, m?.plan]),
+    ...prices.flatMap((p) => [p.lookup_key, p.nickname]),
+    ...(o.lines?.data || []).map((l) => l.description),
+  ].filter((v) => typeof v === "string" && v);
+}
+/** "Follow-Up Desk", "Support Plan", ... or "" when the Stripe object doesn't say. */
+export function productName(o) {
+  for (const h of hints(o || {})) for (const [re, name] of PRODUCTS) if (re.test(h)) return name;
+  return "";
+}
+const label = (o, fallback = "Subscription") => productName(o) || fallback;
+
 export function describeEvent(event) {
   const o = event.data?.object || {};
   switch (event.type) {
@@ -28,7 +61,7 @@ export function describeEvent(event) {
       if (o.mode === "subscription" || o.invoice) return null;
       if (o.payment_status === "unpaid") return null; // delayed method: wait for async_payment_succeeded
       return {
-        subject: `Payment received: ${money(o.amount_total, o.currency)} from ${who(o) || "a customer"}`,
+        subject: `Payment received: ${money(o.amount_total, o.currency)}${productName(o) ? ` for ${productName(o)}` : ""} from ${who(o) || "a customer"}`,
         headline: `Paid: ${money(o.amount_total, o.currency)}`,
         rows: [["Customer", who(o)], ["Name", o.customer_details?.name], ["Offer", o.metadata?.offer]],
         next: "Reply to the customer to book the work, and log it in the Accounts sheet.",
@@ -44,16 +77,20 @@ export function describeEvent(event) {
         next: "Don't start the work yet. Send the customer a new link or an invoice.",
         replyTo: who(o) || undefined,
       };
-    case "invoice.paid":
+    case "invoice.paid": {
       if (!o.amount_paid) return null; // $0 invoices (trials, credits) aren't news
+      const sub = o.billing_reason === "subscription_cycle" || o.billing_reason === "subscription_create";
+      const name = productName(o);
+      const kind = o.billing_reason === "subscription_cycle" ? `${name || "subscription"} renewal` : sub ? `first ${name || "subscription"} payment` : "invoice";
       return {
-        subject: `Invoice paid: ${money(o.amount_paid, o.currency)} from ${o.customer_email || o.customer_name || "a customer"}`,
-        headline: `Paid: ${money(o.amount_paid, o.currency)} (${o.billing_reason === "subscription_cycle" ? "support plan renewal" : o.billing_reason === "subscription_create" ? "first support plan payment" : "invoice"})`,
+        subject: `Invoice paid: ${money(o.amount_paid, o.currency)}${name ? ` for ${name}` : ""} from ${o.customer_email || o.customer_name || "a customer"}`,
+        headline: `Paid: ${money(o.amount_paid, o.currency)} (${kind})`,
         rows: [["Customer", o.customer_email], ["Name", o.customer_name], ["Invoice", o.number], ["Lines", lines(o)]],
         next: o.billing_reason === "subscription_cycle" ? "Nothing to do. Count it in Friday's MRR." : "Log it in the Accounts sheet and book the work.",
         replyTo: o.customer_email || undefined,
         dashPath: `invoices/${o.id}`,
       };
+    }
     case "invoice.payment_failed":
       return {
         subject: `Invoice payment failed: ${o.customer_email || "a customer"}`,
@@ -65,10 +102,10 @@ export function describeEvent(event) {
       };
     case "customer.subscription.created":
       return {
-        subject: "New support plan subscription",
+        subject: productName(o) ? `New ${productName(o)} subscription` : "New subscription",
         headline: `New subscription: ${planName(o)}`,
-        rows: [["Status", o.status], ["Customer", o.customer], ["Started", day(o.start_date)]],
-        next: "Send the welcome note and agree the monthly request count in writing.",
+        rows: [["Product", productName(o)], ["Status", o.status], ["Customer", o.customer], ["Started", day(o.start_date)]],
+        next: NEXT_NEW_SUB[productName(o)] || "Check in Stripe what was bought and follow up.",
         dashPath: `subscriptions/${o.id}`,
       };
     case "customer.subscription.updated": {
@@ -76,7 +113,7 @@ export function describeEvent(event) {
       // Only flag a cancellation being scheduled, or a plan going past due.
       if (o.cancel_at_period_end && prev.cancel_at_period_end === false) {
         return {
-          subject: "Support plan set to cancel",
+          subject: `${label(o)} set to cancel`,
           headline: `Cancels on ${day(o.cancel_at || o.items?.data?.[0]?.current_period_end)}`,
           rows: [["Plan", planName(o)], ["Customer", o.customer]],
           next: "Optional: ask what would have made it worth keeping.",
@@ -85,8 +122,8 @@ export function describeEvent(event) {
       }
       if (o.status === "past_due" && prev.status && prev.status !== "past_due") {
         return {
-          subject: "Support plan past due",
-          headline: "A support plan payment is past due",
+          subject: `${label(o)} past due`,
+          headline: `A ${label(o, "subscription")} payment is past due`,
           rows: [["Plan", planName(o)], ["Customer", o.customer]],
           next: "Stripe keeps retrying. A short personal note usually helps.",
           dashPath: `subscriptions/${o.id}`,
@@ -96,7 +133,7 @@ export function describeEvent(event) {
     }
     case "customer.subscription.deleted":
       return {
-        subject: "Support plan canceled",
+        subject: `${label(o)} canceled`,
         headline: `Subscription ended: ${planName(o)}`,
         rows: [["Customer", o.customer], ["Ended", day(o.ended_at)], ["Reason", o.cancellation_details?.reason]],
         next: "Take it off Friday's MRR.",
