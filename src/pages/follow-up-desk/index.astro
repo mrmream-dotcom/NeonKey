@@ -38,7 +38,7 @@ const faq = [
 ---
 <ProductPage
   title="Follow-Up Desk: Estimate Follow-Up"
-  description={`Follow-Up Desk: ${trial} days free, then ${usd(deskMonthly)}/month${saleLive ? ' (founding price until Nov 30)' : ''}. Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}
+  description={`Follow-Up Desk: ${trial} days free, then ${usd(deskMonthly)}/month${saleLive ? ` (founding price until ${followUpDeskSale.endsLabel})` : ''}. Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}
   lane="smb"
   crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: LANE_NAMES.smb }, { label: fd.name }]}
   eyebrow={`${LANE_NAMES.smb} · ${fd.name}`}
