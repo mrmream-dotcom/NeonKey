@@ -1,0 +1,45 @@
+# NeonKey Family Shield Worker: the paid family plan (one family, up to 5 adults, rules + AI scam check).
+# Stripe signup -> private link for the owner -> invite up to 4 more adults (18+ consent) -> paste-to-check.
+# Shares nothing with the other workers (its own Stripe endpoint and secret, its own KV).
+# Secrets (set with `wrangler secret put`, never committed, never pasted in chat):
+#   STRIPE_WEBHOOK_SECRET  whsec_... from THIS Worker's own Stripe endpoint (/stripe)
+#   RESEND_API_KEY         Resend key that can send from neonkey.tech
+#   ANTHROPIC_API_KEY      Claude API key for the AI second opinion. Set a monthly spend limit on it in the Claude Console.
+name = "neonkey-family-shield"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+APP_URL = "https://neonkey-family-shield.mr-mream.workers.dev"
+FROM_ADDRESS = "NeonKey 🔑 <hello@neonkey.tech>"
+REPLY_TO = "hello@neonkey.tech"
+NOTIFY_TO = "hello@neonkey.tech"
+# The owner's welcome email only (a sale record). Invites and family sign-in links are never BCC'd.
+BCC_ADDRESS = "mr.mream@gmail.com"
+# CHECKOUT IS CLOSED until this lists the Family Shield Payment Link id(s) ($7/mo and $70/yr), comma-separated.
+# Fill it in only after the end-to-end test in README.md passes.
+FS_PAYMENT_LINK = ""
+# Stripe customer portal login link (billing and cancel), shown to plan owners.
+PORTAL_URL = "https://billing.stripe.com/p/login/dRm9AS6l07sA29180Ab3q00"
+# Live Stripe events are ignored until this is "true".
+ALLOW_LIVE = "false"
+# Kill switch for the AI second opinion. "false" = rules only, no Anthropic calls.
+AI_ENABLED = "false"
+# Most AI checks per day across ALL families (cost guard). About $0.0005 each on Claude Haiku 5.5.
+AI_DAILY_CAP = "1500"
+
+[[kv_namespaces]]
+binding = "FS"
+# Create once: npx wrangler kv namespace create neonkey-family-shield, then paste the id here.
+id = "REPLACE_WITH_KV_ID"
+
+[triggers]
+crons = ["17 12 * * *"]
+
+[observability]
+enabled = true
+
+[observability.logs]
+invocation_logs = false
