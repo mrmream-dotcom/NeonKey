@@ -89,6 +89,20 @@ a.ds-card:hover, .ds-card:has(> a:hover) { border-color: var(--color-border-stro
   .product-lede { font-size: var(--text-md); margin-bottom: var(--space-3); }
   .product-hero h1 { margin-bottom: var(--space-3); }
 }
+/* Phones: the price box (and its one primary action) comes straight after the h1 and lede, so it lands in the first
+   screen; "who it's for" and the small facts follow it. display: contents lets the copy's children join the grid. */
+@media (max-width: 640px) {
+  .product-hero-grid { display: flex; flex-direction: column; gap: 0; }
+  .product-hero-copy { display: contents; }
+  .product-hero-copy > * { order: 1; }
+  .product-hero-price { order: 2; margin: var(--space-2) 0 var(--space-5); }
+  .product-hero-copy > .product-who, .product-hero-copy > .product-meta, .product-hero-copy > .product-hero-after { order: 3; }
+  .product-hero .crumbs { margin-bottom: var(--space-3); }
+  .product-hero .lane-pill { align-self: flex-start; }
+  .product-hero h1 { font-size: 1.875rem; margin: var(--space-2) 0 var(--space-3); }
+  .product-lede { font-size: var(--text-base); }
+  .product-meta { margin-top: var(--space-4); }
+}
 
 /* ---------- Lane hero (hub pages) ---------- */
 .lane-hero { padding: clamp(1.5rem, 4vw, 3.5rem) 0 var(--section-y-sm); border-bottom: 1px solid var(--color-border); }
@@ -137,8 +151,12 @@ a.ds-card:hover, .ds-card:has(> a:hover) { border-color: var(--color-border-stro
 .footer-fine a { color: inherit; }
 @media (max-width: 1000px) { .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .footer-brand { grid-column: 1 / -1; } }
 @media (max-width: 640px) {
-  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); }
+  .footer-col ul { gap: 0; }
   .footer-col a { min-height: var(--tap); }
+  /* The two longer columns span the width with their links in two columns, so the footer stays short on phones. */
+  .footer-col.lane-smb, .footer-col:not([class*="lane-"]) { grid-column: 1 / -1; }
+  .footer-col.lane-smb ul, .footer-col:not([class*="lane-"]) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-4); }
 }
 
 /* ---------- Header lane button ---------- */

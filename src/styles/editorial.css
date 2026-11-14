@@ -210,3 +210,9 @@
 .issue-format > h3 { font-size: 1.15rem; margin: 0 0 1.1rem; }
 .issue-sections { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
 .issue-sections > li { background: rgba(255,255,255,.02); }
+
+/* Phones: a shorter page header, so forms and tools under it start higher (full overhaul, Nov 14 2026). */
+@media (max-width: 640px) {
+  .page-header h1 { font-size: 1.875rem; }
+  .page-header .lede { font-size: var(--text-md); }
+}
