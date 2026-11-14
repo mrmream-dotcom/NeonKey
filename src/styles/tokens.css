@@ -1,0 +1,106 @@
+/* ==========================================================================
+   NeonKey design tokens (Nov 2026 overhaul). The single source for color, type, spacing, radius, elevation and
+   motion. Documented in docs/design-system.md; brand rules in docs/brand-guide.md.
+   Loaded first (Base.astro), before global.css and editorial.css. Legacy names (--bg, --panel, --line, --muted,
+   --cyan, --radius ...) are kept as aliases at the bottom so older pages keep working; new code uses the
+   --color-*, --text-*, --space-* and --radius-* names.
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+
+  /* ---- Color: surfaces (dark navy does the work) ---- */
+  --color-bg: #0b0d17;            /* page */
+  --color-bg-raised: #0f1224;     /* alternate section band */
+  --color-surface: #141832;       /* cards, panels, price boxes */
+  --color-surface-2: #1a1f3f;     /* inputs on cards, hover fill */
+  --color-border: #262b52;        /* hairlines, card borders */
+  --color-border-strong: #3a4078; /* inputs, secondary buttons */
+
+  /* ---- Color: text (all pass WCAG AA on bg and surface) ---- */
+  --color-text: #e8eaf6;          /* 16.2:1 on bg, 14.5:1 on surface */
+  --color-text-muted: #b3b8d6;    /* 9.9:1 on bg, 8.9:1 on surface */
+  --color-text-subtle: #8d93b8;   /* 6.4:1 on bg, 5.8:1 on surface; captions and fine print only */
+
+  /* ---- Color: brand hues (unchanged from the original NeonKey palette) ---- */
+  --color-primary: #22d3ee;       /* cyan: the one primary action per screen, links */
+  --color-primary-hover: #67e8f9;
+  --color-on-primary: #04121a;    /* text on cyan, 10.5:1 */
+  --color-violet: #a78bfa;        /* kickers, short labels */
+  --color-magenta: #f472b6;       /* focus ring, the key's dot, sparing accents */
+  --brand-gradient: linear-gradient(90deg, #22d3ee, #a78bfa 55%, #f472b6);
+
+  /* ---- Color: status ---- */
+  --color-success: #6ee7b7;
+  --color-warning: #fbbf24;
+  --color-danger: #fda4af;
+
+  /* ---- Lane accents: one hue per customer entrance ---- */
+  --lane-family: var(--color-primary);    /* Protect Yourself */
+  --lane-founders: var(--color-violet);   /* Build Your Business */
+  --lane-smb: var(--color-magenta);       /* Run Your Business */
+
+  /* ---- Type ---- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --text-xs: .8125rem;   /* 13px: kickers, legal */
+  --text-sm: .875rem;    /* 14px: captions, meta */
+  --text-base: 1rem;     /* 16px: UI text, buttons */
+  --text-md: 1.0625rem;  /* 17px: body copy */
+  --text-lg: 1.25rem;    /* 20px: lede, card titles */
+  --text-xl: 1.5rem;     /* 24px: h3, prices */
+  --text-2xl: clamp(1.625rem, 3vw, 2.125rem);  /* h2 */
+  --text-3xl: clamp(2rem, 4.5vw, 3rem);        /* page h1 */
+  --text-display: clamp(2.25rem, 6vw, 3.5rem); /* homepage and lane h1 */
+  --leading-tight: 1.12;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --tracking-tight: -.02em;
+  --tracking-caps: .08em;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+
+  /* ---- Spacing (4px grid) ---- */
+  --space-1: .25rem;  --space-2: .5rem;  --space-3: .75rem; --space-4: 1rem;   --space-5: 1.25rem;
+  --space-6: 1.5rem;  --space-8: 2rem;   --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
+  --section-y: clamp(3rem, 7vw, 5rem);    /* standard section padding */
+  --section-y-sm: clamp(2rem, 5vw, 3rem); /* tight section padding */
+  --gutter: 1.25rem;                       /* page side gutter (each side) */
+  --max: 1140px;                           /* content width */
+  --max-narrow: 760px;                     /* reading width */
+
+  /* ---- Radius ---- */
+  --radius-sm: 6px;   /* tags, small chips */
+  --radius-md: 10px;  /* buttons, inputs */
+  --radius-lg: 14px;  /* cards, panels */
+  --radius-xl: 20px;  /* hero panels */
+  --radius-pill: 999px;
+
+  /* ---- Elevation (no glow at rest) ---- */
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, .04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .35);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, .45);
+
+  /* ---- Interaction ---- */
+  --tap: 44px;                  /* minimum tap target */
+  --focus-ring: 2px solid var(--color-magenta);
+  --focus-offset: 2px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --dur-fast: 150ms;
+  --dur: 200ms;
+
+  /* ---- Legacy aliases (pre-overhaul names; keep until no page uses them) ---- */
+  --bg: var(--color-bg);
+  --bg-2: #11142a;
+  --panel: var(--color-surface);
+  --line: var(--color-border);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --cyan: var(--color-primary);
+  --magenta: var(--color-magenta);
+  --violet: var(--color-violet);
+  --radius: var(--radius-lg);
+  --font: var(--font-sans);
+  --mono: var(--font-mono);
+}

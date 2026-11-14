@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Design-system components (Nov 2026 overhaul). Styles for src/components/ui/* and the shared lane pieces
+   (LaneDoors, TrustLine, footer). Tokens come from tokens.css. Documented in docs/design-system.md.
+   No glow at rest, hover/focus transitions only, everything respects prefers-reduced-motion (global rule).
+   ========================================================================== */
+
+/* ---------- Lane accent: .lane-family / .lane-founders / .lane-smb set --lane ---------- */
+.lane-family { --lane: var(--lane-family); }
+.lane-founders { --lane: var(--lane-founders); }
+.lane-smb { --lane: var(--lane-smb); }
+.lane-pill { display: inline-flex; align-items: center; gap: .5rem; font-size: var(--text-xs); font-weight: var(--weight-bold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-text-muted); }
+.lane-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--lane, var(--color-primary)); flex: none; }
+
+/* ---------- Section ---------- */
+.ds-section { padding: var(--section-y) 0; }
+.ds-section-sm { padding: var(--section-y-sm) 0; }
+.ds-section-raised { background: var(--color-bg-raised); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.ds-section + .ds-section:not(.ds-section-raised) { padding-top: 0; }
+.ds-section-raised + .ds-section { padding-top: var(--section-y-sm); }
+.ds-section-head { margin: 0 0 var(--space-6); max-width: 46rem; }
+.ds-section-head.is-center { margin-inline: auto; text-align: center; }
+.ds-section-head .kicker { display: block; margin-bottom: var(--space-2); }
+.ds-section-head h2 { margin: 0; }
+.ds-section-head p { margin: var(--space-2) 0 0; color: var(--color-text-muted); }
+[id] { scroll-margin-top: 84px; }
+
+/* ---------- Card ---------- */
+.ds-card { position: relative; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-inset); transition: border-color var(--dur) var(--ease); }
+.ds-card-sm { padding: var(--space-4); } .ds-card-md { padding: var(--space-6); } .ds-card-lg { padding: var(--space-8); }
+.ds-card-lane { border-top: 2px solid var(--lane); }
+a.ds-card:hover, .ds-card:has(> a:hover) { border-color: var(--color-border-strong); }
+
+/* ---------- Checklist (What you get) ---------- */
+.ds-checklist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--space-3) var(--space-6); }
+.ds-checklist li { position: relative; padding-left: 1.75rem; color: var(--color-text); }
+.ds-checklist li::before { content: ''; position: absolute; left: 0; top: .32em; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: rgba(34,211,238,.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%2322d3ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 75% no-repeat; }
+
+/* ---------- Steps ---------- */
+.ds-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--space-4); counter-reset: ds-step; }
+.ds-steps > li { counter-increment: ds-step; display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); color: var(--color-text-muted); font-size: .97rem; }
+.ds-steps > li::before { content: counter(ds-step); display: grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-bottom: var(--space-2); border-radius: 50%; border: 1px solid var(--color-border-strong); color: var(--color-text); font-family: var(--font-mono); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.ds-steps > li strong { color: var(--color-text); font-size: var(--text-md); }
+
+/* ---------- FAQ ---------- */
+.ds-faq { border-top: 1px solid var(--color-border); }
+.ds-faq-item { border-bottom: 1px solid var(--color-border); }
+.ds-faq-item > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); min-height: var(--tap); padding: var(--space-4) 0; font-weight: var(--weight-semibold); color: var(--color-text); }
+.ds-faq-item > summary::-webkit-details-marker { display: none; }
+.ds-faq-item > summary::after { content: ''; flex: none; width: .6rem; height: .6rem; border-right: 2px solid var(--color-text-muted); border-bottom: 2px solid var(--color-text-muted); transform: rotate(45deg) translate(-2px, -2px); transition: transform var(--dur) var(--ease); }
+.ds-faq-item[open] > summary::after { transform: rotate(225deg) translate(-2px, -2px); }
+.ds-faq-item > summary:hover { color: var(--color-primary-hover); }
+.ds-faq-a { padding: 0 0 var(--space-5); color: var(--color-text-muted); }
+.ds-faq-a p { margin: 0 0 var(--space-3); } .ds-faq-a p:last-child { margin: 0; }
+.ds-faq-a ul { margin: 0 0 var(--space-3); padding-left: 1.1rem; }
+.ds-faq-a a, .ds-faq-foot a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; }
+.ds-faq-foot { margin: var(--space-5) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+
+/* ---------- Price box ---------- */
+.price-box { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border-strong); border-top: 2px solid var(--lane, var(--color-primary)); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+.price-box p { margin: 0; }
+.pb-price { font-size: 2.25rem; font-weight: var(--weight-heavy); line-height: 1.05; letter-spacing: var(--tracking-tight); color: var(--color-text); font-variant-numeric: tabular-nums; }
+.pb-price small { margin-left: .35rem; font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: 0; color: var(--color-text-muted); }
+.pb-from { font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: 0; color: var(--color-text-muted); margin-right: .1rem; }
+.pb-terms { font-size: .9375rem; color: var(--color-text-muted); }
+.pb-note, .pb-alt { font-size: var(--text-sm); color: var(--color-text-muted); }
+.pb-alt a, .pb-links a { color: var(--color-primary); }
+.pb-links { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: var(--space-3) 0 0; list-style: none; border-top: 1px solid var(--color-border); font-size: var(--text-sm); }
+.pb-links li { margin: 0; }
+.pb-fine { font-size: var(--text-xs); color: var(--color-text-subtle); }
+.pb-fine a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.price-box .ds-tag { font-size: var(--text-xs); font-weight: var(--weight-bold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-magenta); }
+
+/* ---------- Product hero ---------- */
+.product-hero { padding: clamp(1.5rem, 4vw, 3.5rem) 0 var(--section-y-sm); border-bottom: 1px solid var(--color-border); }
+.product-hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 25rem); gap: var(--space-8) clamp(2rem, 5vw, 4rem); align-items: start; }
+.product-hero.is-single .product-hero-grid { grid-template-columns: minmax(0, 48rem); }
+.product-hero h1 { margin: var(--space-3) 0 var(--space-4); }
+.product-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 40rem; margin: 0 0 var(--space-4); }
+.product-who { margin: 0; font-size: .97rem; color: var(--color-text-muted); max-width: 40rem; }
+.product-who strong { color: var(--color-text); }
+.product-meta { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: var(--space-5) 0 0; padding: 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+.product-meta li { display: inline-flex; align-items: center; gap: .45rem; margin: 0; }
+.product-meta li::before { content: ''; width: .35rem; height: .35rem; border-radius: 50%; background: var(--lane, var(--color-primary)); }
+.product-hero-price { position: sticky; top: 84px; }
+.product-trust { padding: var(--space-4) 0 var(--space-12); }
+@media (max-width: 860px) {
+  .product-hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .product-hero-price { position: static; }
+  .product-lede { font-size: var(--text-md); margin-bottom: var(--space-3); }
+  .product-hero h1 { margin-bottom: var(--space-3); }
+}
+
+/* ---------- Lane hero (hub pages) ---------- */
+.lane-hero { padding: clamp(1.5rem, 4vw, 3.5rem) 0 var(--section-y-sm); border-bottom: 1px solid var(--color-border); }
+.lane-hero h1 { font-size: var(--text-display); max-width: 20ch; margin: var(--space-3) 0 var(--space-4); }
+.lane-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 42rem; margin: 0; }
+.lane-actions { margin-top: var(--space-6); }
+@media (max-width: 640px) { .lane-lede { font-size: var(--text-md); } .lane-actions { margin-top: var(--space-5); } .lane-actions .btn { flex: 1 1 100%; } }
+
+/* ---------- Offer card (hub pages): name, one line, price, one action ---------- */
+.offer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--space-5); }
+.offer-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.offer-card h3 { margin: 0; font-size: var(--text-xl); }
+.offer-card .oc-line { margin: 0; color: var(--color-text-muted); }
+.offer-card .oc-price { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-heavy); color: var(--color-text); font-variant-numeric: tabular-nums; }
+.offer-card .oc-price small { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text-muted); margin-left: .3rem; }
+.offer-card .oc-list { margin: 0; padding-left: 1.1rem; color: var(--color-text-muted); font-size: .97rem; }
+.offer-card .oc-list li { margin-bottom: .3rem; }
+.offer-card .btn-row { margin-top: auto; padding-top: var(--space-2); }
+.offer-card.is-primary { border-color: var(--color-border-strong); }
+.oc-badge { align-self: flex-start; font-size: var(--text-xs); font-weight: var(--weight-bold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-on-primary); background: var(--lane, var(--color-primary)); border-radius: var(--radius-pill); padding: .2rem .6rem; }
+
+/* ---------- Link list (guides) ---------- */
+.link-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--space-3); }
+.link-grid li { margin: 0; }
+.link-grid a { display: flex; flex-direction: column; gap: var(--space-1); height: 100%; min-height: var(--tap); padding: var(--space-4) var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); color: var(--color-text); text-decoration: none; font-weight: var(--weight-semibold); line-height: var(--leading-snug); transition: border-color var(--dur-fast) var(--ease); }
+.link-grid a:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+.link-grid a span { font-weight: 400; font-size: var(--text-sm); color: var(--color-text-muted); }
+
+/* ---------- Trust line ---------- */
+.trust-line { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.55; }
+.trust-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.trust-line a:hover { color: var(--color-text); }
+.tl-sep { margin: 0 .25rem; color: var(--color-text-subtle); }
+.tl-page-end { margin: 0 0 var(--space-8); }
+
+/* ---------- Footer (three lanes + company) ---------- */
+.site-footer { border-top: 1px solid var(--color-border); padding: var(--space-12) 0 var(--space-10); margin-top: var(--space-8); background: #090b14; }
+.footer-grid { display: grid; grid-template-columns: minmax(14rem, 1.3fr) repeat(4, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
+.footer-brand p { color: var(--color-text-muted); margin: var(--space-2) 0 0; font-size: var(--text-sm); }
+.footer-col h2 { font-size: var(--text-xs); font-weight: var(--weight-bold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-text); margin: 0 0 var(--space-3); display: flex; align-items: center; gap: .45rem; }
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.footer-col li { margin: 0; }
+.footer-col a { display: inline-flex; align-items: center; min-height: 32px; color: var(--color-text-muted); text-decoration: none; font-size: var(--text-sm); }
+.footer-col a:hover { color: var(--color-text); }
+.footer-fine { grid-column: 1 / -1; margin: 0; padding-top: var(--space-6); border-top: 1px solid var(--color-border); color: var(--color-text-subtle); font-size: var(--text-xs); display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); justify-content: space-between; }
+.footer-fine a { color: inherit; }
+@media (max-width: 1000px) { .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+  .footer-col a { min-height: var(--tap); }
+}
+
+/* ---------- Header lane button ---------- */
+.nav-cta { white-space: nowrap; }

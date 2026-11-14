@@ -1,0 +1,89 @@
+---
+// PriceBox (docs/design-system.md): the one place a product's price, terms and primary action are shown on its page.
+// Every number comes from src/data/services.ts; buy buttons go through buyAttrs() (src/lib/checkout-ref.ts), so each
+// Stripe link carries its nk1_ client_reference_id and the Umami lane/sku/price/ref props. Custom work has no checkout:
+// its button asks for a written quote on /contact/.
+//   product: follow-up-desk | email-auth | founder-stack | front-office | remote-it | support-plan
+// Live sales keep their own components: the Follow-Up Desk founding sale renders DeskSale variant "price" (countdown
+// and swap to the regular price at the deadline). The Founder Stack flash sale (GuideSale) and the Email
+// Authentication flash sale ended Nov 10 2026; while either flag is false this box shows the regular price only.
+// Slot: extra lines under the terms (sample links, "already signed up?").
+import { url } from '../../config';
+import DeskSale from '../DeskSale.astro';
+import GuideSale from '../GuideSale.astro';
+import { buyAttrs, type Lane } from '../../lib/checkout-ref';
+import {
+  followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as deskSale, emailLockdown, lockdownCredit,
+  setupGuide, guideFlashSaleLive, frontOfficePackage as fop, remoteIt, remoteSupportPlan as sp, introPricing, usd,
+} from '../../data/services';
+export type PriceProduct = 'follow-up-desk' | 'email-auth' | 'founder-stack' | 'front-office' | 'remote-it' | 'support-plan';
+interface Props { product: PriceProduct; lane: Lane; location: string; kicker?: string; id?: string; class?: string }
+const { product, lane, location, kicker, id, class: cls } = Astro.props;
+const quote = (topic: string, offer: string, label = 'Get a written quote') => ({ href: url(`/contact/?topic=${topic}`), label, attrs: { 'data-umami-event': 'contact-click', 'data-umami-event-offer': offer, 'data-umami-event-location': location } });
+const defaultKicker: Record<PriceProduct, string> = {
+  'follow-up-desk': 'Self-serve · monthly',
+  'email-auth': 'Buy online · no call',
+  'founder-stack': 'Guide · PDF · one-time',
+  'front-office': 'Done for you · custom setup',
+  'remote-it': 'Remote · fixed written quote',
+  'support-plan': 'Monthly · cancel anytime',
+};
+const q = product === 'front-office' ? quote(fop.slug, fop.name) : product === 'remote-it' ? quote('remote-it', remoteIt.name) : product === 'support-plan' ? quote('support-plan', sp.name) : undefined;
+const buyable = product === 'follow-up-desk' || product === 'email-auth' || product === 'founder-stack';
+const refundsHref = product === 'email-auth' ? '/refunds/#email-authentication-setup' : '/refunds/';
+---
+<aside class:list={['price-box', `lane-${lane}`, cls]} id={id} aria-label="Price and how to start">
+  <span class="kicker">{kicker ?? defaultKicker[product]}</span>
+
+  {product === 'follow-up-desk' && (deskSale
+    ? <DeskSale variant="price" location={location} lane={lane} />
+    : <Fragment>
+        <p class="pb-price">{usd(fd.from)}<small>/month</small></p>
+        <p class="pb-terms">{trial} days free, then {usd(fd.from)}/month. Card required, cancel anytime.</p>
+        <a class="btn btn-primary btn-lg btn-block" {...buyAttrs(fd.buyUrl, { lane, sku: 'desk-250m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
+      </Fragment>)}
+
+  {product === 'email-auth' && (
+    <Fragment>
+      <p class="pb-price">{usd(emailLockdown.from)}<small>flat, one domain</small></p>
+      <p class="pb-terms">One-time payment. Your report usually arrives by email within a few minutes.</p>
+      <a class="btn btn-primary btn-lg btn-block" {...buyAttrs(emailLockdown.buyUrl, { lane, sku: 'email-auth-29', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location={location}>Buy now · {usd(emailLockdown.from)}</a>
+      <p class="pb-note">{lockdownCredit}</p>
+    </Fragment>
+  )}
+
+  {product === 'founder-stack' && (guideFlashSaleLive
+    ? <GuideSale variant="box" location={location} lane={lane} />
+    : <Fragment>
+        <p class="pb-price">{usd(setupGuide.price)}<small>one-time</small></p>
+        <p class="pb-terms">PDF guide, emailed to you automatically, usually within a few minutes. Includes one {emailLockdown.name}.</p>
+        <a class="btn btn-primary btn-lg btn-block" {...buyAttrs(setupGuide.buyUrl, { lane, sku: 'founder-stack-29', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={setupGuide.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(setupGuide.price)}</a>
+      </Fragment>)}
+
+  {product === 'front-office' && q && (
+    <Fragment>
+      <p class="pb-price">{usd(fop.from)}<small>setup + 3 months of support</small></p>
+      <p class="pb-terms">{introPricing.label}. Scoped first: you get a fixed written quote before any work starts. Software fees, if any, are listed in your quote.</p>
+      <a class="btn btn-primary btn-lg btn-block" href={q.href} {...q.attrs}>{q.label}</a>
+    </Fragment>
+  )}
+
+  {product === 'remote-it' && q && (
+    <Fragment>
+      <p class="pb-price"><span class="pb-from">from</span> {usd(remoteIt.from)}<small>one-time setup</small></p>
+      <p class="pb-terms">{introPricing.label}. The final price depends on how many people and items are in scope; you get a fixed written quote first.</p>
+      <a class="btn btn-primary btn-lg btn-block" href={q.href} {...q.attrs}>{q.label}</a>
+    </Fragment>
+  )}
+
+  {product === 'support-plan' && q && (
+    <Fragment>
+      <p class="pb-price"><span class="pb-from">from</span> {usd(sp.from)}<small>/month</small></p>
+      <p class="pb-terms">Up to 3 small requests a month as standard, first reply by the end of the next business day. Agreed in writing before you pay; cancel anytime.</p>
+      <a class="btn btn-primary btn-lg btn-block" href={q.href} {...q.attrs}>{q.label}</a>
+    </Fragment>
+  )}
+
+  <slot />
+  <p class="pb-fine">{buyable ? 'Secure checkout by Stripe. ' : 'Written quote before any work starts. '}<a href={url(refundsHref)}>Refunds and cancellations</a> · <a href={url('/terms/')}>Terms</a></p>
+</aside>

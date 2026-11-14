@@ -1,0 +1,9 @@
+---
+// Steps (docs/design-system.md): a numbered "what happens next" list. Each item is { h, p }; keep every line true to
+// what the product actually does (the same facts as its page and src/data/services.ts).
+interface Props { items: { h: string; p: string }[]; class?: string }
+const { items, class: cls } = Astro.props;
+---
+<ol class:list={['ds-steps', cls]}>
+  {items.map((s) => <li><strong>{s.h}</strong><span>{s.p}</span></li>)}
+</ol>

@@ -1,0 +1,8 @@
+---
+// Card (docs/design-system.md): a bordered surface. `as` picks the element (article, li, div, aside), `lane` adds the
+// lane's accent rule along the top, `pad` sets inner spacing. Content goes in the default slot.
+import type { Lane } from '../../lib/checkout-ref';
+interface Props { as?: 'article' | 'div' | 'li' | 'aside'; lane?: Lane; pad?: 'sm' | 'md' | 'lg'; class?: string; id?: string; [attr: string]: unknown }
+const { as: Tag = 'div', lane, pad = 'md', class: cls, ...rest } = Astro.props;
+---
+<Tag class:list={['ds-card', `ds-card-${pad}`, lane && `lane-${lane}`, lane && 'ds-card-lane', cls]} {...rest}><slot /></Tag>
