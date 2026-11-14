@@ -2,46 +2,60 @@
 // Free Launch Preflight for founders: checks a domain's public DNS (email authentication, inbox readiness, basic
 // domain hygiene) right in the browser through Cloudflare's public DNS-over-HTTPS resolver. Nothing is stored or
 // sent to NeonKey; the only request leaves the browser for cloudflare-dns.com (allowed in public/_headers).
-// Founders track (Nov 6 2026): kept apart from the small-business pages, linked only from /founders/ and the footer.
+// "Build Your Business" lane. Product template (no price, it's free): src/layouts/ProductPage.astro (Nov 14 2026).
+// The check sits in the hero, so the input is in the first screen on phones.
 import { url } from '../../config';
-import Base from '../../layouts/Base.astro';
-import PageHeader from '../../components/PageHeader.astro';
+import ProductPage from '../../layouts/ProductPage.astro';
 import DomainCheck from '../../components/DomainCheck.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
 import { setupGuide, emailLockdown, usd } from '../../data/services';
+import { LANE_NAMES } from '../../lib/lanes';
+const includes = [
+  'MX: whether your domain can receive mail, and which provider handles it.',
+  'SPF: the public list of services allowed to send as you, and whether it stays under the 10-lookup limit.',
+  "DKIM: a signing key for common providers (Google, Microsoft, Resend and others). We can only test well-known selector names, so a miss here isn't proof you have none.",
+  'DMARC: the policy that tells Gmail, Yahoo and Microsoft what to do with mail that fails, and whether you get reports.',
+  'Extras: MTA-STS, TLS reporting and CAA, the small records that harden a domain.',
+];
+const faq = [
+  { q: 'Is anything stored or sent to NeonKey?', a: "<p>No. The check runs in your browser and asks Cloudflare's public DNS resolver for your domain's public records. Nothing you type is stored or sent to NeonKey.</p>" },
+  { q: 'If everything passes, will my email reach the inbox?', a: "<p>Passing all of these doesn't guarantee the inbox. Content, volume, sending reputation and each provider's own filters matter too. It does remove the most common setup reasons mail gets filtered.</p>" },
+  { q: "DKIM shows as missing, but I set it up. Why?", a: "<p>DKIM keys live under a name (a selector) that only your provider knows. The check tries the well-known ones, so a miss here isn't proof you have none.</p>" },
+  { q: 'Something failed. What now?', a: `<p>Fix it yourself with the free guides, or buy the <a href="${url('/services/email-lockdown/')}">${emailLockdown.name}</a> (${usd(emailLockdown.from)}), which checks your records and hands you the exact ones to add, with a PDF report.</p>` },
+];
 ---
-<Base title="Free Launch Preflight for founders" description="Free check for founders: see if your domain's email will land before you send a launch email or cold outreach. SPF, DKIM, DMARC, MX and more, in seconds. Nothing is stored.">
-  <PageHeader eyebrow="Free tool · For founders" title="Launch Preflight" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: 'Launch Preflight' }]}>
-    <p class="lede">Before your launch email or first cold outreach goes out, check that your domain is set up so inboxes trust it. Type your domain and get a plain report with what to fix first.</p>
-    <Fragment slot="meta">
-      <li><span>Free</span></li>
-      <li><span>No signup</span></li>
-      <li><span>Runs in your browser</span></li>
-    </Fragment>
-  </PageHeader>
-
-  <section style="padding-top:0">
-    <div class="container narrow-ish">
-      <DomainCheck placeholder="yourstartup.com" track="founders">
-        <div slot="next" class="panel topline accent-magenta pf-next">
-          <h2 class="pf-h">What to do next</h2>
-          <p><strong>Want it fixed for you?</strong> The <a href={url('/services/email-lockdown/')} data-umami-event="preflight-cta" data-umami-event-target="lockdown" data-umami-event-track="founders">Email Authentication Setup</a> ({usd(emailLockdown.from)}) checks your records and hands you the exact ones to add, with a PDF report.</p>
-          <p><strong>Want to build the whole backend yourself?</strong> <a href={url('/founders/guide/')} data-umami-event="preflight-cta" data-umami-event-target="guide" data-umami-event-track="founders">{setupGuide.name}</a> is the step-by-step guide to the stack NeonKey runs on: domain and email, website, Stripe, a product that delivers itself, outreach and lead tracking. An Email Authentication Setup is included.</p>
-          <WatchdogCta from="preflight" lead="Everything passing?" />
-        </div>
-      </DomainCheck>
-
-      <div class="panel pf-about">
-        <h2 class="pf-h">What this checks</h2>
-        <ul>
-          <li><strong>MX:</strong> whether your domain can receive mail, and which provider handles it.</li>
-          <li><strong>SPF:</strong> the public list of services allowed to send as you, and whether it stays under the 10-lookup limit.</li>
-          <li><strong>DKIM:</strong> a signing key for common providers (Google, Microsoft, Resend and others). We can only test well-known selector names, so a miss here isn't proof you have none.</li>
-          <li><strong>DMARC:</strong> the policy that tells Gmail, Yahoo and Microsoft what to do with mail that fails, and whether you get reports.</li>
-          <li><strong>Extras:</strong> MTA-STS, TLS reporting and CAA, the small records that harden a domain.</li>
-        </ul>
-        <p class="muted">Passing all of these doesn't guarantee the inbox. Content, volume, sending reputation and each provider's own filters matter too. It does remove the most common setup reasons mail gets filtered.</p>
+<ProductPage
+  title="Free Launch Preflight for founders"
+  description="Free check for founders: see if your domain's email will land before you send a launch email or cold outreach. SPF, DKIM, DMARC, MX and more, in seconds. Nothing is stored."
+  lane="founders"
+  crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: LANE_NAMES.founders }, { label: 'Launch Preflight' }]}
+  eyebrow={`${LANE_NAMES.founders} · Free tool`}
+  heading="Launch Preflight"
+  lede="Before your launch email or first cold outreach goes out, check that your domain is set up so inboxes trust it. Type your domain and get a short report with what to fix first."
+  includes={includes}
+  includesTitle="What this checks"
+  faq={faq}
+  trustLocation="preflight"
+>
+  <div class="pf-check" slot="hero">
+    <DomainCheck placeholder="yourstartup.com" track="founders">
+      <div slot="next" class="panel topline accent-magenta pf-next">
+        <h2 class="pf-h">What to do next</h2>
+        <p><strong>Want it fixed for you?</strong> The <a href={url('/services/email-lockdown/')} data-umami-event="preflight-cta" data-umami-event-target="lockdown" data-umami-event-track="founders">Email Authentication Setup</a> ({usd(emailLockdown.from)}) checks your records and hands you the exact ones to add, with a PDF report.</p>
+        <p><strong>Want to build the whole backend yourself?</strong> <a href={url('/founders/guide/')} data-umami-event="preflight-cta" data-umami-event-target="guide" data-umami-event-track="founders">{setupGuide.name}</a> is the step-by-step guide to the stack NeonKey runs on: domain and email, website, Stripe, a product that delivers itself, outreach and lead tracking. An Email Authentication Setup is included.</p>
+        <WatchdogCta from="preflight" lead="Everything passing?" />
       </div>
-    </div>
-  </section>
-</Base>
+    </DomainCheck>
+  </div>
+  <Fragment slot="meta">
+    <li>Free</li>
+    <li>No signup</li>
+    <li>Runs in your browser</li>
+  </Fragment>
+</ProductPage>
+<style>
+  .pf-check { margin-top: var(--space-5); max-width: 48rem; }
+  .pf-next p { margin: .4rem 0; }
+  .pf-next a { color: var(--color-primary); }
+  .pf-h { font-size: var(--text-lg); margin: 0 0 .4rem; }
+</style>

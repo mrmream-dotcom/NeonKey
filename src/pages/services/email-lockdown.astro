@@ -1,116 +1,92 @@
 ---
-import { url, CONTACT_EMAIL } from '../../config';
-import Base from '../../layouts/Base.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
-import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlashSaleLive as live, usd } from '../../data/services';
-import SaleClock from '../../components/SaleClock.astro';
+import { url } from '../../config';
+import ProductPage from '../../layouts/ProductPage.astro';
+import PriceBox from '../../components/ui/PriceBox.astro';
+import Section from '../../components/ui/Section.astro';
+import { emailLockdown, usd } from '../../data/services';
 import DomainCheck from '../../components/DomainCheck.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
-import TrustLine from '../../components/TrustLine.astro';
 import { buyAttrs } from '../../lib/checkout-ref';
-// Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
-// It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
-// from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
-// checkout, checks it and emails the buyer the exact records, usually within minutes (Nov 4 2026).
-// Scope (Nov 4 2026): we check the domain's public records, then either send exact records plus steps for their
-// DNS host, or add them ourselves if they invite us as a collaborator/delegate. DKIM keys come from the email
-// provider's admin console, so the buyer (or their admin) may need to generate one.
+import { LANE_NAMES } from '../../lib/lanes';
+// Email Authentication Setup: the fixed-price job you can buy online (Stripe Payment Link in services.ts). Shared by
+// "Build Your Business" (founders) and "Run Your Business" (it lives under /services/, so the breadcrumb is the
+// business lane; checkout refs keep lane=smb from this page). Product template: src/layouts/ProductPage.astro.
+// After paying, the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe checkout, checks it and
+// emails the buyer the exact records, usually within minutes (Nov 4 2026). The intake form at /pay/email-lockdown/
+// (linked only from /pay/thanks/) is optional.
+// Scope (Nov 4 2026): we check the domain's public records, then either send exact records plus steps for their DNS
+// host, or add them ourselves if they invite us as a collaborator/delegate. DKIM keys come from the email provider's
+// admin console, so the buyer (or their admin) may need to generate one.
+// The Nov 9-10 flash sale is over (lockdownFlashSaleLive is false), so this page shows the regular price only.
+const includes = [
+  "Your domain's SPF, DKIM and DMARC records checked (these are the settings that prove your email is really from you)",
+  'The exact records your domain needs, written for your email provider and the other tools that send email as you',
+  'Either step-by-step instructions for your domain host, or we add them for you if you invite us as a collaborator',
+  'A fake-email policy (DMARC) that starts gently: it reports mail faking your address before anything gets blocked',
+  'A branded report with your score and findings, plus rechecks on day 2 and day 5',
+  'A short note of what changed and what to watch for',
+];
+const after = [
+  { h: 'Type your domain at checkout', p: 'Secure checkout by Stripe. One domain per purchase. Your card details stay with Stripe.' },
+  { h: 'We check your public records', p: 'No passwords needed: your SPF, DKIM and DMARC records are public, so they can be checked without logging in.' },
+  { h: 'Your report arrives by email', p: 'Usually within a few minutes, with the exact records to add. If your setup needs a closer look by a person, it can take up to 1 business day.' },
+  { h: 'Add the records, then rechecks', p: 'Add them in your DNS settings (the report shows where), or invite us to add them. We recheck on day 2 and day 5.' },
+];
+const faq = [
+  { q: 'Do you need my passwords?', a: '<p>No. Your public records are visible to anyone, so we can check them without logging in. If you want us to add the records, you invite us as a collaborator on your DNS instead of sharing a password.</p>' },
+  { q: 'What about DKIM keys?', a: '<p>DKIM keys are created in your email provider\'s admin settings (Google Workspace or Microsoft 365). If you\'re not the admin, your admin may need to click one button. We\'ll show you where.</p>' },
+  { q: 'What does "all set" mean?', id: 'all-set', a: '<p>When your report shows 4 of 4, SPF, DKIM and DMARC are published for your domain and pass our check of your public records on the day we checked. Inboxes can then confirm that mail claiming to be from you really is. It doesn\'t stop scam emails sent <em>to</em> you, it can\'t make every message land in the inbox, and DMARC starts in monitor mode, so it reports fakes before anything gets blocked. When you add a new tool that sends email as you, like a newsletter or invoicing app, turn on its "authenticate your domain" setting.</p>' },
+  { q: 'What if my records are already in place?', a: '<p>Your report says so and covers extra checks beyond the basics, with the next useful step if there is one. That\'s still a full report, so the sale is final once it\'s sent.</p>' },
+  { q: 'More than one domain, or moving email?', a: '<p>One domain per purchase. Moving email to a new provider or a messy multi-domain setup is a bigger job, and we\'ll tell you before doing anything more.</p>' },
+  { q: 'Can I get a refund?', a: `<p>Your report is sent right after checkout, so sales are final once it's delivered. If we can't deliver it or something in it is wrong, we'll fix it or refund you. <a href="${url('/refunds/#email-authentication-setup')}">How refunds work</a>.</p>` },
+  { q: 'What do you keep?', a: `<p>Your order record (name, email, business name, domain and check results) is kept for 180 days so we can run your rechecks and answer questions, then it deletes automatically. Copies of the emails we send you stay in our business inbox as records. Your card details stay with Stripe and never reach us. See the <a href="${url('/privacy/#email-lockdown')}">privacy policy</a>.</p>` },
+  { q: 'Is this the same as Email Lockdown?', a: '<p>Yes. It was formerly called Email Lockdown. Same service, same price.</p>' },
+];
 ---
-<Base title="Email Authentication Setup" description={`Email Authentication Setup, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC records checked and fixed, so it's harder for scammers to fake your address. Buy online, no call needed.`}>
-  <PageHeader eyebrow="Services · Buy online" title="Email Authentication Setup" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Email Authentication Setup' }]}>
-    <p class="lede">Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes. {usd(emailLockdown.from)} flat, no call needed.</p>
-    <p class="muted" style="font-size:.92rem">Formerly called Email Lockdown. Same service, same price.</p>
-  </PageHeader>
+<ProductPage
+  title="Email Authentication Setup"
+  description={`Email Authentication Setup, ${usd(emailLockdown.from)} flat: your domain's SPF, DKIM and DMARC records checked, with the exact records to add, so it's harder for scammers to fake your address. Buy online, no call needed.`}
+  lane="smb"
+  crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: LANE_NAMES.smb }, { label: 'Email Authentication Setup' }]}
+  eyebrow={`${LANE_NAMES.founders} · ${LANE_NAMES.smb}`}
+  heading="Email Authentication Setup"
+  lede="Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes. Buy online, no call needed."
+  who={`${emailLockdown.for}: a business, or a founder about to send a launch email or first outreach.`}
+  includes={includes}
+  after={after}
+  faq={faq}
+  trustLocation="email-auth"
+  refundsHref="/refunds/#email-authentication-setup"
+>
+  <PriceBox slot="price" product="email-auth" lane="smb" location="lockdown-page">
+    <ul class="pb-links">
+      <li><a href="#free-check" data-umami-event="lockdown-free-check-jump" data-umami-event-location="lockdown-page">Check your domain free first</a></li>
+      <li><a href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a></li>
+    </ul>
+  </PriceBox>
+  <Fragment slot="meta">
+    <li>One domain</li>
+    <li>Report usually within minutes</li>
+    <li>No passwords needed</li>
+  </Fragment>
 
-  <section style="padding-top:0">
-    <div class="container el-grid">
-      <div class="panel topline">
-        <h2 class="el-h">What you get</h2>
-        <ul>
-          <li>Your domain's SPF, DKIM and DMARC records checked (these are the settings that prove your email is really from you)</li>
-          <li>The exact records your domain needs, written for your email provider and the other tools that send email as you</li>
-          <li>Either step-by-step instructions for your domain host, or we add them for you if you invite us as a collaborator</li>
-          <li>A fake-email policy (DMARC) that starts gently: it reports mail faking your address before anything gets blocked</li>
-          <li>A branded report with your score and findings, plus rechecks on day 2 and day 5</li>
-          <li>A short note of what changed and what to watch for</li>
-        </ul>
-        <h2 class="el-h">Good to know</h2>
-        <ul class="muted">
-          <li>It's quick. You type your domain at checkout, we check its public records, and your report with the exact records usually arrives by email within a few minutes. If your setup needs a closer look by a person, it can take up to 1 business day.</li>
-          <li>No passwords needed. Your public records are visible to anyone, so we can check them without logging in.</li>
-          <li>DKIM keys are created in your email provider's admin settings (Google Workspace or Microsoft 365). If you're not the admin, your admin may need to click one button. We'll show you where.</li>
-          <li>One domain per purchase. Moving email to a new provider or a messy multi-domain setup is a bigger job, and we'll tell you before doing anything more.</li>
-          <li>Already protected? If your three records are already in place, your report says so and covers extra checks beyond the basics, with the next useful step if there is one. That's still a full report, so the sale is final once it's sent.</li>
-        </ul>
-        <h2 class="el-h" id="all-set">What "all set" means</h2>
-        <p class="muted">When your report shows 4 of 4, SPF, DKIM and DMARC are published for your domain and pass our check of your public records on the day we checked. Inboxes can then confirm that mail claiming to be from you really is. It doesn't stop scam emails sent <em>to</em> you, it can't make every message land in the inbox, and DMARC starts in monitor mode, so it reports fakes before anything gets blocked. When you add a new tool that sends email as you, like a newsletter or invoicing app, turn on its "authenticate your domain" setting.</p>
-        <h2 class="el-h">What we keep</h2>
-        <p class="muted">Your order record (name, email, business name, domain and check results) is kept for 180 days so we can run your rechecks and answer questions, then it deletes automatically. Copies of the emails we send you stay in our business inbox as records. Your card details stay with Stripe and never reach us. See the <a href={url('/privacy/#email-lockdown')}>privacy policy</a>.</p>
+  <Section slot="try" id="free-check" title="Not sure you need it? Check your domain first" intro="Type the part of your email address after the @. You'll see the same public records the paid setup starts from, with what's missing or weak. No signup." size="sm" width="narrow">
+    <DomainCheck placeholder="yourbusiness.com" track="lockdown">
+      <div slot="next" class="panel topline accent-magenta pf-next">
+        <h2 class="pf-h">Want it fixed for you?</h2>
+        <p>The Email Authentication Setup turns this check into the exact records for your email provider and DNS host, in a PDF report that usually arrives by email within a few minutes. Type this same domain at checkout.</p>
+        <p><a class="btn btn-primary" {...buyAttrs(emailLockdown.buyUrl, { lane: 'smb', sku: 'email-auth-29', location: 'lockdown-free-check' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
+        <p class="muted el-small">Everything passing already? Then you don't need this one. Keep the result for your records.</p>
+        <WatchdogCta from="lockdown-check" lead="Founder or solo builder?" />
       </div>
-      <aside class="panel topline accent-magenta el-buy">
-        <span class="kicker">{emailLockdown.kicker}</span>
-        <div class="el-pricebox" data-sale-ends={live ? sale.endsAt : undefined}>
-          {live && (
-            <div data-sale class="el-pricebox">
-              <p class="el-flash">Flash sale · {sale.percentOff}% off</p>
-              <p class="el-count"><span data-countdown>24 hours only</span></p>
-              <p class="price"><s class="el-was">{usd(emailLockdown.from)}</s> {usd(sale.price)}<small>First {sale.cap} orders only. When the time or the {sale.cap} run out, the price goes back to {usd(emailLockdown.from)}.</small></p>
-              <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${emailLockdown.name} flash ${sale.price}`} data-umami-event-location="lockdown-page">Buy now · {usd(sale.price)}</a>
-              <p class="muted el-small">Code {sale.code} is added at checkout for you. If it doesn't show, type it in the promotion code box. If Stripe says the code is invalid, all {sale.cap} are gone.</p>
-            </div>
-          )}
-          <div data-sale-after hidden={live} class="el-pricebox">
-            <p class="price">{usd(emailLockdown.from)}<small>Flat price</small></p>
-            <a class="btn btn-primary" {...buyAttrs(emailLockdown.buyUrl, { lane: 'smb', sku: 'email-auth-29', location: 'lockdown-page' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
-          </div>
-        </div>
-        <a class="btn btn-ghost btn-sm" href="#free-check" data-umami-event="lockdown-free-check-jump" data-umami-event-location="lockdown-page">Check your domain free first</a>
-        <a class="btn btn-ghost btn-sm" href={url('/samples/neonkey-email-lockdown-sample.pdf')} target="_blank" rel="noopener" data-umami-event="lockdown-sample" data-umami-event-location="lockdown-page">See a sample report (PDF)</a>
-        <p class="el-small"><strong>{lockdownCredit}</strong></p>
-        <p class="muted el-small">Secure checkout by Stripe. Your report usually arrives by email within a few minutes.</p>
-        <p class="muted el-small">Your report is sent right after checkout, so sales are final once it's delivered. If we can't deliver it or something in it is wrong, we'll fix it or refund you. <a href={url('/refunds/#email-authentication-setup')}>How refunds work</a>.</p>
-        <p class="muted el-small">Questions first? <a href={url('/contact/?topic=email-lockdown')}>Send a message</a>.</p>
-      </aside>
-    </div>
-  </section>
+    </DomainCheck>
+    <p class="el-small el-diy">Rather do it yourself? Free guides: <a href={url('/learn/dmarc-google-workspace/')}>Google Workspace</a> · <a href={url('/learn/spf-dkim-dmarc-microsoft-365/')}>Microsoft 365</a> · <a href={url('/learn/emails-going-to-spam/')}>Why emails go to spam</a>.</p>
+  </Section>
 
-  <section id="free-check" style="padding-top:0">
-    <div class="container narrow-ish">
-      <SectionHeading eyebrow="Free check" title="Not sure you need it? Check your domain first" />
-      <p class="muted">Type the part of your email address after the @. You'll see the same public records the paid setup starts from, with what's missing or weak. No signup.</p>
-      <DomainCheck placeholder="yourbusiness.com" track="lockdown">
-        <div slot="next" class="panel topline accent-magenta pf-next">
-          <h2 class="pf-h">Want it fixed for you?</h2>
-          <p>The Email Authentication Setup turns this check into the exact records for your email provider and DNS host, in a PDF report that usually arrives by email within a few minutes. Type this same domain at checkout.</p>
-          <p><a class="btn btn-primary" {...buyAttrs(emailLockdown.buyUrl, { lane: 'smb', sku: 'email-auth-29', location: 'lockdown-free-check' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
-          <p class="muted el-small">Everything passing already? Then you don't need this one. Keep the result for your records.</p>
-          <WatchdogCta from="lockdown-check" lead="Founder or solo builder?" />
-        </div>
-      </DomainCheck>
-      <p class="muted el-small" style="margin-top:1rem">Rather do it yourself? Free guides: <a href={url('/learn/dmarc-google-workspace/')}>Google Workspace</a> · <a href={url('/learn/spf-dkim-dmarc-microsoft-365/')}>Microsoft 365</a> · <a href={url('/learn/emails-going-to-spam/')}>Why emails go to spam</a>.</p>
-    </div>
-  </section>
-
-  <div class="container"><TrustLine location="email-auth" class="tl-page-end" /></div>
-  {live && <SaleClock />}
-</Base>
+</ProductPage>
 
 <style>
-  .el-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-  /* Phones: the buy box comes first (it sat about 4.7 screens down under the details, Nov 12 2026 audit). Same pattern as /follow-up-desk/. */
-  @media (max-width: 820px) { .el-grid { grid-template-columns: 1fr; } .el-buy { order: -1; } }
-  .el-h { font-size: 1.15rem; margin: 0 0 .5rem; }
-  .el-h + ul { margin-top: 0; }
-  .el-grid ul { padding-left: 1.1rem; }
-  .el-grid li { margin-bottom: .45rem; }
-  .el-buy { display: flex; flex-direction: column; gap: .6rem; }
-  .el-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
-  .el-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
-  .el-buy .btn { align-self: flex-start; }
-  .el-pricebox { display: flex; flex-direction: column; gap: .6rem; }
-  .el-flash { margin: 0; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--magenta); }
-  .el-count { margin: 0; align-self: flex-start; padding: .3rem .7rem; border-radius: 999px; border: 1px solid var(--magenta); color: var(--magenta); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .el-was { color: var(--muted); font-weight: 500; }
-  .el-small { font-size: .88rem; margin: 0; }
+  .el-small { font-size: var(--text-sm); margin: 0; }
+  .el-diy { margin-top: var(--space-4); color: var(--color-text-muted); }
+  .el-diy a { color: var(--color-primary); }
 </style>

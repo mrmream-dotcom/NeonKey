@@ -1,0 +1,68 @@
+---
+// ProductPage (docs/design-system.md): the one template every product page uses, in a fixed order:
+//   1. ProductHero: what it does + who it's for, with the PriceBox (slot "price") and its one primary action
+//   2. slot "try": a free check, demo or video, when there is one
+//   3. "What you get": `includes`
+//   4. default slot: product-specific detail sections (keep them short)
+//   5. "What happens after you pay": `after` (Steps)
+//   6. FAQ: `faq` (true facts only), plus refunds and terms links
+//   7. TrustLine
+// Pages keep their own <Base> props (title, description, image, lane) so URLs, titles and link previews don't change.
+import Base from './Base.astro';
+import ProductHero from '../components/ui/ProductHero.astro';
+import Section from '../components/ui/Section.astro';
+import Steps from '../components/ui/Steps.astro';
+import FAQ from '../components/ui/FAQ.astro';
+import TrustLine from '../components/TrustLine.astro';
+import type { Lane } from '../lib/checkout-ref';
+import { url } from '../config';
+interface Props {
+  title: string; description: string; image?: string; lane: Lane;
+  crumbs: { href?: string; label: string }[]; eyebrow?: string; heading: string; lede: string; who?: string;
+  includes?: string[]; includesTitle?: string; includesIntro?: string;
+  after?: { h: string; p: string }[]; afterTitle?: string; afterIntro?: string;
+  faq?: { q: string; a: string; id?: string }[]; faqTitle?: string;
+  trustLocation: string; refundsHref?: string;
+}
+const {
+  title, description, image, lane, crumbs, eyebrow, heading, lede, who,
+  includes = [], includesTitle = 'What you get', includesIntro,
+  after = [], afterTitle = 'What happens after you pay', afterIntro,
+  faq = [], faqTitle = 'Questions', trustLocation, refundsHref = '/refunds/',
+} = Astro.props;
+---
+<Base title={title} description={description} image={image} lane={lane}>
+  <ProductHero lane={lane} crumbs={crumbs} eyebrow={eyebrow} title={heading} lede={lede} who={who}>
+    <slot name="hero" />
+    {Astro.slots.has('meta') && <Fragment slot="meta"><slot name="meta" /></Fragment>}
+    {Astro.slots.has('price') && <Fragment slot="price"><slot name="price" /></Fragment>}
+  </ProductHero>
+
+  <slot name="try" />
+
+  {includes.length > 0 && (
+    <Section id="included" title={includesTitle} intro={includesIntro} size="sm">
+      <ul class="ds-checklist">{includes.map((i) => <li>{i}</li>)}</ul>
+      <slot name="includes-after" />
+    </Section>
+  )}
+
+  <slot />
+
+  {after.length > 0 && (
+    <Section id="after-you-pay" title={afterTitle} intro={afterIntro} tone="raised" size="sm">
+      <Steps items={after} />
+      <slot name="after-extra" />
+    </Section>
+  )}
+
+  {faq.length > 0 && (
+    <Section id="faq" title={faqTitle} size="sm" width="narrow">
+      <FAQ items={faq} />
+      <p class="ds-faq-foot">More in the <a href={url(refundsHref)}>refund and cancellation policy</a>, the <a href={url('/terms/')}>terms</a> and the <a href={url('/privacy/')}>privacy policy</a>. Questions first? <a href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location={`${trustLocation}-faq`}>Send a message</a> and you'll get a written answer by email.</p>
+    </Section>
+  )}
+
+  <div class="container product-trust"><TrustLine location={trustLocation} /></div>
+  <slot name="end" />
+</Base>

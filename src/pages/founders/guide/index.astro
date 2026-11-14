@@ -1,128 +1,134 @@
 ---
 import { url } from '../../../config';
-import Base from '../../../layouts/Base.astro';
-import PageHeader from '../../../components/PageHeader.astro';
+import ProductPage from '../../../layouts/ProductPage.astro';
+import PriceBox from '../../../components/ui/PriceBox.astro';
+import Section from '../../../components/ui/Section.astro';
+import Button from '../../../components/ui/Button.astro';
 import GuideSale from '../../../components/GuideSale.astro';
 import WatchdogCta from '../../../components/WatchdogCta.astro';
-import TrustLine from '../../../components/TrustLine.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
+import { LANE_NAMES } from '../../../lib/lanes';
 // Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
-// Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
-// Prices and buy buttons come from GuideSale (regular price, or the 24-hour flash sale while it's configured and running).
+// "Build Your Business" lane. Product template: src/layouts/ProductPage.astro (full overhaul, Nov 14 2026).
+// Price and buy button: PriceBox (regular price; it hands over to GuideSale only while a flash sale is live).
+// The slim phone buy bar (GuideSale "bar") and the ad pixels stay as they were.
 // Copy rules: no income claims or implied results, no comparison "value" price, no invented reviews.
+const includes = [
+  'The stack at a glance: how the pieces connect, and why each one does a single job',
+  "Domain and email: SPF, DKIM, DMARC and CAA set up before you send anything, so your launch email isn't the thing that burns your domain",
+  'The website: a fast static site on GitHub Pages, a security policy kept in one file, and the checks to run after every deploy',
+  'Forms and Workers: lead capture with honeypots, origin locks and rate limits, using small Cloudflare Workers',
+  'Stripe: which payment tool fits which offer, payment links with a Terms checkbox, and verified webhooks',
+  'A product that delivers itself: how our Email Authentication Setup goes from checkout to delivered report with no manual step, and how to build your own version',
+  'Outreach: sending caps, a warm-up schedule, bounce rules and inbox placement tests',
+  'The lead tracker and Friday scoreboard: the spreadsheet tabs and columns that record replies, objections, quotes and payments',
+  'AI as your operations hub: how we run the business with Claude Projects, written rules, memory and guardrails',
+  'A security baseline, a 4-week build plan and copy-paste templates (a CLAUDE.md, a memory file, a Worker README, a deploy checklist and the lead tracker columns)',
+  `One ${emailLockdown.name} for your own domain (${usd(emailLockdown.from)} on its own): your SPF, DKIM and DMARC reviewed, with a report of the exact records to add`,
+];
+const after = [
+  { h: 'Check out with Stripe', p: 'Secure checkout. Enter your domain for the included Email Authentication Setup at checkout, or reply to the email your guide arrives in.' },
+  { h: 'Your PDF arrives by email', p: 'Emailed to you automatically right after checkout, usually within a few minutes. About 18 pages, first edition, November 2026.' },
+  { h: 'Your domain report', p: 'We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. One domain per guide.' },
+  { h: 'Build at your pace', p: "Follow the 4-week plan. You add the DNS records yourself; the report shows where. Questions about the guide are welcome at hello@neonkey.tech." },
+];
+const faq = [
+  { q: 'Do I need to be a developer?', a: "<p>No. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>" },
+  { q: 'Will it make me money?', a: "<p>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</p>" },
+  { q: 'Are the tools free?', a: "<p>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the price of the guide. Check each tool's current pricing.</p>" },
+  { q: 'Is there setup help or support?', a: '<p>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</p>' },
+  { q: 'How is the included Email Authentication Setup delivered?', a: '<p>Enter your domain at checkout, or reply to the email your guide arrives in. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>' },
+];
+const why = [
+  { h: 'Skip the trial and error', p: "It isn't a list of tools. It's the working setup, in order, with the settings and the reasons behind each choice." },
+  { h: 'Protect your domain before you send', p: 'Email authentication done in the right order, before your launch email or first outreach goes out.' },
+  { h: 'Own your stack', p: 'A static site, small serverless Workers and Stripe payment links you control, instead of a separate subscription for every job.' },
+  { h: 'Automate delivery', p: 'The pattern we use to turn a Stripe payment into a delivered product with no manual step, ready to adapt to your own offer.' },
+];
 ---
-<Base image="/og-founder-stack.png" title={`${setupGuide.name}: a setup guide for founders`} description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}>
-  <PageHeader eyebrow="Guide for founders · PDF" title={setupGuide.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: setupGuide.name }]}>
-    <p class="lede">The complete setup guide to the production backend NeonKey runs on: business email that inboxes trust, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails and a lead tracker that shows what's actually happening. Every step comes from a system running today, with the exact settings.</p>
-  </PageHeader>
+<ProductPage
+  image="/og-founder-stack.png"
+  title={`${setupGuide.name}: a setup guide for founders`}
+  description={`${setupGuide.name}: a step-by-step PDF guide for founders to the backend NeonKey runs on. Domain and email that land, website, Stripe, a product that delivers itself, outreach and lead tracking. ${usd(setupGuide.price)}.`}
+  lane="founders"
+  crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: LANE_NAMES.founders }, { label: setupGuide.name }]}
+  eyebrow={`${LANE_NAMES.founders} · Guide (PDF)`}
+  heading={setupGuide.name}
+  lede="The step-by-step setup guide to the production backend NeonKey runs on: business email that inboxes trust, a fast website, Stripe checkout, a product that delivers itself, outreach with guardrails and a lead tracker."
+  who="Solo founders and small startups who want a lean, dependable backend they own. You don't need to be a developer."
+  includes={includes}
+  includesTitle="What's inside"
+  after={after}
+  faq={faq}
+  trustLocation="founders-guide"
+>
+  <PriceBox slot="price" product="founder-stack" lane="founders" location="guide-top">
+    <ul class="pb-links">
+      <li>Not ready to buy? <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="guide-top" data-umami-event-track="founders">Run the free Launch Preflight</a> first.</li>
+    </ul>
+  </PriceBox>
+  <Fragment slot="meta">
+    <li>PDF, about 18 pages</li>
+    <li>Emailed within minutes</li>
+    <li>Includes one {emailLockdown.name}</li>
+  </Fragment>
 
-  <!-- Top call to action (Nov 9 2026): ad visitors landed here and 74% left before reaching the buy box,
-       which sits at the bottom of the page on phones. Price and buy button up top, plus a free next step. -->
-  <section class="sg-top-wrap">
-    <div class="container">
-      <div class="panel topline accent-magenta sg-top">
-        <GuideSale variant="top" location="guide-top" />
-        <p class="sg-small sg-top-free">Not ready to buy? <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="guide-top" data-umami-event-track="founders">Run the free Launch Preflight</a> on your domain first. It takes about 30 seconds, no signup.</p>
-      </div>
-    </div>
-  </section>
-
-  <section style="padding-top:0">
-    <div class="container sg-grid">
-      <div class="panel topline">
-        <img class="sg-cover" src={url('/images/founder-stack-3d.webp')} alt={`${setupGuide.name} guide cover`} width="1200" height="900" loading="eager" />
-        <h2 class="sg-h">See it in 30 seconds</h2>
+  <Section slot="try" id="look-inside" title="Look inside" intro="A 30-second walkthrough, then the contents page and the first two chapters exactly as they appear in the PDF." size="sm">
+    <div class="sg-try">
+      <div>
         <video class="sg-video" controls playsinline preload="none" width="1920" height="1080" poster={url('/video/founder-stack-walkthrough.jpg')}>
           <source src={url('/video/founder-stack-walkthrough.mp4')} type="video/mp4" />
           <track kind="captions" src={url('/video/founder-stack-walkthrough.vtt')} srclang="en" label="English" default />
         </video>
-        <p class="muted sg-small sg-vnote">Pages shown are from the guide.</p>
-        <h2 class="sg-h">Why founders buy it</h2>
-        <ul class="sg-why">
-          <li><strong>Skip the trial and error.</strong> It isn't a list of tools. It's the working setup, in order, with the settings and the reasons behind each choice.</li>
-          <li><strong>Protect your domain before you send.</strong> Email authentication done in the right order, before your launch email or first outreach goes out, so a new domain doesn't start life in the spam folder.</li>
-          <li><strong>Own your stack.</strong> A static site, small serverless Workers and Stripe payment links you control, instead of a separate subscription for every job.</li>
-          <li><strong>Automate delivery.</strong> The pattern we use to turn a Stripe payment into a delivered product with no manual step, ready to adapt to your own offer.</li>
-          <li><strong>Start fast.</strong> A 4-week build plan and copy-paste templates: a CLAUDE.md, a memory file, a Worker README, a deploy checklist and the lead tracker columns.</li>
-          <li><strong>Your domain checked for you.</strong> An Email Authentication Setup is included ({usd(emailLockdown.from)} on its own): your SPF, DKIM and DMARC reviewed, with a report of the exact records to add.</li>
-        </ul>
-        <h2 class="sg-h">Who it's for</h2>
-        <p class="muted">Solo founders and small teams who want a lean, dependable backend they own. You don't need to be a developer. You'll copy a few commands into a terminal and edit text files, and every step that needs code shows it.</p>
-        <h2 class="sg-h">What's inside</h2>
-        <ul>
-          <li><strong>The stack at a glance:</strong> how the pieces connect, and why each one does a single job</li>
-          <li><strong>Domain and email:</strong> SPF, DKIM, DMARC and CAA set up before you send anything, so your launch email isn't the thing that burns your domain</li>
-          <li><strong>The website:</strong> a fast static site on GitHub Pages, a security policy kept in one file, and the checks to run after every deploy</li>
-          <li><strong>Forms and Workers:</strong> lead capture with honeypots, origin locks and rate limits, using small Cloudflare Workers</li>
-          <li><strong>Stripe:</strong> which payment tool fits which offer, payment links with a Terms checkbox, and verified webhooks</li>
-          <li><strong>A product that delivers itself:</strong> how our Email Authentication Setup goes from checkout to delivered report with no manual step, and how to build your own version</li>
-          <li><strong>Outreach:</strong> sending caps, a warm-up schedule, bounce rules and inbox placement tests</li>
-          <li><strong>The lead tracker and Friday scoreboard:</strong> the spreadsheet tabs and columns that record replies, objections, quotes and payments</li>
-          <li><strong>AI as your operations hub:</strong> how we run the business with Claude Projects, written rules, memory and guardrails</li>
-          <li><strong>A security baseline, a 4-week build plan</strong> and copy-paste templates</li>
-        </ul>
-        <h2 class="sg-h">Look inside</h2>
-        <p class="muted">The contents page and the first two chapters, exactly as they appear in the PDF.</p>
-        <div class="sg-samples">
-          {[1, 2, 3].map((n) => (
-            <a href={url(`/images/founder-stack-sample-${n}.webp`)} target="_blank" rel="noopener" data-umami-event="guide-sample" data-umami-event-page={String(n)} data-umami-event-track="founders">
-              <img src={url(`/images/founder-stack-sample-${n}.webp`)} alt={['Contents page of The Founder Stack', 'Chapter 1: the stack at a glance', 'Chapter 2: domain, business email and DNS'][n - 1]} width="800" height="1035" loading="lazy" />
-            </a>
-          ))}
-        </div>
-        <h2 class="sg-h">How the included Email Authentication Setup works</h2>
-        <p class="muted">Enter your domain at checkout, or reply to the email your guide arrives in. We check your SPF, DKIM and DMARC and email you a report with the exact records to add, within one business day. You add the records in your DNS settings yourself; the report shows where. One domain per guide.</p>
-        <h2 class="sg-h">Good to know</h2>
-
-        <ul class="muted">
-          <li>It's a setup guide. It shows exactly how the systems are built; what they earn depends on your offer, your market and your work, so we don't promise results.</li>
-          <li>It's a PDF of about 18 pages, first edition, November 2026. Your copy is emailed to you automatically right after checkout, usually within a few minutes.</li>
-          <li>It names the tools we really use and has no affiliate links. Many have free tiers, but some (your domain and business email, for example) cost money and are billed by those companies, not included in the price of the guide. Check each tool's current pricing.</li>
-          <li>Self-serve only: no done-for-you setup or ongoing support. Questions about the guide itself are welcome at hello@neonkey.tech.</li>
-        </ul>
-        <p class="muted">Not sure where your domain stands? Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight</a> first.</p>
-        <WatchdogCta from="guide" lead="After setup:" />
+        <p class="sg-small">Pages shown are from the guide.</p>
       </div>
-      <aside class="panel topline accent-magenta sg-buy">
-        <span class="kicker">Guide for founders · PDF</span>
-        <GuideSale variant="box" location="guide-page" />
-        {setupGuide.includesLockdown && <p class="sg-small"><strong>Includes an Email Authentication Setup for your own domain</strong> (sold separately for {usd(emailLockdown.from)}): your SPF, DKIM and DMARC checked, with a report of the exact records to add.</p>}
-        <p class="muted sg-small">Secure checkout by Stripe. Your copy is emailed to you automatically, usually within a few minutes.</p>
-        <p class="muted sg-small">Questions first? <a href={url('/contact/')}>Send a message</a>.</p>
-      </aside>
+      <img class="sg-cover" src={url('/images/founder-stack-3d.webp')} alt={`${setupGuide.name} guide cover`} width="1200" height="900" loading="lazy" />
     </div>
-  </section>
-  <div class="container"><TrustLine location="founders-guide" class="tl-page-end" /></div>
-  <GuideSale variant="bar" location="guide-mobile-bar" />
-  <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
-  <script is:inline src={url('/js/ad-pixels.js')}></script>
-</Base>
+    <div class="sg-samples">
+      {[1, 2, 3].map((n) => (
+        <a href={url(`/images/founder-stack-sample-${n}.webp`)} target="_blank" rel="noopener" data-umami-event="guide-sample" data-umami-event-page={String(n)} data-umami-event-track="founders">
+          <img src={url(`/images/founder-stack-sample-${n}.webp`)} alt={['Contents page of The Founder Stack', 'Chapter 1: the stack at a glance', 'Chapter 2: domain, business email and DNS'][n - 1]} width="800" height="1035" loading="lazy" />
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="why" title="Why founders buy it" tone="raised" size="sm">
+    <ul class="sg-why">{why.map((w) => <li><strong>{w.h}.</strong> {w.p}</li>)}</ul>
+    <div class="btn-row sg-free">
+      <Button href="/founders/preflight/" variant="secondary" data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Check your domain free first</Button>
+    </div>
+  </Section>
+
+  <div slot="after-extra" class="sg-next"><WatchdogCta from="guide" lead="After setup:" /></div>
+
+  <Fragment slot="end">
+    <GuideSale variant="bar" location="guide-mobile-bar" />
+    <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
+    <script is:inline src={url('/js/ad-pixels.js')}></script>
+  </Fragment>
+</ProductPage>
 
 <style>
-  .sg-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-  @media (max-width: 820px) { .sg-grid { grid-template-columns: 1fr; } }
-  .sg-cover { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1rem; }
-  .sg-h { font-size: 1.15rem; margin: 0 0 .5rem; }
-  .sg-h + ul { margin-top: 0; }
-  .sg-grid ul { padding-left: 1.1rem; }
-  .sg-grid li { margin-bottom: .45rem; }
-  .sg-why { margin-bottom: 1.25rem; }
-  .sg-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .25rem 0 1.25rem; }
-  .sg-samples img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; }
-  @media (max-width: 560px) { .sg-samples { grid-template-columns: 1fr; } }
-  .sg-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 5rem; }
-  .sg-buy :global(.btn) { align-self: flex-start; }
-  :global(.sg-small) { font-size: .88rem; margin: 0; }
-  .sg-video { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); background: #0b0d17; margin: .25rem 0 .35rem; }
-  .sg-vnote { margin-bottom: 1.25rem; }
-  .sg-top-wrap { padding: 0 0 1.25rem; }
-  .sg-top { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
-  .sg-top-free { flex-basis: 100%; }
-  /* Phones only: a slim buy bar pinned to the bottom of the screen (CSS only, no script). */
+  .sg-try { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--space-6); align-items: center; }
+  @media (max-width: 860px) { .sg-try { grid-template-columns: 1fr; } }
+  .sg-video, .sg-cover { display: block; width: 100%; height: auto; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); }
+  .sg-small { font-size: var(--text-sm); color: var(--color-text-subtle); margin: var(--space-2) 0 0; }
+  .sg-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-6); }
+  .sg-samples a { display: block; }
+  .sg-samples img { width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--color-border); display: block; }
+  @media (max-width: 560px) { .sg-samples { grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); } }
+  .sg-why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-5); color: var(--color-text-muted); }
+  .sg-why li { margin: 0; }
+  .sg-why strong { display: block; color: var(--color-text); margin-bottom: var(--space-1); }
+  .sg-free { margin-top: var(--space-6); }
+  .sg-next { margin-top: var(--space-5); color: var(--color-text-muted); }
+  .sg-next :global(a) { color: var(--color-primary); }
+  /* Phones only: a slim buy bar pinned to the bottom of the screen (GuideSale "bar", CSS only, no script). */
   :global(.sg-mbar) { display: none; }
-  @media (max-width: 820px) {
-    :global(.sg-mbar) { display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: .6rem 16px calc(.6rem + env(safe-area-inset-bottom)); background: var(--bg, #0b0d17); border-top: 1px solid var(--line, #262b52); }
-    :global(.sg-mbar-price) { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+  @media (max-width: 860px) {
+    :global(.sg-mbar) { display: flex; align-items: center; justify-content: space-between; gap: .75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: .6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom)); background: var(--color-bg); border-top: 1px solid var(--color-border); }
+    :global(.sg-mbar-price) { font-weight: 800; font-size: 1.15rem; color: var(--color-text); }
     :global(.sg-mbar .btn) { margin: 0; }
     :global(body) { padding-bottom: 4.5rem; }
   }

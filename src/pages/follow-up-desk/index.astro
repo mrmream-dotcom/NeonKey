@@ -1,204 +1,164 @@
 ---
 import { url } from '../../config';
-import Base from '../../layouts/Base.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import { followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as saleLive, frontOfficePackage as fop, remoteSupportPlan as sp, usd } from '../../data/services';
-import DeskSale from '../../components/DeskSale.astro';
-import { followUpDeskSale } from '../../data/services';
-import { buyAttrs } from '../../lib/checkout-ref';
-import TrustLine from '../../components/TrustLine.astro';
+import ProductPage from '../../layouts/ProductPage.astro';
+import PriceBox from '../../components/ui/PriceBox.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import { followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as saleLive, followUpDeskSale, frontOfficePackage as fop, remoteSupportPlan as sp, usd } from '../../data/services';
+import { LANE_NAMES } from '../../lib/lanes';
+// Follow-Up Desk: the self-serve product (Michael, Nov 7 2026) and the primary product of "Run Your Business".
+// Buy, set up and run it with no call. Everything after checkout is done by the neonkey-followup-desk Worker
+// (workers/followup-desk). Product template: src/layouts/ProductPage.astro (full overhaul, Nov 14 2026).
+// Checkout links: PriceBox renders the founding-sale box (DeskSale "price": $99/mo, $891/yr, and the regular $250 link
+// in its after-deadline state), so this page carries exactly the Desk links release-checks expects.
 // Payback example uses whatever monthly price is on sale right now ($1,250 profit per job is a labeled example).
 const deskMonthly = saleLive ? followUpDeskSale.monthly : fd.from;
 const paybackMonths = Math.floor(1250 / deskMonthly);
 const paybackText = paybackMonths >= 12 ? 'once a year' : `every ${paybackMonths} months`;
-// Follow-Up Desk: the self-serve product (Michael, Nov 7 2026). Buy, set up and run it with no call.
-// Everything after checkout is done by the neonkey-followup-desk Worker (workers/followup-desk).
-// The Buy button appears only once fd.buyUrl is set (Michael approves the $250/mo Stripe product first).
 const sample = [
   { day: 'Day 3', subject: 'Your estimate for the kitchen remodel', body: 'Just checking that the estimate for the kitchen remodel reached you. Happy to answer any questions or adjust anything.' },
   { day: 'Day 7', subject: 'Re: Your estimate for the kitchen remodel', body: 'Following up on the estimate for the kitchen remodel. If the timing or scope needs to change, just reply and let me know what would work better.' },
   { day: 'Day 14', subject: 'Should I close out your estimate?', body: "I haven't heard back about the kitchen remodel, so I'll close out the estimate for now. If you'd still like to go ahead, just reply and we'll pick it right back up." },
 ];
+const after = [
+  { h: 'Start your free trial', p: `${trial} days free, card required. You get a private link to your dashboard by email within a few minutes. There's no password to remember.` },
+  { h: 'Add your details', p: 'Your business name, the email replies should go to, and how you sign off. The three messages are written for you, and you can change every word.' },
+  { h: 'Add the estimates you sent', p: 'One at a time, or paste a list exported from QuickBooks, Jobber or a spreadsheet. A short checklist guides you the first time.' },
+  { h: 'Follow-ups go out on their own', p: 'Weekday mornings, your time. When a customer replies or taps "Yes, let\'s go ahead", you hear about it right away and that job\'s follow-ups stop.' },
+];
+const faq = [
+  { q: 'When am I charged, and how do I cancel?', a: `<p>The first ${trial} days are free. Cancel before day ${trial + 1} and you won't be charged. After that, cancel anytime from the billing link on your dashboard. Follow-ups stop when your subscription ends, and your list is deleted 30 days later.</p>` },
+  { q: 'When do follow-ups go out, and from whom?', a: '<p>Monday to Friday, between 9 AM and noon in your time zone, at most 60 a day. You pick the days (3, 7 and 14 by default) and write your own wording. Emails come from your business name at a NeonKey sending address, and replies reach your own inbox. You can get a copy of every follow-up.</p>' },
+  { q: 'Who can I add?', a: '<p>Only people who asked you for an estimate or are already your customers. It isn\'t for cold email or bought lists. Anyone can ask to stop with one click.</p>' },
+  { q: 'Does it connect to QuickBooks?', a: '<p>Not yet. You add estimates on the dashboard or paste an export from QuickBooks, Jobber or a spreadsheet.</p>' },
+  { q: 'Why not just use QuickBooks or Jobber reminders?', a: '<p>Those tools can send reminders too, and if they already do the job for you, keep using them. The Follow-Up Desk is for estimates that go quiet over email, and it\'s built around one rule: <strong>the moment a customer answers, the follow-ups stop</strong> and the answer comes to you. Out-of-office replies don\'t count as an answer, and a bad email address shows up in your Monday report.</p>' },
+  { q: 'Is it worth it?', id: 'worth-it', a: `<p>Do the math with your own numbers: if your average job leaves you $1,250 after costs, one estimate that turns into work ${paybackText} pays for the Desk. That figure is an example, not an average.</p><p>Slipping through the cracks is common: when Harvard Business Review researchers sent a web inquiry to 2,241 US companies, 23% never answered at all. In Intuit QuickBooks' 2025 survey of 2,487 US small businesses, 56% were owed money on unpaid invoices, about $17,500 on average; the Desk has a polite reminder set for invoices, too.</p><p>Sources: <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review, "The Short Life of Online Sales Leads" (2011)</a>; <a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2025/" rel="noopener">Intuit QuickBooks 2025 Small Business Late Payments Report</a>. Results depend on your business. More follow-ups don't guarantee more jobs; what the Desk does is make sure nobody slips through because you were busy.</p>` },
+  { q: 'What if I haven\'t added an estimate yet?', a: '<p>New accounts get a short reminder on day 1, 3 and 10 if they haven\'t added an estimate yet, with a fresh link to the dashboard.</p>' },
+];
 ---
-<Base title="Follow-Up Desk: Estimate Follow-Up" description={`Follow-Up Desk: ${trial} days free, then ${usd(deskMonthly)}/month${saleLive ? ' (founding price until Nov 30)' : ''}. Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}>
-  <PageHeader eyebrow="Self-serve · monthly" title="Stop letting estimates go quiet" crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'For businesses' }, { label: 'Follow-Up Desk' }]}>
-    <p class="lede">Add the estimates you've sent. The Follow-Up Desk checks in with each customer for you, under your business name, and stops the moment they reply. You set it up yourself in about five minutes. No call needed.</p>
-    {/* First action above the fold on phones (04-website-overhaul-plan item 5). Same links as the buy box below. */}
-    {fd.buyUrl && <div class="btn-row fd-head-cta">
-      {saleLive
-        ? <DeskSale variant="button" location="follow-up-desk-header" />
-        : <a class="btn btn-primary" {...buyAttrs(fd.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'follow-up-desk-header' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-header">Start {trial} days free</a>}
-      <span class="muted fd-head-note">Card required, cancel anytime. <a href="#price">See the price</a></span>
-    </div>}
-    <TrustLine location="follow-up-desk" />
-  </PageHeader>
+<ProductPage
+  title="Follow-Up Desk: Estimate Follow-Up"
+  description={`Follow-Up Desk: ${trial} days free, then ${usd(deskMonthly)}/month${saleLive ? ' (founding price until Nov 30)' : ''}. Add the estimates you sent, and polite follow-ups go out under your business name until the customer replies. Self-serve, no setup call, cancel anytime.`}
+  lane="smb"
+  crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: LANE_NAMES.smb }, { label: fd.name }]}
+  eyebrow={`${LANE_NAMES.smb} · ${fd.name}`}
+  heading="Stop letting estimates go quiet"
+  lede="Add the estimates you've sent. The Follow-Up Desk checks in with each customer for you, under your business name, and stops the moment they reply."
+  who={`${fd.for}. You set it up yourself in about five minutes. No call needed.`}
+  includes={fd.items}
+  after={after}
+  faq={faq}
+  trustLocation="follow-up-desk"
+>
+  <PriceBox slot="price" product="follow-up-desk" lane="smb" location="follow-up-desk-page" id="price">
+    <ul class="pb-links">
+      <li>Already signed up? <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">Get your dashboard link</a></li>
+      <li>See the <a href={url('/terms/#follow-up-desk')}>terms</a> and <a href={url('/privacy/#follow-up-desk')}>what we keep</a></li>
+    </ul>
+  </PriceBox>
+  <Fragment slot="meta">
+    <li>{trial} days free</li>
+    <li>No setup call</li>
+    <li>Cancel anytime</li>
+  </Fragment>
 
-  <section style="padding-top:0">
-    <div class="container fd-grid">
+  <Section slot="try" id="see-it" title="See it in 30 seconds" size="sm">
+    <div class="fd-try">
       <div>
-        <div class="panel topline">
-          <h2 class="fd-h">See it in 30 seconds</h2>
-          <video class="fd-video" controls playsinline preload="none" width="1920" height="1080" poster={url('/video/follow-up-desk-walkthrough.jpg')}>
-            <source src={url('/video/follow-up-desk-walkthrough.mp4')} type="video/mp4" />
-            <track kind="captions" src={url('/video/follow-up-desk-walkthrough.vtt')} srclang="en" label="English" default />
-          </video>
-          <p class="muted fd-small">Sample with made-up customers.</p>
-          <p class="fd-small"><a href={url('/lab/follow-up-desk/')} data-umami-event="desk-demo-link" data-umami-event-location="follow-up-desk-page">Try it with one of your own estimates</a>: see the exact follow-ups it would send, in your browser.</p>
-        </div>
+        <video class="fd-video" controls playsinline preload="none" width="1920" height="1080" poster={url('/video/follow-up-desk-walkthrough.jpg')}>
+          <source src={url('/video/follow-up-desk-walkthrough.mp4')} type="video/mp4" />
+          <track kind="captions" src={url('/video/follow-up-desk-walkthrough.vtt')} srclang="en" label="English" default />
+        </video>
+        <p class="fd-small">Sample with made-up customers.</p>
+      </div>
+      <div class="fd-try-side">
+        <h3>Try it with one of your own estimates</h3>
+        <p class="fd-muted">See the exact follow-ups it would send, in your browser. Nothing is sent to anyone.</p>
+        <Button href="/lab/follow-up-desk/" variant="secondary" data-umami-event="desk-demo-link" data-umami-event-location="follow-up-desk-page">Try the free demo</Button>
+      </div>
+    </div>
+  </Section>
 
-        <div class="panel topline">
-          <h2 class="fd-h">How it works</h2>
-          <ol class="fd-steps">
-            <li><strong>Start your free trial.</strong> {trial} days free, card required, cancel anytime. You get a private link to your dashboard by email. There's no password to remember.</li>
-            <li><strong>Add your details.</strong> Your business name, the email replies should go to, and how you sign off. The three messages are written for you, and you can change every word.</li>
-            <li><strong>Add the estimates you've sent.</strong> One at a time, or paste a list exported from QuickBooks, Jobber or a spreadsheet.</li>
-            <li><strong>That's it.</strong> Follow-ups go out on weekday mornings, your time. When a customer replies, or taps "Yes, let's go ahead", you hear about it right away and that job's follow-ups stop on their own.</li>
-          </ol>
+  <Section id="customer" title="What your customer gets" intro="Short, plain notes that read like they came from you. These are the defaults for an estimate; there are matching sets for unpaid invoices and new inquiries." size="sm">
+    <div class="fd-mails">
+      {sample.map((m) => (
+        <div class="fd-mail">
+          <span class="fd-day">{m.day}</span>
+          <strong>{m.subject}</strong>
+          <p>Hi Jane,</p>
+          <p>{m.body}</p>
+          <p>Pat, Sample Roofing Co</p>
         </div>
-
-        <div class="panel topline">
-          <h2 class="fd-h">Your dashboard</h2>
-          <p class="muted">Everything is on one page, with a short checklist the first time you sign in.</p>
-          <img class="fd-shot" src={url('/images/follow-up-desk/sample-dashboard.webp')} width="1600" height="1216" alt="Sample Follow-Up Desk dashboard with made-up customers: tool buttons along the top, counts of open follow-ups, replies and wins, and forms to add one or paste a list." loading="lazy" />
-          <p class="muted fd-small">Sample with made-up customers.</p>
-          <ul class="fd-tools">
-            <li><strong>Add one or paste a list.</strong> Type in an estimate, or paste rows from QuickBooks, Jobber or a spreadsheet.</li>
-            <li><strong>Your messages.</strong> Three short follow-ups are written for you. Change any word, or the days they go out.</li>
-            <li><strong>Won, Lost, Stop.</strong> One click when you hear back some other way, so nobody gets an extra email.</li>
-            <li><strong>Buttons and your payment link.</strong> Turn the one-tap buttons on or off, and paste your own deposit or invoice link from Stripe, Square or PayPal.</li>
-            <li><strong>Send me a preview.</strong> See exactly what your customers get, then reply to it to test the reply flow.</li>
-            <li><strong>Pause.</strong> Slammed or on vacation? One button holds everything.</li>
-            <li><strong>Monday report.</strong> A short email: what went out, who replied, what needs a look.</li>
-          </ul>
-        </div>
-
-        <div class="panel topline">
-          <h2 class="fd-h">What your customer gets</h2>
-          <p class="muted">Short, plain notes that read like they came from you. These are the defaults for an estimate; there are matching sets for unpaid invoices and new inquiries.</p>
-          <div class="fd-mails">
-            {sample.map((m) => (
-              <div class="fd-mail">
-                <span class="fd-day">{m.day}</span>
-                <strong>{m.subject}</strong>
-                <p>Hi Jane,</p>
-                <p>{m.body}</p>
-                <p class="muted">Pat, Sample Roofing Co</p>
-              </div>
-            ))}
-          </div>
-          <h3 class="fd-sub">One tap to say yes</h3>
-          <p class="muted">Every follow-up ends with buttons, so a customer who's ready doesn't have to write anything.</p>
-          <div class="fd-mail fd-btnmail" aria-label="Sample follow-up buttons">
-            <div class="fd-btns">
-              <span class="fd-btn fd-btn-main">Yes, let's go ahead</span>
-              <span class="fd-btn">I have a question</span>
-              <span class="fd-btn">Pay the deposit</span>
-            </div>
-          </div>
-          <ul>
-            <li><strong>Yes, let's go ahead.</strong> Your customer confirms on a short page (and can leave a phone number). You get an email right away, the job shows as Replied, and the follow-ups stop.</li>
-            <li><strong>I have a question.</strong> They type it on the same kind of page, and it lands in your inbox with Reply going straight to them.</li>
-            <li><strong>Pay the deposit.</strong> Shows only if you add your own payment link. It goes straight to your checkout, so the money goes to you, never through NeonKey. Invoices get "Pay the invoice" instead.</li>
-          </ul>
-          <p class="muted fd-small">New inquiries get "Yes, let's set up a time". You can turn the buttons off in Settings.</p>
-        </div>
-
-        <div class="panel topline" id="worth-it">
-          <h2 class="fd-h">Why it's a good investment</h2>
-          <ul class="fd-why">
-            <li><strong>One extra job can cover months of it.</strong> Do the math with your own numbers: if your average job leaves you $1,250 after costs, one estimate that turns into work {paybackText} pays for the Desk. Bigger jobs pay it back faster.</li>
-            <li><strong>Slipping through the cracks is common.</strong> When Harvard Business Review researchers sent a web inquiry to 2,241 US companies, 23% never answered at all. Usually that's because people are busy, not because they don't care.</li>
-            <li><strong>Unpaid invoices hurt cash flow.</strong> In Intuit QuickBooks' 2025 survey of 2,487 US small businesses, 56% were owed money on unpaid invoices, about $17,500 on average. Businesses with overdue invoices were more likely to report cash-flow problems (50% vs 34%). The Desk has a polite reminder set for invoices, too.</li>
-            <li><strong>It gives you time back.</strong> No more digging through sent mail to see who you haven't heard from. Follow-ups go out on their own, and you only step in when someone answers.</li>
-            <li><strong>Low risk.</strong> Try it free for {trial} days. After that it's monthly, cancel anytime, with no call or contract.</li>
-          </ul>
-          <p class="muted fd-small">Sources: <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review, "The Short Life of Online Sales Leads" (2011)</a>; <a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2025/" rel="noopener">Intuit QuickBooks 2025 Small Business Late Payments Report</a>. The $1,250 figure is an example, not an average. Results depend on your business, and follow-ups can't promise replies, jobs or payments.</p>
-        </div>
-
-        <div class="panel topline">
-          <h2 class="fd-h">Why not just use QuickBooks or Jobber reminders?</h2>
-          <p class="muted">Those tools can send reminders too, and if they already do the job for you, keep using them. The Follow-Up Desk is for estimates that go quiet over email, and it's built around one rule: <strong>the moment a customer answers, the follow-ups stop</strong> and the answer comes to you. Out-of-office replies don't count as an answer, a bad email address shows up in your Monday report, and anyone can ask to stop with one click.</p>
-        </div>
-
-        <div class="panel topline">
-          <h2 class="fd-h">Good to know</h2>
-          <ul class="muted">
-            <li>New accounts get a short reminder on day 1, 3 and 10 if they haven't added an estimate yet, with a fresh link to the dashboard.</li>
-            <li>Follow-ups go out Monday to Friday, between 9 AM and noon in your time zone, at most 60 a day.</li>
-            <li>You pick the days (3, 7 and 14 by default) and write your own wording. Send yourself a preview anytime.</li>
-            <li>Emails come from your business name at a NeonKey sending address, and replies reach your own inbox. You can get a copy of every follow-up.</li>
-            <li>Only add people who asked you for an estimate or are already your customers. It isn't for cold email or bought lists.</li>
-            <li>It doesn't connect to QuickBooks yet. You add estimates on the dashboard or paste an export.</li>
-            <li>More follow-ups don't guarantee more jobs. What it does is make sure nobody slips through because you were busy.</li>
-            <li>The first {trial} days are free. Cancel before day {trial + 1} and you won't be charged. After that, cancel anytime from the billing link on your dashboard. Follow-ups stop when your subscription ends, and your list is deleted 30 days later.</li>
-          </ul>
-        </div>
-
-        <div class="panel topline" id="fit">
-          <h2 class="fd-h">Is this the right one for you?</h2>
-          <ul class="fd-fit">
-            <li><strong>{fd.name}: you run it.</strong> You send estimates by email and want follow-ups to go out on their own. Set it up yourself in about five minutes.</li>
-            <li><strong>{fop.name}: built for you.</strong> You want new requests from your website and inbox routed, answered with drafts and tracked on one list, as a custom setup with a written quote first.</li>
-            <li><strong>{sp.name}: IT help by email.</strong> Your basics are set up and you want someone to handle small IT changes and questions. It doesn't send follow-ups.</li>
-          </ul>
-          <p class="fd-small"><a href={url('/services/#compare')} data-umami-event="desk-compare-link" data-umami-event-location="follow-up-desk-page">Compare all three side by side</a></p>
+      ))}
+    </div>
+    <div class="fd-btnrow">
+      <div class="fd-mail fd-btnmail" aria-label="Sample follow-up buttons">
+        <p class="fd-day">Every follow-up ends with one-tap buttons</p>
+        <div class="fd-btns">
+          <span class="fd-btn fd-btn-main">Yes, let's go ahead</span>
+          <span class="fd-btn">I have a question</span>
+          <span class="fd-btn">Pay the deposit</span>
         </div>
       </div>
-
-      <aside class="panel topline accent-magenta fd-buy" id="price">
-        <span class="kicker">{fd.kicker}</span>
-        {saleLive
-          ? <DeskSale variant="box" location="follow-up-desk-page" />
-          : <Fragment>
-        <p class="price">{trial} days free<small>then {usd(fd.from)} per month · cancel anytime</small></p>
-        {fd.buyUrl
-          ? <a class="btn btn-primary" {...buyAttrs(fd.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'follow-up-desk-page' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start your free trial</a>
-          : <a class="btn btn-primary" href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Ask about it</a>}
-        {fd.buyUrl
-          ? <p class="muted fd-small">A card is required to start. You won't be charged until day {trial + 1}, and you can cancel before then from your dashboard. Secure checkout by Stripe; your dashboard link arrives by email within a few minutes.</p>
-          : <p class="muted fd-small">Online signup opens soon. Send a message and you'll hear back by email.</p>}
-          </Fragment>}
-        <ul class="fd-list">
-          {fd.items.map((i) => <li>{i}</li>)}
-        </ul>
-        <p class="muted fd-small">Questions before you start? <a href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-buybox">Ask us</a> and you'll get a written answer by email.</p>
-        <p class="muted fd-small">Already signed up? <a href="https://neonkey-followup-desk.mr-mream.workers.dev/login" rel="noopener">Get your dashboard link</a>.</p>
-        <p class="muted fd-small">See the <a href={url('/terms/#follow-up-desk')}>terms</a> and <a href={url('/privacy/#follow-up-desk')}>what we keep</a>.</p>
-      </aside>
+      <ul class="fd-btnlist">
+        <li><strong>Yes, let's go ahead.</strong> Your customer confirms on a short page (and can leave a phone number). You get an email right away, the job shows as Replied, and the follow-ups stop.</li>
+        <li><strong>I have a question.</strong> They type it on the same kind of page, and it lands in your inbox with Reply going straight to them.</li>
+        <li><strong>Pay the deposit.</strong> Shows only if you add your own payment link. It goes straight to your checkout, so the money goes to you, never through NeonKey. Invoices get "Pay the invoice" instead.</li>
+      </ul>
     </div>
-  </section>
-</Base>
+    <p class="fd-small">New inquiries get "Yes, let's set up a time". You can turn the buttons off in Settings.</p>
+  </Section>
+
+  <Section id="dashboard" title="Your dashboard" intro="Everything is on one page, with a short checklist the first time you sign in." tone="raised" size="sm">
+    <div class="fd-dash">
+      <figure class="fd-fig">
+        <img class="fd-shot" src={url('/images/follow-up-desk/sample-dashboard.webp')} width="1600" height="1216" alt="Sample Follow-Up Desk dashboard with made-up customers: tool buttons along the top, counts of open follow-ups, replies and wins, and forms to add one or paste a list." loading="lazy" />
+        <figcaption class="fd-small">Sample with made-up customers.</figcaption>
+      </figure>
+      <ul class="fd-tools">
+        <li><strong>Add one or paste a list.</strong> Type in an estimate, or paste rows from QuickBooks, Jobber or a spreadsheet.</li>
+        <li><strong>Your messages.</strong> Three short follow-ups are written for you. Change any word, or the days they go out.</li>
+        <li><strong>Won, Lost, Stop.</strong> One click when you hear back some other way, so nobody gets an extra email.</li>
+        <li><strong>Send me a preview.</strong> See exactly what your customers get, then reply to it to test the reply flow.</li>
+        <li><strong>Pause.</strong> Slammed or on vacation? One button holds everything.</li>
+        <li><strong>Monday report.</strong> A short email: what went out, who replied, what needs a look.</li>
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="fit" title="Is this the right one for you?" size="sm">
+    <div class="offer-grid fd-fit">
+      <div class="ds-card ds-card-md lane-smb ds-card-lane"><h3>{fd.name}: you run it</h3><p class="fd-muted">You send estimates by email and want follow-ups to go out on their own. Set it up yourself in about five minutes.</p></div>
+      <div class="ds-card ds-card-md"><h3>{fop.name}: built for you</h3><p class="fd-muted">You want new requests from your website and inbox routed, answered with drafts and tracked on one list, as a custom setup with a written quote first. <a href={url('/services/#front-office-package')}>See it</a>.</p></div>
+      <div class="ds-card ds-card-md"><h3>{sp.name}: IT help by email</h3><p class="fd-muted">Your basics are set up and you want someone to handle small IT changes and questions. It doesn't send follow-ups. <a href={url(sp.href!)}>See it</a>.</p></div>
+    </div>
+    <p class="fd-small fd-compare"><a href={url('/services/#compare')} data-umami-event="desk-compare-link" data-umami-event-location="follow-up-desk-page">Compare all three side by side</a> · Questions before you start? <a href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-buybox">Ask</a> and you'll get a written answer by email.</p>
+  </Section>
+</ProductPage>
 
 <style>
-  .fd-head-cta { align-items: center; margin-top: 1rem; }
-  .fd-head-note { font-size: .9rem; }
-  .fd-buy { scroll-margin-top: 90px; }
-  .fd-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-  @media (max-width: 820px) { .fd-grid { grid-template-columns: 1fr; } .fd-buy { order: -1; } }
-  .fd-grid > div > .panel { margin-bottom: 1.25rem; }
-  .fd-h { font-size: 1.15rem; margin: 0 0 .5rem; }
-  .fd-steps { padding-left: 1.2rem; margin: 0; }
-  .fd-steps li, .fd-grid ul li { margin-bottom: .5rem; }
-  .fd-grid ul { padding-left: 1.1rem; }
-  .fd-mails { display: grid; gap: .75rem; }
-  .fd-mail { border: 1px solid var(--line, #262b52); border-radius: 12px; padding: .8rem 1rem; }
-  .fd-mail p { margin: .35rem 0; }
-  .fd-day { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--cyan, #22d3ee); }
-  .fd-buy { display: flex; flex-direction: column; gap: .6rem; position: sticky; top: 1rem; }
-  @media (max-width: 820px) { .fd-buy { position: static; } }
-  .fd-buy .price { margin: 0; font-size: 2rem; font-weight: 800; color: var(--text); }
-  .fd-buy .price small { display: block; font-size: .85rem; font-weight: 400; color: var(--muted); }
-  .fd-buy .btn { align-self: flex-start; }
-  .fd-list { margin: 0; padding-left: 1.1rem; font-size: .92rem; }
-  .fd-small { font-size: .88rem; margin: 0; }
-  .fd-shot { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); margin: .5rem 0 .35rem; }
-  .fd-tools { margin: .9rem 0 0; }
-  .fd-why { margin: 0 0 .75rem; }
-  .fd-fit { margin: 0 0 .6rem; }
-  .fd-video { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line, #262b52); background: #0b0d17; margin: .25rem 0 .35rem; }
-  .fd-sub { font-size: 1rem; margin: 1.25rem 0 .35rem; }
-  .fd-btnmail { margin: .5rem 0 .75rem; }
-  .fd-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
-  .fd-btn { display: inline-block; padding: .55rem .9rem; border-radius: 8px; border: 1px solid var(--line, #262b52); font-weight: 700; font-size: .92rem; }
-  .fd-btn-main { background: var(--text, #f8fafc); color: var(--bg, #0b0d1f); border-color: var(--text, #f8fafc); }
+  .fd-try { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--space-6); align-items: center; }
+  @media (max-width: 860px) { .fd-try { grid-template-columns: 1fr; } }
+  .fd-try-side h3 { margin: 0 0 var(--space-2); font-size: var(--text-lg); }
+  .fd-muted { color: var(--color-text-muted); margin: 0 0 var(--space-4); }
+  .fd-muted a, .fd-compare a { color: var(--color-primary); }
+  .fd-small { font-size: var(--text-sm); color: var(--color-text-subtle); margin: var(--space-2) 0 0; }
+  .fd-video, .fd-shot { display: block; width: 100%; height: auto; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); }
+  .fd-mails { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-4); }
+  .fd-mail { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); background: var(--color-surface); }
+  .fd-mail p { margin: .35rem 0; color: var(--color-text-muted); }
+  .fd-day { display: block; font-size: var(--text-xs); font-weight: var(--weight-bold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-primary); }
+  .fd-btnrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--space-6); margin-top: var(--space-6); align-items: start; }
+  @media (max-width: 860px) { .fd-btnrow { grid-template-columns: 1fr; } }
+  .fd-btns { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: var(--space-3); }
+  .fd-btn { display: inline-block; padding: .55rem .9rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-strong); font-weight: var(--weight-bold); font-size: .92rem; }
+  .fd-btn-main { background: var(--color-text); color: var(--color-bg); border-color: var(--color-text); }
+  .fd-btnlist, .fd-tools { margin: 0; padding-left: 1.1rem; color: var(--color-text-muted); }
+  .fd-btnlist li, .fd-tools li { margin-bottom: var(--space-2); }
+  .fd-btnlist strong, .fd-tools strong { color: var(--color-text); }
+  .fd-dash { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+  @media (max-width: 860px) { .fd-dash { grid-template-columns: 1fr; } }
+  .fd-fig { margin: 0; }
+  .fd-fit h3 { font-size: var(--text-md); margin: 0 0 var(--space-2); }
+  .fd-compare { margin-top: var(--space-5); color: var(--color-text-muted); }
 </style>
