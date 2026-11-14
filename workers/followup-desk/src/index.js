@@ -383,7 +383,7 @@ async function dashboard(request, env, token, action) {
     const msg = new URL(request.url).searchParams.get("m") || "";
     if (action === "settings") {
       if (!acct.messagesSeen) { acct.messagesSeen = Date.now(); await putAccount(env, acct); }
-      return html(settingsPage({ acct, base, msg }));
+      return html(settingsPage({ acct, base, msg, portalUrl }));
     }
     if (action) return redirect(base);
     return html(dashboardPage({ acct, base, msg, portalUrl }));
