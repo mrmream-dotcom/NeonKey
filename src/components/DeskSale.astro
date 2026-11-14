@@ -5,11 +5,18 @@
 // holds the regular $250/mo offer. See followUpDeskSale in src/data/services.ts.
 import { followUpDesk as fd, followUpDeskSale as sale, followUpDeskTrialDays as trial, usd } from '../data/services';
 import { buyAttrs, type Lane } from '../lib/checkout-ref';
-interface Props { location: string; variant?: 'box' | 'card' | 'line'; lane?: Lane }
+// variant 'button': just the "Start N days free" buy button (founding link during the sale, regular link after), for
+// page headers. Same checkout ref and Umami props as the box.
+interface Props { location: string; variant?: 'box' | 'card' | 'line' | 'button'; lane?: Lane }
 const { location, variant = 'card', lane = 'smb' } = Astro.props;
 const monthlyTotal = sale.monthly * 12;
 ---
-{variant === 'line'
+{variant === 'button'
+  ? <span class="ds-button" data-sale-ends={sale.endsAt}>
+      <a data-sale class="btn btn-primary" {...buyAttrs(sale.monthlyUrl, { lane, sku: 'desk-founding-99m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} monthly ${sale.monthly}`} data-umami-event-location={location}>Start {trial} days free</a>
+      <a data-sale-after hidden class="btn btn-primary" {...buyAttrs(fd.buyUrl, { lane, sku: 'desk-250m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
+    </span>
+  : variant === 'line'
   ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>Lock in {usd(sale.monthly)}/mo before it goes to {usd(fd.from)} · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
   : <div class={`ds ds-${variant}`} data-sale-ends={sale.endsAt}>
       <div data-sale>

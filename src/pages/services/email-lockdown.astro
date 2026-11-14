@@ -7,6 +7,7 @@ import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlash
 import SaleClock from '../../components/SaleClock.astro';
 import DomainCheck from '../../components/DomainCheck.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
+import TrustLine from '../../components/TrustLine.astro';
 import { buyAttrs } from '../../lib/checkout-ref';
 // Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
@@ -91,6 +92,7 @@ import { buyAttrs } from '../../lib/checkout-ref';
     </div>
   </section>
 
+  <div class="container"><TrustLine location="email-auth" class="tl-page-end" /></div>
   {live && <SaleClock />}
 </Base>
 

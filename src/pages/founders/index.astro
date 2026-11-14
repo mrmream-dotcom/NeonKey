@@ -2,40 +2,83 @@
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { setupGuide } from '../../data/services';
+import DomainCheck from '../../components/DomainCheck.astro';
 import GuideSale from '../../components/GuideSale.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
-// Founders track (Nov 6 2026): tools and guides for startup founders, kept apart from the small-business pages.
-// Linked from the footer only; the main nav stays aimed at small businesses. Umami events carry track=founders.
+import TrustLine from '../../components/TrustLine.astro';
+import { setupGuide, emailLockdown, usd } from '../../data/services';
+import { buyAttrs } from '../../lib/checkout-ref';
+// Founders hub (three-lane site, Nov 14 2026; 04-website-overhaul-plan item 7). In the main nav as "For founders".
+// Order: the free domain check first (#check, the header button on founders pages points here), then two clear offers:
+// Email Authentication Setup ("just the email fix") and The Founder Stack (the whole backend, includes one setup).
+// Watchdog is only the "next" step, through WatchdogCta (a waitlist; nothing to buy). Umami events carry track=founders.
+// Prices come from src/data/services.ts; buy buttons carry the checkout ref (src/lib/checkout-ref.ts), lane=founders.
 ---
-<Base title="Tools for founders" description="Free and paid tools for founders from NeonKey: check that your launch email will land, and set up the lean, automated backend NeonKey runs on.">
-  <PageHeader eyebrow="NeonKey · For founders" title="Tools for founders" crumbs={[{ href: '/', label: 'Home' }, { label: 'Founders' }]}>
-    <p class="lede">NeonKey runs on a small, automated backend: a static website, email that passes authentication, Stripe checkout, a product that delivers itself and a lead tracker that records what actually happened. These are the tools and write-ups behind it, for founders building their own.</p>
+<Base title="Tools for founders" lane="founders" description="Launching something? Check free that inboxes will trust your domain's email, then fix just the email records or set up the lean, automated backend NeonKey runs on with The Founder Stack.">
+  <PageHeader eyebrow="NeonKey · For founders" title="Tools for founders" crumbs={[{ href: '/', label: 'Home' }, { label: 'For founders' }]}>
+    <p class="lede">Launching something? Make sure your email lands, then set up the rest. Start with the free domain check below. It takes about 30 seconds, no signup.</p>
   </PageHeader>
-  <section style="padding-top:0">
-    <div class="container fd-grid">
-      <a class="panel topline fd-card" href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">
-        <span class="kicker">Free tool</span>
-        <h2>Launch Preflight</h2>
-        <p class="muted">Type your domain and see whether inboxes will trust your launch email or outreach: MX, SPF, DKIM, DMARC and more, with what to fix first. No signup.</p>
-        <span class="fd-go">Run the check</span>
-      </a>
-      <a class="panel topline accent-magenta fd-card" href={url('/founders/guide/')} data-umami-event="founders-nav" data-umami-event-target="guide" data-umami-event-track="founders">
-        <span class="kicker"><GuideSale variant="kicker" location="founders-hub" /></span>
-        <h2>{setupGuide.name}</h2>
-        <p class="muted">{setupGuide.subtitle}, step by step: domain and email, website, Stripe, a self-delivering product, outreach and lead tracking. Includes an Email Authentication Setup.</p>
-        <span class="fd-go">See what's inside</span>
-      </a>
-      <WatchdogCta from="founders-hub" variant="panel" />
+
+  <section style="padding-top:0" id="check" class="fd-check" aria-label="Free domain check">
+    <div class="container narrow-ish">
+      <DomainCheck placeholder="yourstartup.com" track="founders">
+        <div slot="next" class="panel topline accent-magenta fd-next">
+          <h2 class="fd-next-h">What to do next</h2>
+          <p>Something to fix? Pick <a href="#fix" data-umami-event="founders-nav" data-umami-event-target="hub-fix" data-umami-event-track="founders">just the email fix or the whole backend</a> below.</p>
+          <WatchdogCta from="founders-hub" lead="Everything passing?" />
+        </div>
+      </DomainCheck>
+      <p class="muted fd-small">Want the full write-up of each record? Open the <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-track="founders">Launch Preflight page</a>.</p>
     </div>
-    <div class="container"><p class="muted fd-note">Run a small business rather than a startup? Start at <a href={url('/services/')}>Services</a> instead.</p></div>
+  </section>
+
+  <section id="fix" aria-labelledby="fix-h" style="padding-top:1rem">
+    <div class="container">
+      <h2 id="fix-h" class="fd-sec-h">Two ways to fix it</h2>
+      <div class="fd-grid">
+        <article class="panel topline accent-cyan fd-card">
+          <span class="kicker">Just the email fix · {usd(emailLockdown.from)} one-time</span>
+          <h3>{emailLockdown.name}</h3>
+          <p class="muted">Your SPF, DKIM and DMARC records checked, then the exact records to add for your provider, or added for you if you invite NeonKey to your DNS. Buy online, no call.</p>
+          <div class="btn-row fd-btns">
+            <a class="btn btn-primary btn-sm" {...buyAttrs(emailLockdown.buyUrl, { lane: 'founders', sku: 'email-auth-29', location: 'founders-hub-email-auth' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="founders-hub-email-auth" data-umami-event-track="founders">Buy now · {usd(emailLockdown.from)}</a>
+            <a class="btn btn-ghost btn-sm" href={url('/services/email-lockdown/')} data-umami-event="founders-nav" data-umami-event-target="email-auth" data-umami-event-track="founders">Details</a>
+          </div>
+        </article>
+        <article class="panel topline accent-magenta fd-card">
+          <span class="kicker">The whole backend · <GuideSale variant="kicker" location="founders-hub" /></span>
+          <h3>{setupGuide.name}</h3>
+          <p class="muted">{setupGuide.subtitle}, step by step: domain and email, website, Stripe, a self-delivering product, outreach and lead tracking. Includes one {emailLockdown.name}.</p>
+          <GuideSale variant="box" location="founders-hub" />
+          <a class="fd-more" href={url('/founders/guide/')} data-umami-event="founders-nav" data-umami-event-target="guide" data-umami-event-track="founders">See what's inside →</a>
+        </article>
+      </div>
+
+      <h2 class="fd-sec-h fd-next-title">Next: keep it working</h2>
+      <div class="fd-grid fd-grid-one">
+        <WatchdogCta from="founders-hub" variant="panel" />
+      </div>
+
+      <TrustLine location="founders-hub" />
+      <p class="muted fd-note">Run a small business rather than a startup? Start at <a href={url('/services/')}>For businesses</a> instead.</p>
+    </div>
   </section>
 </Base>
 <style>
+  .narrow-ish { max-width: 820px; }
+  .fd-small { font-size: .9rem; margin: .75rem 0 0; }
+  .fd-check { scroll-margin-top: 80px; }
+  .fd-next p { margin: .4rem 0; }
+  .fd-next-h { font-size: 1.15rem; margin: 0 0 .4rem; }
+  .fd-sec-h { font-size: 1.35rem; margin: 0 0 1rem; }
+  .fd-next-title { margin-top: 2rem; }
   .fd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
-  .fd-card { display: flex; flex-direction: column; gap: .5rem; text-decoration: none; color: inherit; }
-  .fd-card h2 { font-size: 1.35rem; margin: 0; }
+  .fd-grid-one { grid-template-columns: minmax(0, 1fr); max-width: 640px; }
+  .fd-card { display: flex; flex-direction: column; gap: .5rem; }
+  .fd-card h3 { font-size: 1.35rem; margin: 0; }
   .fd-card p { margin: 0; }
-  .fd-go { margin-top: auto; font-weight: 700; color: var(--accent); }
-  .fd-note { margin-top: 1.25rem; }
+  .fd-btns { margin-top: auto; padding-top: .4rem; }
+  .fd-more { font-weight: 700; }
+  .fd-note { margin-top: 1rem; }
+  #fix { scroll-margin-top: 80px; }
 </style>

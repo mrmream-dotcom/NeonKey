@@ -3,6 +3,7 @@
 // Same component as /learn/is-this-a-scam/. Old short link /scam/ redirects here.
 import LearnLayout from '../components/learn/LearnLayout.astro';
 import ScamChecker from '../components/learn/ScamChecker.astro';
+import TrustLine from '../components/TrustLine.astro';
 import { url } from '../config';
 import { familyShield as fs } from '../data/scam-samples';
 
@@ -11,12 +12,16 @@ const frontmatter = {
   description: 'Paste a text, email or pop-up into the free Family Shield check to see the warning signs and what to do. It runs in your browser and nothing you paste is saved.',
   kicker: 'Free tool · Family Shield',
   back: { href: '/learn/', label: 'Back to Learn' },
+  // Three-lane site (Nov 14 2026): this page is the "Protect yourself" door, so it is a tool page, not a Learn tutorial.
+  lane: 'family',
+  tool: true,
+  crumbs: [{ href: '/', label: 'Home' }, { label: 'Protect yourself' }],
 };
 ---
 <LearnLayout frontmatter={frontmatter}>
-  <p class="lead">Got a text, email or pop-up that feels off? Paste it below. The check looks for the warning signs scammers rely on and tells you what to do next. It's free, and nothing you paste leaves your device.</p>
+  <p class="lead">Paste a text, email or pop-up that feels off to see the warning signs and what to do next.</p>
 
-  <ScamChecker />
+  <ScamChecker compact />
 
   <h2 id="looks-for">What it looks for</h2>
   <ul>
@@ -46,6 +51,8 @@ const frontmatter = {
     <p>Until then, the best thing you can do for someone you love is send them this page.</p>
     <p><button type="button" class="btn btn-primary" data-share>Send this checker to family</button> <span class="form-note fs-status" data-share-status role="status" aria-live="polite"></span></p>
   </section>
+
+  <TrustLine location="scam-checker" />
 </LearnLayout>
 
 <style>
