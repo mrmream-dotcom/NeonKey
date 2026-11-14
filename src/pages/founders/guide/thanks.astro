@@ -11,7 +11,7 @@ import { skuPricesJson } from '../../../lib/checkout-ref';
 // Workers KV. The PDF is never in this repo or at any public URL. Google Ads (conv-founder.js) and Meta and Reddit Purchase events fire here via /js/ad-pixels.js only with offer=founder-stack and a cs_ session id.
 ---
 <Base title="Thanks for buying the guide" description={`Thanks for buying ${setupGuide.name}.`} noindex>
-  <PageHeader width="narrow" align="center" eyebrow="Guide · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: 'Thank you' }]} class="status-head">
+  <PageHeader width="narrow" align="center" eyebrow="Guide · Thank you" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Build Your Business' }, { label: 'Thank you' }]} class="status-head">
     <span class="status-mark" slot="title-before"><Icon name="check" /></span>
     <Fragment slot="title">Thanks, your payment went through.</Fragment>
     <p class="lede">Your copy of {setupGuide.name} is on its way to your inbox now, from {CONTACT_EMAIL}, with the PDF attached. It usually arrives within a few minutes, and Stripe sends your receipt separately. If it hasn't arrived within an hour, check spam, then email us.</p>

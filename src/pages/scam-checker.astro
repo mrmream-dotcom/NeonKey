@@ -6,16 +6,17 @@ import ScamChecker from '../components/learn/ScamChecker.astro';
 import TrustLine from '../components/TrustLine.astro';
 import { url } from '../config';
 import { familyShield as fs } from '../data/scam-samples';
+import { LANE_NAMES } from '../lib/lanes';
 
 const frontmatter = {
   title: 'Free scam checker: is this text or email a scam?',
   description: 'Paste a text, email or pop-up into the free Family Shield check to see the warning signs and what to do. It runs in your browser and nothing you paste is saved.',
-  kicker: 'Free tool · Family Shield',
-  back: { href: '/learn/', label: 'Back to Learn' },
-  // Three-lane site (Nov 14 2026): this page is the "Protect yourself" door, so it is a tool page, not a Learn tutorial.
+  kicker: `${LANE_NAMES.family} · Free tool`,
+  back: { href: '/protect/', label: `Back to ${LANE_NAMES.family}` },
+  // Three-lane site (Nov 14 2026): the tool of the "Protect Yourself" lane (hub: /protect/), a tool page, not a Learn tutorial.
   lane: 'family',
   tool: true,
-  crumbs: [{ href: '/', label: 'Home' }, { label: 'Protect yourself' }],
+  crumbs: [{ href: '/', label: 'Home' }, { href: '/protect/', label: LANE_NAMES.family }, { label: 'Free scam checker' }],
 };
 ---
 <LearnLayout frontmatter={frontmatter}>

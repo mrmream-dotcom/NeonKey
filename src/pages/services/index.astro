@@ -1,92 +1,131 @@
 ---
-import LockdownStrip from '../../components/LockdownStrip.astro';
 import OfferTitle from '../../components/OfferTitle.astro';
 import OfferNameLabel from '../../components/OfferNameLabel.astro';
 import { url } from '../../config';
 import Base from '../../layouts/Base.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
+import LaneHero from '../../components/ui/LaneHero.astro';
+import Section from '../../components/ui/Section.astro';
+import Button from '../../components/ui/Button.astro';
+import PriceBox from '../../components/ui/PriceBox.astro';
+import Steps from '../../components/ui/Steps.astro';
+import FAQ from '../../components/ui/FAQ.astro';
+import TrustLine from '../../components/TrustLine.astro';
 import DeskSale from '../../components/DeskSale.astro';
 import { buyAttrs } from '../../lib/checkout-ref';
+import { LANE_NAMES } from '../../lib/lanes';
 import DomainCheck from '../../components/DomainCheck.astro';
-import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSale, followUpDeskSaleLive, automationMenu, introPricing, showPackageValue, usd, lockdownFlashSale, lockdownFlashSaleLive } from '../../data/services';
-// Page layout (Nov 2026, after two outside reviews): lead with TWO remote offers, picked by the buyer's problem.
-//   $999 Front Office Package for quote and inquiry follow-up, $299 Remote Small-Office IT Setup.
-//   The site is remote-only (Michael, Nov 4 2026). The on-site $249 tune-up lives only on /local/, which is not linked
-//   from the site; it is the landing page for the Fairbanks Google Ads campaign and direct local outreach. Don't delete it.
-//   Every smaller job sits in one short "Need just one thing?" list further down.
-// Keep the old anchors (#front-office-package, #support-plan, #quick-win, #ai-faq, #lead-routing,
-// #email-lockdown, #remote-it, #automation-menu, #featured-h, #auto-h): other pages, the quiz and outreach links point to them.
-// The crossed-out "$2,000+ value" line is controlled site-wide by showPackageValue in src/data/services.ts.
-// The $499 and $799 parts are not listed on their own (reviewers: it invites a $799 vs $999 comparison); they are
-// downsells for calls and email. Their old anchors (#ai-faq, #lead-routing) now land on the package card.
+import { automationOffers, remoteIt, remoteSupportPlan, frontOfficePackage as fop, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSale, followUpDeskSaleLive, automationMenu, introPricing, usd, lockdownFlashSale, lockdownFlashSaleLive } from '../../data/services';
+// "Run Your Business" lane hub (full overhaul, Nov 14 2026). URL unchanged (/services/); ads, the quiz and outreach
+// link here and to the anchors below, so keep every one of them:
+//   #follow-up-desk #front-office-package #ai-faq #lead-routing #compare #support-plan #remote-it #featured-h
+//   #free-tools #inbox-check #smaller #email-lockdown #quick-win #automation-menu #menu-* #auto-h
+// Order: one primary product (Follow-Up Desk, self-serve, with its price box) -> the done-for-you option (Front Office
+// Package) -> keep the office running (Support Plan monthly, Remote IT Setup) -> compare -> free tools -> smaller jobs
+// -> how custom work runs -> FAQ. Prices only from src/data/services.ts; buy buttons carry the checkout ref (lane=smb).
+// The on-site $249 tune-up lives only on /local/ (Fairbanks ad landing page); don't link it here, don't delete it.
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
 const smallJobs = [
   { o: emailLockdown, price: lockdownFlashSaleLive ? `${usd(lockdownFlashSale.price)} today (${lockdownFlashSale.percentOff}% off ${usd(emailLockdown.from)}, first ${lockdownFlashSale.cap} orders)` : `${usd(emailLockdown.from)} flat`, line: 'Make it harder for scammers to send email pretending to be you. Buy online and get the exact fixes by email, usually within minutes. No call or passwords needed.', href: lockdownFlashSaleLive ? lockdownFlashSale.buyUrl : emailLockdown.buyUrl!, sku: lockdownFlashSaleLive ? undefined : 'email-auth-29' as const, cta: 'Buy now', buy: true, more: '/services/email-lockdown/' },
-  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request, so none sit unseen.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Ask about it' },
-  { o: remoteSupportPlan, slug: 'support-plan', price: `from ${usd(remoteSupportPlan.from)}/mo`, line: 'Changes, questions and new features after any setup. Simple changes included; bigger work quoted first. Cancel anytime.', href: '/contact/?topic=support-plan', cta: 'Ask about it' },
+  { o: quickWin, price: `from ${usd(quickWin.from)}`, line: 'One website form connected to a shared list, with an alert to one person on each new request, so none sit unseen.', href: `/contact/?topic=${quickWin.slug}`, cta: 'Get a written quote' },
 ];
 const sp = remoteSupportPlan;
+const faq = [
+  { q: 'How do I know if I\'m losing leads?', a: '<p>Look back at last month and check three things: how long it took to send the first reply to each new inquiry, how many quotes got no follow-up after the first message, and how many past customers you haven\'t contacted in a year. If any answer surprises you, that\'s the place to start. Tell us what you find and we\'ll suggest the smallest fix that helps.</p>' },
+  { q: 'Does anything reply to my customers without me?', a: `<p>It depends on which one you pick.</p><p><strong>${fop.name}:</strong> only the FAQ assistant replies on its own, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your side sends them.</p><p><strong>${followUpDesk.name}:</strong> yes, that's the point of it. Follow-ups on the estimates you add go out on their own, in wording you write and can edit, and they stop the moment the customer replies. You can send yourself a preview first and stop any job with one click. <a href="#compare">Compare them</a>.</p>` },
+  { q: 'Are there software costs on top?', a: '<p>Where possible we build on tools you already pay for, like your email and a spreadsheet. If a setup needs a paid tool, its monthly fee is listed in your written quote before you decide, and the provider bills you directly.</p>' },
+  { q: 'Why not just buy software?', a: '<p>Sometimes you should. If an off-the-shelf app already does exactly what you need, use it, and I\'m happy to help you set it up. A custom build makes sense when an app would make you change how you work: it fits the process you already have, plugs into the tools you already use, and you own it outright. You control where your data goes.</p>' },
+  { q: 'How do you handle my accounts and data?', a: '<p>Your accounts stay yours. You keep every admin login, and where a tool allows it I work from a separate admin account or delegated access that you can switch off, rather than your own password. I only open the settings and files the job needs. At handoff we review who has access, and you can remove mine (I\'ll show you how). I don\'t keep copies of your files or passwords after the work is done.</p>' },
+  { q: 'Can I start small and add more later?', a: '<p>Yes, that\'s how most people start. Begin with one fix or one module. Anything you add later is built to fit what\'s already there, and on the monthly plan simple changes are part of the plan. Advanced features may cost extra, and you always get the price before any work starts.</p>' },
+];
+const customSteps = [
+  { h: 'Written scope and price', p: 'Tell us what you need by message (or a short call, if you prefer), then get a fixed quote in writing. If a simple app you already have does the job, I\'ll tell you.' },
+  { h: 'Built after hours', p: 'After business hours or on weekends, tested with sample requests first, so the setup work stays out of your business day.' },
+  { h: 'You approve going live', p: 'We run a test together, and nothing switches on until you say so.' },
+  { h: 'Handoff', p: 'Everything lives in accounts you control, with a walkthrough and written notes.' },
+];
 ---
-<Base title="For Businesses: Estimate Follow-Up and Office IT" lane="smb" description="Stop losing customers to slow replies and quotes that go quiet: start the self-serve Follow-Up Desk with 14 days free, or have a custom follow-up system set up for you. Remote, anywhere in the US.">
-  {/* Business hub (three-lane site, Nov 14 2026; 04-website-overhaul-plan item 6). URL unchanged. The Follow-Up Desk is
-      the primary offer, the Front Office Package the done-for-you option. Two buttons in the header so the first action
-      is above the fold on phones; the Desk button is the same checkout as the Desk card (checkout ref, lane=smb). */}
-  <PageHeader eyebrow="NeonKey · For businesses" title="Stop losing customers to slow replies and quiet quotes" crumbs={[{ href: '/', label: 'Home' }, { label: 'For businesses' }]}>
-    <p class="lede">Run the {followUpDesk.name} yourself with {followUpDeskTrialDays} days free, or have a custom system set up for you with a written scope and price first. Need office IT instead? <a href="#remote-it">That's further down</a>.</p>
-    <div class="btn-row svc-head-cta">
+<Base title={`${LANE_NAMES.smb}: Estimate Follow-Up and Office IT`} lane="smb" description="Stop losing customers to slow replies and quotes that go quiet: start the self-serve Follow-Up Desk with 14 days free, or have a custom follow-up system set up for you. Remote, anywhere in the US.">
+  <LaneHero lane="smb" crumbs={[{ href: '/', label: 'Home' }, { label: LANE_NAMES.smb }]} title="Stop losing customers to slow replies and quiet quotes." lede={`Run the ${followUpDesk.name} yourself with ${followUpDeskTrialDays} days free, or have a custom system set up for you with a written scope and price first. Office IT and monthly support are here too.`}>
+    <Fragment slot="actions">
       {followUpDeskSaleLive
         ? <DeskSale variant="button" location="services-header" />
         : <a class="btn btn-primary" {...buyAttrs(followUpDesk.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'services-header' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-header">Start {followUpDeskTrialDays} days free</a>}
-      <a class="btn btn-ghost" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="services-header">Get a written quote</a>
-    </div>
-  </PageHeader>
+      <Button href="/contact/" variant="secondary" data-umami-event="contact-click" data-umami-event-location="services-header">Get a written quote</Button>
+    </Fragment>
+  </LaneHero>
 
-  <section style="padding-top:0;padding-bottom:1rem" aria-labelledby="pick-h">
-    <div class="container">
-      <h2 id="pick-h" class="sr-only">Two ways to start</h2>
-      <div class="choices">
-        <div class="card topline accent-violet choice" id={followUpDesk.slug}>
-          <span class="kicker">Do it yourself · start today</span>
-          <strong><OfferTitle offer={followUpDesk} /></strong>
-          <span class="choice-name">{followUpDesk.name}</span>
-          <span class="muted">Add the estimates you sent, or paste a list from QuickBooks. Polite follow-ups go out under your business name and stop the moment your customer replies.</span>
-          {followUpDeskSaleLive
-            ? <Fragment><DeskSale location="services-choice-fud" />
-              <div class="btn-row choice-btns">
-            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</a>
-              </div></Fragment>
-            : <Fragment><span class="choice-price">{usd(followUpDesk.from)} <small>a month</small></span>
-              <span class="choice-trial">{followUpDeskTrialDays} days free. Card required, cancel anytime.</span>
-              <div class="btn-row choice-btns">
-            <a class="btn btn-primary btn-sm" {...buyAttrs(followUpDesk.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'services-choice-fud' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">Start free trial</a>
-            <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</a>
-              </div></Fragment>}
-        </div>
-        <div class="card topline accent-magenta choice">
-          <span class="kicker">Done for you · custom setup · remote</span>
-          <strong><OfferTitle offer={fop} /></strong>
-          <span class="choice-name">{fop.name}</span>
-          <span class="muted">Requests from your website form or shared inbox land on one list, and the right person gets an alert. Quotes that go quiet get a reminder on day 1, 3 and 7.</span>
-          <span class="choice-price">{usd(fop.from)} <small>setup + 3 months of support</small></span>
-          <div class="btn-row choice-btns">
-            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-choice-fop">Get a written quote</a>
-            <a class="btn btn-ghost btn-sm" href="#front-office-package" data-umami-event="services-cta" data-umami-event-location="services-choice-fop">What's included</a>
-          </div>
+  <Section id={followUpDesk.slug} eyebrow="Self-serve · start today" title={followUpDesk.headline!} intro="The main product for this lane. Set it up yourself in about five minutes, no call." size="sm">
+    <div class="hub-product">
+      <div class="hub-product-copy">
+        <h3 class="hub-name">{followUpDesk.name}</h3>
+        <p class="hub-line">Add the estimates you sent, or paste a list from QuickBooks or a spreadsheet. Polite follow-ups go out under your business name and stop the moment your customer replies.</p>
+        <ul class="ds-checklist hub-list">
+          <li>Up to three follow-ups per estimate, written in your words</li>
+          <li>Sent under your business name on weekday mornings</li>
+          <li>One-tap "Yes, let's go ahead" and "I have a question" buttons</li>
+          <li>A short report every Monday</li>
+        </ul>
+        <div class="btn-row hub-links">
+          <Button href={followUpDesk.href} variant="secondary" data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-choice-fud">How it works</Button>
+          <Button href="/lab/follow-up-desk/" variant="ghost" data-umami-event="desk-demo-link" data-umami-event-location="services-hub">Try it with one of your estimates</Button>
         </div>
       </div>
-      <LockdownStrip location="services-lockdown-strip" />
-      <p class="muted small-note"><strong>{introPricing.label}:</strong> {introPricing.note}</p>
+      <PriceBox product="follow-up-desk" lane="smb" location="services-choice-fud" />
     </div>
-  </section>
+  </Section>
+
+  <Section id={fop.slug} eyebrow="Done for you · custom setup · remote" title={fop.headline!} intro="For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups." tone="raised" size="sm">
+    <span id="ai-faq" class="anchor"></span><span id="lead-routing" class="anchor"></span>
+    <div class="hub-product">
+      <div class="hub-product-copy">
+        <h3 class="hub-name">{fop.name}</h3>
+        <ul class="ds-checklist hub-list">
+          <li>Requests from your website form and shared inbox in one list, with who's handling each one and when to follow up</li>
+          <li>Reply drafts from your approved templates, and follow-up reminders on day 1, 3 and 7 that stop when the customer replies. A person sends every quote reply and follow-up</li>
+          <li>An FAQ assistant that only gives answers you approved, and hands everything else to a person</li>
+          <li>Business email security set up (SPF, DKIM and DMARC), so it's harder to fake your address</li>
+          <li>Three months of the {sp.name}, so small changes are covered while it beds in</li>
+        </ul>
+        <p class="hub-note">Phone calls aren't part of this setup. Want to win back old quotes and past customers too? A win-back follow-up list can be added to your written quote.</p>
+        <div class="btn-row hub-links">
+          <Button href="/lab/front-office/?type=home" variant="secondary" data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Try a sample request</Button>
+        </div>
+      </div>
+      <PriceBox product="front-office" lane="smb" location="services-package" />
+    </div>
+  </Section>
+
+  <Section id="keep-running" title="Keep your office running" intro="Office IT set up properly, done over video and screen share, and small changes handled by email after that." size="sm">
+    <div class="offer-grid">
+      <article class="ds-card ds-card-md offer-card" id="support-plan">
+        <span class="kicker">Monthly · cancel anytime</span>
+        <h3>{sp.name}</h3>
+        <p class="oc-line">{sp.outcome}. Account adds and removes, settings changes, how-to questions. No 24/7 or emergency cover.</p>
+        <p class="oc-price">from {usd(sp.from)}<small>/month</small></p>
+        <div class="btn-row">
+          <Button href="/contact/?topic=support-plan" data-umami-event="contact-click" data-umami-event-offer={sp.name} data-umami-event-location="services-support-plan">Get a written quote</Button>
+          <Button href={sp.href} variant="ghost" data-umami-event="services-cta" data-umami-event-offer={sp.name} data-umami-event-location="services-support-plan">How it works</Button>
+        </div>
+      </article>
+      <article class="ds-card ds-card-md offer-card" id={remoteIt.slug}>
+        <span class="kicker">Remote · anywhere in the US</span>
+        <h3 id="featured-h">{remoteIt.name}</h3>
+        <p class="oc-line">Business email on your own domain, email security records, Wi-Fi and router security, backups, a password manager and device checklists. You keep every login.</p>
+        <p class="oc-price">from {usd(remoteIt.from)}<small>{introPricing.label.toLowerCase()} · scoped first</small></p>
+        <div class="btn-row">
+          <Button href="/contact/?topic=remote-it" data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Get a written quote</Button>
+          <Button href={remoteIt.href} variant="ghost" data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">What's included</Button>
+        </div>
+      </article>
+    </div>
+  </Section>
 
   {/* Audit Nov 7 2026 (A3), widened Nov 13 2026 (B2B workstream): Desk (self-serve), Front Office (done for you) and the
       Support Plan (scoped IT help) side by side, so a buyer can tell them apart without another page.
-      Keep every cell true to the Desk page and the package card. The Desk price uses DeskSale's [data-sale-ends] swap
-      (its script is on this page via the choice card), so it changes to the regular price at the deadline. */}
-  <section aria-labelledby="compare-h" id="compare" style="padding-top:1rem">
-    <div class="container">
-      <SectionHeading id="compare-h" eyebrow="Compare" title="Which one fits?" intro={`Two ways to stop quotes from going quiet, plus ongoing IT help. The difference is who does the work and where it runs.`} />
+      Keep every cell true to the Desk page and the package card. The Desk price uses DeskSale's [data-sale-ends] swap. */}
+  <Section id="compare" title="Which one fits?" intro="Two ways to stop quotes from going quiet, plus ongoing IT help. The difference is who does the work and where it runs." tone="raised" size="sm">
+    <details class="compare-wrap">
+      <summary>Compare the {followUpDesk.name}, the {fop.name} and the {sp.name}</summary>
       <div class="table-scroll">
         <table class="vlan-table compare">
           <thead><tr><th scope="col"><span class="sr-only">Question</span></th><th scope="col">{followUpDesk.name}</th><th scope="col">{fop.name}</th><th scope="col">{sp.name}</th></tr></thead>
@@ -94,7 +133,7 @@ const sp = remoteSupportPlan;
             <tr><th scope="row">Best for</th><td data-label={followUpDesk.name}>You send estimates by email and want follow-ups to go out on their own, set up yourself today</td><td data-label={fop.name}>You want new requests and quote follow-up handled as one system, built for you</td><td data-label={sp.name}>Your basics are already set up and you want someone to email when a small IT change or question comes up</td></tr>
             <tr><th scope="row">What it handles</th><td data-label={followUpDesk.name}>Follow-ups on estimates you've already sent</td><td data-label={fop.name}>New requests from your website form and shared inbox, who handles each one, reply drafts, follow-up reminders, an FAQ assistant and email security</td><td data-label={sp.name}>Account adds and removes, settings changes and how-to questions for your office tech. It doesn't send follow-ups</td></tr>
             <tr><th scope="row">How work gets in</th><td data-label={followUpDesk.name}>You add estimates, or paste a list from QuickBooks or a spreadsheet</td><td data-label={fop.name}>Your website form and shared inbox feed one list on their own</td><td data-label={sp.name}>You email one request at a time</td></tr>
-            <tr><th scope="row">Who does the work</th><td data-label={followUpDesk.name}>The Desk sends follow-ups on weekday mornings, from your business name at a NeonKey sending address. Replies go to your inbox and stop that job's follow-ups</td><td data-label={fop.name}>NeonKey builds it in your accounts. After that, a person on your team sends follow-ups from your own inbox, with a reminder and a draft ready</td><td data-label={sp.name}>NeonKey handles each request remotely, with a first reply by the end of the next business day (Monday to Friday)</td></tr>
+            <tr><th scope="row">Who does the work</th><td data-label={followUpDesk.name}>The Desk sends follow-ups on weekday mornings, from your business name at a NeonKey sending address. Replies go to your inbox and stop that job's follow-ups</td><td data-label={fop.name}>NeonKey builds it in your accounts. After that, a person in your business sends follow-ups from your own inbox, with a reminder and a draft ready</td><td data-label={sp.name}>NeonKey handles each request remotely, with a first reply by the end of the next business day (Monday to Friday)</td></tr>
             <tr><th scope="row">Where it runs</th><td data-label={followUpDesk.name}>On NeonKey's hosted service. You set it up yourself in about five minutes</td><td data-label={fop.name}>In your own accounts and tools, set up for you</td><td data-label={sp.name}>In your own accounts. Changes are made remotely</td></tr>
             <tr><th scope="row">Limits</th><td data-label={followUpDesk.name}>Up to 3 follow-ups per estimate, at most 60 emails a day. Only people who asked you for an estimate</td><td data-label={fop.name}>The scope in your written quote. Small changes after go-live are covered by the 3 included months of support</td><td data-label={sp.name}>Up to 3 small requests a month (about 30 minutes each) unless your plan says otherwise. No 24/7 or emergency cover</td></tr>
             <tr><th scope="row">If you stop paying NeonKey</th><td data-label={followUpDesk.name}>Follow-ups stop when your subscription ends, and your list is deleted 30 days later</td><td data-label={fop.name}>What we built stays in your accounts. Any third-party software fees continue with that provider</td><td data-label={sp.name}>Requests stop. Nothing already changed in your accounts is removed</td></tr>
@@ -105,207 +144,72 @@ const sp = remoteSupportPlan;
           </tbody>
         </table>
       </div>
-      <div class="btn-row" style="margin-top:1rem">
-        <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="services-compare">How the {followUpDesk.name} works</a>
-        <a class="btn btn-ghost btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-compare">Get a written quote</a>
-        <a class="btn btn-ghost btn-sm" href={url(sp.href)} data-umami-event="services-cta" data-umami-event-offer={sp.name} data-umami-event-location="services-compare">How the {sp.name} works</a>
-      </div>
-    </div>
-  </section>
+    </details>
+  </Section>
 
-  <section class="alt" aria-labelledby="demo-h">
-    <div class="container">
-      <SectionHeading id="demo-h" eyebrow="See it first" title="What happens to a new quote request" intro="A sample request from the clickable demo (made-up business and customer). This is the flow we'd set up in your own inbox and spreadsheet." />
-      <ol class="flow">
-        <li><span class="flow-n">Tue 7:42 AM</span><strong>A website form comes in</strong><span class="muted">"Looking for a quote to replace two bathroom fans. Do you do free estimates?"</span></li>
-        <li><span class="flow-n">Same minute</span><strong>It's added to your list</strong><span class="muted">Logged in your Google Sheet as "Needs reply · Today", so it can't get buried in the inbox.</span></li>
-        <li><span class="flow-n">Assigned</span><strong>Dana gets it, with a draft</strong><span class="muted">Estimate requests go to the owner, with a reply drafted from approved templates. Nothing goes out until Dana sends it.</span></li>
-        <li><span class="flow-n">Day 1, 3 and 7</span><strong>Follow-up reminders</strong><span class="muted">If the customer goes quiet, Dana gets a reminder with a draft ready. They stop the moment the customer replies.</span></li>
-      </ol>
-      <div class="btn-row" style="margin-top:1.25rem">
-        <a class="btn btn-primary" href={url('/lab/front-office/?type=home')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Try a sample request</a>
-        <a class="btn btn-ghost" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-flow">Get a written quote</a>
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="fop-h">
-    <div class="container">
-      <span id="ai-faq" class="anchor"></span><span id="lead-routing" class="anchor"></span>
-      <article class="card offer offer-featured topline accent-magenta" id={fop.slug}>
-        <div class="offer-featured-grid">
-          <div>
-            <span class="kicker">Remote · fixed written quote</span>
-            <h2 id="fop-h" class="offer-h2"><OfferTitle offer={fop} /></h2>
-            <OfferNameLabel offer={fop} />
-            <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold. For owner-led businesses that get requests by website form or email and lose some to slow replies or forgotten follow-ups.</p>
-            <h3 class="incl-h">What the setup includes</h3>
-            <ul>
-              <li>Requests from your website form and shared inbox in one list, with who's handling each one and when to follow up</li>
-              <li>Reply drafts from your approved templates, and follow-up reminders on day 1, 3 and 7 that stop when the customer replies. A person sends every quote reply and follow-up</li>
-              <li>An FAQ assistant that only gives answers you approved, and hands everything else to a person</li>
-              <li>Business email security set up (SPF, DKIM and DMARC), so it's harder to fake your address</li>
-              <li>Three months of the Monthly Remote Support Plan, so small changes are covered while it beds in</li>
-            </ul>
-            <p class="muted side-note">Want to win back old quotes and past customers too? We can add a win-back follow-up list with drafts for you to send, included in your written quote if you want it.</p>
-            <p class="muted side-note">Phone calls aren't part of this setup. They still need a person or a separate phone setup, which we can quote.</p>
-          </div>
-          <div class="offer-featured-side">
-            {showPackageValue && <p class="fop-value"><s>{usd(fop.value)}+ value</s></p>}
-            <p class="price">{usd(fop.from)}<small>{introPricing.label} · scoped first</small></p>
-            <p class="muted side-note">Any software fees are listed in your written quote and billed to you by that provider. After the three months, support is optional from {usd(remoteSupportPlan.from)}/mo.</p>
-            <div class="btn-row">
-              <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Get a written quote</a>
-              <a class="btn btn-ghost" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="services-package">Try the demo</a>
-            </div>
-          </div>
-        </div>
+  <Section id="free-tools" title="Not ready to buy? Start free" intro="Two free checks you can run yourself today." size="sm">
+    <div class="free-grid">
+      <article class="ds-card ds-card-md offer-card free-kit">
+        <span class="oc-badge">Free · Excel or Google Sheets</span>
+        <h3>Starter IT Kit</h3>
+        <p class="oc-line">One spreadsheet to list every account your business uses, spot the risky ones and run a 10-minute monthly checkup.</p>
+        <div class="btn-row"><Button href="/free-it-kit/" variant="secondary" data-umami-event="free-kit-cta" data-umami-event-location="services-free-tools">Get the free kit</Button></div>
       </article>
+      <div class="free-inbox" id="inbox-check">
+        <h3 class="free-inbox-h">Inbox Check</h3>
+        <p class="hub-line">Type your business domain to see if inboxes will trust your email: SPF, DKIM, DMARC and more, in your browser.</p>
+        <DomainCheck placeholder="yourbusiness.com" track="business" />
+      </div>
     </div>
-  </section>
+  </Section>
 
-  <section class="alt" aria-labelledby="how-h">
-    <div class="container">
-      <SectionHeading id="how-h" eyebrow="How custom setups work" title="You know what's changing before it goes live" intro={`For the ${fop.name} and other custom work. The ${followUpDesk.name} is self-serve, so none of this is needed.`} />
-      <ol class="step-cards">
-        <li><strong>Written scope and price.</strong> Tell us what you need by message (or a short call, if you prefer), then get a fixed quote in writing. If a simple app you already have does the job, I'll tell you.</li>
-        <li><strong>Built after hours.</strong> After business hours or on weekends, tested with sample requests first, so the setup work stays out of your business day.</li>
-        <li><strong>You approve going live.</strong> We run a test together, and nothing switches on until you say so.</li>
-        <li><strong>Handoff.</strong> Everything lives in accounts you control, with a walkthrough and written notes.</li>
-      </ol>
-      <p class="muted founder-line">NeonKey is run by Michael Ream, who has worked in the IT industry for most of his adult career.</p>
-    </div>
-  </section>
-
-  <section aria-labelledby="auto-h" id="smaller">
-    <div class="container">
-      <SectionHeading id="auto-h" eyebrow="Smaller jobs" title="Need just one thing?" intro="Fixed-scope jobs for when you know exactly what you want." />
-      <ul class="jobs">
-        {smallJobs.map((j) => (
-          <li class="job" id={j.slug ?? j.o.slug}>
-            <div class="job-main">
-              <h3 id={j.headingId}><OfferTitle offer={j.o} /></h3>
-              <OfferNameLabel offer={j.o} />
-              <p class="muted">{j.line}{j.demo && <Fragment> <a href={url(j.demo.href)} data-umami-event="demo-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.demo.label}</a>.</Fragment>}</p>
-            </div>
-            <div class="job-side">
-              <span class="job-price">{j.price}</span>
-              {j.more && <a class="btn btn-ghost btn-sm" href={url(j.more)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small-details">Details</a>}
-              {j.buy
-                ? <a class="btn btn-primary btn-sm" {...(j.sku ? buyAttrs(j.href, { lane: 'smb', sku: j.sku, location: 'services-small' }) : { href: j.href })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>
-                : <a class="btn btn-ghost btn-sm" href={url(j.href)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>}
-            </div>
-          </li>
+  <Section id="smaller" headingId="auto-h" eyebrow="Smaller jobs" title="Need just one thing?" intro="Fixed-scope jobs for when you know exactly what you want." size="sm">
+    <ul class="jobs">
+      {smallJobs.map((j) => (
+        <li class="job" id={j.o.slug}>
+          <div class="job-main">
+            <h3><OfferTitle offer={j.o} /></h3>
+            <OfferNameLabel offer={j.o} />
+            <p class="muted">{j.line}</p>
+          </div>
+          <div class="job-side">
+            <span class="job-price">{j.price}</span>
+            {j.more && <a class="btn btn-ghost btn-sm" href={url(j.more)} data-umami-event="services-cta" data-umami-event-offer={j.o.name} data-umami-event-location="services-small-details">Details</a>}
+            {j.buy
+              ? <a class="btn btn-primary btn-sm" {...(j.sku ? buyAttrs(j.href, { lane: 'smb', sku: j.sku, location: 'services-small' }) : { href: j.href })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>
+              : <a class="btn btn-ghost btn-sm" href={url(j.href)} data-umami-event="contact-click" data-umami-event-offer={j.o.name} data-umami-event-location="services-small">{j.cta}</a>}
+          </div>
+        </li>
+      ))}
+    </ul>
+    <details class="offer-details menu-wrap" id="automation-menu">
+      <summary>Ideas: everyday jobs we can automate</summary>
+      <div class="grid grid-3 menu-grid">
+        {automationMenu.map((g) => (
+          <div id={`menu-${g.id}`}>
+            <h4>{g.title}</h4>
+            <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
         ))}
-      </ul>
-      <details class="offer-details menu-wrap" id="automation-menu">
-        <summary>Ideas: everyday jobs we can automate</summary>
-        <div class="grid grid-3 menu-grid">
-          {automationMenu.map((g) => (
-            <div id={`menu-${g.id}`}>
-              <h4>{g.title}</h4>
-              <ul class="menu-list">{g.items.map((it) => <li>{it}</li>)}</ul>
-            </div>
-          ))}
-        </div>
-        <p class="muted" style="font-size:.95rem">Examples, not a promise of results. Got your own idea? <a href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu-own-idea">Tell us about it</a>.</p>
-      </details>
-    </div>
-  </section>
-
-  {/* Free for businesses (item 6): the Starter IT Kit and the domain email check, labeled Inbox Check here. */}
-  <section aria-labelledby="free-h" id="free-tools">
-    <div class="container">
-      <SectionHeading id="free-h" eyebrow="Free for businesses" title="Not ready to buy? Start free" intro="Two free checks you can run yourself today." />
-      <div class="free-grid">
-        <div class="panel topline accent-cyan free-kit">
-          <span class="kicker">Free · Excel or Google Sheets</span>
-          <h3>Starter IT Kit</h3>
-          <p class="muted">One spreadsheet to list every account your business uses, spot the risky ones and run a 10-minute monthly checkup.</p>
-          <a class="btn btn-ghost btn-sm" href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services-free-tools">Get the free kit</a>
-        </div>
-        <div class="free-inbox" id="inbox-check">
-          <h3 class="free-inbox-h">Inbox Check</h3>
-          <p class="muted">Type your business domain to see if inboxes will trust your email: SPF, DKIM, DMARC and more, in your browser.</p>
-          <DomainCheck placeholder="yourbusiness.com" track="business" />
-        </div>
       </div>
-    </div>
-  </section>
+      <p class="muted" style="font-size:.95rem">Examples, not a promise of results. Got your own idea? <a href={url('/contact/?topic=quick-win')} data-umami-event="services-cta" data-umami-event-location="automation-menu-own-idea">Tell us about it</a>.</p>
+    </details>
+  </Section>
 
-  <section class="alt" aria-labelledby="featured-h">
-    <div class="container">
-      <article class="card offer offer-featured topline accent-cyan" id={remoteIt.slug}>
-        <div class="offer-featured-grid">
-          <div>
-            <span class="kicker">Remote · anywhere in the US</span>
-            <h2 id="featured-h" class="offer-h2"><OfferTitle offer={remoteIt} /></h2>
-            <OfferNameLabel offer={remoteIt} />
-            <p class="offer-outcome">Your office tech set up properly, done over video and screen share.</p>
-            <ul>{remoteIt.items.map((i) => <li>{i}</li>)}</ul>
-          </div>
-          <div class="offer-featured-side">
-            <p class="price">Starting at {usd(remoteIt.from)}<small>{introPricing.label} · scoped first</small></p>
-            <p class="muted side-note">You keep every login, and you get notes on everything we changed. Ongoing help is optional from {usd(remoteSupportPlan.from)}/mo.</p>
-            <div class="btn-row">
-              <a class="btn btn-primary" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">Get a written quote</a>
-              <a class="btn btn-ghost" href={url(remoteIt.href!)} data-umami-event="services-cta" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-remote-it">See what's included</a>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
+  <Section id="how" headingId="how-h" eyebrow="How custom setups work" title="You know what's changing before it goes live" intro={`For the ${fop.name} and other custom work. The ${followUpDesk.name} is self-serve, so none of this is needed.`} tone="raised" size="sm">
+    <Steps items={customSteps} />
+  </Section>
 
-  <section aria-labelledby="faq-h">
-    <div class="container faq">
-      <SectionHeading id="faq-h" eyebrow="Questions" title="A few things to know before you ask for a quote" />
-      <details class="offer-details faq-item">
-        <summary>How do I know if I'm losing leads?</summary>
-        <div class="offer-details-body">
-          <p>Look back at last month and check three things: how long it took to send the first reply to each new inquiry, how many quotes got no follow-up after the first message, and how many past customers you haven't contacted in a year. If any answer surprises you, that's the place to start. Tell us what you find and we'll suggest the smallest fix that helps.</p>
-        </div>
-      </details>
-      <details class="offer-details faq-item">
-        <summary>Does anything reply to my customers without me?</summary>
-        <div class="offer-details-body">
-          <p>It depends on which one you pick.</p>
-          <p><strong>{fop.name}:</strong> only the FAQ assistant replies on its own, and only with answers you approved in advance, like hours or service area. Anything it isn't sure about goes to a person. Quote replies and follow-ups are drafted for you, and a person on your team sends them.</p>
-          <p><strong>{followUpDesk.name}:</strong> yes, that's the point of it. Follow-ups on the estimates you add go out on their own, in wording you write and can edit, and they stop the moment the customer replies. You can send yourself a preview first and stop any job with one click. <a href="#compare">Compare them</a>.</p>
-        </div>
-      </details>
-      <details class="offer-details faq-item">
-        <summary>Are there software costs on top?</summary>
-        <div class="offer-details-body">
-          <p>Where possible we build on tools you already pay for, like your email and a spreadsheet. If a setup needs a paid tool, its monthly fee is listed in your written quote before you decide, and the provider bills you directly.</p>
-        </div>
-      </details>
-      <details class="offer-details faq-item">
-        <summary>Why not just buy software?</summary>
-        <div class="offer-details-body">
-          <p>Sometimes you should. If an off-the-shelf app already does exactly what you need, use it, and I'm happy to help you set it up. A custom build makes sense when an app would make you change how you work. It fits the process you already have: your categories, your spreadsheet, your steps. It can also connect or replace subscriptions that overlap, and it plugs into the tools you already use. And you own it outright, so there are no surprise price hikes or features that disappear in an update. You control where your data goes. If you'd like, I can maintain it for you, or you can run it yourself.</p>
-        </div>
-      </details>
-      <details class="offer-details faq-item">
-        <summary>How do you handle my accounts and data?</summary>
-        <div class="offer-details-body">
-          <p>Your accounts stay yours. You keep every admin login, and where a tool allows it I work from a separate admin account or delegated access that you can switch off, rather than your own password. I only open the settings and files the job needs. At handoff we review who has access, and you can remove mine (I'll show you how). If you're on a support plan, my access stays only for the systems the plan covers. I don't keep copies of your files or passwords after the work is done. Questions about this are welcome anytime before you approve a quote.</p>
-        </div>
-      </details>
-      <details class="offer-details faq-item">
-        <summary>Can I start small and add more later?</summary>
-        <div class="offer-details-body">
-          <p>Yes, that's how most people start. Begin with one fix or one module. Anything you add later is built to fit what's already there, and on the monthly plan simple changes are part of the plan. Advanced features may cost extra, and you always get the price before any work starts.</p>
-        </div>
-      </details>
-      <div class="btn-row" style="margin-top:1.5rem">
-        <a class="btn btn-primary" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Get a written quote</a>
-        <a class="btn btn-ghost" href={url('/contact/?topic=remote-it')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="services-faq">Ask about IT setup</a>
-      </div>
-      <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Not ready for a project? Grab the <a href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="services">free Starter IT Kit</a> to check your own accounts in 10 minutes, or take the <a href={url('/services/quiz/')} data-umami-event="quiz-cta" data-umami-event-location="services">2-minute quiz</a>. Or get <a href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="services">Unlock the Week</a>: one short fix every Wednesday for catching more customers and keeping your tech secure.</p>
-      <p class="muted" style="font-size:.9rem">Prices shown are starting points, not quotes. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
+  <Section id="faq" headingId="faq-h" title="A few things to know before you ask for a quote" size="sm" width="narrow">
+    <FAQ items={faq} />
+    <div class="btn-row hub-faq-cta">
+      <Button href={`/contact/?topic=${fop.slug}`} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="services-faq">Get a written quote</Button>
+      <Button href="/services/quiz/" variant="secondary" data-umami-event="quiz-cta" data-umami-event-location="services">Take the 2-minute quiz</Button>
     </div>
-  </section>
+    <p class="hub-note">{introPricing.label}: {introPricing.note}</p>
+    <p class="hub-note">Prices shown are starting points, not quotes. Outcomes depend on your business, your tools and your data; no specific results are promised.</p>
+    <TrustLine location="services" />
+  </Section>
 </Base>
 
 <script is:inline>
@@ -316,69 +220,45 @@ const sp = remoteSupportPlan;
 </script>
 
 <style>
-  .svc-head-cta { margin-top: 1rem; }
-  .free-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.25rem; align-items: start; }
-  @media (max-width: 820px) { .free-grid { grid-template-columns: 1fr; } }
-  .free-kit { display: flex; flex-direction: column; gap: .45rem; }
-  .free-kit h3, .free-inbox-h { font-size: 1.2rem; margin: 0; }
-  .free-kit p, .free-inbox p { margin: 0 0 .6rem; }
-  .free-kit .btn { align-self: flex-start; }
-  #free-tools, #inbox-check { scroll-margin-top: 90px; }
-  .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  @media (max-width: 760px) { .choices { grid-template-columns: 1fr; } }
-  .choice { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: inherit; height: 100%; }
-  .choice strong { font-size: 1.3rem; color: var(--text); line-height: 1.25; }
-  .choice .muted { font-size: .98rem; }
-  .choice-name { font-size: .85rem; font-weight: 600; color: var(--muted); margin-top: -.2rem; }
-  .choice-price { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-top: .3rem; font-variant-numeric: tabular-nums; }
-  .choice-price small { font-size: .9rem; font-weight: 500; color: var(--muted); }
-  .choice-btns { margin-top: auto; padding-top: .4rem; }
-  .choice-trial { font-size: .92rem; font-weight: 600; color: var(--cyan); margin-top: -.3rem; }
   .anchor { display: block; scroll-margin-top: 90px; }
-  .small-note { margin: 1rem 0 0; font-size: .92rem; }
-  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }
-  @media (max-width: 900px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
-  .flow li { display: flex; flex-direction: column; gap: .3rem; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
-  .flow-n { font-weight: 700; color: var(--cyan); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
-  .flow .muted { font-size: .93rem; }
-  .offer-h2 { font-size: 1.6rem; margin: .4rem 0 0; }
-  .incl-h { font-size: 1.05rem; margin: 1rem 0 .3rem; }
-  .side-note { font-size: .92rem; }
-  .fop-value { margin: 0 0 -.4rem; color: var(--muted); font-weight: 600; }
-  .offer[id], #smaller, .job { scroll-margin-top: 90px; }
-  .founder-line { margin-top: 1.25rem; font-size: .95rem; max-width: 860px; }
-  .jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
-  .job { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
-  .job h3 { font-size: 1.08rem; margin: 0; }
+  .hub-product { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 24rem); gap: var(--space-8); align-items: start; }
+  @media (max-width: 860px) { .hub-product { grid-template-columns: 1fr; gap: var(--space-5); } }
+  .hub-name { font-size: var(--text-xl); margin: 0 0 var(--space-2); }
+  .hub-line { color: var(--color-text-muted); margin: 0 0 var(--space-4); }
+  .hub-list { grid-template-columns: 1fr; }
+  .hub-links { margin-top: var(--space-5); }
+  .hub-note { font-size: var(--text-sm); color: var(--color-text-muted); margin: var(--space-4) 0 0; max-width: 46rem; }
+  .hub-faq-cta { margin-top: var(--space-6); }
+  .free-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-5); align-items: start; }
+  @media (max-width: 860px) { .free-grid { grid-template-columns: 1fr; } }
+  .free-inbox-h { font-size: var(--text-xl); margin: 0 0 var(--space-2); }
+  .compare-wrap > summary { cursor: pointer; display: inline-flex; align-items: center; min-height: var(--tap); font-weight: var(--weight-semibold); color: var(--color-primary); }
+  .compare-wrap[open] > summary { margin-bottom: var(--space-4); }
+  .jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .job { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); scroll-margin-top: 90px; }
+  .job h3 { font-size: var(--text-md); margin: 0; }
   .job p { margin: .2rem 0 0; font-size: .93rem; }
-  .job-side { display: flex; align-items: center; gap: .9rem; flex-shrink: 0; }
-  .job-price { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  @media (max-width: 640px) { .job { flex-direction: column; align-items: flex-start; } }
-  .menu-wrap { margin-top: 1.5rem; }
-  .menu-wrap > summary { color: var(--text); font-size: 1.05rem; }
-  .menu-grid { margin-top: 1rem; }
+  .job-side { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+  .job-price { font-weight: var(--weight-bold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) { .job { flex-direction: column; align-items: flex-start; } .job-side { flex-wrap: wrap; } }
+  .menu-wrap { margin-top: var(--space-6); }
+  .menu-wrap > summary { color: var(--color-text); font-size: 1.05rem; min-height: var(--tap); }
+  .menu-grid { margin-top: var(--space-4); }
   .menu-grid h4 { margin: 0 0 .5rem; font-size: 1rem; }
   .menu-list { margin: 0 0 .9rem; padding-left: 1.1rem; font-size: .93rem; }
   .menu-list li { margin-bottom: .35rem; }
   [id^="menu-"] { scroll-margin-top: 90px; }
-  .faq .faq-item { max-width: 860px; }
-  .compare th[scope="row"] { color: var(--text); font-size: .92rem; text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: top; }
+  .compare th[scope="row"] { color: var(--color-text); font-size: .92rem; text-transform: none; letter-spacing: 0; white-space: nowrap; vertical-align: top; }
   .compare td { vertical-align: top; }
   .compare thead th { white-space: nowrap; }
-  /* Phones: each question becomes a small card with both answers stacked, so neither column scrolls out of view. */
+  /* Phones: each question becomes a small card with every answer stacked, so no column scrolls out of view. */
   @media (max-width: 640px) {
     .table-scroll .compare { min-width: 0; }
     .compare thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
     .compare, .compare tbody, .compare tr, .compare th, .compare td { display: block; }
-    .compare tr { border-bottom: 1px solid var(--line); padding: .6rem 0; }
+    .compare tr { border-bottom: 1px solid var(--color-border); padding: .6rem 0; }
     .compare th[scope="row"], .compare td { border: 0; padding: .25rem 0; white-space: normal; }
     .compare th[scope="row"] { font-size: 1rem; }
-    .compare td::before { content: attr(data-label); display: block; color: var(--violet); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    .compare td::before { content: attr(data-label); display: block; color: var(--color-violet); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
   }
-  #compare { scroll-margin-top: 90px; }
-  .step-cards > li strong:first-child { display: inline; font-size: inherit; }
-  .faq-item { border-bottom: 1px solid var(--line); padding-bottom: .7rem; }
-  .faq-item > summary { color: var(--text); font-size: 1.05rem; }
-  .faq-item .offer-details-body { font-size: 1rem; margin-top: .6rem; }
 </style>
