@@ -5,6 +5,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import { followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive as saleLive, frontOfficePackage as fop, remoteSupportPlan as sp, usd } from '../../data/services';
 import DeskSale from '../../components/DeskSale.astro';
 import { followUpDeskSale } from '../../data/services';
+import { buyAttrs } from '../../lib/checkout-ref';
 // Payback example uses whatever monthly price is on sale right now ($1,250 profit per job is a labeled example).
 const deskMonthly = saleLive ? followUpDeskSale.monthly : fd.from;
 const paybackMonths = Math.floor(1250 / deskMonthly);
@@ -142,7 +143,7 @@ const sample = [
           : <Fragment>
         <p class="price">{trial} days free<small>then {usd(fd.from)} per month · cancel anytime</small></p>
         {fd.buyUrl
-          ? <a class="btn btn-primary" href={fd.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start your free trial</a>
+          ? <a class="btn btn-primary" {...buyAttrs(fd.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'follow-up-desk-page' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Start your free trial</a>
           : <a class="btn btn-primary" href={url('/contact/?topic=follow-up-desk')} data-umami-event="contact-click" data-umami-event-offer={fd.name} data-umami-event-location="follow-up-desk-page">Ask about it</a>}
         {fd.buyUrl
           ? <p class="muted fd-small">A card is required to start. You won't be charged until day {trial + 1}, and you can cancel before then from your dashboard. Secure checkout by Stripe; your dashboard link arrives by email within a few minutes.</p>

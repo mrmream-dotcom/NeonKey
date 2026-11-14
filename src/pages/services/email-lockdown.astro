@@ -7,6 +7,7 @@ import { emailLockdown, lockdownCredit, lockdownFlashSale as sale, lockdownFlash
 import SaleClock from '../../components/SaleClock.astro';
 import DomainCheck from '../../components/DomainCheck.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
+import { buyAttrs } from '../../lib/checkout-ref';
 // Email Authentication Setup: the one fixed-price job you can buy online (Stripe Payment Link in services.ts).
 // It is NOT instant: after paying, the buyer answers the intake form at /pay/email-lockdown/ (unlisted, linked only
 // from /pay/thanks/) is optional now: the neonkey-lockdown Worker (workers/lockdown) reads the domain typed at Stripe
@@ -60,7 +61,7 @@ import WatchdogCta from '../../components/WatchdogCta.astro';
           )}
           <div data-sale-after hidden={live} class="el-pricebox">
             <p class="price">{usd(emailLockdown.from)}<small>Flat price</small></p>
-            <a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
+            <a class="btn btn-primary" {...buyAttrs(emailLockdown.buyUrl, { lane: 'smb', sku: 'email-auth-29', location: 'lockdown-page' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-page">Buy now · {usd(emailLockdown.from)}</a>
           </div>
         </div>
         <a class="btn btn-ghost btn-sm" href="#free-check" data-umami-event="lockdown-free-check-jump" data-umami-event-location="lockdown-page">Check your domain free first</a>
@@ -81,7 +82,7 @@ import WatchdogCta from '../../components/WatchdogCta.astro';
         <div slot="next" class="panel topline accent-magenta pf-next">
           <h2 class="pf-h">Want it fixed for you?</h2>
           <p>The Email Authentication Setup turns this check into the exact records for your email provider and DNS host, in a PDF report that usually arrives by email within a few minutes. Type this same domain at checkout.</p>
-          <p><a class="btn btn-primary" href={emailLockdown.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
+          <p><a class="btn btn-primary" {...buyAttrs(emailLockdown.buyUrl, { lane: 'smb', sku: 'email-auth-29', location: 'lockdown-free-check' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={emailLockdown.name} data-umami-event-location="lockdown-free-check">Fix it for {usd(emailLockdown.from)}</a></p>
           <p class="muted el-small">Everything passing already? Then you don't need this one. Keep the result for your records.</p>
           <WatchdogCta from="lockdown-check" lead="Founder or solo builder?" />
         </div>

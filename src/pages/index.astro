@@ -11,6 +11,7 @@ import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import LockdownStrip from '../components/LockdownStrip.astro';
 import DeskSale from '../components/DeskSale.astro';
+import { buyAttrs } from '../lib/checkout-ref';
 import { publishedLabProjects } from '../data/lab';
 import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, followUpDeskSale, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
@@ -214,7 +215,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
               </div></Fragment>
             : <Fragment><p class="price" style="margin:.4rem 0 .8rem">{usd(followUpDesk.from)}<small>a month · {followUpDeskTrialDays} days free · card required, cancel anytime</small></p>
               <div class="btn-row">
-            <a class="btn btn-primary btn-sm" href={followUpDesk.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud">Start free trial</a>
+            <a class="btn btn-primary btn-sm" {...buyAttrs(followUpDesk.buyUrl, { lane: 'smb', sku: 'desk-250m', location: 'home-fud' })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud">Start free trial</a>
             <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud-details">How it works</a>
               </div></Fragment>}
         </article>

@@ -5,6 +5,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import Icon from '../../components/Icon.astro';
 import WatchdogCta from '../../components/WatchdogCta.astro';
 import { lockdownCredit, followUpDesk, followUpDeskTrialDays as trial } from '../../data/services';
+import { skuPricesJson } from '../../lib/checkout-ref';
 // Where Stripe Checkout and Payment Links send customers after paying (workers/payments/scripts/).
 // Google Ads purchase conversion: public/js/conv-lockdown.js fires only for the Email Authentication Setup Payment Link
 // redirect (?offer=email-lockdown&session_id=cs_...), never for invoice payments or plain visits.
@@ -32,6 +33,8 @@ import { lockdownCredit, followUpDesk, followUpDeskTrialDays as trial } from '..
   </div>
   <!-- Google Ads "Lockdown purchase" conversion. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-lockdown.js')}></script>
+  <!-- Checkout return: Umami checkout-return + GA4 purchase (prices passed from src/lib/checkout-ref.ts). External file. -->
+  <script is:inline src={url('/js/checkout-return.js')} data-skus={skuPricesJson()}></script>
 </Base>
 
 <style>

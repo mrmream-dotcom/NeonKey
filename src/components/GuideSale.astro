@@ -4,8 +4,11 @@
 // countdown to one fixed end time for every visitor, the first-100 limit) and keeps the regular offer hidden in
 // [data-sale-after]; at the deadline the script swaps them. With no sale it renders exactly the regular offer.
 import { setupGuide as g, guideFlashSale as sale, guideFlashSaleLive as live, usd } from '../data/services';
-interface Props { variant: 'top' | 'box' | 'bar' | 'kicker'; location: string }
-const { variant, location } = Astro.props;
+import { buyAttrs, type Lane } from '../lib/checkout-ref';
+interface Props { variant: 'top' | 'box' | 'bar' | 'kicker'; location: string; lane?: Lane }
+const { variant, location, lane = 'founders' } = Astro.props;
+// Regular-price buy links carry the checkout ref (lane, sku, location). The expired flash-sale links are left as they were.
+const buy = () => buyAttrs(g.buyUrl, { lane, sku: 'founder-stack-29', location });
 const canBuy = g.buyUrl !== '';
 const saleOffer = `${g.name} flash ${sale.price}`;
 const limits = `${sale.hours} hours only, first ${sale.cap} orders. When either runs out, the price goes back to ${usd(g.price)}.`;
@@ -28,7 +31,7 @@ const limits = `${sale.hours} hours only, first ${sale.cap} orders. When either 
     <div data-sale-after hidden={live} class="gs-row">
       <p class="sg-top-price">{usd(g.price)} <span class="muted">one-time · PDF emailed in minutes</span></p>
       {canBuy
-        ? <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
+        ? <a class="btn btn-primary" {...buy()} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
         : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
     </div>
   </div>
@@ -43,13 +46,13 @@ const limits = `${sale.hours} hours only, first ${sale.cap} orders. When either 
         <p class="price"><s class="gs-was" aria-label={`was ${usd(g.price)}`}>{usd(g.price)}</s> {usd(sale.price)}<small>One-time. First edition, November 2026.</small></p>
         <p class="sg-small"><strong>First {sale.cap} orders only.</strong> When the {sale.hours} hours or the {sale.cap} orders run out, the price goes back to {usd(g.price)}.</p>
         <a class="btn btn-primary" href={sale.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={saleOffer} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(sale.price)}</a>
-        <p class="muted sg-small">If checkout says the sale has closed, all {sale.cap} are gone. <a href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">The guide is still available at {usd(g.price)}</a>.</p>
+        <p class="muted sg-small">If checkout says the sale has closed, all {sale.cap} are gone. <a {...buy()} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">The guide is still available at {usd(g.price)}</a>.</p>
       </div>
     )}
     <div data-sale-after hidden={live} class="gs-col">
       <p class="price">{usd(g.price)}<small>One-time. First edition, November 2026.</small></p>
       {canBuy
-        ? <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
+        ? <a class="btn btn-primary" {...buy()} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Buy the guide · {usd(g.price)}</a>
         : <span class="btn btn-primary" aria-disabled="true">Opens soon</span>}
     </div>
   </div>
@@ -65,7 +68,7 @@ const limits = `${sale.hours} hours only, first ${sale.cap} orders. When either 
     )}
     <div data-sale-after hidden={live} class="gs-bar">
       <span class="sg-mbar-price">{usd(g.price)}</span>
-      <a class="btn btn-primary" href={g.buyUrl} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Get the guide</a>
+      <a class="btn btn-primary" {...buy()} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={g.name} data-umami-event-location={location} data-umami-event-track="founders">Get the guide</a>
     </div>
   </div>
 )}

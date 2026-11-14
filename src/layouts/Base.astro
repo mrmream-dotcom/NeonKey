@@ -139,6 +139,8 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
     <script is:inline>try{if(!sessionStorage.getItem('nk_src')){var q=new URLSearchParams(location.search),r=document.referrer,x='';try{if(r&&new URL(r).host!==location.host)x=r.slice(0,200)}catch(e){}sessionStorage.setItem('nk_src',JSON.stringify({l:location.pathname.slice(0,120),u:['utm_source','utm_medium','utm_campaign'].map(function(n){return(q.get(n)||'').slice(0,60)}).join(' / '),r:x}))}}catch(e){}</script>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-18547389944"></script>
     <script is:inline src={url('/js/gtag-init.js')}></script>
+    <!-- Checkout attribution: first-touch UTMs, client_reference_id src on Stripe buy links, GA4 begin_checkout. External file (CSP). -->
+    <script is:inline defer src={url('/js/checkout-attr.js')}></script>
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={url('/favicon-32x32.png')} type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} sizes="180x180" />
@@ -236,6 +238,12 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
           if (note) note.textContent = 'This form is not connected yet, so nothing was sent. Please email instead.';
         });
       });
+      // GA4 copy of a real lead submit (generate_lead), sent to GA4 only (not the Ads tag). The lane comes from a
+      // data-umami-event-lane prop if the button has one, else from the page path. No form field values are sent.
+      const laneFor = (p: string) => (/^\/founders(\/|$)/.test(p) ? 'founders' : /^\/(scam-checker|learn)(\/|$)/.test(p) ? 'family' : 'smb');
+      const gaLead = (form: string, lane?: string) => {
+        try { (window as any).gtag?.('event', 'generate_lead', { send_to: 'G-425106TVS2', form, lane: lane || laneFor(location.pathname) }); } catch {}
+      };
       // Lead forms: a submit button marked data-umami-submit="<event>" is counted when the form is actually
       // submitted (the browser has already checked the required fields), not on every click. A click on an
       // empty form used to count as a submit. Extra data-umami-event-* attributes (like the A/B tags) go along.
@@ -248,6 +256,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
           if (a.name.startsWith('data-umami-event-')) props[a.name.slice('data-umami-event-'.length)] = a.value;
         }
         (window as any).umami?.track?.(name, props);
+        gaLead(name, props.lane);
       }, true);
       // Newsletter (Kit): count a "newsletter-signup" only when a signup form is actually submitted
       // (the browser has already validated the email). Works for our own form and for Kit's JS embed,
@@ -257,6 +266,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         const host = form?.closest('[data-nl-form], [data-nl-embed]') as HTMLElement | null;
         if (!host) return;
         (window as any).umami?.track?.('newsletter-signup', { form: host.dataset.form || '', provider: 'kit' });
+        gaLead('newsletter-signup');
         // Mark this tab as having just submitted a signup. /js/conv-newsletter.js on /newsletter/thanks/ fires the
         // Google Ads conversion only when this mark exists (Kit redirects there only after it accepts the email),
         // then clears it, so a direct visit or a reload of the thanks page never counts.
