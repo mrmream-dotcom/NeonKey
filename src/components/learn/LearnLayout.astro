@@ -11,11 +11,14 @@ import track from '../../data/security-plus/track.json';
 import { isLearnPathLive } from '../../lib/schedule.mjs';
 const { frontmatter } = Astro.props;
 // `noindex: true` in frontmatter keeps a draft page out of search engines (pair it with DRAFT_PAGES in astro.config.mjs).
-const { title, description, kicker = 'Learn', back, noindex = false } = frontmatter;
+// Optional (Nov 14 2026, three-lane site): `lane` ('family' | 'founders' | 'smb') sets the header button (Base.astro),
+// `crumbs` replaces the breadcrumb trail, and `tool: true` hides the "Tutorial" tag and reading-time row (tool pages).
+const { title, description, kicker = 'Learn', back, noindex = false, lane, crumbs: crumbsOverride, tool = false } = frontmatter;
 const parts: string[] = String(kicker).split('·').map((x: string) => x.trim()).filter((x: string) => x && x !== 'Learn');
-const crumbs: { href?: string; label: string }[] = [{ href: '/', label: 'Home' }, { href: '/learn/', label: 'Learn' }];
+let crumbs: { href?: string; label: string }[] = [{ href: '/', label: 'Home' }, { href: '/learn/', label: 'Learn' }];
 if (back && back.href !== '/learn/') crumbs.push({ href: back.href, label: back.href.includes('security-plus') ? 'Security+ guide' : back.label.replace(/^Back to (the )?/, '') });
 crumbs.push({ label: title });
+if (Array.isArray(crumbsOverride) && crumbsOverride.length) crumbs = crumbsOverride;
 const isTrack = Astro.url.pathname.includes('/security-plus/');
 const icon: IconName = isTrack ? 'book' : /automation|\bai\b/i.test(String(kicker)) ? 'spark' : /network|wi-?fi/i.test(String(kicker)) ? 'wifi' : /practical it/i.test(String(kicker)) ? 'wrench' : 'shield';
 const mins = learnMinutes(Astro.url.pathname);
@@ -36,7 +39,7 @@ const related = self
       .slice(0, 3)
   : [];
 ---
-<Base title={title} description={description} noindex={noindex}>
+<Base title={title} description={description} noindex={noindex} lane={lane}>
   <article class="narrow page-head prose guide-page">
     <nav class="crumbs" aria-label="Breadcrumb">
       <ol>
@@ -45,12 +48,12 @@ const related = self
     </nav>
     <span class="kicker eyebrow">{kicker}</span>
     <h1 class="guide-title">{title}</h1>
-    <div class="guide-byline">
+    {!tool && <div class="guide-byline">
       <span class="icon-chip"><Icon name={icon} /></span>
       <span class="cat-badge tone-violet">{kind}</span>
       {parts.map((t) => <span class="tag">{t}</span>)}
       {mins && mins >= 3 && <span class="muted"><span class="meta-sep" aria-hidden="true">·</span> {mins} min read</span>}
-    </div>
+    </div>}
     <slot />
     {(prevPage || nextPage) && (
       <nav class="guide-pager" aria-label="Security+ guide pages">

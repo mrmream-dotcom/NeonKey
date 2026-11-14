@@ -4,6 +4,7 @@ import Base from '../../../layouts/Base.astro';
 import PageHeader from '../../../components/PageHeader.astro';
 import GuideSale from '../../../components/GuideSale.astro';
 import WatchdogCta from '../../../components/WatchdogCta.astro';
+import TrustLine from '../../../components/TrustLine.astro';
 import { setupGuide, emailLockdown, usd } from '../../../data/services';
 // Sales page for the self-serve founder guide (Michael's request, Nov 6 2026; retargeted at founders the same night).
 // Founders track: linked from /founders/, /founders/preflight/ and the footer only, not from the small-business nav.
@@ -91,6 +92,7 @@ import { setupGuide, emailLockdown, usd } from '../../../data/services';
       </aside>
     </div>
   </section>
+  <div class="container"><TrustLine location="founders-guide" class="tl-page-end" /></div>
   <GuideSale variant="bar" location="guide-mobile-bar" />
   <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>

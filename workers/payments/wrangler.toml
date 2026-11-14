@@ -17,7 +17,9 @@ BCC_ADDRESS = "mr.mream@gmail.com"
 # Live-mode events are ignored unless this is "true". Michael approved live on Nov 4 2026.
 ALLOW_LIVE = "true"
 # Founder Stack Payment Link. Paid checkouts from it (or with metadata offer=nk_founder_stack_guide) get the PDF emailed.
-FOUNDER_STACK_LINK = "plink_1UYvrICRxS1tvAi2komKzvTp"
+# Current $29 link (src/data/services.ts setupGuide.buyUrl). The retired $97 link plink_1UYvrICRxS1tvAi2komKzvTp was
+# here until Nov 14 2026; metadata matching covered it. Takes effect on the next deploy (Michael).
+FOUNDER_STACK_LINK = "plink_1UajXgCRxS1tvAi2Esh56b8q"
 
 # Private product files (the Founder Stack PDF). Never in the repo or on the site; no route serves it.
 [[kv_namespaces]]

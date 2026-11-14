@@ -253,7 +253,7 @@ export const emailLockdown: Offer = {
   from: 29,
   outcome: 'Make it harder for scammers to send email pretending to be you, and help your real email land in inboxes',
   for: 'For any business that sends email from its own domain',
-  items: ['Your SPF, DKIM and DMARC records checked', 'Missing or broken records fixed', 'DMARC started in report-only mode', 'A short note of what changed'],
+  items: ['Your SPF, DKIM and DMARC records checked', 'The exact records to add for your provider, or added for you if you invite NeonKey to your DNS', 'DMARC started in report-only mode', 'A short note of what changed'],
   href: '/services/#email-lockdown',
   // Live $29 Stripe Payment Link plink_1UajXgCRxS1tvAi2TjNiqT0y (Nov 11 2026; the $49 link 8x2aEW... is retired).
   // The neonkey-lockdown Worker must list this link in LOCKDOWN_PAYMENT_LINK. After paying, the customer lands on /pay/thanks/.
@@ -407,7 +407,7 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
   parts: [
     { name: 'AI Intake & FAQ Assistant', value: 'standard rate from $699' },
     { name: 'Lead-Routing & Follow-Up System', value: 'standard rate from $999' },
-    { name: 'Email authentication setup (SPF, DKIM and DMARC checked and fixed)', value: 'standard rate $29' },
+    { name: 'Email authentication setup (SPF, DKIM and DMARC checked and set up)', value: 'standard rate $29' },
     { name: '3 months of the Monthly Remote Support Plan', value: 'standard rate $129/mo' },
   ],
   items: [

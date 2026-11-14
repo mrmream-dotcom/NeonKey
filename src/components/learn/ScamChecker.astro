@@ -3,14 +3,17 @@
 // The rules live in src/lib/scam-check.mjs and run only in the browser: the pasted text is never sent or stored.
 // Deliberately not a <form> (the Google tag watches form submits). Umami gets the verdict and tell ids only.
 // Also wires any [data-share] button on the page (send the checker to family).
-interface Props { heading?: string; level?: 'h1' | 'h2' }
-const { heading = 'Paste a message to check it', level = 'h2' } = Astro.props;
+// compact (Nov 14 2026, /scam-checker/): no eyebrow and a one-line privacy note, so the paste box sits in the first phone screen.
+interface Props { heading?: string; level?: 'h1' | 'h2'; compact?: boolean }
+const { heading = 'Paste a message to check it', level = 'h2', compact = false } = Astro.props;
 const H = level;
 ---
   <section class="fc-box topline" id="check" aria-labelledby="fc-h">
-    <span class="eyebrow">Family Shield free check</span>
+    {!compact && <span class="eyebrow">Family Shield free check</span>}
     <H id="fc-h">{heading}</H>
-    <p>Copy the text, email or pop-up wording and paste it below. <strong>The check runs only in your browser: what you paste is never sent or saved anywhere.</strong> Leave out names, account numbers and codes anyway.</p>
+    {compact
+      ? <p><strong>It runs only in your browser: what you paste is never sent or saved anywhere.</strong> Leave out names, account numbers and codes anyway.</p>
+      : <p>Copy the text, email or pop-up wording and paste it below. <strong>The check runs only in your browser: what you paste is never sent or saved anywhere.</strong> Leave out names, account numbers and codes anyway.</p>}
     <div data-fc-form>
       <label for="fc-text" class="sr-only">Message to check</label>
       <textarea id="fc-text" name="message" rows="6" maxlength="8000" placeholder="Paste the message here" autocomplete="off" spellcheck="false"></textarea>

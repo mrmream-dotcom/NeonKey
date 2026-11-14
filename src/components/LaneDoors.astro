@@ -1,0 +1,59 @@
+---
+// The three lane doors on the homepage (04-website-overhaul-plan, section 3): Protect yourself, For founders,
+// For businesses. Lane ids match the Lane type in src/lib/checkout-ref.ts. Each button is counted in Umami as
+// "lane-door" with its lane, so we can see which door visitors pick. Prices come from src/data/services.ts.
+import { url } from '../config';
+import { setupGuide, followUpDeskTrialDays as trial, usd } from '../data/services';
+import type { Lane } from '../lib/checkout-ref';
+const doors: { lane: Lane; accent: string; eyebrow: string; title: string; body: string; cta: string; href: string }[] = [
+  {
+    lane: 'family', accent: 'accent-cyan',
+    eyebrow: 'Protect yourself · Free',
+    title: 'Is this text a scam?',
+    body: 'Paste a text, email or pop-up into the free scam checker to see the warning signs and what to do next. It runs in your browser, and nothing you paste is saved.',
+    cta: 'Check a message free', href: '/scam-checker/',
+  },
+  {
+    lane: 'founders', accent: 'accent-violet',
+    eyebrow: `For founders · Free check, guide ${usd(setupGuide.price)}`,
+    title: 'Will inboxes trust your launch email?',
+    body: 'Run the free Launch Preflight on your domain. It takes about 30 seconds, no signup. Then set up the backend NeonKey runs on with The Founder Stack, a step-by-step guide.',
+    cta: 'Check my domain free', href: '/founders/#check',
+  },
+  {
+    lane: 'smb', accent: 'accent-magenta',
+    eyebrow: 'For small businesses · Self-serve or done for you',
+    title: 'Stop letting estimates go quiet.',
+    body: `The Follow-Up Desk follows up on the estimates you've sent, under your business name, and stops when the customer replies. ${trial} days free. Want a custom system instead? Get a written quote first.`,
+    cta: 'See options for businesses', href: '/services/',
+  },
+];
+---
+<ul class="lane-doors" aria-label="Pick what fits you">
+  {doors.map((d) => (
+    <li class={`card topline ${d.accent} lane-door`}>
+      <span class="kicker">{d.eyebrow}</span>
+      <h2 class="lane-door-h">{d.title}</h2>
+      <p class="muted">{d.body}</p>
+      <a class="btn btn-primary btn-sm" href={url(d.href)} data-umami-event="lane-door" data-umami-event-lane={d.lane} data-umami-event-location="home-doors">{d.cta}</a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .lane-doors { list-style: none; width: 100%; text-align: left; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 900px) { .lane-doors { grid-template-columns: 1fr; gap: .75rem; } }
+  .lane-door { display: flex; flex-direction: column; gap: .45rem; margin: 0; }
+  .lane-door-h { font-size: 1.2rem; line-height: 1.25; margin: 0; }
+  .lane-door p { margin: 0; font-size: .95rem; }
+  .lane-door .btn { align-self: flex-start; margin-top: auto; }
+  .lane-door .kicker { font-size: .74rem; }
+  /* Phones: all three doors fit in the first screen (eyebrow, question, button). The longer text shows from 641px up. */
+  @media (max-width: 640px) {
+    .lane-doors { margin-top: 1.1rem; gap: .6rem; }
+    .lane-door { padding: .8rem 1rem .9rem; gap: .3rem; }
+    .lane-door-h { font-size: 1.08rem; }
+    .lane-door p { display: none; }
+    .lane-door .btn { margin-top: .25rem; }
+  }
+</style>
