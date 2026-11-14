@@ -6,7 +6,9 @@ import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, abs
 import SocialLinks from '../components/SocialLinks.astro';
 import { abTests } from '../data/ab-tests';
 import { articles } from '../data/articles';
+import { emailLockdown, usd } from '../data/services';
 import { existsSync } from 'node:fs';
+import type { Lane } from '../lib/checkout-ref';
 interface Props {
   title: string;
   description?: string;
@@ -17,23 +19,37 @@ interface Props {
   type?: 'website' | 'article';
   /** Set false when the page prints its own JSON-LD (home, /local/). */
   schema?: boolean;
+  /**
+   * Which of the three lanes the page belongs to; picks the header button. Values match the Lane type in
+   * src/lib/checkout-ref.ts. Left out, it follows the path: /founders/* is 'founders', /scam-checker/ is 'family',
+   * everything else 'smb' (business, the default).
+   */
+  lane?: Lane;
 }
-const { title, description = DEFAULT_DESCRIPTION, image: imageProp, noindex = false, type = 'website', schema = true } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, image: imageProp, noindex = false, type = 'website', schema = true, lane: laneProp } = Astro.props;
 
 // Current path relative to the base, e.g. "/lab/" for /NeonKey/lab/.
 const baseNoSlash = import.meta.env.BASE_URL.replace(/\/$/, '');
 const relPath = (Astro.url.pathname.startsWith(baseNoSlash) ? Astro.url.pathname.slice(baseNoSlash.length) : Astro.url.pathname) || '/';
 const path = relPath.replace(/\/$/, '') || '/';
+// Three lanes (04-website-overhaul-plan, section 2): Protect yourself, For founders, For businesses, plus Learn.
+// Lab, Articles and Newsletter moved to the footer; no URL changed.
 const nav = [
-  { href: '/services/', label: 'Services' },
-  { href: '/lab/', label: 'Lab' },
-  { href: '/learn/', label: 'Learn' },
-  { href: '/articles/', label: 'Articles' },
-  { href: '/newsletter/', label: 'Newsletter' },
+  { href: '/scam-checker/', label: 'Protect yourself', lane: 'family' },
+  { href: '/founders/', label: 'For founders', lane: 'founders' },
+  { href: '/services/', label: 'For businesses', lane: 'smb' },
+  { href: '/learn/', label: 'Learn', lane: '' },
 ];
 const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
+const lane: Lane = laneProp ?? (/^\/founders(\/|$)/.test(path) ? 'founders' : /^\/scam-checker(\/|$)/.test(path) ? 'family' : 'smb');
+// Header button follows the lane. Business (the default) keeps the original quote button and its Umami event.
+const laneCta = {
+  smb: { href: '/contact/', label: 'Get a written quote', event: 'contact-click' },
+  founders: { href: '/founders/#check', label: 'Check my domain free', event: 'lane-cta' },
+  family: { href: '/scam-checker/#check', label: 'Check a message', event: 'lane-cta' },
+}[lane];
 // Search results cut titles at about 60 characters, so long page titles drop the " | NeonKey" suffix.
-const fullTitle = title === 'Home' ? 'NeonKey | Lead Follow-Up and Office IT for Small Businesses' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
+const fullTitle = title === 'Home' ? 'NeonKey | Scam Checks, Founder Tools, Business Follow-Up' : `${title} | NeonKey`.length > 60 ? title : `${title} | NeonKey`;
 const canonicalPath = relPath === '/' ? '/' : relPath.replace(/\/?$/, '/');
 const canonical = absoluteUrl(canonicalPath, Astro.site);
 // Link-preview image: the page's own image, else its branded card from public/og/ (npm run og), else the default.
@@ -49,7 +65,7 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
 // Organization and WebSite defined on the home page, plus a breadcrumb trail built from the URL.
 const home = absoluteUrl('/', Astro.site);
 const orgId = `${home}#organization`;
-const crumbLabels: Record<string, string> = { 'security-plus': 'Security+ guide', lab: 'Lab', learn: 'Learn', articles: 'Articles', services: 'Services', newsletter: 'Newsletter', contact: 'Contact', pay: 'Pay', founders: 'Founders' };
+const crumbLabels: Record<string, string> = { 'security-plus': 'Security+ guide', lab: 'Lab', learn: 'Learn', articles: 'Articles', services: 'For businesses', newsletter: 'Newsletter', contact: 'Contact', pay: 'Pay', founders: 'For founders', 'scam-checker': 'Protect yourself' };
 const segs = canonicalPath.split('/').filter(Boolean);
 const crumbs = [{ name: 'Home', item: home }, ...segs.map((seg, i) => ({
   name: i === segs.length - 1 ? title : crumbLabels[seg] || seg.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()),
@@ -155,7 +171,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={hasOgCard ? `${title === 'Home' ? 'Small-business tech' : title}, from NeonKey` : 'NeonKey: Unlock tech, whatever your level.'} />
+    <meta property="og:image:alt" content={hasOgCard ? `${title === 'Home' ? 'Practical tech help' : title}, from NeonKey` : 'NeonKey: Unlock tech, whatever your level.'} />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
@@ -179,10 +195,10 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         <nav id="site-nav" class="site-nav" aria-label="Main">
           <ul>
             {nav.map((item) => (
-              <li><a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+              <li><a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined} data-umami-event="nav-click" data-umami-event-target={item.lane || 'learn'}>{item.label}</a></li>
             ))}
           </ul>
-          <a href={url('/contact/')} class="btn btn-primary btn-sm nav-cta" data-umami-event="contact-click" data-umami-event-location="header">Get a written quote</a>
+          <a href={url(laneCta.href)} class="btn btn-primary btn-sm nav-cta" data-umami-event={laneCta.event} data-umami-event-location="header" data-umami-event-lane={lane}>{laneCta.label}</a>
         </nav>
       </div>
     </header>
@@ -194,14 +210,19 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         <div class="footer-brand">
           <Logo size={30} />
           <p>Unlock tech, whatever your level.</p>
-          <p class="footer-area">Office IT and AI automation for small businesses, done remotely across the US.</p>
+          <p class="footer-area">Practical tech help for families, founders and small businesses.</p>
           <SocialLinks location="footer" />
         </div>
         <nav aria-label="Footer">
           <ul class="footer-links">
-            <li><a href={url('/services/email-lockdown/')} data-umami-event="services-cta" data-umami-event-location="footer-lockdown">Email Authentication Setup ($29)</a></li>
+            <li><a href={url('/scam-checker/')} data-umami-event="lane-cta" data-umami-event-location="footer" data-umami-event-lane="family">Free scam checker</a></li>
+            <li><a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="footer-preflight" data-umami-event-track="founders">Launch Preflight</a></li>
+            <li><a href={url('/services/email-lockdown/')} data-umami-event="services-cta" data-umami-event-location="footer-lockdown">Email Authentication Setup ({usd(emailLockdown.from)})</a></li>
             <li><a href={url('/follow-up-desk/')} data-umami-event="services-cta" data-umami-event-location="footer-follow-up-desk">Follow-Up Desk</a></li>
             <li><a href={url('/founders/')} data-umami-event="founders-nav" data-umami-event-target="footer" data-umami-event-track="founders">For founders</a></li>
+            <li><a href={url('/lab/')}>Lab</a></li>
+            <li><a href={url('/articles/')}>Articles</a></li>
+            <li><a href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="footer">Newsletter</a></li>
             <li><a href={url('/about/')}>About</a></li>
             <li><a href={url('/reviews/')}>Reviews</a></li>
             <li><a href={url('/refer/')}>Refer a business</a></li>

@@ -4,30 +4,21 @@ import OfferNameLabel from '../components/OfferNameLabel.astro';
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import FeaturedArticle from '../components/FeaturedArticle.astro';
-import ArticleCard from '../components/ArticleCard.astro';
-import LabCard from '../components/LabCard.astro';
-import { articlesIn, sortByDate } from '../data/articles';
 import NewsletterForm from '../components/NewsletterForm.astro';
-import LockdownStrip from '../components/LockdownStrip.astro';
 import DeskSale from '../components/DeskSale.astro';
+import LaneDoors from '../components/LaneDoors.astro';
+import TrustLine from '../components/TrustLine.astro';
 import { buyAttrs } from '../lib/checkout-ref';
-import { publishedLabProjects } from '../data/lab';
 import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, followUpDeskSale, frontOfficePackage as fop, introPricing, showPackageValue, usd } from '../data/services';
-import { absoluteUrl, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, YOUTUBE_URL, SOCIALS } from '../config';
-const latestArticles = sortByDate(articlesIn());
-const leadStory = latestArticles.find((a) => a.date);
-const moreStories = latestArticles.filter((a) => a !== leadStory).slice(0, 3);
+import { absoluteUrl, CONTACT_EMAIL, SOCIALS } from '../config';
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
-const pillars = [
-  { cls: 'c', title: 'Unlock AI', href: '/services/', link: 'See services', text: 'Self-serve estimate follow-up and custom lead follow-up systems for small businesses, so fewer inquiries slip away.',
-    icon: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>' },
-  { cls: 'm', title: 'Unlock Deals', href: '/reviews/', link: 'Read reviews', text: 'Honest takes on gear and software worth your money, with pros, cons and a plain verdict.',
-    icon: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>' },
-  { cls: 'v', title: 'Unlock Skills', href: '/learn/', link: 'Start learning', text: 'Plain-language guides for learning tech, starting with a free CompTIA Security+ study guide. Beginner-friendly, no gatekeeping.',
-    icon: '<path d="M4 19V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h6M8 11h6"/>' },
-  { cls: 'y', title: 'Unlock the Week', href: '/newsletter/', link: 'Get the newsletter', text: 'One short email every Wednesday: a one-minute fix for your tech or your customer follow-up, plus a free guide from Learn.',
-    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>' },
+// Homepage = three lane doors (04-website-overhaul-plan, sections 2-3, Nov 14 2026). The Lab grid, "Four ways to unlock",
+// latest articles and "Built in the open" moved off the homepage; they stay reachable from the footer and /learn/.
+// The three lanes, for the JSON-LD ItemList below (same order as LaneDoors).
+const lanes = [
+  { title: 'Protect yourself: free scam checker', href: '/scam-checker/' },
+  { title: 'For founders: Launch Preflight and The Founder Stack', href: '/founders/' },
+  { title: 'For businesses: Follow-Up Desk and custom setups', href: '/services/' },
 ];
 // JSON-LD structured data (one @graph). Prices and service text come from src/data/services.ts.
 const abs = (p: string) => absoluteUrl(p, Astro.site);
@@ -86,9 +77,9 @@ const jsonLd = {
       '@type': 'WebPage',
       '@id': `${home}#webpage`,
       url: home,
-      name: 'NeonKey | Lead Follow-Up and Office IT for Small Businesses',
-      headline: 'Stop losing leads to slow replies and forgotten follow-ups.',
-      description: 'Lead follow-up systems and office IT for small businesses: faster replies to new inquiries, follow-up on quiet quotes, and secure business email. Done remotely anywhere in the US.',
+      name: 'NeonKey | Scam Checks, Founder Tools, Business Follow-Up',
+      headline: 'Practical tech help for you, your launch and your business.',
+      description: 'Check a suspicious message for free, set up email that inboxes trust, or make sure every estimate gets a follow-up. A free scam checker, a free domain email check and The Founder Stack for founders, and the Follow-Up Desk for small businesses.',
       inLanguage: 'en',
       isPartOf: { '@id': `${home}#website` },
       about: { '@id': orgId },
@@ -101,8 +92,8 @@ const jsonLd = {
     {
       '@type': 'ItemList',
       '@id': `${home}#sections`,
-      name: 'NeonKey content and services',
-      itemListElement: pillars.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: abs(p.href) })),
+      name: 'NeonKey: three ways in',
+      itemListElement: lanes.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: abs(p.href) })),
     },
     {
       '@type': 'CreativeWorkSeries',
@@ -138,9 +129,9 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description="Stop losing leads to slow replies and forgotten follow-ups. Self-serve estimate follow-up with 14 days free, or a custom follow-up system set up remotely anywhere in the US.">
+<Base title="Home" description={`Practical tech help for you, your launch and your business: a free scam checker, a free domain email check with The Founder Stack, and the Follow-Up Desk with ${followUpDeskTrialDays} days free.`}>
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
-  <section class="hero hero-bg">
+  <section class="hero hero-bg home-hero">
     <span data-ab="motion:a" hidden></span>
     <div class="hero-motion" data-ab="motion:b" aria-hidden="true">
       <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
@@ -163,40 +154,19 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </svg>
     </div>
     <div class="container hero-content">
-      <a class="hero-new" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-hero-new"><span class="hero-new-tag">New</span> {followUpDeskSaleLive ? <Fragment>{followUpDesk.name} · <DeskSale variant="line" location="home-hero-new" /></Fragment> : `${followUpDesk.name}: estimate follow-ups that run themselves · ${followUpDeskTrialDays} days free`} →</a>
-      <span class="kicker">Lead and estimate follow-up for small businesses</span>
-      <h1>Stop losing customers to <span class="hl">slow replies</span> and quiet quotes.</h1>
-      <p class="lead">New inquiries get answered, and estimates get followed up until the customer replies. Start the {followUpDesk.name} yourself today, or get a written quote and we build a custom system for you, remotely, anywhere in the US.</p>
-      <div class="btn-row hero-ctas">
-        <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-hero">Get a written quote</a>
-        <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-hero">See services and prices</a>
-      </div>
-      <p class="hero-proof">Written quote before any custom work · You keep every login · <a href={url('/lab/')} data-umami-event="lab-cta" data-umami-event-location="home-hero">Live demos in the Lab</a></p>
-      <p class="hero-sub-links"><strong>Not ready for a quote?</strong> <a href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="home-hero">Get one free tech fix every Wednesday →</a> Or browse <a href={url('/learn/')}>free guides</a> and <a href={url('/lab/')}>Lab demos</a>.</p>
+      <span class="kicker">NeonKey · Run by Michael Ream</span>
+      <h1>Practical tech help for <span class="hl">you, your launch</span> and your business.</h1>
+      <p class="lead">Check a suspicious message for free, set up email that inboxes trust, or make sure every estimate gets a follow-up. Pick the one that fits you.</p>
+      <LaneDoors />
+      <TrustLine location="home" class="home-trust" extra={['Written quote before any custom work', 'You keep every login']} />
     </div>
   </section>
 
-  <section class="alt" aria-labelledby="svc-h">
+  <section aria-labelledby="svc-h">
     <div class="container">
-      <SectionHeading id="svc-h" eyebrow="Services" title="Fix the leaks that cost you customers" intro="Have it set up for you with a written quote first, or start the self-serve version today." link={{ href: '/services/', label: 'All services and prices', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
+      <a class="hero-new" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-hero-new"><span class="hero-new-tag">New</span> {followUpDeskSaleLive ? <Fragment>{followUpDesk.name} · <DeskSale variant="line" location="home-hero-new" /></Fragment> : `${followUpDesk.name}: estimate follow-ups that run themselves · ${followUpDeskTrialDays} days free`} →</a>
+      <SectionHeading id="svc-h" eyebrow="For businesses" title="Stop letting estimates go quiet" intro="Start the self-serve Follow-Up Desk today, or have a custom system set up for you with a written quote first." link={{ href: '/services/', label: 'All options for businesses', attrs: { 'data-umami-event': 'services-cta', 'data-umami-event-location': 'home-services' } }} />
       <div class="grid grid-2 home-offers">
-        <article class="card offer-featured topline accent-magenta" id="front-office">
-          <span class="kicker">Done for you · Custom setup · {usd(fop.from)}</span>
-          <h3><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
-          <OfferNameLabel offer={fop} />
-          <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold.</p>
-          <ul class="home-offer-list">
-            <li>Requests from your website form or shared inbox land on one list, and the right person gets an alert</li>
-            <li>Follow-up reminders on day 1, 3 and 7 for quotes that go quiet, with a draft ready</li>
-            <li>Reply drafts from your templates; a person sends every quote reply and follow-up</li>
-            <li>Business email security set up, plus three months of support</li>
-          </ul>
-          <p class="price" style="margin:.4rem 0 .8rem">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Setup + three months of support · {introPricing.label.toLowerCase()}</small></p>
-          <div class="btn-row">
-            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Get a written quote</a>
-            <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Try a sample request</a>
-          </div>
-        </article>
         <article class="card topline accent-violet" id="follow-up-desk">
           <span class="kicker">Do it yourself · Start today · {usd(followUpDeskSaleLive ? followUpDeskSale.monthly : followUpDesk.from)}/mo</span>
           <h3><a href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud"><OfferTitle offer={followUpDesk} /></a></h3>
@@ -219,70 +189,27 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
             <a class="btn btn-ghost btn-sm" href={url(followUpDesk.href)} data-umami-event="services-cta" data-umami-event-offer={followUpDesk.name} data-umami-event-location="home-fud-details">How it works</a>
               </div></Fragment>}
         </article>
+        <article class="card offer-featured topline accent-magenta" id="front-office">
+          <span class="kicker">Done for you · Custom setup · {usd(fop.from)}</span>
+          <h3><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="home-package"><OfferTitle offer={fop} /></a></h3>
+          <OfferNameLabel offer={fop} />
+          <p class="offer-outcome">Reply to new requests faster and stop quotes from going cold.</p>
+          <ul class="home-offer-list">
+            <li>Requests from your website form or shared inbox land on one list, and the right person gets an alert</li>
+            <li>Follow-up reminders on day 1, 3 and 7 for quotes that go quiet, with a draft ready</li>
+            <li>Reply drafts from your templates; a person sends every quote reply and follow-up</li>
+            <li>Business email security set up, plus three months of support</li>
+          </ul>
+          <p class="price" style="margin:.4rem 0 .8rem">{showPackageValue && <s class="muted" style="font-weight:400;font-size:1rem;margin-right:.4rem">{usd(fop.value)}+ value</s>}{usd(fop.from)}<small>Setup + three months of support · {introPricing.label.toLowerCase()}</small></p>
+          <div class="btn-row">
+            <a class="btn btn-primary btn-sm" href={url(`/contact/?topic=${fop.slug}`)} data-umami-event="contact-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Get a written quote</a>
+            <a class="btn btn-ghost btn-sm" href={url('/lab/front-office/')} data-umami-event="demo-click" data-umami-event-offer={fop.name} data-umami-event-location="home-package">Try a sample request</a>
+          </div>
+        </article>
       </div>
-      <LockdownStrip location="home-lockdown-strip" />
-      <p class="intro-pricing" role="note" style="margin-top:1.25rem"><strong>{introPricing.label}.</strong> {introPricing.note}</p>
-      <div class="btn-row">
-        <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-services">Get in touch</a>
-        <a class="btn btn-ghost" href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-services-btn">See all services</a>
-      </div>
-      <p class="muted" style="margin-top:1rem;font-size:.92rem">Custom setup prices are starting points, and every project is scoped first. Smaller jobs, like website inquiry alerts from {usd(quickWin.from)}, office IT setup from {usd(remoteIt.from)} or a monthly support plan, are on the services page. Results depend on your business and tools.</p>
+      <p class="muted" style="margin-top:1rem;font-size:.92rem">Custom setup prices are starting points, and every project is scoped first. Smaller jobs, like {emailLockdown.name} ({usd(emailLockdown.from)}), website inquiry alerts from {usd(quickWin.from)}, office IT setup from {usd(remoteIt.from)} or a monthly support plan, are on the <a href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-small-jobs">businesses page</a>. Results depend on your business and tools.</p>
     </div>
   </section>
-
-  <section aria-labelledby="how-h">
-    <div class="container">
-      <SectionHeading id="how-h" eyebrow="How custom setups work" title="Scoped, built after hours, handed over to you" />
-      <ol class="step-cards">
-        <li><strong>Scope:</strong> we agree on what "done" looks like, by message or a short call. You get a written quote before any work starts.</li>
-        <li><strong>Build:</strong> setup and changeovers happen after business hours or on weekends, so your staff don't lose a working hour.</li>
-        <li><strong>Check:</strong> we test it with you on screen: email records, sign-ins, a backup restore.</li>
-        <li><strong>Hand off:</strong> every account is created in your name. You get notes and a walkthrough, and you can switch off our access.</li>
-      </ol>
-    </div>
-  </section>
-
-  {publishedLabProjects.length > 0 && (
-  <section aria-labelledby="lab-h">
-    <div class="container">
-      <SectionHeading id="lab-h" eyebrow="The Lab" title="From the Lab" intro="Working demos you can try right now: what I built, why, the results and lessons, and what I'd do differently." link={{ href: '/lab/', label: 'All builds', attrs: { 'data-umami-event': 'lab-cta', 'data-umami-event-location': 'home' } }} />
-      <ul class="article-grid">
-        {publishedLabProjects.map((p) => <LabCard project={p} as="li" />)}
-      </ul>
-    </div>
-  </section>
-  )}
-
-  <section class="alt" aria-labelledby="pillars-h">
-    <div class="container">
-      <SectionHeading id="pillars-h" eyebrow="Free from NeonKey" title="Four ways to unlock" intro="Here to learn, not to hire? This part of NeonKey is free for everyone: guides, honest reviews, Lab builds and a weekly email." />
-      <div class="grid grid-4">
-        {pillars.map((p, i) => (
-          <article class={`card pillar topline ${p.cls}`}>
-            <span class="num-eyebrow pillar-num">{String(i + 1).padStart(2, '0')}</span>
-            <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={p.icon} /></div>
-            <h3>{p.title}</h3>
-            <p>{p.text}</p>
-            <a href={url(p.href)}>{p.link} →</a>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  {leadStory && (
-  <section class="home-latest" aria-labelledby="latest-h">
-    <div class="container">
-      <SectionHeading id="latest-h" eyebrow="Articles" title="Latest from NeonKey" intro="News, explainers and reviews, newest first." link={{ href: '/articles/', label: 'All articles' }} />
-      <FeaturedArticle article={leadStory} eager={false} />
-      {moreStories.length > 0 && (
-        <ul class="article-grid">
-          {moreStories.map((a) => <ArticleCard article={a} />)}
-        </ul>
-      )}
-    </div>
-  </section>
-  )}
 
   <section class="alt" aria-labelledby="who-h">
     <div class="container">
@@ -321,19 +248,6 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     </div>
   </section>
 
-  <section aria-labelledby="lip-h">
-    <div class="narrow">
-      <div class="callout final-cta">
-        <h2 id="lip-h" style="font-size:1.35rem">Built and documented in the open</h2>
-        <p>I'm Michael Ream, and NeonKey is where I build, test and document as I go: homelab projects, AI automations and small-office IT setups. You'll see the results and lessons, including what I'd do differently. <a href={url('/about/')}>More about NeonKey →</a></p>
-        <p style="margin-bottom:0">Losing track of inquiries or quotes? Tell us where they come in and we'll send a free written quote.</p>
-        <div class="btn-row" style="margin-top:1rem">
-          <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="home-final">Get a written quote</a>
-          <a class="btn btn-ghost" href={INSTAGRAM_URL} rel="me noopener" target="_blank" data-umami-event="outbound-click" data-umami-event-item="instagram" data-umami-event-location="home-final">Follow {INSTAGRAM_HANDLE}</a>
-        </div>
-      </div>
-    </div>
-  </section>
   <script is:inline defer src={url('/js/hero-matrix.js')}></script>
 </Base>
 
@@ -348,11 +262,16 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   .fop-strip-side { display: grid; gap: .6rem; justify-items: start; }
   .fop-strip .price small { display: block; font-size: .85rem; }
   @media (max-width: 760px) { .fop-strip { grid-template-columns: 1fr; } }
-  .hero-proof { margin: .9rem 0 0; font-size: .92rem; color: var(--muted); }
+  .home-hero .lead { margin-bottom: 0; max-width: 46rem; }
+  @media (max-width: 640px) {
+    .home-hero { padding-top: 1.25rem; padding-bottom: 2.5rem; }
+    .home-hero h1 { font-size: 1.95rem; }
+    .home-hero .lead { font-size: .98rem; line-height: 1.5; }
+  }
+  .home-hero :global(.home-trust) { max-width: 60rem; }
   .hero-new { display: flex; width: fit-content; align-items: center; gap: .5rem; max-width: 100%; margin-bottom: .9rem; padding: .3rem .8rem .3rem .3rem; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); font-size: .88rem; font-weight: 600; color: var(--text); text-decoration: none; }
   .hero-new:hover { border-color: var(--cyan); }
   .hero-new-tag { padding: .15rem .55rem; border-radius: 999px; background: var(--cyan); color: var(--bg); font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
-  .hero-proof a { color: inherit; text-decoration: underline; }
   .who-card { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.5rem; align-items: start; }
   .who-card p + p { margin-top: .75rem; }
   .who-mark { flex-shrink: 0; filter: drop-shadow(0 0 12px rgba(167,139,250,.45)); }
