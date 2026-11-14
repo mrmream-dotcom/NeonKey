@@ -116,6 +116,14 @@ for (const f of walk(distDir)) if (/founder-stack.*\.pdf$|the-founder-stack/i.te
       const q = new URL(h.replace(/&amp;/g, '&')).searchParams;
       if (!/^nk1_[A-Za-z0-9_-]{1,196}$/.test(q.get('client_reference_id') || '')) fail(`Stripe checkout link without a valid client_reference_id ${h} on ${rel}`);
       for (const k of q.keys()) if (!['client_reference_id', 'prefilled_promo_code'].includes(k)) fail(`unexpected query parameter "${k}" on Stripe checkout link ${h} on ${rel}`);
+      for (const k of new Set(q.keys())) if (q.getAll(k).length > 1) fail(`query parameter "${k}" repeated on Stripe checkout link ${h} on ${rel}`);
+      // A promo code may only appear on a sale whose end date has not passed (an expired code would silently fail at checkout).
+      if (q.has('prefilled_promo_code')) {
+        const code = q.get('prefilled_promo_code');
+        const promoBlock = src.split('export const').find((b) => b.includes(`'${code}'`) && /endsAt: '([^']+)'/.test(b));
+        const promoEnds = promoBlock && promoBlock.match(/endsAt: '([^']+)'/)[1];
+        if (!promoEnds || Date.parse(promoEnds) < Date.now()) fail(`promo code "${code}" on Stripe checkout link ${h} on ${rel} is not tied to a live sale`);
+      }
     }
   }
   const deskPage = join(distDir, 'follow-up-desk', 'index.html');

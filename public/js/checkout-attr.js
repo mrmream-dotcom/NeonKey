@@ -24,13 +24,19 @@
   function clean(v, max) {
     v = String(v || '').toLowerCase().trim();
     if (!v || v.indexOf('@') !== -1 || /\d{7,}/.test(v.replace(/[\s().+-]/g, ''))) return '';
-    return v.replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, max);
+    return v.replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, max);
   }
   function load(key) {
     try { return JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { return null; }
   }
   function save(key, val) {
     try { sessionStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  // The last buy click goes in localStorage: buy links open a new tab with noopener, and sessionStorage is per tab,
+  // so the thanks page (in that new tab) could not read it otherwise. It holds no personal data and is removed
+  // by checkout-return.js once read (and ignored after a day).
+  function saveShared(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
   }
 
   // 1. First touch (only the first page of this tab's visit sets it).
@@ -73,11 +79,12 @@
   function onBuy(e) {
     var a = e.target && e.target.closest ? e.target.closest('a[data-umami-event-ref][href^="https://buy.stripe.com/"]') : null;
     if (!a) return;
+    if (e.type === 'auxclick' && e.button !== 1) return; // middle click opens the link; right click does not
     var sku = a.getAttribute('data-umami-event-sku') || '';
     var lane = a.getAttribute('data-umami-event-lane') || '';
     var ref = a.getAttribute('data-umami-event-ref') || '';
     var price = Number(a.getAttribute('data-umami-event-price')) || 0;
-    save(KEY_LAST, { lane: lane, sku: sku, ref: ref, t: Date.now() });
+    saveShared(KEY_LAST, { lane: lane, sku: sku, ref: ref, t: Date.now() });
     try {
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'begin_checkout', {

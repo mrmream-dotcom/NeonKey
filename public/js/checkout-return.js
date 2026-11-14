@@ -37,7 +37,7 @@
   function clean(v, max) {
     v = String(v || '').toLowerCase().trim();
     if (!v || v.indexOf('@') !== -1 || /\d{7,}/.test(v.replace(/[\s().+-]/g, ''))) return '';
-    return v.replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, max);
+    return v.replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, max);
   }
 
   // Once per session id in this tab.
@@ -48,7 +48,8 @@
 
   // The buy click on our site (set by checkout-attr.js), if it was for this offer and within the last day.
   var last = null;
-  try { last = JSON.parse(sessionStorage.getItem('nk_ck_last') || 'null'); } catch (e) {}
+  // Written by checkout-attr.js in localStorage (the buy link opened this tab with noopener); read once, then removed.
+  try { last = JSON.parse(localStorage.getItem('nk_ck_last') || 'null'); localStorage.removeItem('nk_ck_last'); } catch (e) {}
   if (!last || offer.skus.indexOf(last.sku) === -1 || !(Date.now() - last.t < 86400000)) last = null;
 
   var sku = last ? last.sku : offer.skus.length === 1 ? offer.skus[0] : '';

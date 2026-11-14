@@ -6,7 +6,7 @@ import DomainCheck from '../DomainCheck.astro';
 import { emailLockdown, usd } from '../../data/services';
 import { buyAttrs, type Lane } from '../../lib/checkout-ref';
 interface Props { track: string; lane?: Lane }
-const { track, lane = 'family' } = Astro.props;
+const { track, lane = 'smb' } = Astro.props;
 ---
 <section class="ecb" id="check-your-domain">
   <h2>Check your domain now (free)</h2>
