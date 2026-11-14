@@ -145,7 +145,8 @@ test("primary action follows the account's state", () => {
   const a = acctWith([it("open")]);
   assert.match(primaryAction(a, base, portalUrl), /href="#add">.*Add a follow-up/);
   assert.match(primaryAction({ ...a, paused: true }, base, portalUrl), /name="paused" value="0".*Resume follow-ups/);
-  assert.match(primaryAction({ ...a, billing: "canceled" }, base, portalUrl), /Restart in Billing/);
+  assert.match(primaryAction({ ...a, billing: "canceled" }, base, portalUrl), /Restart the Desk/);
+  assert.match(primaryAction({ ...a, billing: "canceled" }, base, portalUrl), /href="https:\/\/neonkey.tech\/follow-up-desk\/"/);
   assert.match(primaryAction({ ...a, billing: "past_due" }, base, portalUrl), /Update payment/);
   assert.match(primaryAction({ ...a, billing: "past_due" }, base, ""), /mailto:hello@neonkey\.tech/);
   const canceled = dashboardPage({ acct: { ...a, billing: "canceled" }, base, msg: "", portalUrl, now: NOW });
@@ -162,4 +163,22 @@ test("status chip: trial shown only while it's really a running trial", () => {
   assert.deepEqual(statusChip({ ...a, billing: "trialing" }), { label: "Running", cls: "ok", trial: true });
   assert.equal(statusChip({ ...a, billing: "active" }).trial, false);
   assert.equal(statusChip({ ...a, billing: "trialing", paused: true }).label, "Paused");
+});
+
+test("a lost job the customer replied to has no Reopen button (it would follow up again)", async () => {
+  const { dashboardPage } = await import("../src/pages.js");
+  const now = Date.UTC(2026, 10, 16, 18);
+  const acct = { id: "a1", billing: "active", paused: false, setupDone: true, settings: { timezone: "America/Chicago", days: [3, 7, 14], replyTo: "o@example.com", business: "Shop" },
+    items: [
+      { id: "r1", name: "Replied Lost", email: "r@example.com", status: "lost", repliedAt: now - 1000, closedAt: now - 500, step: 1, sentAt: now - 9e8 },
+      { id: "s1", name: "Plain Stopped", email: "s@example.com", status: "stopped", closedAt: now - 400, step: 1, sentAt: now - 9e8 },
+    ] };
+  const html = dashboardPage({ acct, base: "/d/tok", now });
+  const reopenIds = [...html.matchAll(/name="id" value="([^"]+)"><input type="hidden" name="to" value="open">/g)].map((m) => m[1]);
+  assert.deepEqual(reopenIds, ["s1"]);
+});
+
+test("stylesheet URL carries a content version", async () => {
+  const { CSS_VERSION, dashboardPage } = await import("../src/pages.js");
+  assert.match(CSS_VERSION, /^[0-9a-z]+$/);
 });

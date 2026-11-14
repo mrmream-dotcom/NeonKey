@@ -201,7 +201,7 @@ details.more>.card-b{padding-top:0}
 .mail-foot{display:flex;gap:8px;align-items:flex-start;margin:0;padding:10px 16px;background:#f3f4f6;color:#374151;font-size:.88rem}.mail-foot .ic{color:#0e7490;margin-top:2px}
 
 /* settings */
-.sticky-save{margin-top:16px;padding:12px 16px;background:rgba(17,20,42,.96);border:1px solid var(--line);border-radius:var(--r);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sticky-save{position:sticky;bottom:0;z-index:5;margin-top:16px;padding:12px 16px;background:rgba(17,20,42,.96);border:1px solid var(--line);border-radius:var(--r);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .sticky-save p{margin:0}
 @media (max-width:759px){.sticky-save .btn{width:100%}}
 @media (min-width:760px){.sticky-save{position:sticky;bottom:12px;z-index:2;box-shadow:0 8px 24px rgba(0,0,0,.35)}}
@@ -289,7 +289,7 @@ const MARK = '<svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable
 
 function page(title, body, { cls = "", top = "" } = {}) {
   const scheme = cls === "cust" ? "light" : "dark";
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta name="color-scheme" content="${scheme}"><title>${esc(title)} · NeonKey Follow-Up Desk</title><link rel="stylesheet" href="/app.css"></head><body${cls ? ` class="${cls}"` : ""}><a class="skip" href="#main">Skip to content</a>${top}<main id="main" class="wrap">${body}</main></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta name="color-scheme" content="${scheme}"><title>${esc(title)} · NeonKey Follow-Up Desk</title><link rel="stylesheet" href="/app.css?v=${CSS_VERSION}"></head><body${cls ? ` class="${cls}"` : ""}><a class="skip" href="#main">Skip to content</a>${top}<main id="main" class="wrap">${body}</main></body></html>`;
 }
 
 /** What the owner sees as the Desk's state. Display only: the cron decides sending with deskState(). */
@@ -480,7 +480,8 @@ function itemRow(base, i, acct) {
   const buttons = i.status === "open"
     ? itemForm(base, i, "won", wonLabel(i)) + itemForm(base, i, "lost", "Lost") + itemForm(base, i, "stopped", "Stop")
     : i.status === "replied" ? itemForm(base, i, "won", wonLabel(i)) + itemForm(base, i, "lost", "Lost")
-    : ["stopped", "done", "lost"].includes(i.status) ? itemForm(base, i, "open", "Reopen") : "";
+    // A job the customer already replied to is never reopened from here: reopening would send them another follow-up.
+    : ["stopped", "done", "lost"].includes(i.status) && !i.repliedAt ? itemForm(base, i, "open", "Reopen") : "";
   return `<tr><td class="who"><strong>${esc(i.name || "(no name)")}</strong><span class="sub">${esc(i.email)}</span></td><td>${esc(KINDS[i.kind] || "")}${i.job ? `<span class="sub">${esc(i.job)}</span>` : ""}</td><td class="st"><span class="tag ${STATUS_CLS[i.status] || ""}">${esc(STATUS[i.status] || i.status)}</span><span class="sub num">${esc(step)}${next ? ` · next ${esc(next)}` : ""}</span></td><td>${buttons ? `<div class="acts">${buttons}</div>` : ""}</td></tr>`;
 }
 
@@ -521,8 +522,9 @@ ${portalUrl ? `<a class="btn quiet" href="${esc(portalUrl)}">${icon("card")}Bill
 export function primaryAction(acct, base, portalUrl) {
   const b = esc(base);
   if (!["active", "trialing"].includes(acct.billing)) {
-    const label = acct.billing === "canceled" ? "Restart in Billing" : "Update payment";
-    return portalUrl ? `<a class="btn primary" href="${esc(portalUrl)}">${icon("card")}${label}</a>` : `<a class="btn primary" href="mailto:hello@neonkey.tech">Email hello@neonkey.tech</a>`;
+    // An ended subscription can't be restarted in the Stripe portal; a new checkout with the same email brings the account back.
+    if (acct.billing === "canceled") return `<a class="btn primary" href="https://neonkey.tech/follow-up-desk/">${icon("card")}Restart the Desk</a>`;
+    return portalUrl ? `<a class="btn primary" href="${esc(portalUrl)}">${icon("card")}Update payment</a>` : `<a class="btn primary" href="mailto:hello@neonkey.tech">Email hello@neonkey.tech</a>`;
   }
   if (acct.paused) return `<form method="post" action="${b}/pause" class="inline"><input type="hidden" name="paused" value="0"><button class="btn primary" type="submit">${icon("play")}Resume follow-ups</button></form>`;
   return `<a class="btn primary" href="#add">${icon("plus")}Add a follow-up</a>`;
@@ -648,3 +650,10 @@ ${yes ? `<div class="field"><label for="phone">Best phone number (optional)</lab
 <button class="btn primary block" type="submit">${yes ? `Send to ${name}` : "Send my question"}</button>
 </form></div></section>${foot}</div>`, { cls: "cust" });
 }
+
+/** Short content hash of the stylesheet, added to its URL so a deploy never pairs new pages with a cached old /app.css. */
+export const CSS_VERSION = (() => {
+  let h = 5381;
+  for (let i = 0; i < CSS.length; i++) h = ((h * 33) ^ CSS.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+})();
