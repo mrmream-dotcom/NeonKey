@@ -1,0 +1,84 @@
+---
+// Founder Watchdog sales page (paid product since Nov 13 2026; Michael: "make it live now", replacing the waitlist).
+// Two Stripe Payment Links ($9/mo, $90/yr) ask for the domain at checkout; workers/watchdog/ takes it from there:
+// welcome email with one TXT record to prove ownership, then a first look, then a daily check with email alerts.
+// Copy here must match what the Worker really does (watchdog.checks / watchdog.limits in src/data/watchdog.ts).
+// PUBLIC_WATCHDOG=off turns this into a redirect (src/config.ts). Umami events carry track=founders.
+import { url, CONTACT_EMAIL, WATCHDOG } from '../../../config';
+import Base from '../../../layouts/Base.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import Redirect from '../../../components/Redirect.astro';
+import { watchdog } from '../../../data/watchdog';
+import { usd } from '../../../data/services';
+const ev = { 'data-umami-event-track': 'founders' };
+---
+{WATCHDOG === 'off' ? <Redirect to="/founders/" /> : (
+<Base title="Founder Watchdog" description={`Founder Watchdog checks your domain's email records, mail servers, homepage and renewal date every day and emails you when something breaks. ${usd(watchdog.monthly)} a month or ${usd(watchdog.yearly)} a year. Cancel anytime.`}>
+  <PageHeader eyebrow="For founders" title="Know the day your domain breaks" crumbs={[{ href: '/', label: 'Home' }, { href: '/founders/', label: 'Founders' }, { label: watchdog.name }]}>
+    <p class="lede">Your domain passes today. Then someone adds a new sending tool, a record gets deleted, or the homepage quietly stops loading, and mail starts landing in spam before anyone notices. {watchdog.name} checks your domain every day and emails you when something changes or breaks, with what changed and how to fix it.</p>
+    <Fragment slot="meta">
+      <li><span>{usd(watchdog.monthly)}/mo or {usd(watchdog.yearly)}/yr</span></li>
+      <li><span>Cancel anytime</span></li>
+      <li><span>No passwords, read-only</span></li>
+    </Fragment>
+  </PageHeader>
+
+  <section style="padding-top:0">
+    <div class="container wd-grid">
+      <div class="panel topline">
+        <h2 class="wd-h">What it watches</h2>
+        <ul class="wd-list">{watchdog.checks.map((c) => <li>{c}</li>)}</ul>
+        <p class="muted">We only read public records: DNS, your homepage and the domain registry. We never ask for a password or login, and we never change anything.</p>
+
+        <h2 class="wd-h">How it starts</h2>
+        <ol class="wd-list">
+          <li><strong>Subscribe</strong> and type the domain you want watched at checkout.</li>
+          <li><strong>Add one TXT record.</strong> We email it to you right away. It changes nothing about your email or website; it just proves the domain is yours, so nobody can watch a domain that isn't theirs. If someone else manages your DNS, forward them the email.</li>
+          <li><strong>Get your first look.</strong> As soon as the record shows up, we email what we see today: your email records, mail servers, homepage and renewal date.</li>
+          <li><strong>Then we watch.</strong> You only hear from us when something changes or breaks, plus a short all-clear once a month.</li>
+        </ol>
+
+        <h2 class="wd-h">Honest limits</h2>
+        <ul class="muted wd-list">{watchdog.limits.map((l) => <li>{l}</li>)}</ul>
+
+        <h2 class="wd-h">Not sure your domain passes today?</h2>
+        <p class="muted">Run the free <a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="preflight" data-umami-event-location="watchdog" {...ev}>Launch Preflight</a> first. Watchdog tells you when things change; it doesn't fix them for you.</p>
+      </div>
+
+      <div class="panel topline accent-magenta wd-buy" id="buy">
+        <h2 class="wd-h">Start watching</h2>
+        <div class="wd-plan">
+          <p class="wd-price"><strong>{usd(watchdog.monthly)}</strong> <span class="muted">a month</span></p>
+          <a class="btn btn-primary" href={watchdog.monthlyUrl} rel="noopener" data-umami-event="watchdog-buy" data-umami-event-plan="monthly" {...ev}>Subscribe monthly</a>
+        </div>
+        <div class="wd-plan">
+          <p class="wd-price"><strong>{usd(watchdog.yearly)}</strong> <span class="muted">a year (two months free)</span></p>
+          <a class="btn" href={watchdog.yearlyUrl} rel="noopener" data-umami-event="watchdog-buy" data-umami-event-plan="yearly" {...ev}>Subscribe yearly</a>
+        </div>
+        <ul class="form-note wd-list wd-fine">
+          <li>One domain per subscription. Secure checkout by Stripe.</li>
+          <li>Cancel anytime with the <a href={watchdog.portalUrl} rel="noopener">billing link</a>; it stops at the end of the period you've paid for.</li>
+          <li>If we can't start watching your domain, or you change your mind on the yearly plan, ask within {watchdog.refundDays} days for a full refund. <a href={url('/refunds/#founder-watchdog')}>Refund rules</a>.</li>
+          <li>Questions first? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</li>
+        </ul>
+        <p class="form-note">By subscribing you agree to the <a href={url('/terms/#founder-watchdog')}>terms</a>. What we keep about your domain: <a href={url('/privacy/#founder-watchdog')}>privacy policy</a>.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+)}
+
+<style>
+  .wd-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 820px) { .wd-grid { grid-template-columns: 1fr; } .wd-buy { order: -1; } }
+  .wd-h { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .wd-h:not(:first-child) { margin-top: 1.25rem; }
+  .wd-list { padding-left: 1.1rem; margin-top: 0; }
+  .wd-list li { margin-bottom: .4rem; }
+  .wd-buy { display: flex; flex-direction: column; gap: .9rem; }
+  .wd-plan { display: flex; flex-direction: column; gap: .45rem; }
+  .wd-plan .btn { align-self: stretch; text-align: center; }
+  .wd-price { margin: 0; font-size: 1.05rem; }
+  .wd-price strong { font-size: 1.6rem; }
+  .wd-fine { margin: 0; }
+</style>

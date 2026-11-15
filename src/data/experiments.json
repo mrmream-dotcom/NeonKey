@@ -55,8 +55,8 @@
     },
     {
       "id": "watchdog-waitlist",
-      "status": "running",
-      "note": "Waitlist demand test, not an A/B test, so it has no ab-tests.ts entry. Live from Nov 13 2026.",
+      "status": "stopped",
+      "note": "Waitlist demand test, not an A/B test, so it has no ab-tests.ts entry. Live from Nov 13 2026, stopped the same day: Michael said skip the waitlist and sell it, so it was replaced by watchdog-paid. Signups taken before then stay in the quiz Worker KV.",
       "kind": "offer",
       "page": "/founders/watchdog/",
       "hypothesis": "Founders who just checked or fixed their domain will join a waitlist for daily change alerts at a planned $9/mo or $90/yr, enough to justify building Founder Watchdog.",
@@ -66,6 +66,20 @@
       "minPerArm": 100,
       "readOn": "Dec 13 2026 gate (master plan section J: 25+ qualified), and only after at least 100 views of /founders/watchdog/",
       "ownerOk": "Michael, Nov 13 2026: \"Ship all items\" (waitlist and planned prices on the site, thread: Test demand for Founder Watchdog)"
+    },
+    {
+      "id": "watchdog-paid",
+      "status": "running",
+      "note": "Paid launch, not an A/B test. Founder Watchdog on sale at $9/mo or $90/yr from Nov 13 2026 (Stripe Payment Links, delivered by workers/watchdog).",
+      "kind": "offer",
+      "page": "/founders/watchdog/",
+      "hypothesis": "Founders who just checked or fixed their domain will pay $9/mo or $90/yr for daily change alerts.",
+      "primaryMetric": "paid Watchdog subscriptions (Stripe metadata offer=nk_watchdog), plus buy clicks per touchpoint view by 'from' (Umami watchdog-cta, watchdog-buy)",
+      "guardrails": ["every subscriber gets the TXT setup email and, once verified, a first look (Watchdog KV status and hello@ notices)", "refunds and cancels inside 30 days are counted next to sales", "Preflight runs and $29 buy-click rate on the touchpoint pages do not fall"],
+      "baseline": "none yet: first day on sale Nov 13 2026",
+      "minPerArm": 100,
+      "readOn": "Dec 13 2026 (master plan gate), and only after at least 100 views of /founders/watchdog/",
+      "ownerOk": "Michael, Nov 13 2026: \"why are we doing a waitlist ... make it live now\" (thread: Launch Founder Watchdog as a paid product)"
     }
   ]
 }

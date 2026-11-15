@@ -1,5 +1,15 @@
 # Founder Watchdog: demand test and bounded MVP design
 
+> **Update, Nov 13 2026 (later the same day): Founder Watchdog is a paid product now.** Michael: "why are we doing a
+> waitlist ... make it live now". The waitlist page was replaced by a sales page with two Stripe Payment Links
+> ($9/mo, $90/yr) and the smallest real version was built and deployed as `workers/watchdog/` (README there). The
+> rest of this document is the original demand-test design, kept for its reasoning; where it says "not for sale",
+> "no Stripe product" or `PUBLIC_WATCHDOG_WAITLIST`, read the README and `src/config.ts` (`PUBLIC_WATCHDOG`) instead.
+> What changed from the design below: one domain per subscription; ownership is proved by a TXT record before any
+> check runs; daily checks of SPF/DKIM/DMARC, MX, NS, homepage over HTTPS and weekly registration expiry; a second
+> look 15 minutes later before any alert; no advance HTTPS certificate warning yet (an expired certificate shows up as
+> the homepage not loading).
+
 Written Nov 13 2026 for the Product Ecosystem Master Plan (B2F lane). **Live since Nov 13 2026** (Michael: "Ship all items"). Status: **waitlist test only.** No Stripe
 product, no beta, no promise to build. Michael parked a $20-30 "Email Watch" on Nov 7 2026; that decision stands.
 Michael approved showing the waitlist and the planned $9/$90 on the live site on Nov 13 2026 ("Ship all items").
