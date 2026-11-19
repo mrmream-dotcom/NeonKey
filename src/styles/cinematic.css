@@ -1,0 +1,67 @@
+/* ==========================================================================
+   Cinematic layer (Nov 19 2026 restyle). Loaded last in Base.astro, after components.css.
+   Direction: near-black stage, big tight display type, light used as the accent (glows, spectral edges) instead of
+   colored fills, white pill for the one primary action, monospace micro-labels, hairline glass cards.
+   Structure, copy, prices, links and forms are unchanged; this file only changes how they look.
+   Fonts: Geist and Geist Mono (SIL Open Font License), self-hosted through @fontsource-variable (font-src 'self').
+   All motion is CSS only and switched off by the global prefers-reduced-motion rule in global.css.
+   ========================================================================== */
+
+/* ---------- Page ---------- */
+body {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(1200px 520px at 50% -260px, rgba(124, 108, 255, .16), transparent 70%),
+    radial-gradient(700px 360px at 100% 0%, rgba(34, 211, 238, .06), transparent 70%);
+  font-feature-settings: 'ss01', 'cv11';
+}
+::selection { background: rgba(34, 211, 238, .28); color: #fff; }
+
+/* ---------- Type ---------- */
+h1 { font-weight: 400; letter-spacing: -.045em; line-height: 1.02; }
+h2 { font-weight: 500; letter-spacing: -.035em; line-height: 1.08; }
+h3 { font-weight: 600; letter-spacing: -.02em; }
+.kicker, .lane-pill, .price-box .ds-tag {
+  font-family: var(--font-mono); font-weight: 500; letter-spacing: .14em; font-size: .72rem; color: var(--color-text-subtle);
+}
+.kicker::before { content: ''; display: inline-block; width: .38rem; height: .38rem; margin: 0 .55rem .12rem 0; border-radius: 50%; background: var(--color-primary); box-shadow: 0 0 10px var(--color-primary); vertical-align: middle; }
+.lead, .product-lede { font-weight: 400; }
+
+/* ---------- Header: thin glass bar ---------- */
+.site-header { background: rgba(5, 6, 11, .62); border-bottom-color: rgba(255, 255, 255, .06); }
+.header-inner { min-height: 60px; }
+.logo-text { font-weight: 600; letter-spacing: -.03em; }
+.site-nav a:not(.btn) { font-weight: 500; font-size: .9rem; border-radius: var(--radius-pill); }
+.site-nav a:not(.btn):hover, .site-nav a[aria-current='page'] { background: rgba(255, 255, 255, .06); }
+
+/* ---------- Buttons: pills ---------- */
+.btn { border-radius: var(--radius-pill); font-weight: 600; letter-spacing: -.01em; padding: .7rem 1.35rem; }
+.btn-primary { background: #f4f5fb; color: #05060b; box-shadow: 0 0 0 1px rgba(255, 255, 255, .9), 0 8px 30px -8px rgba(124, 108, 255, .55); }
+.btn-primary:hover { background: #fff; color: #05060b; box-shadow: 0 0 0 1px #fff, 0 0 0 5px rgba(34, 211, 238, .18), 0 10px 40px -6px rgba(34, 211, 238, .55); }
+.btn-ghost, .btn-secondary { background: rgba(255, 255, 255, .04); border-color: rgba(255, 255, 255, .16); }
+.btn-ghost:hover, .btn-secondary:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .32); }
+.btn-quiet { border-radius: var(--radius-pill); }
+
+/* ---------- Surfaces: hairline glass ---------- */
+.card, .panel, .ds-card, .price-col, .price-box, .lane-door, .ds-steps > li, .nl-box, .buy-box, .proscons > div {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015)) !important;
+  border-color: rgba(255, 255, 255, .08) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 30px 60px -40px rgba(0, 0, 0, .8);
+}
+.ds-section-raised, .alt { background: transparent; border-top: 1px solid rgba(255, 255, 255, .06); border-bottom: 0; }
+input, textarea, select { background: rgba(255, 255, 255, .03); border-color: rgba(255, 255, 255, .14); border-radius: var(--radius-md); }
+input:focus, textarea:focus, select:focus { background: rgba(255, 255, 255, .05); }
+
+/* ---------- Lane cards: light edge instead of a colored top bar ---------- */
+.lane-door, .ds-card-lane, .price-box { border-top: 1px solid rgba(255, 255, 255, .08) !important; overflow: hidden; }
+.lane-door::before, .ds-card-lane::before, .price-box::before {
+  content: ''; position: absolute; left: 12%; right: 12%; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lane, var(--color-primary)), transparent);
+  box-shadow: 0 0 18px 1px var(--lane, var(--color-primary)); opacity: .9; pointer-events: none;
+}
+.price-box { position: relative; }
+.door-q { font-weight: 500; letter-spacing: -.03em; }
+.lane-doors .lane-door .door-name { font-family: var(--font-mono); font-weight: 500; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
+
+/* ---------- Footer ---------- */
+.site-footer { background: transparent; border-top: 1px solid rgba(255, 255, 255, .06); }

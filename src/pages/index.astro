@@ -3,6 +3,7 @@ import { url } from '../config';
 import Base from '../layouts/Base.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import LaneDoors from '../components/LaneDoors.astro';
+import HeroStage from '../components/HeroStage.astro';
 import TrustLine from '../components/TrustLine.astro';
 import Section from '../components/ui/Section.astro';
 import { LANE_NAMES, LANE_HUBS } from '../lib/lanes';
@@ -155,9 +156,14 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="home-hero" aria-labelledby="home-h">
     <div class="container">
-      <p class="home-kicker"><span class="kicker">NeonKey</span><span class="home-by">Fairbanks, Alaska</span></p>
-      <h1 id="home-h">Practical tech help for you, your launch and your business.</h1>
-      <p class="home-lede">Check a suspicious message, launch on email that inboxes trust, or make sure every estimate gets a follow-up. Each path starts with something free.</p>
+      <div class="home-top">
+        <div class="home-copy">
+          <p class="home-kicker"><span class="kicker">NeonKey</span><span class="home-by">Fairbanks, Alaska</span></p>
+          <h1 id="home-h">Practical tech help for you, your launch and your business.</h1>
+          <p class="home-lede">Check a suspicious message, launch on email that inboxes trust, or make sure every estimate gets a follow-up. Each path starts with something free.</p>
+        </div>
+        <div class="home-stage"><HeroStage /></div>
+      </div>
       <LaneDoors />
       <TrustLine location="home" class="home-trust" extra={['Written quote before any custom work', 'You keep every login']} />
     </div>
@@ -232,12 +238,20 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   .home-kicker { display: flex; align-items: center; gap: .6rem; margin: 0 0 var(--space-3); }
   .home-by { font-size: var(--text-sm); color: var(--color-text-muted); }
   .home-by::before { content: '·'; margin-right: .6rem; color: var(--color-text-subtle); }
-  .home-hero h1 { font-size: var(--text-display); max-width: 24ch; margin: 0 0 var(--space-4); }
-  .home-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 46rem; margin: 0 0 var(--space-8); }
+  .home-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: var(--space-6); margin-bottom: var(--space-10); }
+  .home-stage { height: clamp(360px, 38vw, 500px); }
+  .home-hero h1 { font-size: clamp(2.5rem, 5.4vw, 4.75rem); font-weight: 300; letter-spacing: -.05em; line-height: 1; max-width: 13ch; margin: 0 0 var(--space-6);
+    background: linear-gradient(180deg, #fff 30%, #a9adc4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .home-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 36rem; margin: 0; }
+  @media (max-width: 900px) {
+    .home-top { grid-template-columns: 1fr; position: relative; margin-bottom: var(--space-6); }
+    .home-copy { position: relative; z-index: 1; }
+    .home-stage { position: absolute; right: -20%; top: -10%; width: 80%; height: 260px; opacity: .45; z-index: 0; pointer-events: none; }
+  }
   .home-hero :global(.home-trust) { margin-top: var(--space-5); max-width: 60rem; }
   @media (max-width: 640px) {
     .home-hero { padding-top: var(--space-5); }
-    .home-hero h1 { font-size: 1.75rem; margin-bottom: var(--space-3); }
+    .home-hero h1 { font-size: 2.25rem; margin-bottom: var(--space-3); }
     .home-lede { font-size: .9375rem; line-height: 1.5; margin-bottom: var(--space-4); }
   }
   .price-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }

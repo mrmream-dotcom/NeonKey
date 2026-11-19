@@ -92,3 +92,7 @@ The names live only in `src/lib/lanes.ts` (`LANE_NAMES`, `LANE_HUBS`, `LANE_AUDI
 - Don't edit inside forms pinned in `scripts/approved-form-changes.json`. Wrap them, don't change them.
 - No inline scripts unless the CSP integration hashes them. No new external hosts without adding them to `public/_headers` first.
 - Copy follows `CLAUDE.md`: no guarantees, no invented numbers, no testimonials, no scarcity.
+
+## Cinematic layer (Nov 19 2026)
+
+`src/styles/cinematic.css` loads last and restyles the shared pieces: near-black stage, Geist and Geist Mono (self-hosted via @fontsource-variable), light display headlines, white pill for the primary button, hairline glass cards with a lit top edge in the lane color, monospace kickers. The homepage hero visual is `src/components/HeroStage.astro` (SVG + CSS only, decorative, reduced-motion safe). Structure, copy, prices, links and forms did not change.

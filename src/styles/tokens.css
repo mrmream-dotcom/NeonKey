@@ -8,18 +8,18 @@
 :root {
   color-scheme: dark;
 
-  /* ---- Color: surfaces (dark navy does the work) ---- */
-  --color-bg: #0b0d17;            /* page */
-  --color-bg-raised: #0f1224;     /* alternate section band */
-  --color-surface: #141832;       /* cards, panels, price boxes */
-  --color-surface-2: #1a1f3f;     /* inputs on cards, hover fill */
-  --color-border: #262b52;        /* hairlines, card borders */
-  --color-border-strong: #3a4078; /* inputs, secondary buttons */
+  /* ---- Color: surfaces (near-black stage; Nov 19 2026 cinematic restyle, see cinematic.css) ---- */
+  --color-bg: #05060b;            /* page */
+  --color-bg-raised: #080912;     /* alternate section band */
+  --color-surface: #0c0e1a;       /* cards, panels, price boxes */
+  --color-surface-2: #141729;     /* inputs on cards, hover fill */
+  --color-border: rgba(255, 255, 255, .08);        /* hairlines, card borders */
+  --color-border-strong: rgba(255, 255, 255, .18); /* inputs, secondary buttons */
 
   /* ---- Color: text (all pass WCAG AA on bg and surface) ---- */
-  --color-text: #e8eaf6;          /* 16.2:1 on bg, 14.5:1 on surface */
-  --color-text-muted: #b3b8d6;    /* 9.9:1 on bg, 8.9:1 on surface */
-  --color-text-subtle: #8d93b8;   /* 6.4:1 on bg, 5.8:1 on surface; captions and fine print only */
+  --color-text: #f2f3f8;          /* 18.3:1 on bg, 17.3:1 on surface */
+  --color-text-muted: #a9adc4;    /* 9.1:1 on bg, 8.7:1 on surface */
+  --color-text-subtle: #80859e;   /* 5.6:1 on bg, 5.3:1 on surface; captions and fine print only */
 
   /* ---- Color: brand hues (unchanged from the original NeonKey palette) ---- */
   --color-primary: #22d3ee;       /* cyan: the one primary action per screen, links */
@@ -40,21 +40,21 @@
   --lane-smb: var(--color-magenta);       /* Run Your Business */
 
   /* ---- Type ---- */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   --text-xs: .8125rem;   /* 13px: kickers, legal */
   --text-sm: .875rem;    /* 14px: captions, meta */
   --text-base: 1rem;     /* 16px: UI text, buttons */
   --text-md: 1.0625rem;  /* 17px: body copy */
   --text-lg: 1.25rem;    /* 20px: lede, card titles */
   --text-xl: 1.5rem;     /* 24px: h3, prices */
-  --text-2xl: clamp(1.625rem, 3vw, 2.125rem);  /* h2 */
-  --text-3xl: clamp(2rem, 4.5vw, 3rem);        /* page h1 */
-  --text-display: clamp(2.25rem, 6vw, 3.5rem); /* homepage and lane h1 */
+  --text-2xl: clamp(1.75rem, 3.4vw, 2.5rem);  /* h2 */
+  --text-3xl: clamp(2.25rem, 5vw, 3.75rem);        /* page h1 */
+  --text-display: clamp(2.5rem, 7vw, 5.75rem); /* homepage and lane h1 */
   --leading-tight: 1.12;
   --leading-snug: 1.3;
   --leading-normal: 1.6;
-  --tracking-tight: -.02em;
+  --tracking-tight: -.035em;
   --tracking-caps: .08em;
   --weight-medium: 500;
   --weight-semibold: 600;
@@ -72,9 +72,9 @@
 
   /* ---- Radius ---- */
   --radius-sm: 6px;   /* tags, small chips */
-  --radius-md: 10px;  /* buttons, inputs */
-  --radius-lg: 14px;  /* cards, panels */
-  --radius-xl: 20px;  /* hero panels */
+  --radius-md: 12px;  /* buttons, inputs */
+  --radius-lg: 18px;  /* cards, panels */
+  --radius-xl: 24px;  /* hero panels */
   --radius-pill: 999px;
 
   /* ---- Elevation (no glow at rest) ---- */
