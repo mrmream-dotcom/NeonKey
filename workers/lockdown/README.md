@@ -45,6 +45,7 @@ Every entry expires after 180 days (long enough to cover a card dispute). No pay
 | Var | Meaning |
 | --- | --- |
 | `LOCKDOWN_PAYMENT_LINK` | The live Email Lockdown Payment Link id(s), comma-separated. Other links are ignored. |
+| `FOUNDER_STACK_PAYMENT_LINK` | The Founder Stack Payment Link id(s). The Stack includes the Email Authentication Setup, so these checkouts get the same audit and report, without the $29 credit line. If the buyer left the domain blank, only an ACTION NEEDED notice goes to hello@ (status `human`). Unset = ignored. |
 | `ALLOW_LIVE` | Live-mode events are ignored unless `"true"`. |
 | `CUSTOMER_EMAILS` | `"shadow"`: buyer emails go to hello@ only, subject `[SHADOW for buyer@...]`. `"send"`: they go to the buyer. |
 | `FROM_ADDRESS`, `NOTIFY_TO`, `REPLY_TO`, `BCC_ADDRESS` | NeonKey 🔑 From, notices to hello@, every email BCC'd to Michael. |

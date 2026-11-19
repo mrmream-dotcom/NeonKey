@@ -72,7 +72,7 @@ export default {
     }
     const relevant = (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") && s.object === "checkout.session";
     if (!relevant) return json(200, { ok: true, ignored: event.type });
-    if (!lockdownLinks(env).includes(s.payment_link)) return json(200, { ok: true, ignored: "other_offer" });
+    if (!lockdownLinks(env).includes(s.payment_link) && !bundleLinks(env).includes(s.payment_link)) return json(200, { ok: true, ignored: "other_offer" });
     if (s.payment_status !== "paid") return json(200, { ok: true, ignored: "unpaid" }); // async methods arrive later as async_payment_succeeded
 
     const ok = await handleOrder(env, s, event.livemode);
@@ -90,11 +90,17 @@ export function lockdownLinks(env) {
   return String(env.LOCKDOWN_PAYMENT_LINK || "").split(",").map((l) => l.trim()).filter(Boolean);
 }
 
+// FOUNDER_STACK_PAYMENT_LINK: The Founder Stack includes this setup (Q-05, approved by Michael Nov 18 2026), so its
+// checkouts run the same audit and report. The payments Worker still sends the guide PDF; this Worker sends the report.
+export function bundleLinks(env) {
+  return String(env.FOUNDER_STACK_PAYMENT_LINK || "").split(",").map((l) => l.trim()).filter(Boolean);
+}
+
 export function customerMode(env) {
   return env.CUSTOMER_EMAILS === "send" ? "send" : "shadow";
 }
 
-function orderFromSession(s, livemode) {
+function orderFromSession(env, s, livemode) {
   const field = (s.custom_fields || []).find((f) => f.key === "domain");
   const rawDomain = field?.text?.value || "";
   return {
@@ -111,6 +117,7 @@ function orderFromSession(s, livemode) {
     amount: typeof s.amount_total === "number" ? s.amount_total / 100 : null,
     checks: 0,
     status: "open",
+    ...(bundleLinks(env).includes(s.payment_link) ? { bundle: "founder_stack" } : {}),
   };
 }
 
@@ -119,12 +126,25 @@ export async function handleOrder(env, s, livemode) {
   const existing = await env.ORDERS.get(key, "json");
   if (existing && existing.reported) return true; // Stripe retry or the async event after completed: already done
 
-  const order = existing || orderFromSession(s, livemode);
+  const order = existing || orderFromSession(env, s, livemode);
   order.customerMode = customerMode(env);
   if (!order.email) {
     await sendNotice(env, "error", order, null, "Stripe sent no buyer email on this checkout. Look it up in Stripe.");
     order.reported = true;
     await env.ORDERS.put(key, JSON.stringify(order), { expirationTtl: ORDER_TTL });
+    return true;
+  }
+
+  // Founder Stack bought with no domain typed: the guide email from the payments Worker already asks the buyer to reply
+  // with it, so don't send them a second "what's your domain?" email. Tell hello@ instead.
+  if (order.bundle && !order.domain) {
+    const sent = await sendNotice(env, "nodomain", order, null, "Founder Stack bought with no domain for the included Email Authentication Setup. The guide email asked the buyer to reply with it; run the setup by hand when they do.");
+    if (!sent) return false;
+    order.reported = true;
+    order.status = "human";
+    await syncPaid(env, order);
+    await env.ORDERS.put(key, JSON.stringify(order), { expirationTtl: ORDER_TTL });
+    if (order.paymentIntent) await env.ORDERS.put(`pi:${order.paymentIntent}`, key, { expirationTtl: ORDER_TTL });
     return true;
   }
 
@@ -143,7 +163,7 @@ export async function handleOrder(env, s, livemode) {
   const audited = Boolean(order.domain && a.mx);
   if (audited) order.before = passingCount(a);
   const att = audited && (a.fixes.length || a.buyerSteps.length || a.locked) ? await reportAttachment(env, a, order) : null;
-  const mail = reportEmail({ name: order.name, a, pdf: att?.pdf });
+  const mail = reportEmail({ name: order.name, a, pdf: att?.pdf, bundle: Boolean(order.bundle) });
   if (att) mail.attachments = att.attachments;
   const sentBuyer = await sendCustomer(env, order, mail, `lockdown-report-${order.id}`);
   if (!sentBuyer) return false;
@@ -235,7 +255,7 @@ export async function recheckOne(env, key, order, now = Date.now()) {
 
   if (a.locked) {
     const att = await reportAttachment(env, a, order);
-    const mail = doneEmail({ name: order.name, a, before: order.before, pdf: att.pdf });
+    const mail = doneEmail({ name: order.name, a, before: order.before, pdf: att.pdf, bundle: Boolean(order.bundle) });
     mail.attachments = att.attachments;
     await sendCustomer(env, order, mail, `lockdown-done-${order.id}`);
     await sendNotice(env, "done", order, a);
@@ -243,7 +263,7 @@ export async function recheckOne(env, key, order, now = Date.now()) {
     result = "done";
   } else if (RECHECK_DAYS[i] === 5) {
     const att = await reportAttachment(env, a, order);
-    const mail = reminderEmail({ name: order.name, a, passing: passingCount(a), pdf: att.pdf });
+    const mail = reminderEmail({ name: order.name, a, passing: passingCount(a), pdf: att.pdf, bundle: Boolean(order.bundle) });
     mail.attachments = att.attachments;
     await sendCustomer(env, order, mail, `lockdown-remind-${order.id}`);
     await sendNotice(env, "reminder", order, a);

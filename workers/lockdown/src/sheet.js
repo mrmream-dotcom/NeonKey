@@ -106,7 +106,7 @@ export async function recordPaid(env, order, fetchImpl = fetch) {
   }
   const lead = [order.name, order.business].filter(Boolean).join(" / ") || order.email;
   const row = [
-    nextInboundId(rows), "Inbound / Hot", lead, order.email, "Stripe checkout (Email Lockdown)", "remote", "hot", "", "lockdown49 (Stripe)",
+    nextInboundId(rows), "Inbound / Hot", lead, order.email, order.bundle ? "Stripe checkout (Founder Stack, includes Email Lockdown)" : "Stripe checkout (Email Lockdown)", "remote", "hot", "", order.bundle ? "founder_stack (Stripe)" : "lockdown49 (Stripe)",
     "paid", "", "", "", auto ? "delivered automatically" : "finish by hand (see the ACTION NEEDED email)", "yes (paid)",
     "", "", "", "", "", "", "", ...paid[0], ...(hours ? hours[0] : ["", ""]),
   ];
