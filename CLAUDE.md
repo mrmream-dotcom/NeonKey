@@ -28,7 +28,7 @@ See `docs/deploy-checklist.md` for the full list and commands.
 One folder per Worker in `workers/`, each with its own README, `package.json` and wrangler config. They share nothing. Every outbound email is From `NeonKey 🔑 <hello@neonkey.tech>` with BCC to the `BCC_ADDRESS` var. Secrets are never in the repo or in chat: Michael sets them in the Cloudflare dashboard or with `wrangler secret put`.
 
 ## Copy rules (anything a visitor can read)
-- "NeonKey" is one word. Public byline is "Michael Ream", never "Mike".
+- "NeonKey" is one word. For now no personal name on the site: no "Run by", no "Michael Ream", bylines say "NeonKey" (Michael, Nov 18 2026). If he brings his name back, it is "Michael Ream", never "Mike".
 - American spelling. Never the phrase "plain English". Beginner-friendly, apolitical.
 - No guarantees, no invented numbers, quotes, reviews or clients.
 - Experience wording: Michael "has worked in the IT industry for most of his adult career" (first person: "I've worked in the IT industry for most of my adult career"). Don't mention the CIAT certificate (Michael, Nov 6 2026). Never claim Security+ or Network+.

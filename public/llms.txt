@@ -58,7 +58,7 @@ Prices are "starting at" guides, not quotes; every project gets a written quote 
 ## Optional
 
 - [About NeonKey](https://neonkey.tech/about/)  
-  Background on Michael Ream’s projects, approach, and public documentation of building and learning in tech.
+  Background on NeonKey’s projects, approach, and public documentation of building and learning in tech.
 
 **Important Pages:**
 - [Home](https://neonkey.tech/)
