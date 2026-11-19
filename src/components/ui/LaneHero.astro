@@ -1,0 +1,25 @@
+---
+// LaneHero (docs/design-system.md): the top of a lane hub (/protect/, /founders/, /services/). Names the entrance
+// exactly ("Protect Yourself", "Build Your Business", "Run Your Business"), says who it's for in one headline and
+// one line, and holds the lane's primary action (slot "actions") or a free tool (slot "tool") in the first screen.
+import { url } from '../../config';
+import type { Lane } from '../../lib/checkout-ref';
+import { LANE_NAMES } from '../../lib/lanes';
+interface Props { lane: Lane; title: string; lede: string; crumbs?: { href?: string; label: string }[]; id?: string }
+const { lane, title, lede, crumbs, id } = Astro.props;
+---
+<header class:list={['lane-hero', `lane-${lane}`]} id={id}>
+  <div class="container lane-hero-inner">
+    {crumbs && crumbs.length > 0 && (
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>{crumbs.map((c, i) => <li>{c.href && i < crumbs.length - 1 ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>)}</ol>
+      </nav>
+    )}
+    <span class="lane-pill"><span class="lane-dot" aria-hidden="true"></span>{LANE_NAMES[lane]}</span>
+    <h1>{title}</h1>
+    <p class="lane-lede">{lede}</p>
+    {Astro.slots.has('actions') && <div class="btn-row lane-actions"><slot name="actions" /></div>}
+    <slot name="tool" />
+    <slot />
+  </div>
+</header>

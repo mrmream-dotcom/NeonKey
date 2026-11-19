@@ -47,10 +47,10 @@ Rules
 - After adding a page or changing a headline, build with `PUBLISH_DATE=2099-01-01` (so timed guides are included) and run `npm run og`, then commit `public/og/`.
 
 ## Motion
-- Motion is for one place at a time (today: the homepage hero, while the `motion` A/B test runs).
-- Animate only `transform` and `opacity`. No scroll-jacking, no autoplaying sound, no video backgrounds, no 3D libraries.
-- `prefers-reduced-motion` turns every animation off (global rule in `global.css`). The still frame must look finished on its own.
-- Durations: hover 150-200ms; ambient background loops 20-30s so the motion is felt, not watched.
+- No ambient or decorative animation (Michael, Nov 14 2026 overhaul: no heavy animations; the homepage `motion` A/B test was ended). Only short hover and focus transitions.
+- Animate only `transform`, `opacity`, `color` and `border-color`. No scroll-jacking, no autoplaying sound, no video backgrounds, no 3D libraries.
+- `prefers-reduced-motion` turns every transition and animation off (global rule in `global.css`).
+- Durations: `--dur` in `src/styles/tokens.css`. See `docs/design-system.md`. (`public/js/hero-matrix.js` is no longer loaded; the file is kept so its old URL still resolves.)
 
 ## Voice (anything a visitor reads)
 Short, warm, and practical. Sell the outcome (fewer lost customers, follow-ups that happen), not the tool.

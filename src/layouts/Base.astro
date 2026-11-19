@@ -1,12 +1,15 @@
 ---
+import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/editorial.css';
+import '../styles/components.css';
 import Logo from '../components/Logo.astro';
 import { IS_DEMO, SITE_NAME, DEFAULT_DESCRIPTION, UMAMI, CONTACT_EMAIL, url, absoluteUrl } from '../config';
 import SocialLinks from '../components/SocialLinks.astro';
 import { abTests } from '../data/ab-tests';
 import { articles } from '../data/articles';
-import { emailLockdown, usd } from '../data/services';
+import { emailLockdown, setupGuide, followUpDesk, frontOfficePackage, remoteIt, remoteSupportPlan, usd } from '../data/services';
+import { LANE_NAMES } from '../lib/lanes';
 import { existsSync } from 'node:fs';
 import type { Lane } from '../lib/checkout-ref';
 interface Props {
@@ -21,8 +24,8 @@ interface Props {
   schema?: boolean;
   /**
    * Which of the three lanes the page belongs to; picks the header button. Values match the Lane type in
-   * src/lib/checkout-ref.ts. Left out, it follows the path: /founders/* is 'founders', /scam-checker/ is 'family',
-   * everything else 'smb' (business, the default).
+   * src/lib/checkout-ref.ts. Left out, it follows the path: /founders/* is 'founders', /protect/ and /scam-checker/
+   * are 'family', everything else 'smb' (Run Your Business, the default).
    */
   lane?: Lane;
 }
@@ -32,16 +35,18 @@ const { title, description = DEFAULT_DESCRIPTION, image: imageProp, noindex = fa
 const baseNoSlash = import.meta.env.BASE_URL.replace(/\/$/, '');
 const relPath = (Astro.url.pathname.startsWith(baseNoSlash) ? Astro.url.pathname.slice(baseNoSlash.length) : Astro.url.pathname) || '/';
 const path = relPath.replace(/\/$/, '') || '/';
-// Three lanes (04-website-overhaul-plan, section 2): Protect yourself, For founders, For businesses, plus Learn.
-// Lab, Articles and Newsletter moved to the footer; no URL changed.
+// Three entrances (Michael, Nov 14 2026 full overhaul): Protect Yourself, Build Your Business, Run Your Business,
+// plus Learn. Names come from src/lib/lanes.ts. Lab, Articles and Newsletter live in the footer; no URL changed.
+// `also` lists other paths that light up the same nav item (product pages that belong to the lane).
 const nav = [
-  { href: '/scam-checker/', label: 'Protect yourself', lane: 'family' },
-  { href: '/founders/', label: 'For founders', lane: 'founders' },
-  { href: '/services/', label: 'For businesses', lane: 'smb' },
-  { href: '/learn/', label: 'Learn', lane: '' },
+  { href: '/protect/', label: LANE_NAMES.family, lane: 'family', also: ['/scam-checker'] },
+  { href: '/founders/', label: LANE_NAMES.founders, lane: 'founders', also: [] },
+  { href: '/services/', label: LANE_NAMES.smb, lane: 'smb', also: ['/follow-up-desk', '/contact', '/free-it-kit'] },
+  { href: '/learn/', label: 'Learn', lane: '', also: [] },
 ];
-const isActive = (href: string) => path === href.replace(/\/$/, '') || path.startsWith(href.replace(/\/$/, '') + '/');
-const lane: Lane = laneProp ?? (/^\/founders(\/|$)/.test(path) ? 'founders' : /^\/scam-checker(\/|$)/.test(path) ? 'family' : 'smb');
+const under = (p: string) => path === p || path.startsWith(p + '/');
+const isActive = (item: (typeof nav)[number]) => under(item.href.replace(/\/$/, '')) || item.also.some(under);
+const lane: Lane = laneProp ?? (/^\/founders(\/|$)/.test(path) ? 'founders' : /^\/(scam-checker|protect)(\/|$)/.test(path) ? 'family' : 'smb');
 // Header button follows the lane. Business (the default) keeps the original quote button and its Umami event.
 const laneCta = {
   smb: { href: '/contact/', label: 'Get a written quote', event: 'contact-click' },
@@ -65,7 +70,7 @@ const robots = IS_DEMO || noindex ? 'noindex, nofollow' : 'index, follow';
 // Organization and WebSite defined on the home page, plus a breadcrumb trail built from the URL.
 const home = absoluteUrl('/', Astro.site);
 const orgId = `${home}#organization`;
-const crumbLabels: Record<string, string> = { 'security-plus': 'Security+ guide', lab: 'Lab', learn: 'Learn', articles: 'Articles', services: 'For businesses', newsletter: 'Newsletter', contact: 'Contact', pay: 'Pay', founders: 'For founders', 'scam-checker': 'Protect yourself' };
+const crumbLabels: Record<string, string> = { 'security-plus': 'Security+ guide', lab: 'Lab', learn: 'Learn', articles: 'Articles', services: LANE_NAMES.smb, newsletter: 'Newsletter', contact: 'Contact', pay: 'Pay', founders: LANE_NAMES.founders, 'scam-checker': 'Free scam checker', protect: LANE_NAMES.family };
 const segs = canonicalPath.split('/').filter(Boolean);
 const crumbs = [{ name: 'Home', item: home }, ...segs.map((seg, i) => ({
   name: i === segs.length - 1 ? title : crumbLabels[seg] || seg.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()),
@@ -195,7 +200,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         <nav id="site-nav" class="site-nav" aria-label="Main">
           <ul>
             {nav.map((item) => (
-              <li><a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined} data-umami-event="nav-click" data-umami-event-target={item.lane || 'learn'}>{item.label}</a></li>
+              <li><a href={url(item.href)} class={item.lane ? `lane-${item.lane}` : undefined} aria-current={isActive(item) ? 'page' : undefined} data-umami-event="nav-click" data-umami-event-target={item.lane || 'learn'}>{item.lane && <span class="nav-dot" aria-hidden="true"></span>}{item.label}</a></li>
             ))}
           </ul>
           <a href={url(laneCta.href)} class="btn btn-primary btn-sm nav-cta" data-umami-event={laneCta.event} data-umami-event-location="header" data-umami-event-lane={lane}>{laneCta.label}</a>
@@ -206,35 +211,57 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
       <slot />
     </main>
     <footer class="site-footer">
-      <div class="container footer-inner">
+      <div class="container footer-grid">
         <div class="footer-brand">
           <Logo size={30} />
-          <p>Unlock tech, whatever your level.</p>
-          <p class="footer-area">Practical tech help for families, founders and small businesses.</p>
+          <p>Practical tech help for families, founders and small businesses. Unlock tech, whatever your level.</p>
           <SocialLinks location="footer" />
         </div>
-        <nav aria-label="Footer">
-          <ul class="footer-links">
+        <nav class="footer-col lane-family" aria-labelledby="ft-family">
+          <h2 id="ft-family"><span class="lane-dot" aria-hidden="true"></span>{LANE_NAMES.family}</h2>
+          <ul>
             <li><a href={url('/scam-checker/')} data-umami-event="lane-cta" data-umami-event-location="footer" data-umami-event-lane="family">Free scam checker</a></li>
-            <li><a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="footer-preflight" data-umami-event-track="founders">Launch Preflight</a></li>
-            <li><a href={url('/services/email-lockdown/')} data-umami-event="services-cta" data-umami-event-location="footer-lockdown">Email Authentication Setup ({usd(emailLockdown.from)})</a></li>
-            <li><a href={url('/follow-up-desk/')} data-umami-event="services-cta" data-umami-event-location="footer-follow-up-desk">Follow-Up Desk</a></li>
-            <li><a href={url('/founders/')} data-umami-event="founders-nav" data-umami-event-target="footer" data-umami-event-track="founders">For founders</a></li>
+            <li><a href={url('/protect/')} data-umami-event="nav-click" data-umami-event-target="family" data-umami-event-location="footer">Scam guides and checkups</a></li>
+            <li><a href={url('/learn/is-this-a-scam/')}>Practice spotting scams</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-col lane-founders" aria-labelledby="ft-founders">
+          <h2 id="ft-founders"><span class="lane-dot" aria-hidden="true"></span>{LANE_NAMES.founders}</h2>
+          <ul>
+            <li><a href={url('/founders/preflight/')} data-umami-event="founders-nav" data-umami-event-target="footer-preflight" data-umami-event-track="founders">Launch Preflight (free)</a></li>
+            <li><a href={url('/founders/guide/')} data-umami-event="founders-nav" data-umami-event-target="footer-guide" data-umami-event-track="founders">{setupGuide.name} ({usd(setupGuide.price)})</a></li>
+            <li><a href={url('/founders/')} data-umami-event="founders-nav" data-umami-event-target="footer" data-umami-event-track="founders">All founder tools</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-col lane-smb" aria-labelledby="ft-smb">
+          <h2 id="ft-smb"><span class="lane-dot" aria-hidden="true"></span>{LANE_NAMES.smb}</h2>
+          <ul>
+            <li><a href={url('/follow-up-desk/')} data-umami-event="services-cta" data-umami-event-location="footer-follow-up-desk">{followUpDesk.name}</a></li>
+            <li><a href={url('/services/email-lockdown/')} data-umami-event="services-cta" data-umami-event-location="footer-lockdown">{emailLockdown.name} ({usd(emailLockdown.from)})</a></li>
+            <li><a href={url('/services/#front-office-package')} data-umami-event="services-cta" data-umami-event-location="footer-front-office">{frontOfficePackage.name}</a></li>
+            <li><a href={url('/services/remote-it/')} data-umami-event="services-cta" data-umami-event-location="footer-remote-it">{remoteIt.name}</a></li>
+            <li><a href={url('/services/remote-it/#support-plan')} data-umami-event="services-cta" data-umami-event-location="footer-support-plan">{remoteSupportPlan.name}</a></li>
+            <li><a href={url('/free-it-kit/')} data-umami-event="free-kit-cta" data-umami-event-location="footer">Free Starter IT Kit</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-col" aria-labelledby="ft-co">
+          <h2 id="ft-co">NeonKey</h2>
+          <ul>
+            <li><a href={url('/about/')}>About</a></li>
+            <li><a href={url('/learn/')}>Learn</a></li>
             <li><a href={url('/lab/')}>Lab</a></li>
             <li><a href={url('/articles/')}>Articles</a></li>
             <li><a href={url('/newsletter/')} data-umami-event="newsletter-cta" data-umami-event-location="footer">Newsletter</a></li>
-            <li><a href={url('/about/')}>About</a></li>
             <li><a href={url('/reviews/')}>Reviews</a></li>
             <li><a href={url('/refer/')}>Refer a business</a></li>
-            <li><a href={url('/disclosure/')}>Disclosure</a></li>
-            <li><a href={url('/privacy/')}>Privacy</a></li>
-            <li><a href={url('/terms/')}>Terms</a></li>
-            <li><a href={url('/refunds/')}>Refunds and cancellations</a></li>
             <li><a href={url('/contact/')} data-umami-event="contact-click" data-umami-event-location="footer">Contact</a></li>
             <li><a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="footer-email">{CONTACT_EMAIL}</a></li>
           </ul>
         </nav>
-        <p class="footer-fine">&copy; {new Date().getFullYear()} NeonKey. Reviews are never paid placements; see the <a href={url('/disclosure/')}>disclosure</a>.</p>
+        <div class="footer-fine">
+          <span>&copy; {new Date().getFullYear()} NeonKey. Reviews are never paid placements; see the <a href={url('/disclosure/')}>disclosure</a>.</span>
+          <span><a href={url('/privacy/')}>Privacy</a> · <a href={url('/terms/')}>Terms</a> · <a href={url('/refunds/')}>Refunds and cancellations</a> · <a href={url('/disclosure/')}>Disclosure</a></span>
+        </div>
       </div>
     </footer>
     <script>
@@ -261,7 +288,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
       });
       // GA4 copy of a real lead submit (generate_lead), sent to GA4 only (not the Ads tag). The lane comes from a
       // data-umami-event-lane prop if the button has one, else from the page path. No form field values are sent.
-      const laneFor = (p: string) => (/^\/founders(\/|$)/.test(p) ? 'founders' : /^\/(scam-checker|learn)(\/|$)/.test(p) ? 'family' : 'smb');
+      const laneFor = (p: string) => (/^\/founders(\/|$)/.test(p) ? 'founders' : /^\/(scam-checker|protect|learn)(\/|$)/.test(p) ? 'family' : 'smb');
       const gaLead = (form: string, lane?: string) => {
         try { (window as any).gtag?.('event', 'generate_lead', { send_to: 'G-425106TVS2', form, lane: lane || laneFor(location.pathname) }); } catch {}
       };

@@ -1,0 +1,15 @@
+---
+// FAQ (docs/design-system.md): native <details>/<summary>, no JavaScript, keyboard and screen-reader friendly.
+// Answers are short HTML strings written in this repo (links allowed). Only facts already stated on the site or in
+// src/data/services.ts; no guarantees.
+interface Props { items: { q: string; a: string; id?: string }[]; class?: string }
+const { items, class: cls } = Astro.props;
+---
+<div class:list={['ds-faq', cls]}>
+  {items.map((f) => (
+    <details class="ds-faq-item" id={f.id}>
+      <summary>{f.q}</summary>
+      <div class="ds-faq-a" set:html={f.a} />
+    </details>
+  ))}
+</div>

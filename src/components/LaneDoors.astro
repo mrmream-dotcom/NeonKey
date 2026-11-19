@@ -1,59 +1,81 @@
 ---
-// The three lane doors on the homepage (04-website-overhaul-plan, section 3): Protect yourself, For founders,
-// For businesses. Lane ids match the Lane type in src/lib/checkout-ref.ts. Each button is counted in Umami as
-// "lane-door" with its lane, so we can see which door visitors pick. Prices come from src/data/services.ts.
+// The three customer entrances on the homepage (Michael, Nov 14 2026 full overhaul): Protect Yourself, Build Your
+// Business, Run Your Business. Names come from src/lib/lanes.ts; lane ids match the Lane type in src/lib/checkout-ref.ts.
+// Each door: who it's for, the question it answers, the product and its price, one primary action. The primary
+// button is counted in Umami as "lane-door" with its lane, so we can see which door visitors pick.
+// Prices come from src/data/services.ts. The Desk founding price uses DeskSale's line (it swaps to the regular price
+// at the deadline).
 import { url } from '../config';
-import { setupGuide, followUpDeskTrialDays as trial, usd } from '../data/services';
+import DeskSale from './DeskSale.astro';
+import { setupGuide, emailLockdown, followUpDesk as fd, followUpDeskTrialDays as trial, followUpDeskSaleLive, usd } from '../data/services';
+import { LANE_NAMES, LANE_AUDIENCE, LANE_HUBS } from '../lib/lanes';
 import type { Lane } from '../lib/checkout-ref';
-const doors: { lane: Lane; accent: string; eyebrow: string; title: string; body: string; cta: string; href: string }[] = [
+const doors: { lane: Lane; question: string; product: string; price?: string; cta: string; href: string; more: string }[] = [
   {
-    lane: 'family', accent: 'accent-cyan',
-    eyebrow: 'Protect yourself · Free',
-    title: 'Is this text a scam?',
-    body: 'Paste a text, email or pop-up into the free scam checker to see the warning signs and what to do next. It runs in your browser, and nothing you paste is saved.',
+    lane: 'family',
+    question: 'Is this text a scam?',
+    product: 'Free scam checker. Paste a text, email or pop-up to see the warning signs and what to do. It runs in your browser, and nothing you paste is saved.',
+    price: 'Free · runs in your browser',
     cta: 'Check a message free', href: '/scam-checker/',
+    more: 'Scam guides and family checkups',
   },
   {
-    lane: 'founders', accent: 'accent-violet',
-    eyebrow: `For founders · Free check, guide ${usd(setupGuide.price)}`,
-    title: 'Will inboxes trust your launch email?',
-    body: 'Run the free Launch Preflight on your domain. It takes about 30 seconds, no signup. Then set up the backend NeonKey runs on with The Founder Stack, a step-by-step guide.',
+    lane: 'founders',
+    question: 'Will inboxes trust your launch email?',
+    product: `Free Launch Preflight on your domain in about 30 seconds, no signup. Then fix it with the ${emailLockdown.name} or set up the whole backend with ${setupGuide.name}.`,
+    price: `Free check · ${usd(emailLockdown.from)} fix · ${usd(setupGuide.price)} guide`,
     cta: 'Check my domain free', href: '/founders/#check',
+    more: 'All founder tools',
   },
   {
-    lane: 'smb', accent: 'accent-magenta',
-    eyebrow: 'For small businesses · Self-serve or done for you',
-    title: 'Stop letting estimates go quiet.',
-    body: `The Follow-Up Desk follows up on the estimates you've sent, under your business name, and stops when the customer replies. ${trial} days free. Want a custom system instead? Get a written quote first.`,
-    cta: 'See options for businesses', href: '/services/',
+    lane: 'smb',
+    question: 'Stop letting estimates go quiet.',
+    product: `The ${fd.name} follows up on the estimates you've sent, under your business name, and stops when the customer replies. Want it done for you? Get a written quote first.`,
+    cta: `See the ${fd.name}`, href: fd.href!,
+    more: 'All options for businesses',
   },
 ];
 ---
-<ul class="lane-doors" aria-label="Pick what fits you">
+<ul class="lane-doors" aria-label="Pick where you are">
   {doors.map((d) => (
-    <li class={`card topline ${d.accent} lane-door`}>
-      <span class="kicker">{d.eyebrow}</span>
-      <h2 class="lane-door-h">{d.title}</h2>
-      <p class="muted">{d.body}</p>
-      <a class="btn btn-primary btn-sm" href={url(d.href)} data-umami-event="lane-door" data-umami-event-lane={d.lane} data-umami-event-location="home-doors">{d.cta}</a>
+    <li class={`lane-door lane-${d.lane}`}>
+      <p class="door-lane"><span class="lane-dot" aria-hidden="true"></span><span class="door-name">{LANE_NAMES[d.lane]}</span><span class="door-aud">{LANE_AUDIENCE[d.lane]}</span></p>
+      <h2 class="door-q">{d.question}</h2>
+      <p class="door-product">{d.product}</p>
+      <p class="door-price">{d.price ?? (followUpDeskSaleLive ? <DeskSale variant="line" location="home-door" /> : `${trial} days free, then ${usd(fd.from)}/month`)}</p>
+      <div class="door-actions">
+        <a class="btn btn-primary" href={url(d.href)} data-umami-event="lane-door" data-umami-event-lane={d.lane} data-umami-event-location="home-doors">{d.cta} <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="door-more" href={url(LANE_HUBS[d.lane])} data-umami-event="nav-click" data-umami-event-target={d.lane} data-umami-event-location="home-doors">{d.more}</a>
+      </div>
     </li>
   ))}
 </ul>
 
 <style>
-  .lane-doors { list-style: none; width: 100%; text-align: left; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-  @media (max-width: 900px) { .lane-doors { grid-template-columns: 1fr; gap: .75rem; } }
-  .lane-door { display: flex; flex-direction: column; gap: .45rem; margin: 0; }
-  .lane-door-h { font-size: 1.2rem; line-height: 1.25; margin: 0; }
-  .lane-door p { margin: 0; font-size: .95rem; }
-  .lane-door .btn { align-self: flex-start; margin-top: auto; }
-  .lane-door .kicker { font-size: .74rem; }
-  /* Phones: all three doors fit in the first screen (eyebrow, question, button). The longer text shows from 641px up. */
+  .lane-doors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); text-align: left; }
+  .lane-door { position: relative; display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-top: 2px solid var(--lane); border-radius: var(--radius-lg); box-shadow: var(--shadow-inset); transition: border-color var(--dur) var(--ease); }
+  .lane-door:hover { border-color: var(--color-border-strong); border-top-color: var(--lane); }
+  .lane-door p { margin: 0; }
+  .door-lane { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: .5rem; }
+  .door-name { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-text); }
+  .door-aud { grid-column: 2; font-size: var(--text-sm); color: var(--color-text-subtle); }
+  .door-q { font-size: var(--text-xl); line-height: var(--leading-snug); margin: 0; }
+  .door-product { color: var(--color-text-muted); font-size: .97rem; }
+  .door-price { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text); font-variant-numeric: tabular-nums; }
+  .door-actions { margin-top: auto; padding-top: var(--space-2); display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .door-more { font-size: var(--text-sm); color: var(--color-text-muted); text-decoration: underline; text-underline-offset: 3px; min-height: var(--tap); display: inline-flex; align-items: center; }
+  .door-more:hover { color: var(--color-text); }
+  @media (max-width: 960px) { .lane-doors { grid-template-columns: 1fr; gap: var(--space-3); } }
+  /* Phones: all three doors fit in the first screen (lane, question, one button). Product detail, price line and the
+     hub link show from 641px up; the hubs are one tap away in the menu. */
   @media (max-width: 640px) {
-    .lane-doors { margin-top: 1.1rem; gap: .6rem; }
-    .lane-door { padding: .8rem 1rem .9rem; gap: .3rem; }
-    .lane-door-h { font-size: 1.08rem; }
-    .lane-door p { display: none; }
-    .lane-door .btn { margin-top: .25rem; }
+    .lane-doors { gap: var(--space-2); }
+    .lane-door { padding: var(--space-3) var(--space-4); gap: var(--space-1); }
+    .door-lane { display: flex; gap: .5rem; }
+    .door-aud { display: none; }
+    .door-q { font-size: 1.0625rem; }
+    .door-product, .door-price, .door-more { display: none; }
+    .door-actions { padding-top: var(--space-1); }
+    .door-actions .btn { min-height: var(--tap); padding: .5rem 1rem; font-size: .9375rem; }
   }
 </style>

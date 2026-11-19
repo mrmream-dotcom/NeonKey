@@ -1,0 +1,24 @@
+---
+// Button (docs/design-system.md). One component for every action: a link when `href` is set, otherwise a <button>.
+//   variant: primary (one per screen) | secondary (outlined) | ghost (text-only, rendered as .btn-quiet)
+//   size: sm | md | lg; block = full width.
+// Extra attributes pass straight through, so tracking and checkout attributes stay on the element:
+//   <Button {...buyAttrs(offer.buyUrl, { lane, sku, location })} rel="noopener" data-umami-event="buy-click" ...>
+// Internal paths go through url() (BASE_PATH); absolute URLs, mailto: and #anchors are left as they are.
+import { url } from '../../config';
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  block?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+  [attr: string]: unknown;
+}
+const { href, variant = 'primary', size = 'md', block = false, type = 'button', class: cls, ...rest } = Astro.props;
+const classes = ['btn', { primary: 'btn-primary', secondary: 'btn-secondary', ghost: 'btn-quiet' }[variant], size === 'sm' && 'btn-sm', size === 'lg' && 'btn-lg', block && 'btn-block', cls];
+const target = href === undefined ? undefined : /^(https?:|mailto:|tel:|#)/.test(href) ? href : url(href);
+---
+{target !== undefined
+  ? <a class:list={classes} href={target} {...rest}><slot /></a>
+  : <button class:list={classes} type={type} {...rest}><slot /></button>}

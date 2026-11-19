@@ -16,7 +16,7 @@
     },
     {
       "id": "motion",
-      "status": "live",
+      "status": "ended",
       "kind": "presentation",
       "page": "/",
       "hypothesis": "A subtle motion background on the homepage hero raises clicks to services and contact without slowing the page.",
@@ -25,7 +25,8 @@
       "baseline": "none yet",
       "minPerArm": 100,
       "readOn": "Friday scoreboard",
-      "ownerOk": "Michael, Nov 8 2026 (picked 'All three, free')"
+      "ownerOk": "Michael, Nov 8 2026 (picked 'All three, free')",
+      "ended": "Nov 14 2026: ended without a winner when the homepage was rebuilt (Michael's full-overhaul direction: premium, no heavy animations). Variant b markup and the matrix canvas were removed; variant a (still hero) is the new default."
     },
     {
       "id": "desk-plan-order",

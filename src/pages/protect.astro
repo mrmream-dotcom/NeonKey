@@ -1,0 +1,73 @@
+---
+// /protect/: the "Protect Yourself" lane hub (Michael, Nov 14 2026 full overhaul). For people and families, not
+// businesses. The free scam checker (/scam-checker/) stays the tool; this page points to it first, then the scam
+// guides and family checkups. Nothing is for sale in this lane yet, so there is no price and no checkout here.
+// Guide links come from src/data/learn-guides.ts and only list guides that are live in this build (learn-schedule.json).
+import Base from '../layouts/Base.astro';
+import LaneHero from '../components/ui/LaneHero.astro';
+import Section from '../components/ui/Section.astro';
+import Button from '../components/ui/Button.astro';
+import TrustLine from '../components/TrustLine.astro';
+import { url } from '../config';
+import { tutorialCards } from '../data/learn-guides';
+import { isLearnPathLive } from '../lib/schedule.mjs';
+import { familyShield as fs } from '../data/scam-samples';
+import { LANE_NAMES } from '../lib/lanes';
+const live = (href: string) => isLearnPathLive(href);
+const pick = (hrefs: string[]) => hrefs.map((h) => tutorialCards.find((c) => c.href === h)).filter((c): c is (typeof tutorialCards)[number] => Boolean(c) && live(c!.href));
+const scamGuides = pick(['/learn/unpaid-toll-text-scam/', '/learn/family-emergency-scam/', '/learn/bank-fraud-alert-scam/', '/learn/tech-support-popup-scam/', '/learn/spot-a-scam/']);
+const checkups = pick(['/learn/family-tech-checkup/', '/learn/phone-security-checkup/', '/learn/passwords-and-passkeys/', '/learn/two-factor-authentication/', '/learn/data-breach-what-to-do/']);
+---
+<Base title={`${LANE_NAMES.family}: free scam checks and family tech guides`} lane="family" description="Free tools and short guides to spot scam texts, calls and pop-ups, and to keep your family's phones and accounts safer. Paste a message into the free scam checker; nothing you paste is saved.">
+  <LaneHero lane="family" crumbs={[{ href: '/', label: 'Home' }, { label: LANE_NAMES.family }]} title="Check a message before you tap." lede="Free tools and short guides to spot scam texts, calls and pop-ups, and to keep your family's phones and accounts safer. Nothing to buy, no signup.">
+    <Fragment slot="actions">
+      <Button href="/scam-checker/#check" size="lg" data-umami-event="lane-cta" data-umami-event-location="protect-hero" data-umami-event-lane="family">Check a message free</Button>
+      <Button href="/learn/is-this-a-scam/#practice" variant="secondary" size="lg" data-umami-event="nav-click" data-umami-event-target="practice" data-umami-event-location="protect-hero">Practice with six examples</Button>
+    </Fragment>
+  </LaneHero>
+
+  <Section id="tools" title="Free tools" intro="They run in your browser. What you paste into the checker is never sent or saved anywhere." size="sm">
+    <div class="offer-grid">
+      <article class="ds-card ds-card-md offer-card is-primary lane-family">
+        <span class="oc-badge">Free</span>
+        <h3>Free scam checker</h3>
+        <p class="oc-line">Paste a text, email or pop-up that feels off to see the warning signs and what to do next: pressure, look-alike links, risky requests and common setups.</p>
+        <div class="btn-row"><Button href="/scam-checker/#check" data-umami-event="lane-cta" data-umami-event-location="protect-tools" data-umami-event-lane="family">Check a message <span class="arrow" aria-hidden="true">→</span></Button></div>
+      </article>
+      <article class="ds-card ds-card-md offer-card">
+        <span class="oc-badge">Free</span>
+        <h3>Practice on six made-up examples</h3>
+        <p class="oc-line">Get faster at spotting the tells, see what to do if you already tapped, and learn how to help a parent check a message.</p>
+        <div class="btn-row"><Button href="/learn/is-this-a-scam/" variant="secondary" data-umami-event="nav-click" data-umami-event-target="practice" data-umami-event-location="protect-tools">Try the practice</Button></div>
+      </article>
+    </div>
+  </Section>
+
+  {scamGuides.length > 0 && (
+    <Section id="scam-guides" title="Guides for the most common scams" size="sm">
+      <ul class="link-grid">{scamGuides.map((c) => <li><a href={url(c.href)}>{c.title}<span>{c.text}</span></a></li>)}</ul>
+    </Section>
+  )}
+
+  {checkups.length > 0 && (
+    <Section id="checkups" title="Family and phone checkups" intro="Short, step-by-step fixes you can do in one sitting, for your own devices or a parent's." size="sm">
+      <ul class="link-grid">{checkups.map((c) => <li><a href={url(c.href)}>{c.title}<span>{c.text}</span></a></li>)}</ul>
+    </Section>
+  )}
+
+  <Section id="family-plan" title="Family Shield: coming next" tone="raised" size="sm">
+    <p class="protect-note">The family plan we're building adds an AI second opinion on the messages your family checks, for up to {fs.maxAdults} adults who each say yes by email. Adults 18 and over only. We'll open it on the <a href={url('/scam-checker/#family-plan')}>scam checker page</a> once it works end to end; nothing is for sale yet. Until then, the best thing you can do for someone you love is send them the free checker.</p>
+  </Section>
+
+  <div class="container protect-end">
+    <TrustLine location="protect" />
+    <p class="protect-cross">Launching a product? Start at <a href={url('/founders/')}>{LANE_NAMES.founders}</a>. Running a small business? Start at <a href={url('/services/')}>{LANE_NAMES.smb}</a>.</p>
+  </div>
+</Base>
+
+<style>
+  .protect-note { max-width: 46rem; color: var(--color-text-muted); margin: 0; }
+  .protect-note a, .protect-cross a { color: var(--color-primary); }
+  .protect-end { padding: var(--space-4) 0 var(--space-12); }
+  .protect-cross { font-size: var(--text-sm); color: var(--color-text-muted); margin: var(--space-3) 0 0; }
+</style>

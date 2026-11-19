@@ -1,7 +1,7 @@
 /* ==========================================================================
    Editorial design system: the "official" Articles look carried site-wide.
    Page headers, section headings, image-led cards, panels, fact lists, legal docs.
-   Built on the tokens in global.css. No external assets.
+   Built on the tokens in tokens.css. No external assets.
    ========================================================================== */
 
 /* Accent helpers (fallback thumbs, badges, numbered eyebrows) */
@@ -21,18 +21,18 @@
 .page-header.center::after { background: linear-gradient(90deg, transparent, rgba(34,211,238,.55), rgba(244,114,182,.35), transparent); }
 .page-header.center p, .page-header.center .lede { margin-inline: auto; }
 .page-header.center .meta-line, .page-header.center .btn-row, .page-header.center .crumbs ol { justify-content: center; }
-.page-header h1 { font-size: clamp(2.1rem, 4.6vw, 3.2rem); letter-spacing: -.02em; margin: .45rem 0 .65rem; }
+.page-header h1 { font-size: var(--text-3xl); letter-spacing: var(--tracking-tight); margin: .45rem 0 .65rem; }
 .page-header h1 .glow-c { color: var(--cyan); text-shadow: 0 0 22px rgba(34,211,238,.3); }
-.page-header .lede { font-size: 1.18rem; color: #c9cde6; max-width: 62ch; margin: 0 0 .6rem; }
+.page-header .lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 62ch; margin: 0 0 .6rem; }
 .page-header .btn-row { margin-top: 1.25rem; }
 .eyebrow { display: inline-flex; align-items: center; gap: .55rem; }
 .eyebrow::before { content: ''; width: 1.5rem; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--cyan), var(--magenta)); flex: none; }
 .meta-line { list-style: none; padding: 0; margin: 1.1rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .88rem; color: var(--muted); }
-.meta-line li { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .7rem; border: 1px solid var(--line); border-radius: 999px; background: rgba(21,25,53,.7); margin: 0; }
+.meta-line li { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .7rem; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--color-surface); margin: 0; }
 .meta-line li strong, .meta-line li time { color: var(--text); font-weight: 700; }
-.meta-line li::before { content: ''; width: .4rem; height: .4rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px rgba(34,211,238,.6); }
-.meta-line li:nth-child(3n+2)::before { background: var(--magenta); box-shadow: 0 0 8px rgba(244,114,182,.6); }
-.meta-line li:nth-child(3n+3)::before { background: var(--violet); box-shadow: 0 0 8px rgba(167,139,250,.6); }
+.meta-line li::before { content: ''; width: .4rem; height: .4rem; border-radius: 50%; background: var(--cyan); }
+.meta-line li:nth-child(3n+2)::before { background: var(--magenta); }
+.meta-line li:nth-child(3n+3)::before { background: var(--violet); }
 .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: .35rem; padding: 0; margin: 0 0 1rem; font-size: .85rem; color: var(--muted); }
 .crumbs li { margin: 0; }
 .crumbs li + li::before { content: '/'; margin-right: .35rem; color: #5b6197; }
@@ -57,14 +57,14 @@
 .sec-head.center::after { background: linear-gradient(90deg, transparent, rgba(34,211,238,.55), rgba(244,114,182,.35), transparent); }
 
 /* ---------- Panels and cards: a touch more finish ---------- */
-.card, .panel, .grid-card, .featured-card { background-image: linear-gradient(180deg, rgba(255,255,255,.03), transparent 38%); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+.card, .panel, .grid-card, .featured-card { box-shadow: var(--shadow-inset); }
 .card .kicker, .panel .kicker { display: inline-block; margin-bottom: .35rem; }
 .num-eyebrow { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--mono); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent, var(--cyan)); }
 .num-eyebrow::after { content: ''; width: 2.2rem; height: 1px; background: currentColor; opacity: .5; }
 .icon-chip { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: var(--accent, var(--cyan)); border: 1px solid color-mix(in srgb, var(--accent, var(--cyan)) 60%, transparent); background: color-mix(in srgb, var(--accent, var(--cyan)) 10%, transparent); margin-bottom: .9rem; flex: none; }
 .icon-chip .icon { width: 24px; height: 24px; }
 .topline { position: relative; overflow: hidden; }
-.topline::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--accent, var(--cyan)), transparent 85%); }
+.topline::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, var(--accent, var(--cyan)), transparent 85%); }
 .panel-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; }
 .panel-head h2, .panel-head h3 { margin: 0; }
 .panel-head .icon-chip { margin: 0; }
@@ -122,7 +122,7 @@
 @media (max-width: 900px) { .split, .split-rev { grid-template-columns: 1fr; } .sticky-side { position: static; } }
 
 /* ---------- Status pages (thank-you / welcome) ---------- */
-.status-mark { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto .75rem; color: var(--cyan); border: 1px solid rgba(34,211,238,.6); background: radial-gradient(circle, rgba(34,211,238,.18), transparent 70%); box-shadow: 0 0 28px rgba(34,211,238,.25); }
+.status-mark { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto .75rem; color: var(--cyan); border: 1px solid rgba(34,211,238,.6); background: rgba(34,211,238,.1); }
 .status-mark .icon { width: 32px; height: 32px; }
 .status-steps { counter-reset: st; list-style: none; padding: 0; margin: 0; display: grid; gap: .9rem; }
 .status-steps > li { counter-increment: st; position: relative; padding: 1rem 1.1rem 1rem 3.4rem; margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; color: var(--muted); }
@@ -210,3 +210,9 @@
 .issue-format > h3 { font-size: 1.15rem; margin: 0 0 1.1rem; }
 .issue-sections { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
 .issue-sections > li { background: rgba(255,255,255,.02); }
+
+/* Phones: a shorter page header, so forms and tools under it start higher (full overhaul, Nov 14 2026). */
+@media (max-width: 640px) {
+  .page-header h1 { font-size: 1.875rem; }
+  .page-header .lede { font-size: var(--text-md); }
+}

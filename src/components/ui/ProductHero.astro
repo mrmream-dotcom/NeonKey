@@ -1,0 +1,29 @@
+---
+// ProductHero (docs/design-system.md): what the product does and who it's for, with the PriceBox beside it on
+// desktop and straight under the lede on phones, so the primary action is in the first screen.
+// Slots: "price" (a PriceBox), "meta" (small facts under the lede), default (extra lines under the lede).
+import { url } from '../../config';
+import type { Lane } from '../../lib/checkout-ref';
+import { LANE_NAMES } from '../../lib/lanes';
+interface Props { lane: Lane; eyebrow?: string; title: string; lede: string; who?: string; crumbs?: { href?: string; label: string }[] }
+const { lane, eyebrow, title, lede, who, crumbs } = Astro.props;
+const hasPrice = Astro.slots.has('price');
+---
+<header class:list={['product-hero', `lane-${lane}`, !hasPrice && 'is-single']}>
+  <div class="container product-hero-grid">
+    <div class="product-hero-copy">
+      {crumbs && crumbs.length > 0 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>{crumbs.map((c, i) => <li>{c.href && i < crumbs.length - 1 ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>)}</ol>
+        </nav>
+      )}
+      <span class="lane-pill"><span class="lane-dot" aria-hidden="true"></span>{eyebrow ?? LANE_NAMES[lane]}</span>
+      <h1>{title}</h1>
+      <p class="product-lede">{lede}</p>
+      {who && <p class="product-who"><strong>Who it's for:</strong> {who}</p>}
+      <slot />
+      {Astro.slots.has('meta') && <ul class="product-meta"><slot name="meta" /></ul>}
+    </div>
+    {hasPrice && <div class="product-hero-price"><slot name="price" /></div>}
+  </div>
+</header>

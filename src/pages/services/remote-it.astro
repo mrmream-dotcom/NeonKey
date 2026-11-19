@@ -1,129 +1,82 @@
 ---
 import { url } from '../../config';
-import Base from '../../layouts/Base.astro';
+import ProductPage from '../../layouts/ProductPage.astro';
+import PriceBox from '../../components/ui/PriceBox.astro';
+import Section from '../../components/ui/Section.astro';
 import OfferDetails from '../../components/OfferDetails.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
-import Icon from '../../components/Icon.astro';
-import type { IconName } from '../../lib/ui';
-const setupIcons: IconName[] = ['mail', 'shield', 'wifi', 'doc', 'key', 'check'];
-const setupAccents = ['accent-cyan', 'accent-magenta', 'accent-violet', 'accent-amber', 'accent-cyan', 'accent-magenta'];
-import { remoteIt, remoteSupportPlan, introPricing, usd } from '../../data/services';
+import { remoteIt, remoteSupportPlan, usd } from '../../data/services';
+import { LANE_NAMES } from '../../lib/lanes';
+// "Run Your Business" lane. Product template: src/layouts/ProductPage.astro (full overhaul, Nov 14 2026).
+// Custom work, so no checkout: PriceBox asks for a written quote. #support-plan stays (services.ts links to it).
+// Every fact here comes from src/data/services.ts (remoteIt, remoteSupportPlan) or the page as it was before.
 const setup = [
   { h: 'Business email & domain', p: 'Set up Google Workspace or Microsoft 365 on your own domain: mailboxes, extra addresses like hello@ or billing@ that land in the same inbox (aliases), shared calendars and a clean admin account that you own.' },
   { h: 'Email security (authentication)', p: 'Publish the email security settings that make it harder for scammers to fake your address (SPF, DKIM and DMARC records), so your mail is more likely to land in inboxes. Start DMARC in report-only mode (monitor mode), then tighten it once reports look clean.' },
-  { h: 'Wi-Fi & router security walkthrough', p: 'A guided video session on your own router: router software (firmware) updates, strong admin and Wi-Fi passwords, modern Wi-Fi encryption (WPA2/WPA3), a separate guest network and turning off features you don\'t use.' },
+  { h: 'Wi-Fi & router security walkthrough', p: "A guided video session on your own router: router software (firmware) updates, strong admin and Wi-Fi passwords, modern Wi-Fi encryption (WPA2/WPA3), a separate guest network and turning off features you don't use." },
   { h: 'Backups', p: 'A simple 3-2-1 plan (three copies, on two kinds of storage, one kept off-site) for the files that matter: what gets backed up, where, how often, and a test restore so you know it works.' },
   { h: 'Password manager rollout', p: 'Pick a business password manager, set up shared password folders (vaults), turn on a second login step, like a code on your phone (2FA), for key accounts and give everyone a short how-to.' },
   { h: 'Device setup checklists', p: 'A written checklist for new and departing laptops and phones: updates, disk encryption, screen lock, accounts in and out. Yours to reuse.' },
 ];
+const d = remoteIt.details!;
+const faq = [
+  { q: 'What affects the price?', a: `<ul>${d.priceFactors.map((f) => `<li>${f}</li>`).join('')}</ul><p>You get a fixed written quote before any work starts.</p>` },
+  { q: 'Are software subscriptions included?', a: `<p>${d.note}</p>` },
+  { q: 'What do I need to provide?', a: `<ul>${d.provide.map((f) => `<li>${f}</li>`).join('')}</ul>` },
+  { q: 'How long does it take?', a: `<p>${d.turnaround}</p>` },
+  { q: "What's not included?", a: '<ul><li>Onsite visits or hardware installs</li><li>Government systems or contracts</li><li>Regulated data handling or compliance work (for example health records under HIPAA or card payments under PCI)</li><li>24/7, emergency or after-hours response</li><li>Guarantees of security, uptime or deliverability</li></ul><p>If something\'s outside this scope, I\'ll say so before quoting and point you to a better fit.</p>' },
+];
 ---
-<Base title={remoteIt.name} description="Remote small-office IT setup: business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups, password managers and device checklists. Optional monthly support.">
-  <PageHeader eyebrow="Services · Fully remote" title={remoteIt.name} crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: 'Services' }, { label: 'Remote IT setup' }]}>
-    <p class="lede">For small businesses and solo professionals who want the basics done right without hiring an IT department. Everything happens remotely by video call, screen share and written notes, using your accounts so you keep full ownership.</p>
-    <div class="btn-row">
-      <a class="btn btn-primary" href={url('/contact/')} data-umami-event="contact-click" data-umami-event-offer={remoteIt.name} data-umami-event-location="remote-it-hero">Ask about a setup</a>
-      <a class="btn btn-ghost" href="#support-plan">Monthly support plan</a>
-    </div>
-    <Fragment slot="meta">
-      <li><span>Starting at <strong>{usd(remoteIt.from)}</strong></span></li>
-      <li><span>Roughly 1–10 people</span></li>
-      <li><span>Video call, screen share, email</span></li>
-    </Fragment>
-  </PageHeader>
+<ProductPage
+  title={remoteIt.name}
+  description="Remote small-office IT setup: business email, SPF/DKIM/DMARC, Wi-Fi hardening, backups, password managers and device checklists. Optional monthly support."
+  lane="smb"
+  crumbs={[{ href: '/', label: 'Home' }, { href: '/services/', label: LANE_NAMES.smb }, { label: 'Remote IT setup' }]}
+  eyebrow={`${LANE_NAMES.smb} · Fully remote`}
+  heading={remoteIt.name}
+  lede="Business email, email security, Wi-Fi, backups and passwords set up right, without hiring an IT department. Everything happens remotely by video call, screen share and written notes, on accounts you own."
+  who="Small offices and solo pros, roughly 1 to 10 people, whose email, passwords and backups grew up by accident."
+  includes={d.included}
+  after={d.steps}
+  afterTitle="How a setup works"
+  afterIntro="You get a fixed quote before any work starts."
+  faq={faq}
+  trustLocation="remote-it"
+>
+  <PriceBox slot="price" product="remote-it" lane="smb" location="remote-it-hero">
+    <ul class="pb-links"><li>Want ongoing help after? See the <a href="#support-plan">monthly support plan</a>.</li></ul>
+  </PriceBox>
+  <Fragment slot="meta">
+    <li>Roughly 1–10 people</li>
+    <li>Video call, screen share, email</li>
+    <li>Admin access stays with you</li>
+  </Fragment>
 
-  <section style="padding-top:1rem" aria-labelledby="setup-h">
-    <div class="container">
-      <SectionHeading id="setup-h" eyebrow="Scope menu" title="What a setup can include" intro="Pick what you need; we scope it together first." />
-      <div class="grid grid-3">
-        {setup.map((s, i) => (
-          <article class={`card topline setup-card ${setupAccents[i]}`}>
-            <div class="setup-card-top"><span class="icon-chip"><Icon name={setupIcons[i]} /></span><span class="num-eyebrow">{String(i + 1).padStart(2, '0')}</span></div>
-            <h3>{s.h}</h3><p>{s.p}</p>
-          </article>
-        ))}
-      </div>
-      <div class="grid grid-2" style="margin-top:1.5rem">
-        <div class="panel topline">
-          <span class="kicker">Setup pricing</span>
-          <p class="price-inline">Starting at {usd(remoteIt.from)}</p>
-          <p class="intro-tag">{introPricing.short}</p>
-          <p class="muted" style="margin:0">The final price depends on how many people, accounts and items are in scope. You get a fixed written quote before any work starts.</p>
-        </div>
-        <div class="panel topline accent-violet">
-          <span class="kicker">You get</span>
-          <ul class="muted" style="margin:.4rem 0 0;padding-left:1.1rem">
-            <li>Clear notes on everything that was changed</li>
-            <li>Admin access stays with you, not with me</li>
-            <li>A short recorded walkthrough where it helps</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+  <Section id="setup" title="Pick what you need" intro="A scope menu. We agree what's in before the quote." size="sm">
+    <ul class="ri-menu">{setup.map((s) => <li class="ds-card ds-card-sm"><h3>{s.h}</h3><p>{s.p}</p></li>)}</ul>
+  </Section>
 
-  <section aria-labelledby="how-h">
-    <div class="container">
-      <SectionHeading id="how-h" eyebrow="Process" title="How a setup works" intro="Who it's for, the steps, what you provide and what affects the price." />
-      <OfferDetails offer={remoteIt} mode="open" headingLevel="h3" showIncluded={false} />
+  <Section id="support-plan" title={remoteSupportPlan.name} eyebrow="Optional add-on" intro={`${remoteSupportPlan.for}.`} tone="raised" size="sm" headingId="plan-h">
+    <div class="ri-plan">
+      <ul class="ds-checklist">{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
+      <PriceBox product="support-plan" lane="smb" location="remote-it-support-plan" />
     </div>
-  </section>
+    <details class="ri-more">
+      <summary>How the plan works, in detail</summary>
+      <OfferDetails offer={remoteSupportPlan} mode="open" headingLevel="h3" showIncluded={false} />
+    </details>
+  </Section>
 
-  <section class="alt" id="support-plan" aria-labelledby="plan-h">
-    <div class="container">
-      <div class="grid grid-2" style="align-items:start">
-        <div>
-          <span class="kicker eyebrow">Optional add-on</span>
-          <h2 id="plan-h" style="margin-top:.4rem">{remoteSupportPlan.name}</h2>
-          <p class="muted">{remoteSupportPlan.for}.</p>
-          <ul class="muted" style="padding-left:1.1rem">{remoteSupportPlan.items.map((i) => <li>{i}</li>)}</ul>
-        </div>
-        <div class="panel topline accent-magenta">
-          <span class="kicker">Plan pricing</span>
-          <p class="price-inline">Starting at {usd(remoteSupportPlan.from)}/mo</p>
-          <p class="intro-tag">{introPricing.short}</p>
-          <p class="muted">The standard plan covers up to 3 small requests a month, with a first reply by the end of the next business day. A bigger plan is priced by the number of people and requests included, and agreed in writing before you start.</p>
-          <a class="btn btn-primary" href={url('/contact/')} data-umami-event="services-cta" data-umami-event-offer={remoteSupportPlan.name}>Ask about the plan</a>
-        </div>
-      </div>
-      <div style="margin-top:1.5rem">
-        <OfferDetails offer={remoteSupportPlan} mode="open" headingLevel="h3" showIncluded={false} />
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="scope-h">
-    <div class="container">
-      <SectionHeading id="scope-h" eyebrow="Fine print" title="Scope and exclusions" />
-      <div class="proscons">
-        <div class="pros">
-          <h3>In scope</h3>
-          <ul>
-            <li>Small offices and solo pros, roughly 1–10 people</li>
-            <li>Remote work only: video call, screen share, email</li>
-            <li>Mainstream cloud tools: Google Workspace, Microsoft 365, common password managers and backup tools</li>
-            <li>Consumer and prosumer routers and Wi-Fi gear you already own</li>
-          </ul>
-        </div>
-        <div class="cons">
-          <h3>Not included</h3>
-          <ul>
-            <li>Onsite visits or hardware installs</li>
-            <li>Government systems or contracts</li>
-            <li>Regulated data handling or compliance work (for example health records under HIPAA or card payments under PCI)</li>
-            <li>24/7, emergency or after-hours response</li>
-            <li>Guarantees of security, uptime or deliverability</li>
-          </ul>
-        </div>
-      </div>
-      <p class="muted" style="font-size:.95rem">If something's outside this scope, I'll say so before quoting and point you to a better fit.</p>
-    </div>
-  </section>
-
-  <section class="alt" aria-labelledby="lab-tie-h">
-    <div class="container">
-      <h2 id="lab-tie-h" class="sr-only">More services</h2>
-      <p class="muted" style="margin:0;font-size:.95rem"><a href={url('/services/')}>← All services</a></p>
-    </div>
-  </section>
-</Base>
+  <p slot="end" class="container ri-back"><a href={url('/services/')}>← All of {LANE_NAMES.smb}</a> · Starting at {usd(remoteIt.from)} for a setup, {usd(remoteSupportPlan.from)}/month for the plan.</p>
+</ProductPage>
+<style>
+  .ri-menu { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--space-4); }
+  .ri-menu li { margin: 0; }
+  .ri-menu h3 { font-size: var(--text-md); margin: 0 0 var(--space-2); }
+  .ri-menu p { margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+  .ri-plan { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+  @media (max-width: 860px) { .ri-plan { grid-template-columns: 1fr; } }
+  .ri-more { margin-top: var(--space-6); }
+  .ri-more summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; color: var(--color-primary); font-weight: var(--weight-semibold); }
+  .ri-back { font-size: var(--text-sm); color: var(--color-text-muted); padding-bottom: var(--space-12); }
+  .ri-back a { color: var(--color-primary); }
+</style>

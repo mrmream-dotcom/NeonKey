@@ -1,0 +1,25 @@
+---
+// Section (docs/design-system.md): vertical rhythm plus an optional heading block (eyebrow, h2, one-line intro).
+//   tone: default | raised (the alternate band); size: md | sm (tighter padding); width: container | narrow.
+// Pass `headingId` when there is a title so the section is labelled by it. Anchors other pages link to go in `id`.
+interface Props {
+  id?: string; headingId?: string; eyebrow?: string; title?: string; intro?: string;
+  tone?: 'default' | 'raised'; size?: 'md' | 'sm'; width?: 'container' | 'narrow'; class?: string; label?: string;
+  align?: 'left' | 'center';
+}
+const { id, headingId, eyebrow, title, intro, tone = 'default', size = 'md', width = 'container', class: cls, label, align = 'left' } = Astro.props;
+const hid = title ? headingId ?? (id ? `${id}-h` : undefined) : undefined;
+---
+<section id={id} class:list={['ds-section', tone === 'raised' && 'ds-section-raised', size === 'sm' && 'ds-section-sm', cls]} aria-labelledby={hid} aria-label={!hid ? label : undefined}>
+  <div class={width}>
+    {title && (
+      <header class:list={['ds-section-head', align === 'center' && 'is-center']}>
+        {eyebrow && <span class="kicker">{eyebrow}</span>}
+        <h2 id={hid}>{title}</h2>
+        {intro && <p>{intro}</p>}
+        <slot name="head" />
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

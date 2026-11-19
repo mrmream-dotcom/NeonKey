@@ -24,16 +24,11 @@ export interface AbTest {
 export const abTests: AbTest[] = [
   // `cards` ended Nov 6 2026: outcome headlines kept everywhere (lost-revenue repositioning, Michael's call).
   // `hero` ended Nov 7 2026: Michael wanted one broader headline that covers all services (not lead follow-up only).
+  // `motion` ended Nov 14 2026: the homepage hero was rebuilt in the full overhaul (no heavy animations), no winner read.
   {
     id: 'nl',
     a: '/newsletter/: original page ("Unlock the Week" title, long intro, pills, subscribe card)',
     b: '/newsletter/: calmer page ("One small tech fix, every Wednesday.", visible email label, form on the first phone screen, fix topics, form again)',
-    started: 'on ship (Nov 2026)',
-  },
-  {
-    id: 'motion',
-    a: 'home hero: still background (faint key art, soft glow)',
-    b: 'home hero: same content plus a slow neon motion background (drifting glows and a moving grid floor, CSS only, off for reduced motion)',
     started: 'on ship (Nov 2026)',
   },
 ];

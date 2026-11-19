@@ -7,7 +7,9 @@ import { followUpDesk as fd, followUpDeskSale as sale, followUpDeskTrialDays as 
 import { buyAttrs, type Lane } from '../lib/checkout-ref';
 // variant 'button': just the "Start N days free" buy button (founding link during the sale, regular link after), for
 // page headers. Same checkout ref and Umami props as the box.
-interface Props { location: string; variant?: 'box' | 'card' | 'line' | 'button'; lane?: Lane }
+// variant 'price': the compact design-system price box used by PriceBox.astro (price, terms, one primary button, the
+// yearly plan as a secondary link). Same links, refs and sale swap as 'box'.
+interface Props { location: string; variant?: 'box' | 'card' | 'line' | 'button' | 'price'; lane?: Lane }
 const { location, variant = 'card', lane = 'smb' } = Astro.props;
 const monthlyTotal = sale.monthly * 12;
 ---
@@ -16,6 +18,22 @@ const monthlyTotal = sale.monthly * 12;
       <a data-sale class="btn btn-primary" {...buyAttrs(sale.monthlyUrl, { lane, sku: 'desk-founding-99m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} monthly ${sale.monthly}`} data-umami-event-location={location}>Start {trial} days free</a>
       <a data-sale-after hidden class="btn btn-primary" {...buyAttrs(fd.buyUrl, { lane, sku: 'desk-250m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
     </span>
+  : variant === 'price'
+  ? <div class="ds ds-pricebox" data-sale-ends={sale.endsAt}>
+      <div data-sale>
+        <p class="ds-row"><span class="ds-tag">Founding price · ends {sale.endsLabel}</span> <span class="ds-count" aria-live="off"><span data-countdown>Ends {sale.endsLabel}</span></span></p>
+        <p class="pb-price">{usd(sale.monthly)}<small>/month</small></p>
+        <p class="pb-terms">{trial} days free, then {usd(sale.monthly)}/month. Card required, cancel anytime.</p>
+        <a class="btn btn-primary btn-lg btn-block" {...buyAttrs(sale.monthlyUrl, { lane, sku: 'desk-founding-99m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} monthly ${sale.monthly}`} data-umami-event-location={location}>Start {trial} days free</a>
+        <p class="ds-lock"><strong>Your price never goes up.</strong> Start by {sale.endsLabel} and you pay {usd(sale.monthly)}/month for as long as you stay subscribed. On {sale.regularFrom}, new signups pay {usd(fd.from)}/month.</p>
+        <p class="pb-alt">Or <a {...buyAttrs(sale.annualUrl, { lane, sku: 'desk-founding-891y', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={`${fd.name} annual ${sale.annualPerYear}`} data-umami-event-location={location}>pay {usd(sale.annualPerYear)} for a year</a> ({sale.annualPercentOff}% off {usd(monthlyTotal)}). No free trial on the yearly plan, but a full refund if you ask within {sale.refundDays} days.</p>
+      </div>
+      <div data-sale-after hidden>
+        <p class="pb-price">{usd(fd.from)}<small>/month</small></p>
+        <p class="pb-terms">{trial} days free, then {usd(fd.from)}/month. Card required, cancel anytime.</p>
+        <a class="btn btn-primary btn-lg btn-block" {...buyAttrs(fd.buyUrl, { lane, sku: 'desk-250m', location })} rel="noopener" data-umami-event="buy-click" data-umami-event-offer={fd.name} data-umami-event-location={location}>Start {trial} days free</a>
+      </div>
+    </div>
   : variant === 'line'
   ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>Lock in {usd(sale.monthly)}/mo before it goes to {usd(fd.from)} · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
   : <div class={`ds ds-${variant}`} data-sale-ends={sale.endsAt}>
@@ -94,4 +112,8 @@ const monthlyTotal = sale.monthly * 12;
   .ds-value { color: var(--text); font-size: .95rem; }
   .ds-trialnote strong { color: var(--text); }
   .ds-line { font-variant-numeric: tabular-nums; }
+  .ds-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem .75rem; }
+  .ds-pricebox > div { gap: .65rem; }
+  .ds-pricebox .ds-count { font-size: .85rem; padding: .2rem .6rem; }
+  .ds-pricebox .ds-lock { font-size: .875rem; }
 </style>
