@@ -23,6 +23,10 @@ BCC_ADDRESS = "mr.mream@gmail.com"
 # (buy.stripe.com/9B6dR8bFk14cfZR94Eb3q08, since Nov 11 2026). Second: the retired $49 link
 # (buy.stripe.com/8x2aEWaBgcMU9Bt5Ssb3q01), kept so a checkout already open on it still gets its report.
 LOCKDOWN_PAYMENT_LINK = "plink_1UajXgCRxS1tvAi2TjNiqT0y,plink_1UXuPCCRxS1tvAi22FJy7HTk"
+# The Founder Stack Payment Link (buy.stripe.com, $29 guide that includes this setup; Q-05, Nov 18 2026). Its checkouts
+# get the same audit and report, without the "$29 counts toward any package" credit. The guide PDF itself is sent by
+# the payments Worker.
+FOUNDER_STACK_PAYMENT_LINK = "plink_1UajXgCRxS1tvAi2Esh56b8q"
 ALLOW_LIVE = "true"
 # "shadow": buyer emails go to hello@ only (Michael reads them first). "send": they go to the buyer.
 CUSTOMER_EMAILS = "send"

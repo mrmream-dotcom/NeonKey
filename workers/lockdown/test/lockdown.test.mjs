@@ -537,3 +537,52 @@ test("without GOOGLE_SA_KEY the sync is off and nothing calls Google", async () 
   assert.equal(gCalls.length + gTokenCalls.length, 0);
   assert.equal(JSON.parse(env.ORDERS.m.get("order:cs_test_done_test")).sheet, "off");
 });
+
+// ---- Founder Stack includes the Email Authentication Setup (Q-05, Nov 18 2026) ----
+const FS = "plink_founder_stack_test";
+test("Founder Stack checkout runs the setup: report without the $29 credit, notice and order tagged", async () => {
+  const fsEnv = { ...env, FOUNDER_STACK_PAYMENT_LINK: FS };
+  const r = await worker.fetch(signed(ev(session("bare.test", { id: "cs_test_fs_bare", payment_link: FS, amount_total: 2900 }))), fsEnv);
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 2);
+  const [buyer, notice] = sent.map((s) => s.body);
+  assert.deepEqual(buyer.to, ["pat@owner.example"]);
+  assert.match(buyer.subject, /Your Email Authentication Setup report for bare\.test/);
+  assert.match(buyer.html + buyer.text, /included in your Founder Stack/);
+  assert.doesNotMatch(buyer.html + buyer.text, /\$29|after your credit/);
+  const report = Buffer.from(buyer.attachments[0].content, "base64").toString("utf8");
+  assert.match(report, /included in your Founder Stack/);
+  assert.doesNotMatch(report, /\$29|after your credit/);
+  assert.match(notice.subject, /FYI: Email Lockdown new order \(Founder Stack\) · bare\.test/);
+  const order = JSON.parse(fsEnv.ORDERS.m.get("order:cs_test_fs_bare"));
+  assert.equal(order.bundle, "founder_stack");
+  assert.equal(order.status, "open");
+});
+
+test("Founder Stack with no domain: no second email to the buyer, ACTION NEEDED to hello@", async () => {
+  const fsEnv = { ...env, FOUNDER_STACK_PAYMENT_LINK: FS };
+  const s = session("", { id: "cs_test_fs_blank", payment_link: FS, amount_total: 2900, custom_fields: [] });
+  const r = await worker.fetch(signed(ev(s)), fsEnv);
+  assert.equal(r.status, 200);
+  assert.equal(sent.length, 1);
+  const n = sent[0].body;
+  assert.deepEqual(n.to, ["hello@neonkey.tech"]);
+  assert.match(n.subject, /ACTION NEEDED: Email Lockdown needs the buyer's domain \(Founder Stack\) · no domain/);
+  assert.equal(JSON.parse(fsEnv.ORDERS.m.get("order:cs_test_fs_blank")).status, "human");
+  sent.length = 0;
+  await worker.fetch(signed(ev(s)), fsEnv); // Stripe retry
+  assert.equal(sent.length, 0);
+});
+
+test("Founder Stack link is ignored when FOUNDER_STACK_PAYMENT_LINK isn't set", async () => {
+  const r = await worker.fetch(signed(ev(session("bare.test", { id: "cs_test_fs_off", payment_link: FS }))), env);
+  assert.deepEqual(await r.json(), { ok: true, ignored: "other_offer" });
+  assert.equal(sent.length, 0);
+});
+
+test("standalone Lockdown emails still carry the $29 credit when the Founder Stack link is set", async () => {
+  const fsEnv = { ...env, FOUNDER_STACK_PAYMENT_LINK: FS };
+  await worker.fetch(signed(ev(session("bare.test"))), fsEnv);
+  assert.match(sent[0].body.html, /Your \$29 counts toward any NeonKey package/);
+  assert.equal(JSON.parse(fsEnv.ORDERS.m.get("order:cs_test_bare_test")).bundle, undefined);
+});

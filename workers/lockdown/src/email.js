@@ -109,7 +109,12 @@ function scoreLine(passing, a) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${seg}</tr></table>
 <p style="margin:8px 0 0 0;font-family:${FONT};font-size:13px;color:${C.muted};">${esc(a.domain)}${a.provider ? ` · ${esc(a.provider.label)}` : ""}${a.dnsHost?.label ? ` · domain at ${esc(a.dnsHost.label)}` : ""}</p></td></tr></table>`;
 }
-const doneForYou = (a) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in your $29. No passwords shared.`, "font-size:15px;");
+// Founder Stack buyers get this setup included with the guide (Q-05, Nov 18 2026). They didn't buy the $29 setup on its
+// own, so their emails skip the "$29 counts toward any package" credit and say "included in your Founder Stack".
+const includedIn = (bundle) => (bundle ? "your Founder Stack" : "your $29");
+const credit = (a, bundle) => (bundle ? "" : creditBlock(a));
+const creditText = (a, bundle) => (bundle ? "" : `\n\n${upsell(a).text}`);
+const doneForYou = (a, bundle) => p(`<strong>Rather not do it yourself?</strong> Reply and we'll make these changes for you, included in ${includedIn(bundle)}. No passwords shared.`, "font-size:15px;");
 
 // Locked domains: point at the extra checks so "you're already fine" still comes with something useful.
 function extrasLine(a) {
@@ -122,15 +127,15 @@ function extrasLine(a) {
 const attachNote = (pdf) => pdf ? "Your full report is attached as a PDF to keep for your records." : "Your full report is attached. Open it in any browser, and save or print it as a PDF for your records.";
 
 // 1. First email, right after payment.
-export function reportEmail({ name, a, pdf = false }) {
+export function reportEmail({ name, a, pdf = false, bundle = false }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
   const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
   const personal = a.human.length > 0;
 
   if (a.locked && !personal) {
     const subject = `🔑 Your Email Authentication Setup report for ${a.domain}: records already in place`;
-    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${attachNote(pdf)}`)}${extrasLine(a) ? p(extrasLine(a), "font-size:15px;") : ""}${creditBlock(a)}${p("NeonKey", `color:${C.muted};`)}`;
-    return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${attachNote(pdf)}${extrasLine(a) ? `\n\n${extrasLine(a)}` : ""}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
+    const body = `${p(hi)}${p(`Thanks for your order. We checked <strong>${esc(a.domain)}</strong>, and the three records that protect your email (SPF, DKIM and DMARC) are already published.`)}${p(`There's nothing for you to add. ${attachNote(pdf)}`)}${extrasLine(a) ? p(extrasLine(a), "font-size:15px;") : ""}${credit(a, bundle)}${p("NeonKey", `color:${C.muted};`)}`;
+    return { subject, html: shell(`${a.domain}: records already in place.`, body), text: `${hiT}\n\nThanks for your order. We checked ${a.domain}, and SPF, DKIM and DMARC are already published. There's nothing for you to add. ${attachNote(pdf)}${extrasLine(a) ? `\n\n${extrasLine(a)}` : ""}${creditText(a, bundle)}\n\nNeonKey\nhello@neonkey.tech` };
   }
 
   if (!a.fixes.length && !a.buyerSteps.length) {
@@ -147,25 +152,25 @@ export function reportEmail({ name, a, pdf = false }) {
   body += h2(`${total} ${total === 1 ? "change" : "changes"} to make`) + changeList(a);
   if (a.dnsHost?.help) body += p(`Make these where you manage your domain${a.dnsHost.label ? ` (${esc(a.dnsHost.label)})` : ""}. ${link(a.dnsHost.help, "Their guide")}`, `font-size:14px;color:${C.muted};`);
   if (personal) body += p("Part of your setup needs a closer look by a person. We'll follow up within 1 business day.", `font-size:14px;color:${C.muted};`);
-  body += doneForYou(a) + p("We'll recheck on day 2 and day 5 and send you an updated report.", `font-size:14px;color:${C.muted};`);
-  body += creditBlock(a) + p("NeonKey", `color:${C.muted};`);
+  body += doneForYou(a, bundle) + p("We'll recheck on day 2 and day 5 and send you an updated report.", `font-size:14px;color:${C.muted};`);
+  body += credit(a, bundle) + p("NeonKey", `color:${C.muted};`);
 
-  const text = `${hiT}\n\nThanks for your order. Here's where ${a.domain} stands (${passing} of 4 checks passing). Your full report is attached.\n\n${total} ${total === 1 ? "CHANGE" : "CHANGES"} TO MAKE\n${changeText(a)}\n\n${a.dnsHost?.help ? `Make these at ${a.dnsHost.label}. Guide: ${a.dnsHost.help}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person. We'll follow up within 1 business day.\n\n" : ""}Rather not do it yourself? Reply and we'll make these changes for you, included in your $29.\nWe'll recheck on day 2 and day 5 and send you an updated report.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  const text = `${hiT}\n\nThanks for your order. Here's where ${a.domain} stands (${passing} of 4 checks passing). Your full report is attached.\n\n${total} ${total === 1 ? "CHANGE" : "CHANGES"} TO MAKE\n${changeText(a)}\n\n${a.dnsHost?.help ? `Make these at ${a.dnsHost.label}. Guide: ${a.dnsHost.help}\n\n` : ""}${personal ? "Part of your setup needs a closer look by a person. We'll follow up within 1 business day.\n\n" : ""}Rather not do it yourself? Reply and we'll make these changes for you, included in ${includedIn(bundle)}.\nWe'll recheck on day 2 and day 5 and send you an updated report.${creditText(a, bundle)}\n\nNeonKey\nhello@neonkey.tech`;
   return { subject, html: shell(`${passing} of 4 checks passing for ${a.domain}. Your report is attached.`, body), text };
 }
 
 // 2. Recheck passed: the "after" report is attached.
-export function doneEmail({ name, a, before }) {
+export function doneEmail({ name, a, before, bundle = false }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
   const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
   const from = before != null ? ` (up from ${before} of 4 on your first check)` : "";
   const subject = `🔑 ${a.domain}: all four records published`;
-  const body = `${p(hi)}${p(`Good news: we rechecked <strong>${esc(a.domain)}</strong>, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached as your "after" copy.`)}${h2("What changed")}${p("Inboxes can now check that mail claiming to be from you really is, and mail that fakes your address gets reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.", "font-size:15px;")}${h2("What to watch for")}${p("When you start using a new tool that sends email as you (a newsletter, invoicing or booking app), look for its \"authenticate your domain\" setting. Once a few weeks of real mail pass, DMARC can move from monitor mode to blocking fakes. Reply any time and we'll help.", "font-size:15px;")}${creditBlock(a)}${p("Thanks for trusting NeonKey with this.")}${p("NeonKey", `color:${C.muted};`)}`;
-  return { subject, html: shell(`${a.domain}: SPF, DKIM and DMARC published.`, body), text: `${hiT}\n\nGood news: we rechecked ${a.domain}, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached.\n\nWhat changed: inboxes can now check that mail claiming to be from you really is, and fakes get reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.\n\nWhat to watch for: when you add a new tool that sends email as you, turn on its "authenticate your domain" setting. Later, DMARC can move to blocking fakes. Reply any time.\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech` };
+  const body = `${p(hi)}${p(`Good news: we rechecked <strong>${esc(a.domain)}</strong>, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached as your "after" copy.`)}${h2("What changed")}${p("Inboxes can now check that mail claiming to be from you really is, and mail that fakes your address gets reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.", "font-size:15px;")}${h2("What to watch for")}${p("When you start using a new tool that sends email as you (a newsletter, invoicing or booking app), look for its \"authenticate your domain\" setting. Once a few weeks of real mail pass, DMARC can move from monitor mode to blocking fakes. Reply any time and we'll help.", "font-size:15px;")}${credit(a, bundle)}${p("Thanks for trusting NeonKey with this.")}${p("NeonKey", `color:${C.muted};`)}`;
+  return { subject, html: shell(`${a.domain}: SPF, DKIM and DMARC published.`, body), text: `${hiT}\n\nGood news: we rechecked ${a.domain}, and SPF, DKIM and DMARC are all published and pass our public-records check${from}. Your updated report is attached.\n\nWhat changed: inboxes can now check that mail claiming to be from you really is, and fakes get reported. DMARC is in monitor mode: it reports fakes but doesn't block them yet.\n\nWhat to watch for: when you add a new tool that sends email as you, turn on its "authenticate your domain" setting. Later, DMARC can move to blocking fakes. Reply any time.${creditText(a, bundle)}\n\nNeonKey\nhello@neonkey.tech` };
 }
 
 // 3. Day 5, still open: lead with doing it for them (included), then the stack-specific upgrade.
-export function reminderEmail({ name, a, passing }) {
+export function reminderEmail({ name, a, passing, bundle = false }) {
   const hi = firstName(name) ? `Hi ${esc(firstName(name))},` : "Hi there,";
   const hiT = firstName(name) ? `Hi ${firstName(name)},` : "Hi there,";
   const n = a.fixes.length + a.buyerSteps.length;
@@ -174,17 +179,17 @@ export function reminderEmail({ name, a, passing }) {
   let body = p(hi) + p(`We rechecked <strong>${esc(a.domain)}</strong> today. It's at <strong>${passing} of 4</strong> checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.`);
   body += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 16px 0;background:${C.panel};border:1px solid ${C.violet};border-radius:12px;"><tr><td style="padding:14px 16px;font-family:${FONT};"><p style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:${C.text};">Rather not deal with ${esc(host)}${a.provider ? ` and ${esc(a.provider.label)}` : ""}?</p><p style="margin:0;font-size:15px;line-height:1.55;color:${C.muted};">Reply <strong style="color:${C.text};">DO IT</strong>. We'll walk you through a quick helper invite (no passwords shared) and finish your Email Authentication Setup for you, at no extra cost.</p></td></tr></table>`;
   body += h2("Still open") + changeList(a);
-  body += p("Just added something? New records can take an hour or two to show up.", `font-size:14px;color:${C.muted};`) + creditBlock(a) + p("NeonKey", `color:${C.muted};`);
-  const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${changeText(a)}\n\n${upsell(a).text}\n\nNeonKey\nhello@neonkey.tech`;
+  body += p("Just added something? New records can take an hour or two to show up.", `font-size:14px;color:${C.muted};`) + credit(a, bundle) + p("NeonKey", `color:${C.muted};`);
+  const text = `${hiT}\n\nWe rechecked ${a.domain} today. It's at ${passing} of 4 checks, with ${n} ${n === 1 ? "step" : "steps"} still open. Your updated report is attached.\n\nRather not deal with ${host}? Reply DO IT. We'll walk you through a quick helper invite (no passwords shared) and finish it for you at no extra cost.\n\n${changeText(a)}${creditText(a, bundle)}\n\nNeonKey\nhello@neonkey.tech`;
   return { subject, html: shell(`${a.domain} is at ${passing} of 4. Reply DO IT and we'll finish it.`, body), text };
 }
 
 // Internal notice to hello@ (BCC Michael). Subject starts with ACTION NEEDED only when a person must step in.
 export function noticeEmail({ kind, order, a, extra }) {
-  const action = kind === "stuck" || (kind === "new" && a.human.length > 0) || kind === "error";
-  const label = { new: "new order", done: "locked down", reminder: "reminder sent", stuck: "not finished after 10 days", error: "audit failed" }[kind] || kind;
+  const action = kind === "stuck" || (kind === "new" && a.human.length > 0) || kind === "error" || kind === "nodomain";
+  const label = { new: "new order", done: "locked down", reminder: "reminder sent", stuck: "not finished after 10 days", error: "audit failed", nodomain: "needs the buyer's domain" }[kind] || kind;
   // Manual work is flagged urgent (Michael, Nov 5 2026): subject prefix here, high-priority headers in index.js.
-  const subject = `${action ? "🚨 URGENT · ACTION NEEDED" : "FYI"}: Email Lockdown ${label} · ${order.domain || order.rawDomain}`;
+  const subject = `${action ? "🚨 URGENT · ACTION NEEDED" : "FYI"}: Email Lockdown ${label}${order.bundle ? " (Founder Stack)" : ""} · ${order.domain || order.rawDomain || "no domain"}`;
   const rows = [
     ["Buyer", `${order.name || ""} <${order.email}>`.trim()],
     ["Domain", order.domain || `(couldn't read "${order.rawDomain}")`],
