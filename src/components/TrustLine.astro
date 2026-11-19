@@ -1,14 +1,14 @@
 ---
-// One short trust line: who runs NeonKey, where, how to reach him, and the refund policy (04-website-overhaul-plan,
+// One short trust line: where NeonKey is, how to reach it, and the refund policy (04-website-overhaul-plan,
 // item 10). Used on the homepage, the Follow-Up Desk, the founders hub and guide, Email Authentication Setup and the
-// scam checker. Experience wording is the approved sentence from CLAUDE.md; no street address.
+// scam checker. No personal name (Michael, Nov 18 2026: keep his name off the site for now); no street address.
 // Styles: src/styles/components.css (.trust-line).
 import { url, CONTACT_EMAIL } from '../config';
 interface Props { location: string; extra?: string[]; class?: string }
 const { location, extra = [], class: cls } = Astro.props;
 ---
 <p class:list={['trust-line', cls]}>
-  Run by Michael Ream in Fairbanks, Alaska. He has worked in the IT industry for most of his adult career.
+  Based in Fairbanks, Alaska, with hands-on IT industry experience behind every setup.
   {extra.map((e) => <Fragment> <span class="tl-sep" aria-hidden="true">·</span> {e}</Fragment>)}
   <span class="tl-sep" aria-hidden="true">·</span> <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location={`trust-${location}`}>{CONTACT_EMAIL}</a>
   <span class="tl-sep" aria-hidden="true">·</span> <a href={url('/refunds/')}>Refunds</a>

@@ -92,7 +92,6 @@ const jsonLd = {
       email: CONTACT_EMAIL,
       sameAs: SOCIALS.map((s) => s.url),
       description: 'NeonKey helps beginners and builders get more out of tech through practical AI automations, remote small-office IT services, honest gear picks, hands-on tutorials and a weekly email.',
-      founder: { '@type': 'Person', name: 'Michael Ream', url: abs('/about/') },
       areaServed: usArea,
       knowsAbout: ['Lead follow-up systems', 'Speed to lead', 'Customer reactivation', 'AI automation', 'Small-office IT setup', 'Cybersecurity basics', 'Technology tutorials', 'Computer hardware and software'],
     },
@@ -156,7 +155,7 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
   <section class="home-hero" aria-labelledby="home-h">
     <div class="container">
-      <p class="home-kicker"><span class="kicker">NeonKey</span><span class="home-by">Run by Michael Ream</span></p>
+      <p class="home-kicker"><span class="kicker">NeonKey</span><span class="home-by">Fairbanks, Alaska</span></p>
       <h1 id="home-h">Practical tech help for you, your launch and your business.</h1>
       <p class="home-lede">Check a suspicious message, launch on email that inboxes trust, or make sure every estimate gets a follow-up. Each path starts with something free.</p>
       <LaneDoors />
@@ -211,8 +210,8 @@ const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </svg>
       <div>
         <span class="kicker">Who does the work</span>
-        <h2 id="who-h" class="who-h">Michael Ream</h2>
-        <p>NeonKey is run by me, Michael Ream, and I do the client work myself. I've worked in the IT industry for most of my adult career, setting up, maintaining and troubleshooting networks and communication systems. I'm now pursuing an Applied Bachelor's Degree in Cybersecurity, earning an associate degree in Computer Information Systems along the way.</p>
+        <h2 id="who-h" class="who-h">One person, start to finish</h2>
+        <p>I do the client work myself. I've worked in the IT industry for most of my adult career, setting up, maintaining and troubleshooting networks and communication systems. I'm now pursuing an Applied Bachelor's Degree in Cybersecurity, earning an associate degree in Computer Information Systems along the way.</p>
         <p class="who-more"><a href={url('/about/')}>More about me →</a></p>
       </div>
     </article>
