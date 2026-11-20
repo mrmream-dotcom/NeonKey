@@ -72,12 +72,12 @@ input:focus, textarea:focus, select:focus { background: rgba(255, 255, 255, .05)
 .site-header.is-scrolled { background: rgba(5, 6, 11, .82); border-bottom-color: rgba(255, 255, 255, .09); box-shadow: 0 10px 40px -20px rgba(0, 0, 0, .9); }
 
 /* Pointer light on glass cards (--mx/--my set by motion.ts; nothing shows without a mouse). */
-.lane-door, .ds-card, .price-col, .price-box, .card, .nl-box { position: relative; }
-.lane-door::after, .ds-card::after, .price-col::after, .price-box::after, .card::after, .nl-box::after {
+.lane-door, .ds-card, .price-col, .price-box, .card, .nl-box, .offer-card, .proof-main { position: relative; }
+.lane-door::after, .ds-card::after, .price-col::after, .price-box::after, .card::after, .nl-box::after, .offer-card::after, .proof-main::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s var(--ease);
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .07), transparent 45%);
 }
-.lane-door:hover::after, .ds-card:hover::after, .price-col:hover::after, .price-box:hover::after, .card:hover::after, .nl-box:hover::after { opacity: 1; }
+.lane-door:hover::after, .ds-card:hover::after, .price-col:hover::after, .price-box:hover::after, .card:hover::after, .nl-box:hover::after, .offer-card:hover::after, .proof-main:hover::after { opacity: 1; }
 .lane-door, .price-col, .ds-card { transition: transform .5s var(--ease), border-color .3s var(--ease); }
 @media (hover: hover) { .lane-door:hover, .price-col:hover { transform: translateY(-4px); } }
 

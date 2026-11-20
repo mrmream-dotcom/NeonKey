@@ -82,7 +82,7 @@ export const remoteIt: Offer = {
       'Clear notes on every change, and admin access that stays with you',
     ],
     steps: [
-      { h: 'Scoping call', p: 'A short video call to list what you have today and pick what is in scope. You get a fixed quote before any work starts.' },
+      { h: 'Scope it in writing', p: 'By email (or a short video call, if you prefer) we list what you have today and pick what is in scope. You get a fixed written quote before any work starts.' },
       { h: 'Setup sessions', p: 'I do the work remotely by screen share and in the admin settings pages (admin consoles) you give me access to. Some steps, like changes to your domain settings (DNS), can take a day or two to settle.' },
       { h: 'Check it works', p: 'We send test emails, check the authentication records, try signing in with the second login step (2FA) and do a test restore from backup.' },
       { h: 'Walkthrough and handoff', p: 'A short walkthrough of what changed, the written notes and checklists, and a review that you hold every admin login.' },
@@ -100,7 +100,7 @@ export const remoteIt: Offer = {
       'How many of the setup items you need',
       'Extra domains, or cleanup of an old or messy setup',
     ],
-    note: 'Software subscriptions (for example Google Workspace, Microsoft 365 or a password manager) are billed to you directly by those providers and are not part of this price.',
+    note: 'Software subscriptions (for example Google Workspace, Microsoft 365 or a password manager) are billed to you directly by those providers and are not part of this price. Not included unless your quote says so: on-site visits, buying or repairing hardware, moving large file archives, and systems outside the agreed scope. Those are quoted separately.',
   },
 };
 
@@ -181,7 +181,7 @@ export const automationOffers: Offer[] = [
       'Step-by-step notes on how to update the content yourself',
       ],
       steps: [
-        { h: 'Scoping call', p: 'We go through the questions you get most, where they come in, and what should always go to a person. You get a fixed quote before work starts.' },
+        { h: 'Scope it in writing', p: 'By email (or a short call, if you prefer) we go through the questions you get most, where they come in, and what should always go to a person. You get a fixed written quote before work starts.' },
         { h: 'Content and setup', p: 'We gather your FAQ content, then I set up the assistant and connect it to where inquiries should land.' },
         { h: 'Testing', p: 'I test it with real example questions, including tricky and off-topic ones, and you review the answers before it goes live.' },
         { h: 'Launch, tuning and handoff', p: 'It goes live, we review the first real conversations together and adjust, then you get a walkthrough and notes.' },
@@ -429,7 +429,7 @@ export const frontOfficePackage: Offer & { value: number; separately: number; pa
       'One walkthrough video and written notes covering the whole system, and admin access that stays with you',
     ],
     steps: [
-      { h: 'Scoping call', p: 'We map where questions and leads come from, who handles what and what should always go to a person. You get a fixed quote before work starts.' },
+      { h: 'Scope it in writing', p: 'By email (or a short call, if you prefer) we map where questions and leads come from, who handles what and what should always go to a person. You get a fixed written quote before work starts.' },
       { h: 'Email authentication first', p: 'I check and fix your email security records early, because domain changes can take a day or two to settle.' },
       { h: 'Build and connect', p: 'I set up the assistant and the lead routing, connect them, and test with real example questions and leads. You review before anything goes live.' },
       { h: 'Go live, then three months of support', p: 'We check the first real conversations and leads together, then the support plan covers tuning and small changes for three months. After that, keep the plan or cancel; it\'s up to you.' },

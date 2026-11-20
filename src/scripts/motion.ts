@@ -18,7 +18,7 @@ window.addEventListener('scroll', onScrollHeader, { passive: true }); onScrollHe
 // Light that follows the pointer across glass cards (CSS reads --mx / --my).
 if (finePointer) {
   document.addEventListener('pointermove', (e) => {
-    const el = (e.target as Element | null)?.closest<HTMLElement>('.lane-door, .ds-card, .price-col, .price-box, .card, .nl-box');
+    const el = (e.target as Element | null)?.closest<HTMLElement>('.lane-door, .ds-card, .price-col, .price-box, .card, .nl-box, .offer-card, .proof-main');
     if (!el) return;
     const r = el.getBoundingClientRect();
     el.style.setProperty('--mx', `${e.clientX - r.left}px`);
@@ -50,11 +50,11 @@ if (!reduce) {
       intro.from(split.words, { yPercent: 110, opacity: 0, duration: 1.2, stagger: 0.045 }, 0);
     });
   }
-  intro.from('.home-kicker, .home-lede, .product-lede, .home-stage', { y: 18, opacity: 0, filter: 'blur(8px)', duration: 1.1, stagger: 0.08 }, 0.25);
+  intro.from('.home-kicker, .home-lede, .home-ctas, .home-proof, .product-lede, .home-stage', { y: 18, opacity: 0, filter: 'blur(8px)', duration: 1.1, stagger: 0.08 }, 0.25);
 
   // Everything else reveals as it scrolls in: rise, unblur, fade; siblings in a soft stagger.
   const targets = gsap.utils.toArray<HTMLElement>(
-    '.lane-door, .ds-section-head, .price-col, .how-grid li, .ds-card, .nl-box, .ds-steps > li, .ds-faq-item, .price-box, main .card, .ds-checklist li, .footer-grid > *',
+    '.lane-door, .ds-section-head, .price-col, .pains li, .offer-card, .process li, .proof-main, .proof-side > div, .dd, .final-box, .other-paths a, .how-grid li, .ds-card, .nl-box, .ds-steps > li, .ds-faq-item, .price-box, main .card, .ds-checklist li, .footer-grid > *',
   ).filter((el) => !el.closest('form') || el.matches('.nl-box'));
   gsap.set(targets, { opacity: 0, y: 28, filter: 'blur(6px)' });
   ScrollTrigger.batch(targets, {

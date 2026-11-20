@@ -67,7 +67,7 @@
 
   var tries = 0;
   (function send() {
-    if (window.umami && window.umami.track) return window.umami.track('checkout-return', props);
+    if (window.umami && window.umami.track) { window.umami.track('checkout-return', props); return window.umami.track('checkout_completed', props); }
     if (++tries < 20) setTimeout(send, 250);
   })();
 

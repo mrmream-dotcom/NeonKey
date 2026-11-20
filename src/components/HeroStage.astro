@@ -79,7 +79,7 @@ const bars = [38, 58, 30, 72, 46, 84, 52, 64];
   /* spectral light edges, like stepped bars lit from the top */
   .stage-bars { position: absolute; inset: auto 0 0 0; height: 70%; display: flex; align-items: flex-end; gap: 2px; opacity: .55; z-index: 0;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
-  .stage-bars span { flex: 1; height: var(--h); background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0) 45%); position: relative; }
+  .stage-bars span { flex: 1; height: var(--h); background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,0) 30%); position: relative; }
   .stage-bars span::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
     background: linear-gradient(90deg, rgba(255,255,255,.05), #fff 40%, #22d3ee 70%, #f472b6 92%, rgba(255,255,255,0));
     box-shadow: 0 0 12px rgba(167,139,250,.8); animation: hs-flicker 6s var(--d) ease-in-out infinite; }

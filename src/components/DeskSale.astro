@@ -35,7 +35,7 @@ const monthlyTotal = sale.monthly * 12;
       </div>
     </div>
   : variant === 'line'
-  ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>Lock in {usd(sale.monthly)}/mo before it goes to {usd(fd.from)} · <span data-countdown>ends Nov 30</span></span><span data-sale-after hidden>{trial} days free</span></span>
+  ? <span class="ds-line" data-sale-ends={sale.endsAt}><span data-sale>Lock in {usd(sale.monthly)}/mo before it goes to {usd(fd.from)} · <span data-countdown>ends {sale.endsLabel}</span></span><span data-sale-after hidden>{trial} days free, then {usd(fd.from)}/month</span></span>
   : <div class={`ds ds-${variant}`} data-sale-ends={sale.endsAt}>
       <div data-sale>
         <p class="ds-tag">Founding price · ends {sale.endsLabel}</p>

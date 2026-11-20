@@ -2,15 +2,20 @@
 import { url } from '../config';
 import Base from '../layouts/Base.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
-import LaneDoors from '../components/LaneDoors.astro';
 import HeroStage from '../components/HeroStage.astro';
 import TrustLine from '../components/TrustLine.astro';
 import Section from '../components/ui/Section.astro';
+import FAQ from '../components/ui/FAQ.astro';
+import DeskDemo from '../components/DeskDemo.astro';
+import DeskSale from '../components/DeskSale.astro';
 import { LANE_NAMES, LANE_HUBS } from '../lib/lanes';
 import type { Lane } from '../lib/checkout-ref';
 import { remoteIt, remoteSupportPlan, automationOffers, emailLockdown, setupGuide, followUpDesk, followUpDeskTrialDays, followUpDeskSaleLive, followUpDeskSale, frontOfficePackage as fop, usd } from '../data/services';
 import { absoluteUrl, CONTACT_EMAIL, SOCIALS } from '../config';
 const quickWin = automationOffers.find((o) => o.slug === 'quick-win')!;
+// Homepage (business-first rebuild, Nov 19 2026, Michael's premium/conversion directive). Sections: hero, pain points,
+// live Follow-Up Desk demo, three offers, proof, process + FAQ, final CTA. Individuals and founders keep their hubs
+// (/protect/, /founders/), linked from the nav and the final section. Earlier note, kept for history:
 // Homepage (full overhaul, Nov 14 2026): in five seconds, what NeonKey does, for whom, and the next step.
 //   1. Hero + the three entrances (LaneDoors): Protect Yourself, Build Your Business, Run Your Business
 //   2. Trust line
@@ -100,9 +105,9 @@ const jsonLd = {
       '@type': 'WebPage',
       '@id': `${home}#webpage`,
       url: home,
-      name: 'NeonKey | Scam Checks, Founder Tools, Business Follow-Up',
-      headline: 'Practical tech help for you, your launch and your business.',
-      description: 'Check a suspicious message for free, set up email that inboxes trust, or make sure every estimate gets a follow-up. A free scam checker, a free domain email check and The Founder Stack for founders, and the Follow-Up Desk for small businesses.',
+      name: 'NeonKey | Automation and IT for Small Businesses',
+      headline: 'Stop losing leads. Start automating your business.',
+      description: 'NeonKey builds practical AI automation and IT systems for small businesses: capture every inquiry, follow up with customers and cut repetitive work. Follow-Up Desk, Front Office Package and Remote Small-Office IT Setup.',
       inLanguage: 'en',
       isPartOf: { '@id': `${home}#website` },
       about: { '@id': orgId },
@@ -148,133 +153,266 @@ const jsonLd = {
     },
   ],
 };
+// Offer cards (section 4). Every price, item and timeline comes from src/data/services.ts.
+const deskTurnaround = 'Set it up yourself in about five minutes. No call needed.';
+const offers = [
+  {
+    id: 'desk', lane: 'smb', tag: 'Self-serve · monthly', name: followUpDesk.name, title: 'Every estimate gets a follow-up',
+    who: followUpDesk.for, problem: 'Quotes that go quiet often stay quiet, because nobody has time to chase them.',
+    items: followUpDesk.items.slice(0, 4), timing: deskTurnaround,
+    support: `${followUpDeskTrialDays} days free with a card on file. Cancel anytime before day ${followUpDeskTrialDays + 1} and you're never charged. You approve every message.`,
+    desk: true, cta: `Start ${followUpDeskTrialDays} days free`, href: followUpDesk.href!, event: 'services-cta',
+  },
+  {
+    id: 'front-office', lane: 'founders', tag: 'Done for you · one project', name: fop.name, title: fop.headline!,
+    who: fop.details!.who.split('. ')[0] + '.', problem: 'Questions get answered late, leads land in three places, and quotes are followed up by memory.',
+    items: fop.items, timing: fop.details!.turnaround!, price: `${usd(fop.from)}`, priceNote: 'fixed written quote first',
+    support: 'Three months of the Monthly Remote Support Plan included. AI, automation and software subscriptions are billed to you directly.',
+    cta: 'Get a free workflow review', href: '/contact/?topic=front-office-package', event: 'contact-click',
+  },
+  {
+    id: 'it', lane: 'family', tag: 'Remote · fixed quote', name: remoteIt.name, title: remoteIt.headline!,
+    who: 'Small offices and solo pros, roughly 1 to 10 people.', problem: 'Email, passwords and backups that grew up by accident, with no one in charge of them.',
+    items: remoteIt.items, timing: remoteIt.details!.turnaround!, price: `from ${usd(remoteIt.from)}`, priceNote: 'fixed written quote first',
+    support: `Optional ${remoteSupportPlan.name}, from ${usd(remoteSupportPlan.from)}/month: up to 3 small requests a month by email, a first reply by the end of the next business day. No 24/7, emergency or on-site cover.`,
+    cta: 'See everything included', href: remoteIt.href!, event: 'services-cta',
+  },
+];
+const faqs = [
+  { q: 'What does it cost?', a: `The ${followUpDesk.name} is ${followUpDeskSaleLive ? `${usd(followUpDeskSale.monthly)}/month at the founding price (until ${followUpDeskSale.endsLabel}), then ${usd(followUpDesk.from)}/month for new signups` : `${usd(followUpDesk.from)}/month`}, after ${followUpDeskTrialDays} days free. The ${remoteIt.name} starts at ${usd(remoteIt.from)}, the ${fop.name} is ${usd(fop.from)}, and support is from ${usd(remoteSupportPlan.from)}/month. Custom work always gets a fixed written quote before anything starts. Software subscriptions are billed to you by those providers.` },
+  { q: 'How long does it take?', a: `The ${followUpDesk.name} takes about five minutes to set up yourself. The ${remoteIt.name} usually takes 1 to 2 weeks and the ${fop.name} usually 3 to 5 weeks from when you approve the quote. Your quote gives the plan.` },
+  { q: 'Is my data safe? Who has access?', a: 'You keep every login and admin account, and subscriptions stay in your name. We work in the admin pages you give us access to, and you can remove that access when the work is done. See the <a href="/privacy/">privacy page</a> and <a href="/privacy/#follow-up-desk">what the Follow-Up Desk keeps</a>.' },
+  { q: 'Do I need to be technical?', a: 'No. Setups are done remotely by screen share and in your admin pages, then you get a short walkthrough and written notes in everyday words. The Follow-Up Desk is built to be run by a busy owner from a phone.' },
+  { q: 'Can I trust the AI parts?', a: 'AI answers can be wrong, so every assistant is set up to hand off to a person when it is unsure, and it is tested with real example questions before it goes live. A person reviews every setup. The Follow-Up Desk sends only the messages you approve.' },
+  { q: 'What happens after setup?', a: `You can keep the ${remoteSupportPlan.name} for small changes and questions by email (no 24/7 or emergency cover), or not. The ${fop.name} includes three months of it. You can read the <a href="/refunds/">refund and cancellation policy</a> before you buy.` },
+];
 const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 // Tutorials and reviews have no published posts yet (drafts live in src/_drafts/, see LAUNCH.md),
 // so the home page shows one short teaser instead of empty grids. The Lab section returns on its own once a project is published.
 ---
-<Base title="Home" description={`Practical tech help for you, your launch and your business: a free scam checker, a free domain email check with The Founder Stack, and the Follow-Up Desk with ${followUpDeskTrialDays} days free.`}>
+<Base title="Home" description={`NeonKey builds practical automation and IT for small businesses: capture every inquiry, follow up on every estimate and cut repetitive work. Free workflow review; Follow-Up Desk ${followUpDeskTrialDays} days free.`}>
   <script type="application/ld+json" is:inline set:html={jsonLdHtml}></script>
+
+  <!-- 1. Hero -->
   <section class="home-hero" aria-labelledby="home-h">
     <div class="container">
       <div class="home-top">
         <div class="home-copy">
-          <p class="home-kicker"><span class="kicker">NeonKey</span><span class="home-by">Fairbanks, Alaska</span></p>
-          <h1 id="home-h">Practical tech help for you, your launch and your business.</h1>
-          <p class="home-lede">Check a suspicious message, launch on email that inboxes trust, or make sure every estimate gets a follow-up. Each path starts with something free.</p>
+          <p class="home-kicker"><span class="kicker">Automation and IT for small businesses</span></p>
+          <h1 id="home-h">Stop losing leads. Start automating your business.</h1>
+          <p class="home-lede">NeonKey builds practical AI automation and IT systems that capture inquiries, follow up with customers and take repetitive work off your plate, without adding another employee.</p>
+          <div class="home-ctas">
+            <a class="btn btn-primary btn-lg" href={url('/contact/?topic=workflow-review')} data-umami-event="hero_cta_click" data-umami-event-cta="workflow-review">Get a free workflow review <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-secondary btn-lg" href="#demo" data-umami-event="hero_cta_click" data-umami-event-cta="see-how">See how it works</a>
+          </div>
+          <ul class="home-proof" aria-label="How we work">
+            <li>Remote setup, anywhere in the US</li>
+            <li>Written scope and price first</li>
+            <li>Every setup reviewed by a person</li>
+          </ul>
         </div>
         <div class="home-stage"><HeroStage /></div>
       </div>
-      <LaneDoors />
-      <TrustLine location="home" class="home-trust" extra={['Written quote before any custom work', 'You keep every login']} />
     </div>
   </section>
 
-  <Section id="prices" title="Prices, up front" intro="What each path costs. Custom work always starts with a fixed written quote." tone="raised">
-    <div class="price-cols">
-      {priceCols.map((c) => (
-        <div class={`price-col lane-${c.lane}`}>
-          <h3 class="price-col-h"><a href={url(LANE_HUBS[c.lane])} data-umami-event="nav-click" data-umami-event-target={c.lane} data-umami-event-location="home-prices"><span class="lane-dot" aria-hidden="true"></span>{LANE_NAMES[c.lane]}</a></h3>
-          <ul>
-            {c.items.map((it) => (
-              <li>
-                <a href={url(it.href)} data-umami-event="services-cta" data-umami-event-offer={it.name} data-umami-event-location="home-prices">{it.name}</a>
-                {it.desk
-                  ? (followUpDeskSaleLive
-                    ? <span class="pc-price" data-sale-ends={followUpDeskSale.endsAt}><span data-sale>{followUpDeskTrialDays} days free, then {usd(followUpDeskSale.monthly)}/month (founding price until {followUpDeskSale.endsLabel})</span><span data-sale-after hidden>{followUpDeskTrialDays} days free, then {usd(followUpDesk.from)}/month</span></span>
-                    : <span class="pc-price">{followUpDeskTrialDays} days free, then {usd(followUpDesk.from)}/month</span>)
-                  : <span class="pc-price">{it.price}</span>}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-    <p class="price-foot">Smaller fixed-scope jobs, like website inquiry alerts from {usd(quickWin.from)}, are on the <a href={url('/services/#smaller')} data-umami-event="services-cta" data-umami-event-location="home-small-jobs">{LANE_NAMES.smb} page</a>. Results depend on your business and tools.</p>
-  </Section>
-
-  <Section id="how" title="How NeonKey works" size="sm">
-    <ul class="how-grid">
-      <li><strong>Free first.</strong> Every path starts with a free tool: the scam checker, the Launch Preflight, the Inbox Check or the Starter IT Kit.</li>
-      <li><strong>Prices before you commit.</strong> Self-serve products show their price and terms on the page. Custom work gets a fixed written quote before anything starts.</li>
-      <li><strong>You stay in control.</strong> You keep every login and admin account, and you can read the <a href={url('/refunds/')}>refund and cancellation policy</a> before you buy.</li>
+  <!-- 2. Pain points -->
+  <Section id="problems" eyebrow="What it fixes" title="The work that quietly costs you customers" intro="Small businesses rarely lose jobs on price alone. They lose them in the gaps between the inbox, the spreadsheet and a busy week.">
+    <ul class="pains">
+      <li><span class="pain-n">01</span><h3>Missed inquiries</h3><p>A website form lands in an inbox nobody checks over the weekend. By Monday, they have called someone else.</p></li>
+      <li><span class="pain-n">02</span><h3>Slow follow-up</h3><p>You sent the estimate. They meant to reply. Without a polite nudge, a quiet quote tends to stay quiet.</p></li>
+      <li><span class="pain-n">03</span><h3>Repetitive admin</h3><p>Copying details from emails into a spreadsheet, typing the same answers, chasing the same invoice again.</p></li>
+      <li><span class="pain-n">04</span><h3>Disconnected tools</h3><p>The form, the inbox, the calendar and the spreadsheet don't talk to each other, so things fall between them.</p></li>
+      <li><span class="pain-n">05</span><h3>Weak IT and security</h3><p>Shared passwords, a backup nobody has tested, and business email a scammer can fake from your own domain.</p></li>
     </ul>
   </Section>
 
-  <Section id="who" size="sm" label="Who does the work">
-    <article class="ds-card ds-card-md who-card">
-      <svg class="who-mark" width="56" height="56" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="who-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#22d3ee" /><stop offset="0.55" stop-color="#a78bfa" /><stop offset="1" stop-color="#f472b6" />
-          </linearGradient>
-        </defs>
-        <g fill="none" stroke="url(#who-grad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="22" cy="32" r="11" />
-          <path d="M33 32h22M47 32v9M54 32v6" />
-        </g>
-        <circle cx="22" cy="32" r="3.5" fill="#f472b6" />
-      </svg>
-      <div>
-        <span class="kicker">Who does the work</span>
-        <h2 id="who-h" class="who-h">One person, start to finish</h2>
-        <p>I do the client work myself. I've worked in the IT industry for most of my adult career, setting up, maintaining and troubleshooting networks and communication systems. I'm now pursuing an Applied Bachelor's Degree in Cybersecurity, earning an associate degree in Computer Information Systems along the way.</p>
-        <p class="who-more"><a href={url('/about/')}>More about me →</a></p>
-      </div>
-    </article>
+  <!-- 3. Live demo -->
+  <Section id="demo" eyebrow="See it work" title="One estimate, followed up for you" intro="This is the Follow-Up Desk's real flow with sample data. Change the names and run it.">
+    <DeskDemo />
   </Section>
 
-  <Section id="newsletter" size="sm" label="Newsletter">
-    <div class="nl-box">
-      <span class="kicker">Newsletter · Every Wednesday</span>
-      <h2 id="nl-h">Unlock the Week</h2>
-      <p class="muted">One fix you can do in a few minutes, every Wednesday: keep your tech secure, or catch more of the customers who reach out. Plus a free Learn guide. For small businesses, new founders and anyone curious. No spam; unsubscribe anytime.</p>
-      <NewsletterForm id="home-nl" />
+  <!-- 4. Offers -->
+  <Section id="offers" eyebrow="Three ways to start" title="Pick the size of help you need" intro="Self-serve, done for you, or IT basics set up right. Prices are on the page, and custom work gets a fixed written quote first.">
+    <div class="offers" data-track-view="pricing">
+      {offers.map((o) => (
+        <article class={`offer-card lane-${o.lane}`} id={`offer-${o.id}`}>
+          <p class="oc-tag">{o.tag}</p>
+          <h3 class="oc-title">{o.title}</h3>
+          <p class="oc-name">{o.name}</p>
+          <div class="oc-price">
+            {o.desk
+              ? (followUpDeskSaleLive
+                ? <span data-sale-ends={followUpDeskSale.endsAt}><span data-sale><strong>{usd(followUpDeskSale.monthly)}</strong>/month <em>founding price · {followUpDeskTrialDays} days free first</em></span><span data-sale-after hidden><strong>{usd(followUpDesk.from)}</strong>/month <em>{followUpDeskTrialDays} days free first</em></span></span>
+                : <span><strong>{usd(followUpDesk.from)}</strong>/month</span>)
+              : <span><strong>{o.price}</strong> <em>{o.priceNote}</em></span>}
+            {o.desk && followUpDeskSaleLive && <p class="oc-sale"><DeskSale variant="line" location="home-offer" /></p>}
+          </div>
+          <dl class="oc-facts">
+            <div><dt>Who it's for</dt><dd>{o.who}</dd></div>
+            <div><dt>The problem</dt><dd>{o.problem}</dd></div>
+          </dl>
+          <ul class="oc-items">{o.items.map((i) => <li>{i}</li>)}</ul>
+          <dl class="oc-facts oc-small">
+            <div><dt>Timing</dt><dd>{o.timing}</dd></div>
+            <div><dt>Terms and support</dt><dd>{o.support}</dd></div>
+          </dl>
+          <a class={o.desk ? 'btn btn-primary btn-block' : 'btn btn-secondary btn-block'} href={url(o.href)} data-umami-event={o.event} data-umami-event-location={`home-offer-${o.id}`} data-umami-event-offer={o.name}>{o.cta} <span class="arrow" aria-hidden="true">→</span></a>
+        </article>
+      ))}
+    </div>
+    <p class="offers-foot">Need just one thing, like website inquiry alerts from {usd(quickWin.from)} or the {usd(emailLockdown.from)} {emailLockdown.name}? See <a href={url('/services/')} data-umami-event="services-cta" data-umami-event-location="home-small-jobs">all services and prices</a>.</p>
+  </Section>
+
+  <!-- 5. Proof -->
+  <Section id="proof" eyebrow="Proof you can check" title="Working tools, clear terms, real experience">
+    <div class="proof">
+      <div class="proof-main">
+        <h3>Try the technology before you talk to anyone</h3>
+        <p>These run in your browser today. They are demos with sample data, not client results.</p>
+        <ul class="proof-links">
+          <li><a href={url('/lab/follow-up-desk/')} data-umami-event="lab-click" data-umami-event-location="home-proof">Follow-Up Desk demo <span aria-hidden="true">→</span></a><span>See every follow-up for an estimate, invoice or inquiry</span></li>
+          <li><a href={url('/lab/ai-inquiry-triage/')} data-umami-event="lab-click" data-umami-event-location="home-proof">Inquiry triage demo <span aria-hidden="true">→</span></a><span>A customer message sorted, flagged and drafted for a person to review</span></li>
+          <li><a href={url('/lab/front-office/')} data-umami-event="lab-click" data-umami-event-location="home-proof">Front office demo <span aria-hidden="true">→</span></a><span>How intake, routing and follow-up fit together</span></li>
+        </ul>
+      </div>
+      <div class="proof-side">
+        <div><h3>Experience</h3><p>NeonKey's founder has worked in the IT industry for most of his adult career, setting up, maintaining and troubleshooting networks and communication systems, and is pursuing an Applied Bachelor's Degree in Cybersecurity. <a href={url('/about/')}>About NeonKey</a></p></div>
+        <div><h3>Your accounts stay yours</h3><p>You keep every login and admin account. Subscriptions are in your name, and you can remove our access when the work is done.</p></div>
+        <div><h3>Terms up front</h3><p>Prices on the page, a fixed written quote for custom work, secure checkout by Stripe and a <a href={url('/refunds/')}>refund policy</a> you can read first.</p></div>
+      </div>
     </div>
   </Section>
+
+  <!-- 6. Process + FAQ -->
+  <Section id="process" eyebrow="How it works" title="From problem to working system in four steps">
+    <ol class="process">
+      <li><h3>Describe the problem</h3><p>Send a short note: what's slipping, and the tools you use now. No call needed.</p></li>
+      <li><h3>Get a recommendation and written scope</h3><p>A free reply with what we'd build, what's included and a fixed price.</p></li>
+      <li><h3>Approve it</h3><p>Nothing starts until you say yes to the written quote.</p></li>
+      <li><h3>Deploy and check it works</h3><p>We test with real examples, walk you through it and hand over the notes.</p></li>
+    </ol>
+    <div class="faq-wrap">
+      <h3 class="faq-h">Common questions</h3>
+      <FAQ items={faqs} />
+    </div>
+  </Section>
+
+  <!-- 7. Final CTA -->
+  <section class="final" aria-labelledby="final-h">
+    <div class="container">
+      <div class="final-box">
+        <p class="kicker">Free, by email, no call</p>
+        <h2 id="final-h">Tell us what's slowing you down.</h2>
+        <p class="final-p">Describe one task or follow-up that keeps slipping. You'll get a recommendation and, when it fits, a fixed written quote, usually within one business day.</p>
+        <a class="btn btn-primary btn-lg" href={url('/contact/?topic=workflow-review')} data-umami-event="contact-click" data-umami-event-location="home-final">Get a free workflow review <span class="arrow" aria-hidden="true">→</span></a>
+        <p class="final-alt">Or email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="home-final-email">{CONTACT_EMAIL}</a></p>
+      </div>
+      <div class="other-paths">
+        <a href={url('/protect/')} data-umami-event="nav-click" data-umami-event-target="family" data-umami-event-location="home-final"><span>Not a business?</span> Free scam checker and family guides <span aria-hidden="true">→</span></a>
+        <a href={url('/founders/')} data-umami-event="nav-click" data-umami-event-target="founders" data-umami-event-location="home-final"><span>Launching something?</span> Free domain check and founder tools <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="home-nl">
+        <div><p class="home-nl-h">Unlock the Week</p><p class="home-nl-p">One practical fix every Wednesday. Free, unsubscribe anytime.</p></div>
+        <NewsletterForm id="home-nl" />
+      </div>
+      <TrustLine location="home" class="home-trust" />
+    </div>
+  </section>
 </Base>
 
 <style>
-  .home-hero { padding: clamp(1.25rem, 4vw, 3.5rem) 0 var(--section-y-sm); }
-  .home-kicker { display: flex; align-items: center; gap: .6rem; margin: 0 0 var(--space-3); }
-  .home-by { font-size: var(--text-sm); color: var(--color-text-muted); }
-  .home-by::before { content: '·'; margin-right: .6rem; color: var(--color-text-subtle); }
-  .home-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: var(--space-6); margin-bottom: var(--space-10); }
-  .home-stage { height: clamp(360px, 38vw, 500px); }
-  .home-hero h1 { font-size: clamp(2.5rem, 5.4vw, 4.75rem); font-weight: 300; letter-spacing: -.05em; line-height: 1; max-width: 13ch; margin: 0 0 var(--space-6);
+  .home-hero { padding: clamp(1.5rem, 5vw, 4rem) 0 var(--section-y-sm); }
+  .home-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: var(--space-6); }
+  .home-stage { height: clamp(380px, 40vw, 540px); }
+  .home-kicker { margin: 0 0 var(--space-4); }
+  .home-hero h1 { font-size: clamp(2.6rem, 5.6vw, 5rem); font-weight: 300; letter-spacing: -.05em; line-height: .98; max-width: 12ch; margin: 0 0 var(--space-6);
     background: linear-gradient(180deg, #fff 30%, #a9adc4); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .home-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 36rem; margin: 0; }
+  .home-lede { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 36rem; margin: 0 0 var(--space-8); }
+  .home-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .home-proof { list-style: none; margin: var(--space-6) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; font-size: var(--text-sm); color: var(--color-text-muted); }
+  .home-proof li { display: inline-flex; align-items: center; gap: .5rem; margin: 0; }
+  .home-proof li::before { content: ''; width: .9rem; height: .9rem; border-radius: 50%; background: rgba(110,231,183,.15) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%236ee7b7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat; }
   @media (max-width: 900px) {
-    .home-top { grid-template-columns: 1fr; position: relative; margin-bottom: var(--space-6); }
+    .home-top { grid-template-columns: 1fr; position: relative; }
     .home-copy { position: relative; z-index: 1; }
-    .home-stage { position: absolute; right: -20%; top: -10%; width: 80%; height: 260px; opacity: .45; z-index: 0; pointer-events: none; }
+    .home-stage { position: absolute; right: -25%; top: -6%; width: 85%; height: 260px; opacity: .25; z-index: 0; pointer-events: none; }
   }
-  .home-hero :global(.home-trust) { margin-top: var(--space-5); max-width: 60rem; }
   @media (max-width: 640px) {
-    .home-hero { padding-top: var(--space-5); }
-    .home-hero h1 { font-size: 2.25rem; margin-bottom: var(--space-3); }
-    .home-lede { font-size: .9375rem; line-height: 1.5; margin-bottom: var(--space-4); }
+    .home-hero { padding-top: var(--space-6); }
+    .home-hero h1 { font-size: 2.6rem; margin-bottom: var(--space-4); }
+    .home-lede { font-size: 1rem; line-height: 1.55; margin-bottom: var(--space-5); }
+    .home-ctas .btn { width: 100%; }
   }
-  .price-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
-  @media (max-width: 860px) { .price-cols { grid-template-columns: 1fr; } }
-  .price-col { padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
-  .price-col-h { font-size: var(--text-md); margin: 0 0 var(--space-3); }
-  .price-col-h a { display: inline-flex; align-items: center; gap: .5rem; min-height: var(--tap); color: var(--color-text); text-decoration: none; }
-  .price-col-h a:hover { color: var(--color-primary-hover); }
-  .price-col ul { list-style: none; margin: 0; padding: 0; }
-  .price-col li { display: flex; flex-direction: column; gap: .1rem; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); margin: 0; }
-  .price-col li a { color: var(--color-text); font-weight: var(--weight-semibold); text-decoration: none; min-height: 28px; }
-  .price-col li a:hover { color: var(--color-primary-hover); text-decoration: underline; }
-  .pc-price { font-size: var(--text-sm); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
-  .price-foot { margin: var(--space-5) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); }
-  .how-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
-  @media (max-width: 860px) { .how-grid { grid-template-columns: 1fr; } }
-  .how-grid li { margin: 0; color: var(--color-text-muted); }
-  .how-grid strong { display: block; color: var(--color-text); font-size: var(--text-md); margin-bottom: var(--space-1); }
-  .who-card { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4) var(--space-6); align-items: start; }
-  .who-card p { color: var(--color-text-muted); }
-  .who-h { font-size: var(--text-xl); margin: var(--space-1) 0 var(--space-3); }
-  .who-more { margin: 0; }
-  @media (max-width: 640px) { .who-card { grid-template-columns: 1fr; } }
-  .nl-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.5rem, 4vw, 2.5rem); }
-  .nl-box h2 { margin: var(--space-2) 0 var(--space-3); }
+
+  .pains { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--color-border); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; }
+  .pains li { margin: 0; padding: var(--space-6) var(--space-5); background: var(--color-bg); }
+  .pains h3 { font-size: var(--text-md); margin: var(--space-3) 0 var(--space-2); }
+  .pains p { margin: 0; color: var(--color-text-muted); font-size: .95rem; }
+  .pain-n { font-family: var(--font-mono); font-size: .72rem; color: var(--color-primary); letter-spacing: .1em; }
+  @media (max-width: 1100px) { .pains { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pains li:last-child { grid-column: span 2; } }
+  @media (max-width: 600px) { .pains { grid-template-columns: 1fr; } .pains li:last-child { grid-column: auto; } }
+
+  .offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); align-items: stretch; }
+  @media (max-width: 1000px) { .offers { grid-template-columns: 1fr; max-width: 40rem; } }
+  .offer-card { position: relative; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.01)); overflow: hidden; }
+  .offer-card::before { content: ''; position: absolute; left: 12%; right: 12%; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--lane), transparent); box-shadow: 0 0 18px 1px var(--lane); }
+  #offer-desk { border-color: rgba(34,211,238,.35); box-shadow: 0 0 0 1px rgba(34,211,238,.12), 0 30px 80px -40px rgba(34,211,238,.35); }
+  .offer-card p, .offer-card dl { margin: 0; }
+  .oc-tag { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-text-subtle); }
+  .oc-title { font-size: var(--text-xl); font-weight: 500; letter-spacing: -.025em; margin: 0; }
+  .oc-name { font-size: var(--text-sm); color: var(--color-text-muted); }
+  .oc-price { padding: var(--space-3) 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); font-size: var(--text-sm); }
+  .oc-price strong { font-size: 1.9rem; font-weight: 600; letter-spacing: -.03em; color: var(--color-text); font-variant-numeric: tabular-nums; }
+  .oc-sale { margin-top: .4rem !important; font-size: var(--text-xs); color: var(--color-magenta); font-family: var(--font-mono); }
+  .oc-price em { display: block; font-style: normal; margin-top: .2rem; }
+  .oc-facts { display: grid; gap: var(--space-3); }
+  .oc-facts dt { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-subtle); margin-bottom: .2rem; }
+  .oc-facts dd { margin: 0; color: var(--color-text-muted); font-size: .95rem; }
+  .oc-small dd { font-size: var(--text-sm); }
+  .oc-items { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+  .oc-items li { position: relative; padding-left: 1.5rem; margin: 0; font-size: .95rem; color: var(--color-text); }
+  .oc-items li::before { content: ''; position: absolute; left: 0; top: .5em; width: .55rem; height: .55rem; border-radius: 50%; border: 1px solid var(--lane); box-shadow: 0 0 8px var(--lane); }
+  .offer-card .btn { margin-top: auto; }
+  .offers-foot { margin: var(--space-5) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+
+  .proof { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-8); }
+  @media (max-width: 900px) { .proof { grid-template-columns: 1fr; } }
+  .proof h3 { font-size: var(--text-md); margin: 0 0 var(--space-2); }
+  .proof p { color: var(--color-text-muted); margin: 0; }
+  .proof-main { padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: rgba(255,255,255,.025); }
+  .proof-links { list-style: none; margin: var(--space-5) 0 0; padding: 0; }
+  .proof-links li { display: flex; flex-direction: column; gap: .2rem; padding: var(--space-4) 0; border-top: 1px solid var(--color-border); margin: 0; }
+  .proof-links a { color: var(--color-text); font-weight: 600; text-decoration: none; font-size: 1.05rem; }
+  .proof-links a:hover { color: var(--color-primary-hover); }
+  .proof-links span { color: var(--color-text-muted); font-size: var(--text-sm); }
+  .proof-side { display: flex; flex-direction: column; gap: var(--space-6); }
+
+  .process { list-style: none; margin: 0 0 var(--space-12); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); counter-reset: pr; }
+  @media (max-width: 900px) { .process { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .process { grid-template-columns: 1fr; } }
+  .process li { counter-increment: pr; margin: 0; padding-top: var(--space-5); border-top: 1px solid var(--color-border-strong); }
+  .process li::before { content: '0' counter(pr); font-family: var(--font-mono); font-size: .72rem; color: var(--color-primary); letter-spacing: .1em; }
+  .process h3 { font-size: var(--text-md); margin: var(--space-2) 0; }
+  .process p { margin: 0; color: var(--color-text-muted); font-size: .95rem; }
+  .faq-wrap { max-width: 48rem; }
+  .faq-h { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
+
+  .final { padding: var(--section-y) 0; }
+  .final-box { position: relative; text-align: center; padding: clamp(2.5rem, 7vw, 5rem) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden;
+    background: radial-gradient(600px 260px at 50% 110%, rgba(124,108,255,.35), transparent 70%), radial-gradient(500px 200px at 15% -20%, rgba(34,211,238,.14), transparent 70%), rgba(255,255,255,.02); }
+  .final-box h2 { font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 300; letter-spacing: -.045em; margin: var(--space-3) auto var(--space-4); max-width: 18ch; }
+  .final-p { color: var(--color-text-muted); max-width: 38rem; margin: 0 auto var(--space-6); }
+  .final-alt { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+  .other-paths { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-5); }
+  @media (max-width: 700px) { .other-paths { grid-template-columns: 1fr; } }
+  .other-paths a { display: block; padding: var(--space-4) var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); text-decoration: none; font-size: .95rem; }
+  .other-paths a:hover { border-color: var(--color-border-strong); background: rgba(255,255,255,.03); }
+  .other-paths a span:first-child { display: block; font-size: var(--text-sm); color: var(--color-text-subtle); }
+  .home-nl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--space-5); align-items: center; margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
+  @media (max-width: 800px) { .home-nl { grid-template-columns: 1fr; } }
+  .home-nl-h { margin: 0; font-weight: 600; }
+  .home-nl-p { margin: .2rem 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+  .home-nl :global(.nl-form) { margin-top: 0; }
+  .final :global(.home-trust) { margin-top: var(--space-6); }
 </style>

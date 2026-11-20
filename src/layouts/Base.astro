@@ -41,18 +41,22 @@ const path = relPath.replace(/\/$/, '') || '/';
 // Three entrances (Michael, Nov 14 2026 full overhaul): Protect Yourself, Build Your Business, Run Your Business,
 // plus Learn. Names come from src/lib/lanes.ts. Lab, Articles and Newsletter live in the footer; no URL changed.
 // `also` lists other paths that light up the same nav item (product pages that belong to the lane).
+// Business first (Michael, Nov 19 2026 premium/conversion directive): the homepage now speaks to small businesses,
+// so the nav leads with the Desk, services and working demos. Individuals and founders keep their own hubs, one
+// click away. Learn, Articles and Newsletter stay in the footer. No URL changed.
 const nav = [
-  { href: '/protect/', label: LANE_NAMES.family, lane: 'family', also: ['/scam-checker'] },
-  { href: '/founders/', label: LANE_NAMES.founders, lane: 'founders', also: [] },
-  { href: '/services/', label: LANE_NAMES.smb, lane: 'smb', also: ['/follow-up-desk', '/contact', '/free-it-kit'] },
-  { href: '/learn/', label: 'Learn', lane: '', also: [] },
+  { href: '/follow-up-desk/', label: 'Follow-Up Desk', lane: 'smb', target: 'follow-up-desk', also: ['/lab/follow-up-desk'] },
+  { href: '/services/', label: 'Services & pricing', lane: 'smb', target: 'smb', also: ['/contact', '/free-it-kit'] },
+  { href: '/lab/', label: 'Demos', lane: '', target: 'lab', also: [] },
+  { href: '/founders/', label: 'For founders', lane: 'founders', target: 'founders', also: [] },
+  { href: '/protect/', label: 'For individuals', lane: 'family', target: 'family', also: ['/scam-checker'] },
 ];
 const under = (p: string) => path === p || path.startsWith(p + '/');
 const isActive = (item: (typeof nav)[number]) => under(item.href.replace(/\/$/, '')) || item.also.some(under);
 const lane: Lane = laneProp ?? (/^\/founders(\/|$)/.test(path) ? 'founders' : /^\/(scam-checker|protect)(\/|$)/.test(path) ? 'family' : 'smb');
 // Header button follows the lane. Business (the default) keeps the original quote button and its Umami event.
 const laneCta = {
-  smb: { href: '/contact/', label: 'Get a written quote', event: 'contact-click' },
+  smb: { href: '/contact/?topic=workflow-review', label: 'Free workflow review', event: 'contact-click' },
   founders: { href: '/founders/#check', label: 'Check my domain free', event: 'lane-cta' },
   family: { href: '/scam-checker/#check', label: 'Check a message', event: 'lane-cta' },
 }[lane];
@@ -205,7 +209,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         <nav id="site-nav" class="site-nav" aria-label="Main">
           <ul>
             {nav.map((item) => (
-              <li><a href={url(item.href)} class={item.lane ? `lane-${item.lane}` : undefined} aria-current={isActive(item) ? 'page' : undefined} data-umami-event="nav-click" data-umami-event-target={item.lane || 'learn'}>{item.lane && <span class="nav-dot" aria-hidden="true"></span>}{item.label}</a></li>
+              <li><a href={url(item.href)} class={item.lane ? `lane-${item.lane}` : undefined} aria-current={isActive(item) ? 'page' : undefined} data-umami-event="nav-click" data-umami-event-target={item.target}>{item.label}</a></li>
             ))}
           </ul>
           <a href={url(laneCta.href)} class="btn btn-primary btn-sm nav-cta" data-umami-event={laneCta.event} data-umami-event-location="header" data-umami-event-lane={lane}>{laneCta.label}</a>
@@ -219,7 +223,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
       <div class="container footer-grid">
         <div class="footer-brand">
           <Logo size={30} />
-          <p>Practical tech help for families, founders and small businesses. Unlock tech, whatever your level.</p>
+          <p>Automation and IT for small businesses, plus free tools for founders and families.</p>
           <SocialLinks location="footer" />
         </div>
         <nav class="footer-col lane-family" aria-labelledby="ft-family">
@@ -344,6 +348,6 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
       }, true);
     </script>
     <div class="grain" aria-hidden="true"></div>
-    <script>import '../scripts/motion';</script>
+    <script>import '../scripts/motion'; import '../scripts/funnel';</script>
   </body>
 </html>
