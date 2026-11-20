@@ -23,7 +23,7 @@ import { skuPricesJson } from '../../../lib/checkout-ref';
   </div>
   <!-- Google Ads "Founder guide purchase" conversion. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-founder.js')}></script>
-  <!-- Checkout return: Umami checkout-return + GA4 purchase (prices passed from src/lib/checkout-ref.ts). External file. -->
+  <!-- Checkout return: Umami checkout-return only; verified purchases come from the payments Worker (prices passed from src/lib/checkout-ref.ts). External file. -->
   <script is:inline src={url('/js/checkout-return.js')} data-skus={skuPricesJson()}></script>
   <!-- Meta and Reddit ad pixels (PageView; Purchase only on a real Stripe checkout redirect). External file: no inline scripts. -->
   <script is:inline src={url('/js/ad-pixels.js')}></script>

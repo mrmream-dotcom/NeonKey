@@ -66,6 +66,22 @@ idempotency key per event stops duplicate emails when Stripe retries. If the ema
 returns 500 so Stripe retries. Live-mode events are ignored while `ALLOW_LIVE = "false"`.
 It needs no Stripe API key and stores nothing.
 
+### Verified purchase tracking (`src/analytics.js`, Nov 19 2026)
+
+A visitor landing on a thanks page is not proof of payment, so purchases are counted only from Stripe's signed webhook.
+For each **live** `checkout.session.completed` (or `async_payment_succeeded`) this Worker sends:
+
+- GA4 `purchase` (money taken) or `trial_started` (free-trial subscription), by Measurement Protocol, with the Checkout
+  Session id as `transaction_id` (GA4 drops a repeat). Needs the secret `GA4_API_SECRET`: GA4 Admin > Data streams >
+  the neonkey.tech web stream > Measurement Protocol API secrets > Create. Set it in the Cloudflare dashboard (Workers >
+  neonkey-payments > Settings > Variables and Secrets > Add, type Secret) or with `npx wrangler secret put GA4_API_SECRET`.
+  Until it is set, GA4 is skipped and the Worker logs that once per purchase.
+- Umami `checkout_completed` (kind, lane, sku, value, first source). No secret needed.
+
+No email, name or customer id is sent. The GA4 client id rides in `client_reference_id` as `_g<a>-<b>`
+(added on the buy click by `public/js/checkout-attr.js`) so GA4 joins the purchase to the visit. Tracking runs only after
+the notice email succeeded and never fails the webhook. Subscription renewals (`invoice.paid`) are not reported yet.
+
 ### Founder Stack auto-delivery (`src/deliver.js`)
 
 A paid `checkout.session.completed` (or `async_payment_succeeded`) from the Founder Stack Payment Link

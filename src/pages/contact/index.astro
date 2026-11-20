@@ -9,7 +9,7 @@ import Icon from '../../components/Icon.astro';
 ---
 <Base title="Contact" description="Contact NeonKey about remote small-office IT setup, automation services, a tutorial, a review or the Unlock the Week newsletter.">
   <PageHeader eyebrow="Contact" title="Get a written quote" crumbs={[{ href: '/', label: 'Home' }, { label: 'Contact' }]}>
-    <p class="lede">Tell us what isn't working and what you'd like to improve, or just ask a question. You'll get a reply by email with any questions and, when it fits, a written quote. No call needed. You can also email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
+    <p class="lede">Tell us what isn't working and what you'd like to improve, or just ask a question. The first review is free: you get a reply by email with a recommendation, any questions and, when it fits, a fixed written quote. No call needed. You can also email <a href={`mailto:${CONTACT_EMAIL}`} data-umami-event="contact-click" data-umami-event-location="contact-email">{CONTACT_EMAIL}</a>.</p>
   </PageHeader>
   <div class="container split contact-split">
     <div class="contact-form-col">
@@ -71,6 +71,8 @@ import Icon from '../../components/Icon.astro';
     // follow-up-desk: shown while the self-serve signup isn't open yet; added on the fly like tune-up.
     'follow-up-desk': ['Follow-Up Desk ($250/mo, self-serve)', 'the Follow-Up Desk'],
     'referral': ['I was referred by a client', ''],
+    // workflow-review: the free first step offered on the homepage and header (Nov 19 2026); added on the fly.
+    'workflow-review': ['Free workflow review', 'a free workflow review'],
   };
   const qp = new URLSearchParams(location.search);
   const t = TOPICS[qp.get('topic') || ''];

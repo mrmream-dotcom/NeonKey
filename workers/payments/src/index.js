@@ -4,13 +4,15 @@
 // Stripe itself emails customers their invoices and receipts (Dashboard > Settings > Customer emails),
 // so this Worker notifies NeonKey (hello@, BCC Michael) and emails Founder Stack buyers their PDF (src/deliver.js).
 // It stores nothing; the PDF is read from the private PRODUCTS KV namespace.
-// Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET, RESEND_API_KEY. No Stripe API key is needed here.
+// Secrets (wrangler secret put, never committed): STRIPE_WEBHOOK_SECRET, RESEND_API_KEY, and optional GA4_API_SECRET
+// (verified purchases to GA4, src/analytics.js). No Stripe API key is needed here.
 import { describeEvent } from "./events.js";
 import { verifyStripeEvent } from "./verify.js";
 import { isFounderStackPaid, deliverFounderStack } from "./deliver.js";
+import { reportPurchase } from "./analytics.js";
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const json = (status, body) =>
       new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
@@ -45,12 +47,17 @@ export default {
     // the Idempotency-Key stops a retry or a duplicate event from sending a second copy within 24 h.
     if (isFounderStackPaid(event, env) && !(await deliverFounderStack(env, event))) return json(500, { ok: false });
 
+    // Verified purchase tracking (GA4 + Umami). Only on the success paths below, so a Stripe retry after a failed
+    // email doesn't count the same checkout twice. Runs after the response; it never fails the webhook.
+    const track = () => { const job = reportPurchase(env, event); if (ctx?.waitUntil) ctx.waitUntil(job); return job; };
+
     const notice = describeEvent(event);
-    if (!notice) return json(200, { ok: true, ignored: event.type });
+    if (!notice) { track(); return json(200, { ok: true, ignored: event.type }); }
 
     const sent = await notify(env, event, notice);
     // A non-2xx makes Stripe retry later, so a failed email isn't lost.
     if (!sent) return json(500, { ok: false });
+    track();
     return json(200, { ok: true });
   },
 };

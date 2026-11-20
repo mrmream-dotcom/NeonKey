@@ -1,0 +1,122 @@
+---
+// Homepage Follow-Up Desk demo (Nov 19 2026 conversion directive, section 3): one estimate goes through the Desk's
+// real flow, step by step: New estimate -> Desk schedules follow-ups -> first follow-up sent -> customer replies.
+// Messages, days and buttons come from the Desk's own engine (workers/followup-desk/src/engine.js), so the preview
+// matches what the Desk sends by default. Sample data, clearly labeled. Nothing is sent or stored.
+// Rendered complete at build time (works without JavaScript); the script replays it with the visitor's own words.
+// Events: demo_started (Run), demo_completed (the outcome step is shown).
+import { url } from '../config';
+import { DEFAULT_TEMPLATES, DEFAULT_DAYS, ACTIONS, fill, firstName } from '../../workers/followup-desk/src/engine.js';
+import { followUpDesk as fd, followUpDeskTrialDays as trial } from '../data/services';
+const sample = { kind: 'estimate', name: 'Dana Lopez', job: 'the kitchen repaint', amount: '' };
+const settings = { business: 'Northside Painting', signoff: 'Northside Painting' };
+const t0 = DEFAULT_TEMPLATES.estimate[0];
+const subj = fill(t0.subject, sample, settings);
+const body = fill(t0.body, sample, settings).split('\n\n');
+const first = firstName(sample.name);
+---
+<div class="dd" data-dd>
+  <form class="dd-form" data-dd-form>
+    <p class="dd-label">Demo with sample data · nothing is sent</p>
+    <label>Your business <input name="biz" value={settings.business} maxlength="60" autocomplete="off" /></label>
+    <label>Customer <input name="name" value={sample.name} maxlength="60" autocomplete="off" /></label>
+    <label>The job <input name="job" value={sample.job} maxlength="80" autocomplete="off" /></label>
+    <button type="submit" class="btn btn-primary" data-umami-event="demo_started" data-umami-event-demo="follow-up-desk" data-umami-event-location="home">Run the demo <span class="arrow" aria-hidden="true">→</span></button>
+    <p class="dd-fine">Uses the Desk's real default messages. <a href={url('/lab/follow-up-desk/')}>Full demo with invoices and inquiries</a></p>
+  </form>
+
+  <ol class="dd-flow" aria-live="polite">
+    <li class="dd-step is-on" data-step="1">
+      <span class="dd-n">01</span>
+      <div><p class="dd-h">New estimate</p>
+        <p class="dd-p">You add the estimate for <strong data-v="job">{sample.job}</strong> sent to <strong data-v="first">{first}</strong>. That's the only thing you do.</p></div>
+    </li>
+    <li class="dd-step is-on" data-step="2">
+      <span class="dd-n">02</span>
+      <div><p class="dd-h">The Desk schedules follow-ups</p>
+        <p class="dd-chips">{DEFAULT_DAYS.map((d) => <span class="dd-chip">Day {d}</span>)}</p>
+        <p class="dd-p">Weekday mornings, in your time zone. You can rewrite every message.</p></div>
+    </li>
+    <li class="dd-step is-on" data-step="3">
+      <span class="dd-n">03</span>
+      <div><p class="dd-h">Follow-up 1 goes out, under your name</p>
+        <div class="dd-mail">
+          <p class="dd-meta">From: <span data-v="biz">{settings.business}</span> · To: <span data-v="first">{first}</span></p>
+          <p class="dd-subj" data-v="subj">{subj}</p>
+          <div data-v="body">{body.map((p) => <p>{p}</p>)}</div>
+          <p class="dd-btns"><span>{ACTIONS.estimate.yes}</span><span>{ACTIONS.estimate.ask}</span></p>
+        </div></div>
+    </li>
+    <li class="dd-step is-on dd-win" data-step="4">
+      <span class="dd-n">04</span>
+      <div><p class="dd-h">Outcome: the customer says yes</p>
+        <p class="dd-p"><strong data-v="first">{first}</strong> taps "{ACTIONS.estimate.yes}". You get an email right away, the other two follow-ups are canceled, and you mark the job Won.</p></div>
+    </li>
+  </ol>
+  <p class="dd-cta"><a class="btn btn-secondary" href={url(fd.href!)} data-umami-event="services-cta" data-umami-event-location="home-demo">Try it on real estimates, {trial} days free</a></p>
+</div>
+
+<script>
+  import { DEFAULT_TEMPLATES, fill, firstName } from '../../workers/followup-desk/src/engine.js';
+  const root = document.querySelector<HTMLElement>('[data-dd]');
+  const form = root?.querySelector<HTMLFormElement>('[data-dd-form]');
+  const steps = root ? Array.from(root.querySelectorAll<HTMLElement>('.dd-step')) : [];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timers: number[] = [];
+  const track = (name: string) => { try { (window as any).umami?.track?.(name, { demo: 'follow-up-desk', location: 'home' }); } catch {} };
+
+  function setAll(sel: string, text: string) { root?.querySelectorAll<HTMLElement>(`[data-v="${sel}"]`).forEach((el) => { el.textContent = text; }); }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const biz = String(f.get('biz') || 'Your business').slice(0, 60);
+    const item = { kind: 'estimate', name: String(f.get('name') || 'your customer').slice(0, 60), job: String(f.get('job') || 'the job').slice(0, 80), amount: '' };
+    const settings = { business: biz, signoff: biz };
+    const t = DEFAULT_TEMPLATES.estimate[0];
+    setAll('biz', biz); setAll('job', item.job); setAll('first', firstName(item.name));
+    setAll('subj', fill(t.subject, item, settings));
+    const bodyEl = root?.querySelector<HTMLElement>('[data-v="body"]');
+    if (bodyEl) bodyEl.replaceChildren(...fill(t.body, item, settings).split('\n\n').map((p: string) => { const el = document.createElement('p'); el.textContent = p; return el; }));
+    timers.forEach(clearTimeout); timers = [];
+    steps.forEach((s) => s.classList.remove('is-on'));
+    root?.classList.add('is-running');
+    steps.forEach((s, i) => {
+      timers.push(window.setTimeout(() => {
+        s.classList.add('is-on');
+        if (i === steps.length - 1) { root?.classList.remove('is-running'); track('demo_completed'); }
+      }, reduce ? 0 : 250 + i * 900));
+    });
+  });
+</script>
+
+<style>
+  .dd { display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: var(--space-8); align-items: start; }
+  @media (max-width: 900px) { .dd { grid-template-columns: 1fr; gap: var(--space-6); } }
+  .dd-form { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: rgba(255,255,255,.025); }
+  .dd-form label { display: flex; flex-direction: column; gap: .35rem; margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--color-text-muted); }
+  .dd-label { margin: 0; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-warning); }
+  .dd-fine { margin: 0; font-size: var(--text-sm); color: var(--color-text-subtle); }
+  .dd-fine a { color: var(--color-text-muted); }
+  .dd-flow { list-style: none; margin: 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: var(--space-3); }
+  .dd-flow::before { content: ''; position: absolute; left: 1.15rem; top: .5rem; bottom: .5rem; width: 1px; background: linear-gradient(180deg, var(--color-primary), var(--color-violet), var(--color-magenta)); opacity: .5; }
+  .dd-step { position: relative; display: grid; grid-template-columns: 2.3rem 1fr; gap: var(--space-4); margin: 0; padding: var(--space-4) var(--space-5) var(--space-4) 0; opacity: .25; transform: translateY(6px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .dd-step.is-on { opacity: 1; transform: none; }
+  .dd-n { position: relative; z-index: 1; display: grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--color-bg); border: 1px solid var(--color-border-strong); font-family: var(--font-mono); font-size: .75rem; color: var(--color-text-muted); }
+  .dd-step.is-on .dd-n { border-color: var(--color-primary); color: var(--color-text); box-shadow: 0 0 16px -2px rgba(34,211,238,.6); }
+  .dd-win.is-on .dd-n { border-color: var(--color-success); box-shadow: 0 0 16px -2px rgba(110,231,183,.6); }
+  .dd-h { margin: .35rem 0 .35rem; font-weight: 600; color: var(--color-text); }
+  .dd-p { margin: 0; color: var(--color-text-muted); font-size: .97rem; }
+  .dd-p strong { color: var(--color-text); font-weight: 600; }
+  .dd-chips { display: flex; gap: .4rem; margin: 0 0 .5rem; }
+  .dd-chip { font-family: var(--font-mono); font-size: .75rem; padding: .2rem .6rem; border-radius: var(--radius-pill); border: 1px solid rgba(34,211,238,.4); color: var(--color-primary); }
+  .dd-mail { padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: #f6f7fb; color: #1c1f2e; font-size: .92rem; box-shadow: 0 20px 50px -30px rgba(0,0,0,.9); }
+  .dd-mail p { margin: 0 0 .55rem; }
+  .dd-meta { font-size: .78rem; color: #5b6075; }
+  .dd-subj { font-weight: 700; }
+  .dd-btns { display: flex; flex-wrap: wrap; gap: .4rem; margin: .7rem 0 0 !important; }
+  .dd-btns span { padding: .35rem .8rem; border-radius: 8px; border: 1px solid #c9ccda; font-weight: 600; font-size: .85rem; background: #fff; }
+  .dd-btns span:first-child { background: #1c1f2e; color: #fff; border-color: #1c1f2e; }
+  .dd-cta { grid-column: 2; margin: 0; }
+  @media (max-width: 900px) { .dd-cta { grid-column: 1; } }
+</style>

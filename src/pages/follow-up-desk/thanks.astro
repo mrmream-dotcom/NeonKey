@@ -7,7 +7,7 @@ import { followUpDeskTrialDays } from '../../data/services';
 import { skuPricesJson } from '../../lib/checkout-ref';
 // Where the Follow-Up Desk Payment Link sends buyers after checkout. The neonkey-followup-desk Worker emails the
 // dashboard link (workers/followup-desk). No Google Ads conversion tag yet: add one only when Michael sets up an ads goal for it.
-// checkout-return.js (Umami checkout-return + GA4 purchase) does nothing here until the Desk Payment Links redirect with
+// checkout-return.js (Umami checkout-return) does nothing here until the Desk Payment Links redirect with
 // ?offer=follow-up-desk&session_id={CHECKOUT_SESSION_ID} (a Stripe edit, spec 6.B2).
 ---
 <Base title="You're signed up" description="Your Follow-Up Desk is ready." noindex>
@@ -31,7 +31,7 @@ import { skuPricesJson } from '../../lib/checkout-ref';
     </div>
     <p class="status-actions"><a class="btn btn-primary" href={url('/follow-up-desk/')}>Back to the Follow-Up Desk</a> <a class="btn" href={url('/refunds/#follow-up-desk')}>Cancel and refund rules</a></p>
   </div>
-  <!-- Checkout return: Umami checkout-return + GA4 purchase (prices passed from src/lib/checkout-ref.ts). External file. -->
+  <!-- Checkout return: Umami checkout-return only; verified purchases come from the payments Worker (prices passed from src/lib/checkout-ref.ts). External file. -->
   <script is:inline src={url('/js/checkout-return.js')} data-skus={skuPricesJson()}></script>
 </Base>
 

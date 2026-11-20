@@ -1,0 +1,102 @@
+---
+// Homepage hero visual (Nov 19 2026 cinematic restyle): the NeonKey key as a lit glass object on a dark stage, with
+// a pool of light under it and spectral light edges behind, in the style of product-launch sites. Pure SVG + CSS:
+// no image files, no scripts (the CSP allows neither inline script nor outside images), decorative only.
+// Slow float and light sweep are CSS animations, switched off by the global prefers-reduced-motion rule.
+const bars = [38, 58, 30, 72, 46, 84, 52, 64];
+---
+<div class="stage" aria-hidden="true">
+  <div class="stage-bars">
+    {bars.map((h, i) => <span style={`--h:${h}%;--d:${i * 0.45}s`}></span>)}
+  </div>
+  <div class="stage-floor"></div>
+  <div class="stage-key">
+    <svg class="key" viewBox="0 0 640 300" focusable="false">
+      <defs>
+        <linearGradient id="hs-rim" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#22d3ee" /><stop offset=".55" stop-color="#a78bfa" /><stop offset="1" stop-color="#f472b6" />
+        </linearGradient>
+        <linearGradient id="hs-body" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3b3f6e" /><stop offset=".45" stop-color="#151830" /><stop offset="1" stop-color="#07080f" />
+        </linearGradient>
+        <linearGradient id="hs-spec" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" /><stop offset=".3" stop-color="#fff" stop-opacity=".95" /><stop offset=".7" stop-color="#fff" stop-opacity=".5" /><stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <filter id="hs-blur" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="22" /></filter>
+        <path id="hs-shape" d="M232 150 H560 M488 150 V214 M540 150 V196" />
+      </defs>
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <!-- glow -->
+        <g filter="url(#hs-blur)" stroke="url(#hs-rim)" opacity=".85">
+          <circle cx="150" cy="150" r="82" stroke-width="40" />
+          <use href="#hs-shape" stroke-width="40" />
+        </g>
+        <!-- glass body -->
+        <g stroke="url(#hs-body)">
+          <circle cx="150" cy="150" r="82" stroke-width="40" />
+          <use href="#hs-shape" stroke-width="36" />
+        </g>
+        <!-- colored rim -->
+        <g stroke="url(#hs-rim)" stroke-width="2.5" opacity=".95">
+          <circle cx="150" cy="150" r="102" />
+          <circle cx="150" cy="150" r="62" />
+          <path d="M248 132 H560 M248 168 H470 M506 168 V214 M470 168 V214 M522 168 V196 M558 168 V196" />
+        </g>
+        <!-- specular highlights -->
+        <g stroke="url(#hs-spec)" stroke-width="3" class="key-spec">
+          <path d="M82 96 A90 90 0 0 1 196 70" />
+          <path d="M262 140 H520" />
+        </g>
+        <circle cx="150" cy="150" r="12" fill="#f472b6" stroke="none" class="key-dot" />
+      </g>
+    </svg>
+    <svg class="key key-reflect" viewBox="0 0 640 300" focusable="false">
+      <g fill="none" stroke="url(#hs-rim)" stroke-width="40" stroke-linecap="round" opacity=".5" filter="url(#hs-blur)">
+        <circle cx="150" cy="150" r="82" />
+        <use href="#hs-shape" />
+      </g>
+    </svg>
+  </div>
+  <canvas class="stage-gl" aria-hidden="true"></canvas>
+  <div class="stage-sweep"></div>
+</div>
+
+<script>
+  // Swap the SVG key for the real-time 3D one on capable screens. Three.js loads as its own file, only here, and
+  // only after the page is idle, so it never delays the first paint or the buttons.
+  const stage = document.querySelector<HTMLElement>('.stage');
+  const canvas = stage?.querySelector<HTMLCanvasElement>('.stage-gl');
+  const ok = stage && canvas && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(min-width: 901px)').matches
+    && !!document.createElement('canvas').getContext('webgl2');
+  if (ok) {
+    const go = () => import('../scripts/hero-key').then((m) => m.mountHeroKey(stage!, canvas!)).catch(() => stage!.classList.remove('is-gl'));
+    'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 1200 }) : setTimeout(go, 300);
+  }
+</script>
+
+<style>
+  .stage { position: relative; width: 100%; height: 100%; min-height: 360px; isolation: isolate; overflow: hidden; border-radius: var(--radius-xl); }
+  /* spectral light edges, like stepped bars lit from the top */
+  .stage-bars { position: absolute; inset: auto 0 0 0; height: 70%; display: flex; align-items: flex-end; gap: 2px; opacity: .55; z-index: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+  .stage-bars span { flex: 1; height: var(--h); background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,0) 30%); position: relative; }
+  .stage-bars span::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,.05), #fff 40%, #22d3ee 70%, #f472b6 92%, rgba(255,255,255,0));
+    box-shadow: 0 0 12px rgba(167,139,250,.8); animation: hs-flicker 6s var(--d) ease-in-out infinite; }
+  .stage-floor { position: absolute; left: 10%; right: 10%; bottom: 6%; height: 34%; z-index: 1;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(124,108,255,.55), rgba(34,211,238,.18) 45%, transparent 72%); filter: blur(10px); }
+  .stage-key { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; perspective: 1100px; }
+  .key { width: min(96%, 620px); height: auto; overflow: visible; transform: rotateX(10deg) rotateY(-14deg) rotate(-10deg); transform-origin: 50% 50%;
+    animation: hs-float 9s ease-in-out infinite; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+  .key-reflect { position: absolute; top: 58%; transform: rotateX(10deg) rotateY(-14deg) rotate(10deg) scaleY(-.55); opacity: .35; animation: none; filter: none;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%); mask-image: linear-gradient(180deg, #000, transparent 70%); }
+  .key-dot { filter: drop-shadow(0 0 8px #f472b6); }
+  .stage-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; opacity: 0; transition: opacity 1.2s var(--ease); }
+  .stage.is-gl .stage-gl { opacity: 1; }
+  .stage.is-gl .stage-key { opacity: 0; transition: opacity .6s var(--ease); }
+  .stage-sweep { position: absolute; inset: -20% -60%; z-index: 3; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(100deg, transparent 42%, rgba(255,255,255,.07) 50%, transparent 58%); animation: hs-sweep 11s ease-in-out infinite; }
+  @keyframes hs-float { 0%, 100% { transform: rotateX(10deg) rotateY(-14deg) rotate(-10deg) translateY(0); } 50% { transform: rotateX(6deg) rotateY(-8deg) rotate(-8deg) translateY(-12px); } }
+  @keyframes hs-sweep { 0%, 15% { transform: translateX(-40%); } 60%, 100% { transform: translateX(40%); } }
+  @keyframes hs-flicker { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+</style>

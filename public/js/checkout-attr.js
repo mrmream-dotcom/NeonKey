@@ -6,7 +6,8 @@
 // 2. Buy links: every Stripe buy button already carries client_reference_id=nk1_<lane>_<sku>_<location> from the build
 //    (src/lib/checkout-ref.ts), so it works with JavaScript off. Here we add "_<src>" (the first-touch utm_source, or
 //    "direct") and pass the UTM tags to Stripe, which hands them back on the after-payment redirect.
-// 3. On a buy click: sends GA4 begin_checkout, and remembers lane/sku/ref for /js/checkout-return.js on the thanks page.
+// 3. On a buy click: sends GA4 begin_checkout, remembers lane/sku/ref for /js/checkout-return.js on the thanks page,
+//    and adds the GA4 client id to the ref so the Stripe-verified purchase joins this visit.
 //
 // Privacy: UTM values are cleaned to [a-z0-9._-]; anything that looks like an email or a phone number is dropped, so no
 // personal data goes into the ref or the UTMs passed to Stripe. Every sessionStorage access is wrapped in try/catch;
@@ -85,6 +86,20 @@
     var ref = a.getAttribute('data-umami-event-ref') || '';
     var price = Number(a.getAttribute('data-umami-event-price')) || 0;
     saveShared(KEY_LAST, { lane: lane, sku: sku, ref: ref, t: Date.now() });
+    // Verified purchases (workers/payments/src/analytics.js): add the GA4 client id to client_reference_id as
+    // "_g<a>-<b>" so the purchase Stripe confirms can be joined to this visit in GA4. It is a random browser id,
+    // not personal data. Skipped if there is no _ga cookie or the ref would pass Stripe's 200-character limit.
+    try {
+      var ga = /(?:^|;\s*)_ga=GA\d\.\d\.(\d{1,12})\.(\d{1,12})(?:;|$)/.exec(document.cookie || '');
+      if (ga) {
+        var withGa = ref.replace(/_g\d+-\d+$/, '') + '_g' + ga[1] + '-' + ga[2];
+        if (REF_OK.test(withGa)) {
+          var u2 = new URL(a.href);
+          u2.searchParams.set('client_reference_id', withGa);
+          a.href = u2.toString();
+        }
+      }
+    } catch (err) {}
     try {
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'begin_checkout', {
