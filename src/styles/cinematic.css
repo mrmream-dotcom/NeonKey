@@ -65,3 +65,33 @@ input:focus, textarea:focus, select:focus { background: rgba(255, 255, 255, .05)
 
 /* ---------- Footer ---------- */
 .site-footer { background: transparent; border-top: 1px solid rgba(255, 255, 255, .06); }
+
+/* ---------- Premium motion layer (src/scripts/motion.ts) ---------- */
+/* Header tightens once the page scrolls. */
+.site-header { transition: background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .4s var(--ease); }
+.site-header.is-scrolled { background: rgba(5, 6, 11, .82); border-bottom-color: rgba(255, 255, 255, .09); box-shadow: 0 10px 40px -20px rgba(0, 0, 0, .9); }
+
+/* Pointer light on glass cards (--mx/--my set by motion.ts; nothing shows without a mouse). */
+.lane-door, .ds-card, .price-col, .price-box, .card, .nl-box { position: relative; }
+.lane-door::after, .ds-card::after, .price-col::after, .price-box::after, .card::after, .nl-box::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s var(--ease);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .07), transparent 45%);
+}
+.lane-door:hover::after, .ds-card:hover::after, .price-col:hover::after, .price-box:hover::after, .card:hover::after, .nl-box:hover::after { opacity: 1; }
+.lane-door, .price-col, .ds-card { transition: transform .5s var(--ease), border-color .3s var(--ease); }
+@media (hover: hover) { .lane-door:hover, .price-col:hover { transform: translateY(-4px); } }
+
+/* Split headline: each word carries the gradient so the masked lines can move. */
+h1.is-split .sl { padding-bottom: .06em; }
+.home-hero h1.is-split { background: none; color: var(--color-text); }
+.home-hero h1.is-split .sw { background: linear-gradient(180deg, #fff 30%, #a9adc4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Film grain over everything, very faint (data: URI image, allowed by img-src). */
+.grain { position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 1s steps(4) infinite; }
+@keyframes grain-shift { 0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(0, 0); } }
+@media print { .grain { display: none; } }
+/* Headline waits for the split-text intro; never hidden for more than 2.5s, never under reduced motion. */
+.motion-pending main h1 { opacity: 0; animation: nk-show 0s 2.5s forwards; }
+@keyframes nk-show { to { opacity: 1; } }

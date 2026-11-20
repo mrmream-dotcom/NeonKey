@@ -57,8 +57,22 @@ const bars = [38, 58, 30, 72, 46, 84, 52, 64];
       </g>
     </svg>
   </div>
+  <canvas class="stage-gl" aria-hidden="true"></canvas>
   <div class="stage-sweep"></div>
 </div>
+
+<script>
+  // Swap the SVG key for the real-time 3D one on capable screens. Three.js loads as its own file, only here, and
+  // only after the page is idle, so it never delays the first paint or the buttons.
+  const stage = document.querySelector<HTMLElement>('.stage');
+  const canvas = stage?.querySelector<HTMLCanvasElement>('.stage-gl');
+  const ok = stage && canvas && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(min-width: 901px)').matches
+    && !!document.createElement('canvas').getContext('webgl2');
+  if (ok) {
+    const go = () => import('../scripts/hero-key').then((m) => m.mountHeroKey(stage!, canvas!)).catch(() => stage!.classList.remove('is-gl'));
+    'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 1200 }) : setTimeout(go, 300);
+  }
+</script>
 
 <style>
   .stage { position: relative; width: 100%; height: 100%; min-height: 360px; isolation: isolate; overflow: hidden; border-radius: var(--radius-xl); }
@@ -77,6 +91,9 @@ const bars = [38, 58, 30, 72, 46, 84, 52, 64];
   .key-reflect { position: absolute; top: 58%; transform: rotateX(10deg) rotateY(-14deg) rotate(10deg) scaleY(-.55); opacity: .35; animation: none; filter: none;
     -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%); mask-image: linear-gradient(180deg, #000, transparent 70%); }
   .key-dot { filter: drop-shadow(0 0 8px #f472b6); }
+  .stage-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; opacity: 0; transition: opacity 1.2s var(--ease); }
+  .stage.is-gl .stage-gl { opacity: 1; }
+  .stage.is-gl .stage-key { opacity: 0; transition: opacity .6s var(--ease); }
   .stage-sweep { position: absolute; inset: -20% -60%; z-index: 3; pointer-events: none; mix-blend-mode: screen;
     background: linear-gradient(100deg, transparent 42%, rgba(255,255,255,.07) 50%, transparent 58%); animation: hs-sweep 11s ease-in-out infinite; }
   @keyframes hs-float { 0%, 100% { transform: rotateX(10deg) rotateY(-14deg) rotate(-10deg) translateY(0); } 50% { transform: rotateX(6deg) rotateY(-8deg) rotate(-8deg) translateY(-12px); } }

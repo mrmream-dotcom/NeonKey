@@ -110,6 +110,8 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Hides the page headline for the split-text intro only when motion will run (motion.ts reveals it; CSS shows it after 2.5s if the script never arrives). Hashed into the CSP by csp-meta. -->
+    <script is:inline>if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion-pending');</script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     {abIds.length > 0 && (
       // A/B split (src/data/ab-tests.ts). Runs before paint so the other variant never flashes.
@@ -341,5 +343,7 @@ const pageJsonLd = schema && !noindex && !IS_DEMO && canonicalPath !== '/'
         } catch {}
       }, true);
     </script>
+    <div class="grain" aria-hidden="true"></div>
+    <script>import '../scripts/motion';</script>
   </body>
 </html>
