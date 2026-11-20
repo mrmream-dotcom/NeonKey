@@ -33,7 +33,7 @@ import { skuPricesJson } from '../../lib/checkout-ref';
   </div>
   <!-- Google Ads "Lockdown purchase" conversion. External file: no inline scripts. -->
   <script is:inline src={url('/js/conv-lockdown.js')}></script>
-  <!-- Checkout return: Umami checkout-return + GA4 purchase (prices passed from src/lib/checkout-ref.ts). External file. -->
+  <!-- Checkout return: Umami checkout-return only; verified purchases come from the payments Worker (prices passed from src/lib/checkout-ref.ts). External file. -->
   <script is:inline src={url('/js/checkout-return.js')} data-skus={skuPricesJson()}></script>
 </Base>
 

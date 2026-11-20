@@ -1,11 +1,14 @@
 // Checkout return (05-conversion-tracking-spec, section 3): on a thanks page that Stripe redirects to after payment,
-// sends Umami "checkout-return" and GA4 "purchase" once per Checkout Session. Loaded only on /pay/thanks/,
+// sends Umami "checkout-return" once per Checkout Session. A return is NOT proof of payment (a link can be revisited
+// or shared), so since Nov 19 2026 purchases are counted only from Stripe's signed webhook: the payments Worker sends
+// GA4 "purchase" / "trial_started" and Umami "checkout_completed" (workers/payments/src/analytics.js). This page no
+// longer sends a GA4 purchase, so a purchase is never counted twice. Loaded only on /pay/thanks/,
 // /founders/guide/thanks/ and /follow-up-desk/thanks/. External file: the CSP forbids inline scripts.
 //
 // Fires only when the URL has a known offer= and a real-looking Checkout Session id (cs_live_/cs_test_), like the
-// Google Ads conversion scripts, so a plain visit never counts. The session id is GA4's transaction_id (GA4 drops a
-// repeat), and a sessionStorage mark stops a reload from counting twice in Umami. The session id itself is never sent
-// to Umami. Test-mode sessions (cs_test_) are sent to Umami with mode=test and never to GA4.
+// Google Ads conversion scripts, so a plain visit never counts. A sessionStorage mark stops a reload from counting twice in Umami.
+//
+// The session id itself is never sent to Umami. Test-mode sessions (cs_test_) are marked mode=test.
 // The /follow-up-desk/thanks/ redirect has no offer or session id yet, so nothing fires there until the Desk Payment
 // Links are changed in Stripe (spec 6.B2).
 //
@@ -67,17 +70,8 @@
 
   var tries = 0;
   (function send() {
-    if (window.umami && window.umami.track) { window.umami.track('checkout-return', props); return window.umami.track('checkout_completed', props); }
+    if (window.umami && window.umami.track) return window.umami.track('checkout-return', props);
     if (++tries < 20) setTimeout(send, 250);
   })();
 
-  if (mode !== 'live') return;
-  try {
-    if (typeof window.gtag === 'function') {
-      var ev = { send_to: 'G-425106TVS2', transaction_id: sid, currency: 'USD', lane: lane };
-      if (value !== undefined) ev.value = value;
-      if (sku) ev.items = [{ item_id: sku, price: value || 0, quantity: 1 }];
-      window.gtag('event', 'purchase', ev);
-    }
-  } catch (e) {}
 })();
