@@ -31,7 +31,7 @@
   // Umami's script loads async, so wait briefly for it (up to ~5 seconds).
   var tries = 0;
   (function umamiTrack() {
-    if (window.umami && typeof window.umami.track === 'function') { window.umami.track('contact-confirmed', { topic: topic }); return; }
+    if (window.umami && typeof window.umami.track === 'function') { window.umami.track('contact-confirmed', { topic: topic }); window.umami.track('quote_form_submitted', { topic: topic }); return; }
     if (++tries < 20) setTimeout(umamiTrack, 250);
   })();
 })();
