@@ -1,0 +1,22 @@
+# NeonKey comment-keyword auto reply (Instagram, Meta official API).
+# Secrets (paste in the Cloudflare dashboard or `wrangler secret put`, never committed):
+#   IG_TOKEN   long-lived Instagram token from the Meta App Dashboard (seeds KV; Worker refreshes it weekly)
+name = "neonkey-comment-reply"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# dry = log only, reply = public replies only, live = public replies + DMs
+MODE = "dry"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "d8c4f7aaf30f454cb983cafee7614081"
+
+[observability]
+enabled = false
