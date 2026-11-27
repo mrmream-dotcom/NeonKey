@@ -12,7 +12,7 @@
     "checkout-link": "node --experimental-strip-types scripts/checkout-link.mjs"
   },
   "dependencies": {
-    "stripe": "^23.1.0"
+    "stripe": "^23.2.0"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
